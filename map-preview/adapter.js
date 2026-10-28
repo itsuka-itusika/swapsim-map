@@ -6,7 +6,7 @@ function mapPerson(c,t){
  const bandAge=()=>{let total=c.ageBands.reduce((s,b)=>s+b[2],0),v=rnd()*total,b=c.ageBands.find(b=>(v-=b[2])<0)||c.ageBands.at(-1);return b[0]+Math.floor(rnd()*(b[1]-b[0]+1))};
  if(c.ageBands)sa.age=bandAge();
  // During class hours most domestic pupils are at school; keep about one in ten of those drawn elsewhere.
- if(!c.resident&&!['general','student','area_student','resident','patient','area_inbound'].includes(c.role)&&PersonContext.schoolTime(t))for(let i=0;i<32;i++){let g=gradeIndex(birthOf(sa.age,t),t);if(g<1||g>12||rnd()<.1)break;sa.age=c.ageBands?bandAge():PersonContext.age(c,rnd)}
+ if(!c.resident&&!c.custody&&!['general','student','area_student','resident','patient','area_inbound'].includes(c.role)&&PersonContext.schoolTime(t))for(let i=0;i<32;i++){let g=gradeIndex(birthOf(sa.age,t),t);if(g<1||g>12||rnd()<.1)break;sa.age=c.ageBands?bandAge():PersonContext.age(c,rnd)}
  const P={pref,muni,censusCode:f.id,ward:null,urb:urbOf(pref,muni),age:sa.age,sex:sa.sex,t};P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);
  const stage=c.facility?.kind;
  if(c.role==='student'||c.role==='area_student'){let bounds=c.role==='area_student'?[13,21]:{primary:[1,6],middle:[7,9],high:[10,12],university:[13,21],college:[13,21],kindergarten:[-2,0]}[stage];for(let i=0;bounds&&(P.g<bounds[0]||P.g>bounds[1])&&i<64;i++){P.age=c.min+Math.floor(rnd()*(c.max-c.min+1));P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);}}

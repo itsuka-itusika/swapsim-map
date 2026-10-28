@@ -38,3 +38,9 @@ test('detention house and courts follow daily routines with role-specific scenes
  // No hearings, parties or tours on a Saturday.
  assert.equal(run(`CivicModel.roles(MAP_DATA.publicAreas.find(x=>x.name==='東京高等裁判所・東京地方裁判所・東京簡易裁判所'),{y:2026,mo:10,d:31,dow:6,h:11,hf:11}).filter(c=>c.w>0&&/prosecutor|lawyer|party|audience|saibanin/.test(c.role)).length`),0);
 });
+test('juvenile classification home and immigration detention have their own routines',()=>{
+ const r=JSON.parse(run(`(()=>{let out={};for(const [name,h] of [['東京少年鑑別所',10],['東京少年鑑別所',23],['東京出入国在留管理局',11]]){let f=MAP_DATA.publicAreas.find(x=>x.name===name),p=LandProfile.create(envContext,f.xy,40),t={y:2026,mo:10,d:28,dow:3,h,hf:h+.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),rows=[];for(let i=0;i<150;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);rows.push([c.role,P.age,P.surname.k,P.sit.text])}out[name+h]=rows}return JSON.stringify(out)})()`));
+ const kids=r['東京少年鑑別所10'].filter(x=>x[0]==='civic_juvenile');assert.ok(kids.length>20);assert.ok(kids.every(x=>x[1]>=14&&x[1]<=19));
+ assert.ok(r['東京少年鑑別所23'].filter(x=>x[0]==='civic_juvenile').every(x=>/消灯後/.test(x[3])));
+ const held=r['東京出入国在留管理局11'].filter(x=>x[0]==='civic_imm_detainee');assert.ok(held.length>0);assert.ok(held.every(x=>/^[ァ-ヶー・]+$/.test(x[2])),held.map(x=>x[2]).join());
+});

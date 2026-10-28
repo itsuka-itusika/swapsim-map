@@ -30,5 +30,7 @@ const PersonContext=(()=>{
   if(SEA.test(text)&&land?.type!=='waterfront')return true;
   return /新幹線の運転席/.test(text)&&!/^(東京|品川|上野)駅$/.test(place)}
  function schoolTime(t){let h=t.hf??t.h;return t.dow>0&&t.dow<6&&!t.holiday&&!(typeof holName==='function'&&holName(t))&&!(typeof schoolVac==='function'&&schoolVac(t))&&h>=8.5&&h<15}
- return {foreignName,age,station,away,schoolTime};
+ // Picks a name style uniformly, without implying any nationality distribution.
+ function anyForeignName(sex,r=Math.random){let keys=[...Object.keys(names),null];return foreignName(keys[Math.floor(r()*keys.length)],sex,r)}
+ return {foreignName,anyForeignName,age,station,away,schoolTime};
 })();
