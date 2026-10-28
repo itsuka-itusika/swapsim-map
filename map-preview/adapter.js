@@ -56,7 +56,8 @@ function mapPerson(c,t){
   P.visitLabel=c.label;
   if(Subculture.apply(c,P)){}
   else if(Nightlife.handles(c)){P.mapSituation=P.sit.text;P.visitLabel=P.sit.stateLabel;}
-  else if(['area_tourist','area_inbound'].includes(c.role))P.mapSituation=VisitorSituations.text(c,P,t,rnd);
+  // Market and shopping streets (アメ横, 築地場外, ...) only show shopping or sightseeing, never an unrelated everyday scene.
+  else if(['area_tourist','area_inbound'].includes(c.role)||c.role==='area_shopping'&&c.area.visitOnly)P.mapSituation=VisitorSituations.text(c,P,t,rnd);
   else {
    // Retain swapsim text while excluding sleeping/home scenes for people drawn as visitors.
    const ok=()=>c.role==='area_office'?['work','commute'].includes(P.sit.state):['off','commute','school'].includes(P.sit.state)&&/店|街|駅|カフェ|買い物|買い|歩|待ち合わせ|友人|友達|飲食|居酒屋/.test(P.sit.text)&&! /自宅|家で|部屋|眠|寝|授業/.test(P.sit.text);

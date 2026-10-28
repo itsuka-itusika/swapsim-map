@@ -77,3 +77,8 @@ test('ward central libraries and more large baths are bundled with their own sta
  for(let k of ['setagaya','arakawa'])assert.ok(r[k].includes('place_library_guest')&&r[k].includes('place_library_staff'),k+' '+r[k]);
  assert.ok(r.toyosu.includes('place_bath_guest'));assert.ok(!r.ariake.includes('place_bath_guest'));
 });
+test('market and shopping streets give their visitors only shopping or sightseeing scenes',()=>{
+ const r=JSON.parse(run(`(()=>{let out=[];for(let xy of [[139.7698,35.6655],[139.7745,35.7095]])for(let h of [7,10,15,19]){let p=LandProfile.create(envContext,xy,60),t={y:2026,mo:10,d:28,dow:3,h,hf:h+.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t).filter(c=>['area_shopping','area_tourist','area_inbound'].includes(c.role)&&c.area?.visitOnly),tot=parts.reduce((s,c)=>s+c.n,0);for(let i=0;i<60&&parts.length;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push(P.sit.text)}}return JSON.stringify(out)})()`));
+ const pools=run(`JSON.stringify([...Object.values(MAP_DATA.storyScenes.visitor).flat(),...MAP_DATA.areas.flatMap(a=>(a.scenes||[]).map(s=>s[2]))])`);
+ assert.ok(r.length>200);for(let text of r)assert.ok(pools.includes(JSON.stringify(text))||/買い物|店|土産|観光|商店街|市場/.test(text),text);
+});
