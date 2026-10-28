@@ -13,10 +13,8 @@ const emptyFeatures=[],geometryProfiles=new Map();
 GreenModel.configure(MAP_DATA.greenZones);
 LandModel.configure(MAP_DATA.waters,MAP_DATA.landZones);
 const excluded=p=>LandModel.at(p)||GreenModel.at(p);
-const map=L.map('map',{minZoom:10,maxZoom:18,maxBounds:[[35.48,139.48],[35.86,139.94]],maxBoundsViscosity:.8}).setView([selected[1],selected[0]],15);
-let tiles=L.tileLayer('https://tile.openstreetmap.jp/styles/osm-bright-ja/{z}/{x}/{y}.png',{maxZoom:18,updateWhenIdle:true,updateWhenZooming:false,keepBuffer:1,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | <a href="https://openmaptiles.org/">&copy; OpenMapTiles</a> | <a href="https://www.osm.jp/">OpenStreetMap Japan</a>'}).addTo(map);
-tiles.on('tileerror',()=>{el('status').textContent='背景地図の一部を読み込めません。通信状態を確認してください。地域・施設データは引き続き利用できます。'});
-let circle=L.circle([selected[1],selected[0]],{radius,color:'#2E6A5D',fillOpacity:.12}).addTo(map),pin=L.circleMarker([selected[1],selected[0]],{radius:6,color:'#fff',fillColor:'#C8371E',fillOpacity:1}).addTo(map),layer=L.layerGroup().addTo(map);
+const boot=MapBoot.create(selected,radius),map=boot.map;
+let tiles=boot.tiles,circle=boot.circle,pin=boot.pin,layer=L.layerGroup().addTo(map);
 const clockFormatter=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
 function dateNow(){el('clock').textContent=clockFormatter.format(new Date())}
 function time(){let t=jstNow();t.rand=false;t.holiday=!!holName(t);t.venueEvent='auto';return t}
