@@ -28,7 +28,10 @@ const VisitorSituations=(()=>{
  let pool=P.age<12?stories.child:h>=22||h<6?stories.late:h>=18?stories.evening:stories.day;
  if(P.age>=12&&c.role==='area_inbound'&&h>=8&&h<21)pool=[...pool,...stories.inbound];return pool[Math.floor(random()*pool.length)];
  }
- return {text,daytime,evening,late,inbound};
+ // Street-specific scenes from areas.json: [start,end,text] for visitors, with "night" for evening revelers.
+ function local(c,P,t,random=Math.random){let scenes=c.area?.scenes,h=t.hf??t.h,night=c.role==='area_night';if(!scenes||!['area_shopping','area_tourist','area_inbound','area_night'].includes(c.role)||random()>=.6)return null;
+  let pool=scenes.filter(([s,e,,kind])=>(kind==='night')===night&&(s<=e?h>=s&&h<e:h>=s||h<e));return pool.length?pool[Math.floor(random()*pool.length)][2]:null}
+ return {text,local,daytime,evening,late,inbound};
 })();
 if(typeof module!=='undefined')module.exports=VisitorSituations;
 

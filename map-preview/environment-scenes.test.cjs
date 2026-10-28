@@ -23,3 +23,9 @@ test('pupils are mostly in class on school-day afternoons but out in the city on
  const kids=run(`(()=>{let a=MAP_DATA.areas.find(x=>x.name==='渋谷駅周辺'),p=LandProfile.create(envContext,a.xy,300),out=[];for(const [d,dow] of [[28,3],[31,6]]){let t={y:2026,mo:10,d,dow,h:14,hf:14,mi:0,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),n=0;for(let i=0;i<1200;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);if(P.age>=6&&P.age<=17&&!['student','resident','general','area_inbound'].includes(c.role))n++}out.push(n)}return out})()`);
  assert.ok(kids[0]*4<kids[1],String(kids));
 });
+test('distinctive streets use their own scenes and every subculture area defines genres',()=>{
+ assert.deepEqual(Array.from(run(`MAP_DATA.areas.filter(a=>a.tags?.subculture&&!a.genres).map(a=>a.name)`)),[]);
+ const x=run(`(()=>{let out={};for(const [name,h] of [['キャットストリート',15],['巣鴨地蔵通り商店街',11],['新宿ゴールデン街',21]]){let a=MAP_DATA.areas.find(x=>x.name===name),p=LandProfile.create(envContext,a.xy,100),t={y:2026,mo:10,d:31,dow:6,h,hf:h+.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),own=new Set(a.scenes.map(s=>s[2])),n=0,old=0;for(let i=0;i<200;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);if(own.has(P.sit.text))n++;if(name==='巣鴨地蔵通り商店街'&&P.age>=65)old++}out[name]=[n,old]}return JSON.stringify(out)})()`);
+ const r=JSON.parse(x);for(const [name,[n]] of Object.entries(r))assert.ok(n>=5,name+' '+n);assert.ok(r['巣鴨地蔵通り商店街'][1]>=50);
+ assert.equal(run(`PersonContext.away('海浜公園の砂浜から、レインボーブリッジを眺めているところでした',{role:'area_shopping'})`),false);
+});

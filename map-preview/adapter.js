@@ -69,6 +69,7 @@ function mapPerson(c,t){
    P.visitLabel='外国人観光客／国・地域：'+market.name;
   }
   if(!Nightlife.handles(c)&&P.mapSituation!==P.sit.text)P.sit={...P.sit,text:P.mapSituation,state:c.role==='area_office'?'work':'off',stateLabel:c.label};
+  const local=VisitorSituations.local(c,P,t,rnd);if(local){P.mapSituation=local;P.sit={...P.sit,text:local,state:'off',stateLabel:c.label,source:'area-scene'};}
  }
 
  // Residential occupants are present at home/in the neighborhood, not at an off-site workplace.
