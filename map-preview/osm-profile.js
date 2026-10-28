@@ -4,6 +4,10 @@ const OSMProfile=(()=>{
  function classification(t){
  const a=t.amenity,l=t.landuse,b=t.building;
  if(a==='police'&&/警察署$/.test(t.name||''))return ['public','police'];
+ if(a==='fire_station')return ['public','fire_station'];
+ if(t.tourism==='hotel')return ['commercial','hotel'];
+ if(['museum','gallery'].includes(t.tourism))return ['tourism',t.tourism];
+ if(a==='theatre')return ['tourism','theatre'];
  if(a==='prison')return ['public',/拘置/.test(t.name||'')?'detention':'prison'];
  if(l==='military'||t.military==='barracks'||/駐屯地|防衛省市ヶ谷地区/.test(t.name||''))return ['public','military'];
  if(/^(?:国会議事堂|[衆参]議院.*議員会館)$/.test(t.name||''))return ['public','parliament'];

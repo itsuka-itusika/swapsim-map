@@ -34,3 +34,8 @@ test('residential occupants cannot inherit fishing and other distant leisure ven
  const count=run(`(()=>{const f=MAP_DATA.regions.find(r=>r.name==='目黒区')||MAP_DATA.regions[0],t={y:2026,mo:10,d:28,dow:3,h:10,hf:10.32,mi:19,rand:false};let checked=0;for(let i=0;i<300;i++){const P=mapPerson({role:'general',label:'住宅内・近隣の滞在者',resident:true,region:f,min:0,max:99,female:.5,n:100,roleP:1},t);if(!TimeSituations.homeCompatible(P.sit.text))throw Error(P.sit.text);checked++}return checked})()`);
  assert.equal(count,300);
 });
+
+test('named hotels, cultural facilities and fire stations have matching roles and scenes',()=>{
+ const count=run(`(()=>{const t={y:2026,mo:10,d:28,dow:3,h:14,hf:14,mi:0,rand:false},region=MAP_DATA.regions[0];let count=0;for(const [tags,kind] of [[{tourism:'hotel',name:'試験ホテル'},'hotel'],[{tourism:'museum',name:'試験博物館'},'museum'],[{amenity:'theatre',name:'試験劇場'},'theatre'],[{amenity:'fire_station',name:'試験消防署'},'fire_station']]){let type=OSMProfile.classification(tags);let c={type:type[0],subtype:type[1],name:tags.name,tags,source:'OpenStreetMap',area:10000,areaM2:10000,region};if(PlacesModel.kind(c)!==kind)throw Error(kind);for(const role of PlacesModel.roles(c,t).filter(x=>x.w>0)){let p=mapPerson({...role,region,landType:c.type,landComponent:c,roleP:.1},t);if(p.place!==c.name||!p.sit.text)throw Error(role.role);count++}}return count})()`);
+ assert.ok(count>=10);
+});

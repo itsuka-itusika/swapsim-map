@@ -13,7 +13,7 @@ const LandProfile=(()=>{
  // Relation/member and tagged node/polygon duplicates must not increase density or capacity.
  osm=osm.filter((f,i,a)=>!a.some((g,j)=>j!==i&&g.geometry&&g.type===f.type&&((!f.geometry&&normalize(f.name)===normalize(g.name)&&S.contains(f.xy,g))||(f.geometry&&g.id.startsWith('osm-relation')&&f.id.startsWith('osm-way')&&normalize(f.name)===normalize(g.name)&&Math.abs(f.area-g.area)<Math.max(10,g.area*.05)))));
  let index=new S.Index(osm),facilities=official.filter(f=>!matched.has(f.id)),facilityIndex=new S.Index(facilities),buckets=new Map(),landWeights={},tagTotals={},N=Math.min(10000,Math.max(384,Math.ceil(Math.PI*r*r/225))),unit=Math.PI*r*r/N;
- const specific=f=>!['residential','green','industrial','commercial','office','agriculture','waterfront'].includes(f.type);
+ const specific=f=>['hotel','museum','gallery','theatre','fire_station'].includes(f.subtype)||!['residential','green','industrial','commercial','office','agriculture','waterfront'].includes(f.type);
  function tagAt(q,type){
   if(['green','education','medical','industrial','waterfront','agriculture'].includes(type))return null;
   let best=null,w=0,adult=null,adultWeight=0,tags={},sources={};
@@ -37,6 +37,7 @@ const LandProfile=(()=>{
  if(base?.kind==='palace')return {...base,region};
  let polys=index.at(q).filter(f=>f.geometry).sort((a,b)=>Number(specific(b))-Number(specific(a))||a.area-b.area),f=polys[0];
  if(f&&(specific(f)||f.tags?.building||['green','waterfront'].includes(f.type)))return {...f,region,areaTag:tagAt(q,f.type)};
+ let namedPoint=index.query(S.box(q,20)).filter(x=>!x.geometry&&['hotel','museum','gallery','theatre','fire_station'].includes(x.subtype)&&x.tags?.name&&M.distance(q,x.xy)<=15).sort((a,b)=>M.distance(a.xy,q)-M.distance(b.xy,q))[0];if(namedPoint)return {...namedPoint,region,areaTag:tagAt(q,namedPoint.type)};
  if(base)return {...base,region,areaTag:tagAt(q,base.type)};
  let fs=facilityIndex.at(q).sort((a,b)=>M.distance(a.xy,q)-M.distance(b.xy,q));if(fs.length)return {...fs[0],facilities:[fs[0]],region};
  if(f)return {...f,region,areaTag:tagAt(q,f.type)};
