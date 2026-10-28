@@ -36,7 +36,8 @@ function mapPerson(c,t){
  const outside=c.role!=='general'&&!['resident','patient'].includes(c.role)&&!c.custody;
  for(let i=0;i<64;i++){P.hb=healthBase(P,t);if(!(activeWork&&P.hb.leave)&&!(outside&&P.hb.bed))break;if(i===63)throw Error('勤務・健康状態の抽選に失敗しました');}
  if(typeof linkFamilyHealth==='function')linkFamilyHealth(P);
- P.sit=Nightlife.handles(c)?Nightlife.choose(c,P,t):situation(P,t);
+ const pickSituation=()=>Nightlife.handles(c)?Nightlife.choose(c,P,t):situation(P,t);P.sit=pickSituation();
+ for(let i=0;i<32&&PersonContext.away(P.sit.text,c);i++)P.sit=pickSituation();
  // Keep at-home samples from inheriting distant recreational venues from the national pool.
  if(c.resident&&!TimeSituations.homeCompatible(P.sit.text)){
   for(let i=0;i<32&&!TimeSituations.homeCompatible(P.sit.text);i++)P.sit=situation(P,t);
@@ -81,6 +82,8 @@ function mapPerson(c,t){
  if(typeof PlacesModel!=='undefined')PlacesModel.apply(c,P,t);
  if(typeof PoliceModel!=='undefined')PoliceModel.apply(c,P,t);
  if(typeof EnvironmentScenes!=='undefined')EnvironmentScenes.apply(c,P,t);
+ // Later map modules reuse original pools too; never leave the person somewhere other than the drawn spot.
+ if(PersonContext.away(P.sit.text,c)){for(let i=0;i<32&&PersonContext.away(P.sit.text,c);i++)P.sit=situation(P,t);if(PersonContext.away(P.sit.text,c))P.sit={text:c.resident?'自宅で、ひと息ついているところでした':'近くを歩きながら、次に行く場所を考えているところでした',state:'off',stateLabel:c.label,p:1};P.mapSituation=P.sit.text}
  if(P.occ.job?.n==='MR（医薬情報担当者）')P.occ.label=P.occ.label.replace('MR（医薬情報担当者）','MR');
  P.health=settleHealth(P,t);if(c.role==='venue_ghost'){P.hb.preg=false;P.health={text:'幽霊のため健康状態は不明',items:[],p:1,note:'お遊び要素'};}P.body=bodyOf(P,t);
  P.place=(c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name||f.name);P.placeShort=P.place;

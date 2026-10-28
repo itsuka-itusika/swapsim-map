@@ -4,7 +4,9 @@ const AreaModel=(()=>{
  const types={subculture:['趣味の来街者',14,49,.5],office:['勤務・業務中',22,64,.45],student:['街の学生',18,24,.5],shopping:['買い物・街歩き',16,69,.55],tourist:['国内観光客',6,79,.52],inbound:['外国人観光客',6,79,.5],night:['夜の飲食・娯楽客',20,64,.4],night_worker:['飲食店の勤務者',20,64,.5],cabaret_worker:['夜の接客業の勤務者',20,55,1],adult_customer:['成人向け店舗の利用客',20,69,0],adult_worker:['成人向け店舗の勤務者',20,55,.9]};
  function activity(k,t){let h=t.hf??t.h,we=t.dow===0||t.dow===6||t.holiday;
  if(k==='office')return we?(h>=9&&h<19?.08:.01):h>=9&&h<18?1:h>=7&&h<21?.35:.02;
- if(k==='adult_customer'||k==='adult_worker')return h>=18?1:h<3?.7:h>=10&&h<18?.4:0;
+ // Customer scenes in the original pool begin at noon; staff prepare from 10:00.
+ if(k==='adult_customer')return h>=18?1:h<3?.7:h>=12?.4:0;
+ if(k==='adult_worker')return h>=18?1:h<3?.7:h>=10?.4:0;
  if(k==='cabaret_worker')return h>=18&&h<24?1:0;
  if(k==='night'||k==='night_worker'){let factor=(t.dow===5||t.dow===6||t.holiday)?1.2:1;return factor*(h>=18?1:h<3?.8:h<5?.2:h>=12?.15:0);}
  if(k==='student')return h>=10&&h<21?(we?.45:h>=15?1:.65):0;

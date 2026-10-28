@@ -16,6 +16,7 @@ const EnvironmentScenes=(()=>{
  function ctxFor(P,t){let hol=holName(t),brk=isBreak(t),vacP=P.occ.group==='college'?univVac(t):P.occ.school||P.occ.en==='yochi'?schoolVac(t):false;return {P,t,h:t.hf??t.h,we:t.dow===0||t.dow===6||!!hol||brk,hol,brk,mo:t.mo,vacP,vac:vacP,season:seasonOf(t.mo),wx:wxOf(P.pref,t),eq:eqOf(P.pref,t)}}
  function compatible(e,c,P,kind){let o=e[3]||{},text=textOf(e),p=c.landComponent?.sampleXY||c.landComponent?.xy||c.area?.xy;
   if(!patterns[kind].test(text))return false;
+  if(typeof PersonContext!=='undefined'&&PersonContext.away(text,c))return false;
   if(/自宅|家で|自分の部屋|友達の部屋|実家|マンション|ベランダ|窓から|テレビで|テレビを|録画|宿泊先|帰宅後|バスツアー|山で|山へ/.test(text))return false;
   if(o.at&&((o.at[0]&&o.at[0]!==P.pref.n)||(o.at[1]&&o.at[1]!==P.muni.n)))return false;
   if(o.ev&&[].concat(o.ev).includes('sanja')&&(!p||MapModel.distance(p,[139.7967,35.7148])>800))return false;
