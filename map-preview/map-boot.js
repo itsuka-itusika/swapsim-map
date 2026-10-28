@@ -9,5 +9,9 @@ const MapBoot=(()=>{
   const circle=L.circle([point[1],point[0]],{radius,color:'#2E6A5D',fillOpacity:.12}).addTo(map),pin=L.circleMarker([point[1],point[0]],{radius:6,color:'#fff',fillColor:'#C8371E',fillOpacity:1}).addTo(map);
   state={map,tiles,circle,pin};return state;
  }
- return {create};
+ // Loading readout under the draw button; each published asset reports its step as it finishes.
+ const STEPS=['地図を表示しています','人物生成エンジンを読み込んでいます','地図データを読み込んでいます','滞在人口を推定しています'];
+ function step(n){const text=document.getElementById('sysload-text'),bar=document.querySelectorAll('#sysload .sys-bar i');if(!text)return;text.textContent=STEPS[Math.min(n,STEPS.length-1)];bar.forEach((b,i)=>b.classList.toggle('on',i<n))}
+ function done(){const box=document.getElementById('sysload');if(!box)return;step(4);document.getElementById('sysload-text').textContent='準備完了';box.classList.add('done');setTimeout(()=>{box.hidden=true},1200)}
+ return {create,step,done};
 })();

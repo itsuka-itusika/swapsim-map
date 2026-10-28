@@ -132,5 +132,5 @@ async function drawMesh(){
 el('mesh-toggle').checked=false;el('mesh-toggle').onchange=drawMesh;
 el('mesh-mode').innerHTML='<option value="land">土地用途・敷地（標準）</option><option value="legacy">旧100mメッシュ（比較用）</option>';
 el('mesh-mode').onchange=drawMesh;
-dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh()}},1000);let lastMinute=time().mi;updateWeather();facilitiesOnMap();refresh();drawMesh();
+dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh()}},1000);let lastMinute=time().mi;updateWeather();facilitiesOnMap();refresh();drawMesh();MapBoot.done();
 
