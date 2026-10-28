@@ -14,3 +14,8 @@ test('people drawn in the 23 wards are never placed on distant trips, highways o
  const bad=run(`(()=>{let bad=[],names=['丸の内・大手町','渋谷駅周辺','錦糸町','高円寺','赤坂','池袋'];for(const name of names){let a=MAP_DATA.areas.find(x=>x.name===name),p=LandProfile.create(envContext,a.xy,300);for(const [d,dow] of [[21,6],[25,3]])for(const h of [10,13,16]){let t={y:2026,mo:11,d,dow,h,hf:h+.3,mi:18,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0);for(let i=0;i<40;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);if(PersonContext.away(P.sit.text,c))bad.push(name+':'+P.sit.text)}}}return bad})()`);
  assert.deepEqual(Array.from(bad),[]);
 });
+test('named school-holiday scenes are limited to their own season',()=>{
+ const lines=fs.readFileSync('texts2.js','utf8').split('\n').filter(l=>/^\s*\[[\d.]+, [\d.]+, '[^']*(夏休み|冬休み|春休み)/.test(l));
+ assert.ok(lines.length>10);
+ for(const l of lines)assert.match(l,/\b(m|md): /,l.trim());
+});
