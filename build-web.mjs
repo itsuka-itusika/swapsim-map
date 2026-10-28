@@ -9,6 +9,15 @@ if(split<0||!match)throw Error('Map data or engine boundary not found');
 const data=JSON.parse(match[1]),legacy=data.mesh,legacyHash=createHash('sha256').update(JSON.stringify(legacy)).digest('hex').slice(0,12);data.mesh=null;
 // The original engine's census data is retained for Japan/prefectures and all Tokyo wards.
 let engine=runtime.slice(split,match.index).replace(/const REGIONAL_CENSUS = (.*);/,(_,text)=>{const all=JSON.parse(text),subset=Object.fromEntries(Object.entries(all).filter(([k])=>k.endsWith('000')||/^131(0[1-9]|1[0-9]|2[0-3])$/.test(k)));return 'const REGIONAL_CENSUS = '+JSON.stringify(subset)+';';});
+// Map-generated people always use a Tokyo ward; retain its prefecture and national fallbacks.
+const retainTokyo=rows=>Object.fromEntries(Object.entries(rows).filter(([code])=>code==='00000'||code==='13000'||/^131(0[1-9]|1[0-9]|2[0-3])$/.test(code)));
+engine=engine.replace(/const PROFILE_DATA=(.*)\n?;\n/,(_,text)=>{
+ const profile=JSON.parse(text);
+ for(const key of ['family','familyExact','children','singleParentChildren','singleParentTotals','regions'])profile[key]=retainTokyo(profile[key]);
+ for(const key of Object.keys(profile.childCountMeans))profile.childCountMeans[key]=retainTokyo(profile.childCountMeans[key]);
+ for(const key of Object.keys(profile.siblingsOnly))profile.siblingsOnly[key]=retainTokyo(profile.siblingsOnly[key]);
+ return 'const PROFILE_DATA='+JSON.stringify(profile)+';\n';
+});
 let app=runtime.slice(match.index+match[0].length);
 app=app.replace("'use strict';\nconst el=id",`let legacyLoading;async function loadLegacyMesh(){if(!legacyLoading)legacyLoading=fetch('assets/mesh-legacy.json?v=${legacyHash}').then(r=>{if(!r.ok)throw Error('旧メッシュの取得に失敗しました');return r.json()}).then(data=>{MAP_DATA.mesh=data});return legacyLoading;}\n'use strict';\nconst el=id`);
 fs.mkdirSync('dist/assets',{recursive:true});
