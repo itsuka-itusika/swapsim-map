@@ -27,3 +27,10 @@ test('map filters preserve requested sex and age and both pair participants use 
  const result=run(`(()=>{const f=MAP_DATA.facilities.find(f=>f.kind==='station'),region=MAP_DATA.regions.find(r=>r.id===f.code),t={y:2026,mo:10,d:28,dow:3,h:12,hf:12,mi:0,rand:false};parts=MapModel.roles(f,t).map(c=>({...c,region,facility:f,n:100}));options.sex='f';options.dec=[2,3];options.pair=true;for(let i=0;i<20;i++){const R=sampleResult(t,true);if(R.A.sex!=='f'||R.A.age<20||R.A.age>=40)throw Error('filter mismatch');if(R.A.pref!==region.pref&&R.A.pref.n!=='東京都')throw Error('outside Tokyo');if(R.A.t!==R.B.t)throw Error('different instant')}return true})()`);
  assert.equal(result,true);
 });
+
+test('residential occupants cannot inherit fishing and other distant leisure venues',()=>{
+ assert.equal(run(`TimeSituations.homeCompatible('川辺で、釣り糸の先をじっと見つめているところでした')`),false);
+ assert.equal(run(`TimeSituations.homeCompatible('釣りの雑誌を自宅で読んでいるところでした')`),true);
+ const count=run(`(()=>{const f=MAP_DATA.regions.find(r=>r.name==='目黒区')||MAP_DATA.regions[0],t={y:2026,mo:10,d:28,dow:3,h:10,hf:10.32,mi:19,rand:false};let checked=0;for(let i=0;i<300;i++){const P=mapPerson({role:'general',label:'住宅内・近隣の滞在者',resident:true,region:f,min:0,max:99,female:.5,n:100,roleP:1},t);if(!TimeSituations.homeCompatible(P.sit.text))throw Error(P.sit.text);checked++}return checked})()`);
+ assert.equal(count,300);
+});

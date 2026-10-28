@@ -37,6 +37,11 @@ function mapPerson(c,t){
  for(let i=0;i<64;i++){P.hb=healthBase(P,t);if(!(activeWork&&P.hb.leave)&&!(outside&&P.hb.bed))break;if(i===63)throw Error('勤務・健康状態の抽選に失敗しました');}
  if(typeof linkFamilyHealth==='function')linkFamilyHealth(P);
  P.sit=Nightlife.handles(c)?Nightlife.choose(c,P,t):situation(P,t);
+ // Keep at-home samples from inheriting distant recreational venues from the national pool.
+ if(c.resident&&!TimeSituations.homeCompatible(P.sit.text)){
+  for(let i=0;i<32&&!TimeSituations.homeCompatible(P.sit.text);i++)P.sit=situation(P,t);
+  if(!TimeSituations.homeCompatible(P.sit.text))P.sit={text:'自宅で、ひと息ついているところでした',state:'off',stateLabel:'自宅で過ごしている',p:1};
+ }
  const originalSituation=P.sit;
  P.mapSituation=P.sit.text;
  GreenModel.apply(c,P);
