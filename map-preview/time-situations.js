@@ -64,8 +64,23 @@ const TimeSituations=(()=>{
   const forbidden=/学食|給食|昼食|弁当/.test(k)?null:k.endsWith('_class')?/部活|放課後|昼休み|学食|給食/:k==='school_break'?/授業を受|講義を受/:null;
   let pk=fromPool(list,ctx,e=>{let text=textOf(e);if(c.resident&&!homeCompatible(text))return false;if(typeof PersonContext!=='undefined'&&PersonContext.away(text,c))return false;if(text===last.get(k)||re&&!re.test(text)||forbidden&&forbidden.test(text))return false;if(k.startsWith('college')&&/自宅|一人暮らし|布団|部屋で|アルバイト|バイト先|教習所|居酒屋|古着屋|面接/.test(text))return false;if(k.endsWith('_work')&&/自宅|在宅|帰宅|昼食|昼休み|退勤|出勤|通勤/.test(text))return false;if(k.includes('_lunch')&&/授業中|講義中|授業を受|講義を受|早弁|部活/.test(text))return false;if(k.endsWith('_after')&&(t.hf??t.h)<15&&/部活|サークル/.test(text))return false;return true});return pk?fillText(textOf(pk.e),P):null;
  }
- function apply(c,P,t){let k=key(c,P,t);if(!k)return false;if(c.role==='general'&&P.sit?.text&&!/会社で|職場で|通勤|出勤|退勤|学校で|授業中/.test(P.sit.text))return false;let pool=pools[k];if(!pool?.length)throw Error('Missing time situation '+k);let candidates=pool.filter(x=>x!==last.get(k));let text=rnd()<.5?reuse(k,c,P,t):null,source=text?'swapsim':'supplement';if(!text)text=candidates[Math.floor(rnd()*candidates.length)]||pool[0];last.set(k,text);P.mapSituation=text;P.sit={text,state:k==='home_sleep'||k==='facility_sleep'?'sleep':k.includes('lunch')||k==='facility_meal'?'off':c.role==='student'||c.role==='area_student'?'school':c.role==='general'?P.sit.state:c.role==='resident'||c.role==='patient'?'off':'work',stateLabel:c.label,p:1,source};P.timeSituationKey=k;return true}
- return {configure,studentPhase,homeStudent,key,apply,homeCompatible};
+ // Schools with their own daily life. Matched by the facility name in the school dataset (東京芸術大学 is spelled with 芸 there).
+ const schools=[[/^東京[芸藝]術大学$/,{
+  arrival:['楽器ケースを背負い、上野公園側の門からキャンパスに入ったところでした','イーゼルを抱えて、朝いちばんのアトリエに入ったところでした','美術学部と音楽学部の間の道で、同じ学科の友達に声をかけられたところでした'],
+  class:['石膏像を前に、木炭でデッサンの陰影を重ねているところでした','油絵の課題で、キャンバスに下地の色を塗り広げているところでした','彫刻の実習室で、粘土の塊から人の肩の線を削り出しているところでした','和声の授業で、五線譜に4声の進行を書き込んでいるところでした','レッスン室で、先生の伴奏に合わせて同じフレーズを何度も歌い直しているところでした','合奏の授業で、チューニングの音に耳を澄ませているところでした','講評会の順番を待ちながら、壁に掛けた自分の作品を見直しているところでした'],
+  break:['チェロのケースを背負って、次のレッスン室へ急いでいるところでした','絵の具のついた手を洗い、次の講義に向かうところでした'],
+  lunch:['学食で定食を受け取り、楽器ケースを足元に置いて座ったところでした','中庭のベンチで、パンをかじりながら楽譜を眺めているところでした','絵の具のついた作業着のまま、学食の列に並んでいるところでした'],
+  after:['練習室の予約が取れ、閉館まで個人練習を始めたところでした','アトリエに残り、締め切り前の作品に最後の手を入れているところでした','学内コンサートのポスターを、掲示板に貼っているところでした','学内の画材店で、使い切った絵の具のチューブを買い足しているところでした'],
+  season:t=>t.mo===8||t.mo===9&&t.d<=8?['藝祭で担ぐ御輿を、発泡スチロールから削り出しているところでした','藝祭の模擬店で出す料理の段取りを、同じ科の仲間と決めているところでした']:[]}],
+ [/^堀越高等学校$/,{
+  arrival:['撮影現場から直接来て、2時間目の途中から教室に入ったところでした','校門で先生にあいさつし、友達と並んで登校したところでした'],
+  class:['前日の撮影が長引き、眠気をこらえながら数学の授業を受けているところでした','仕事で休んだ分の課題プリントを、先生から受け取ったところでした','国語の授業で、教科書の音読を指名されたところでした','体育の授業で、ダンスの振りを班で合わせているところでした'],
+  break:['休み時間に、仕事で抜けた授業のノートを友達に見せてもらっているところでした','次の授業の前に、マネージャーからの連絡をこっそり確かめたところでした'],
+  lunch:['昼休みに、教室で友達とお弁当を広げたところでした','午後から仕事が入っているため、昼休みのうちに早退の届けを出しているところでした','同級生が出ているドラマの話で、教室が盛り上がっているところでした'],
+  after:['放課後、校門の近くで待っているマネージャーの車に乗り込むところでした','部活の練習で、グラウンドを走り込んでいるところでした','レッスンに向かう前に、駅までの道で台本を読み返しているところでした','撮影で休んだ日の補習を、教室で受けているところでした']}]];
+ function schoolPool(c,k,t){if(c.role!=='student')return null;let s=schools.find(([re])=>re.test(c.facility?.name||''))?.[1],phase=/_class$/.test(k)?'class':/_lunch$/.test(k)?'lunch':/_after$/.test(k)?'after':k==='school_break'?'break':/arrival$/.test(k)?'arrival':null;if(!s||!phase)return null;return [...s[phase],...(s.season&&['class','after'].includes(phase)?s.season(t):[])]}
+ function apply(c,P,t){let k=key(c,P,t);if(!k)return false;if(c.role==='general'&&P.sit?.text&&!/会社で|職場で|通勤|出勤|退勤|学校で|授業中/.test(P.sit.text))return false;let pool=pools[k];if(!pool?.length)throw Error('Missing time situation '+k);let own=schoolPool(c,k,t);if(own&&rnd()<.75)pool=own;let candidates=pool.filter(x=>x!==last.get(k));let text=pool!==own&&rnd()<.5?reuse(k,c,P,t):null,source=text?'swapsim':pool===own?'school-special':'supplement';if(!text)text=candidates[Math.floor(rnd()*candidates.length)]||pool[0];last.set(k,text);P.mapSituation=text;P.sit={text,state:k==='home_sleep'||k==='facility_sleep'?'sleep':k.includes('lunch')||k==='facility_meal'?'off':c.role==='student'||c.role==='area_student'?'school':c.role==='general'?P.sit.state:c.role==='resident'||c.role==='patient'?'off':'work',stateLabel:c.label,p:1,source};P.timeSituationKey=k;return true}
+ return {configure,studentPhase,homeStudent,key,apply,homeCompatible,schoolPool};
 })();
 if(typeof module!=='undefined')module.exports=TimeSituations;
 

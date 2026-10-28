@@ -58,3 +58,22 @@ test('street-specific workers, concrete factory jobs, visitors from abroad, libr
  assert.ok(r.harajuku.filter(x=>x[0]==='area_inbound').every(x=>x[1]==='観光客'));
  assert.ok(r.library.some(x=>x[0].startsWith('place_library')));assert.ok(r.bath.some(x=>x[0].startsWith('place_bath')));
 });
+test('Ginza pedestrian zone only on weekends, fictional TV talent, a compact Tsukiji market and school-specific scenes',()=>{
+ const r=JSON.parse(run(`(()=>{const ginza=MAP_DATA.areas.find(a=>a.name==='銀座'),hoko=t=>{let n=0;for(let i=0;i<400;i++)if(/歩行者天国/.test(VisitorSituations.local({role:'area_shopping',area:ginza},{},t,Math.random)||''))n++;return n};
+ const tv=MAP_DATA.facilities.find(f=>f.kind==='tv'),roles=BroadcastModel.roles(tv,{y:2026,mo:10,d:28,dow:3,h:14,hf:14,mi:0}),people=[];for(let z of roles.filter(z=>['media_talent','media_actor','media_actress','media_announcer'].includes(z.role)))for(let i=0;i<6;i++){let P=mapPerson({...z,region:MapModel.locate(tv.xy,MAP_DATA.regions),facility:tv,roleP:.01},{y:2026,mo:10,d:28,dow:3,h:14,hf:14,mi:0});people.push([z.role,P.occ.label,P.sex,P.sit.text])}
+ const school=(name,h)=>{let f=MAP_DATA.facilities.find(f=>f.name===name),t={y:2026,mo:10,d:28,dow:3,h,hf:h+.2,mi:12},c={role:'student',label:'学生',min:f.kind==='high'?15:18,max:f.kind==='high'?18:26,female:.5,facility:f,region:MapModel.locate(f.xy,MAP_DATA.regions),roleP:.01},out=[];for(let i=0;i<40;i++){let P=mapPerson(c,t);out.push(P.sit.source+'|'+P.sit.text)}return out};
+ return JSON.stringify({weekday:hoko({y:2026,mo:10,d:28,dow:3,h:14,hf:14,mi:0}),saturday:hoko({y:2026,mo:10,d:31,dow:6,h:14,hf:14,mi:0}),evening:hoko({y:2026,mo:10,d:31,dow:6,h:19,hf:19,mi:0}),people,tsukiji:MAP_DATA.areas.find(a=>a.name==='築地場外').radius,geidai:school('東京芸術大学',10),horikoshi:school('堀越高等学校',12)})})()`));
+ assert.equal(r.weekday,0);assert.equal(r.evening,0);assert.ok(r.saturday>0);
+ for(let [role,label,sex] of r.people){assert.equal(label,{media_talent:'タレント',media_actor:'俳優',media_actress:'女優',media_announcer:'アナウンサー'}[role]);if(role==='media_actor')assert.equal(sex,'m');if(role==='media_actress')assert.equal(sex,'f')}
+ assert.ok(r.people.filter(x=>x[0]==='media_actress').every(x=>!/ジャケット/.test(x[3])));
+ assert.ok(r.tsukiji<=200);
+ assert.ok(r.geidai.some(x=>x.startsWith('school-special|')&&/デッサン|キャンバス|粘土|五線譜|レッスン室|合奏|講評/.test(x)),r.geidai.join('\n'));
+ assert.ok(r.horikoshi.some(x=>x.startsWith('school-special|')),r.horikoshi.join('\n'));
+});
+test('ward central libraries and more large baths are bundled with their own staff and guests',()=>{
+ const r=JSON.parse(run(`(()=>{const go=(name,h,dow,d)=>{let f=MAP_DATA.landmarks.find(a=>a.name===name),p=LandProfile.create(envContext,f.xy,Math.min(20,f.radius/2)),t={y:2026,mo:10,d,dow,h,hf:h+.2,mi:12,rand:false};return LandEstimator.estimate(p,t).filter(c=>c.n>0).map(c=>c.role)};
+ return JSON.stringify({libs:MAP_DATA.landmarks.filter(f=>f.placeKind==='library').length,baths:MAP_DATA.landmarks.filter(f=>f.placeKind==='bath').length,setagaya:go('世田谷区立中央図書館',11,3,28),arakawa:go('ゆいの森あらかわ',15,6,31),toyosu:go('東京豊洲 万葉倶楽部',3,6,31),ariake:go('泉天空の湯 有明ガーデン',3,6,31)})})()`));
+ assert.ok(r.libs>=25&&r.baths>=14,JSON.stringify(r));
+ for(let k of ['setagaya','arakawa'])assert.ok(r[k].includes('place_library_guest')&&r[k].includes('place_library_staff'),k+' '+r[k]);
+ assert.ok(r.toyosu.includes('place_bath_guest'));assert.ok(!r.ariake.includes('place_bath_guest'));
+});
