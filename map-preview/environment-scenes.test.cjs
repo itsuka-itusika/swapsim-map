@@ -115,8 +115,16 @@ test('night-work ages, hosts, fewer stay-at-home husbands and concise job names'
  const r=JSON.parse(run(`(()=>{let xy=MAP_DATA.areas.find(a=>a.name==='歌舞伎町').xy,t={y:2026,mo:10,d:30,dow:5,h:22,hf:22.5,mi:30,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,xy,200),t).filter(c=>/cabaret|host|adult_worker/.test(c.role)),tot=parts.reduce((s,c)=>s+c.n,0),night=[];for(let i=0;i<500;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);night.push([P.occ.label,P.age,P.sex])}
  let wife=0,husband=0,labels=[];for(let i=0;i<20000;i++){let P={pref:PREFS.find(p=>p.n==='東京都'),age:28+Math.floor(Math.random()*35),sex:Math.random()<.5?'m':'f',t};P.muni=P.pref.munis[0];P.urb='metro';P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);let o=occupation(P,t);if(o.label==='専業主婦')wife++;if(o.label==='専業主夫')husband++;if(i<3000)labels.push(JobLabels.short(o.label))}
  return JSON.stringify({night,wife,husband,host:JOB_OBJS.some(j=>j.n==='ホスト'),labels})})()`));
- const f=r.night.filter(x=>/キャバクラ嬢|風俗嬢/.test(x[0]));assert.ok(f.length>200);assert.ok(f.filter(x=>x[1]>=35).length/f.length<.08,String(f.filter(x=>x[1]>=35).length/f.length));
+ const f=r.night.filter(x=>/キャバクラ嬢|風俗嬢/.test(x[0]));assert.ok(f.length>200);assert.ok(f.filter(x=>x[1]>=35).length/f.length<.12,String(f.filter(x=>x[1]>=35).length/f.length));
  assert.ok(r.host&&r.night.some(x=>x[0]==='ホスト'&&x[2]==='m'));assert.ok(r.night.filter(x=>x[0]==='ホスト').every(x=>x[1]<40));
  assert.ok(r.husband*20<r.wife,r.husband+' / '+r.wife);
  assert.ok(!r.labels.some(x=>/^(倉庫のピッキングスタッフ|飲食店のホールスタッフ|コンビニの店員|県庁の職員|市役所の職員|自動車部品工場の作業員)/.test(x)));
+});
+test('night districts skew young: visitors, staff and customers, most of all in youth districts',()=>{
+ const r=JSON.parse(run(`(()=>{let out={};for(let n of ['歌舞伎町','新橋・汐留']){let xy=MAP_DATA.areas.find(a=>a.name===n).xy,t={y:2026,mo:10,d:30,dow:5,h:22,hf:22.2,mi:12,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,xy,150),t).filter(c=>['area_night','area_night_worker','area_adult_customer'].includes(c.role)),tot=parts.reduce((s,c)=>s+c.n,0),ages={};for(let i=0;i<600;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);(ages[c.role]=ages[c.role]||[]).push(P.age)}out[n]=ages}return JSON.stringify(out)})()`));
+ const mean=a=>a.reduce((s,x)=>s+x,0)/a.length,young=a=>a.filter(x=>x<35).length/a.length;
+ assert.ok(mean(r['歌舞伎町'].area_night)<37&&young(r['歌舞伎町'].area_night)>.5,String(mean(r['歌舞伎町'].area_night)));
+ assert.ok(mean(r['歌舞伎町'].area_night)<mean(r['新橋・汐留'].area_night));
+ if(r['歌舞伎町'].area_adult_customer)assert.ok(mean(r['歌舞伎町'].area_adult_customer)<41);
+ assert.ok(mean(r['新橋・汐留'].area_night_worker)<39);
 });

@@ -6,7 +6,12 @@ function mapPerson(c,t){
  const bandAge=()=>{let total=c.ageBands.reduce((s,b)=>s+b[2],0),v=rnd()*total,b=c.ageBands.find(b=>(v-=b[2])<0)||c.ageBands.at(-1);return b[0]+Math.floor(rnd()*(b[1]-b[0]+1))};
  if(c.ageBands)sa.age=bandAge();
  // Hostesses, hosts and sex workers are concentrated in their twenties; past the mid-thirties they are rare.
- const nightBands=c.role==='area_cabaret_worker'&&sa.sex==='f'?[[20,24,10],[25,29,7],[30,34,2],[35,39,.5],[40,45,.1]]:c.role==='area_host_worker'?[[20,24,10],[25,29,6],[30,34,1.5],[35,39,.3]]:c.role==='area_adult_worker'&&sa.sex==='f'?[[20,24,8],[25,29,8],[30,34,3.5],[35,39,1.2],[40,49,.3]]:null;
+ // Night-district visitors, restaurant staff and customers also skew young, more so in youth-tagged districts (歌舞伎町, 渋谷, 池袋 ...).
+ const youth=(c.area?.tags?.youth||0)>=3,nightBands=c.role==='area_cabaret_worker'&&sa.sex==='f'?[[20,24,10],[25,29,7],[30,34,2],[35,39,.5],[40,45,.1]]:c.role==='area_host_worker'?[[20,24,10],[25,29,6],[30,34,1.5],[35,39,.3]]:c.role==='area_adult_worker'&&sa.sex==='f'?[[20,24,8],[25,29,8],[30,34,3.5],[35,39,1.2],[40,49,.3]]
+  :c.role==='area_adult_worker'||c.role==='area_cabaret_worker'?[[20,24,24],[25,29,18],[30,34,13],[35,39,10],[40,44,9],[45,49,8],[50,54,7],[55,59,6]]
+  :c.role==='area_night_worker'?[[20,24,24],[25,29,18],[30,34,13],[35,39,10],[40,44,9],[45,49,8],[50,54,7],[55,59,6],[60,64,5]]
+  :c.role==='area_night'?(youth?[[20,24,24],[25,29,22],[30,34,16],[35,39,11],[40,44,9],[45,49,7],[50,54,5],[55,59,4],[60,64,2]]:[[20,24,15],[25,29,16],[30,34,14],[35,39,12],[40,44,11],[45,49,10],[50,54,9],[55,59,7],[60,64,6]])
+  :c.role==='area_adult_customer'?(youth?[[20,24,12],[25,29,17],[30,34,16],[35,39,14],[40,44,12],[45,49,10],[50,54,8],[55,59,6],[60,69,5]]:[[20,24,9],[25,29,14],[30,34,15],[35,39,14],[40,44,13],[45,49,12],[50,54,10],[55,59,7],[60,69,6]]):null;
  if(nightBands){let v=rnd()*nightBands.reduce((s,b)=>s+b[2],0),b=nightBands.find(b=>(v-=b[2])<0)||nightBands[0];sa.age=b[0]+Math.floor(rnd()*(b[1]-b[0]+1))}
  // During class hours most domestic pupils are at school; keep about one in ten of those drawn elsewhere.
  if(!c.resident&&!c.custody&&!['general','student','area_student','resident','patient','area_inbound','exam_taker'].includes(c.role)&&PersonContext.schoolTime(t))for(let i=0;i<32;i++){let g=gradeIndex(birthOf(sa.age,t),t);if(g<1||g>12||rnd()<.1)break;sa.age=c.ageBands?bandAge():PersonContext.age(c,rnd)}

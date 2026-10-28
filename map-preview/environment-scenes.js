@@ -29,7 +29,9 @@ const EnvironmentScenes=(()=>{
   if(kind==='work'&&/帰宅|通勤|帰り道|休みの日|休暇|自宅/.test(text))return false;
   return true;
  }
- function candidates(c,P,t){let kind=category(c);if(!kind)return [];let ctx=ctxFor(P,t),pool=[];
+ function candidates(c,P,t){let kind=category(c);if(!kind)return [];
+  // The original dated school and teacher scenes are for 小学校・中学校・高校; kindergartens and universities have none.
+  if((kind==='school'&&c.facility?.kind==='kindergarten')||(c.role==='teacher'&&['kindergarten','university','college'].includes(c.facility?.kind)))return [];let ctx=ctxFor(P,t),pool=[];
   if(kind==='school'){let stage=c.facility?.kind;pool=stage==='university'||stage==='college'?(OFF_TX.college||[]):stage==='primary'?(SCHOOL_TX.elem||[]):(SCHOOL_TX.teen||[]);}
   else if(kind==='work'){let tag=P.occ.tag||({green_gardener:'garden',green_parkguard:'security',place_shop_staff:'retail',place_food_staff:'food',place_office_staff:'office',place_security:'security',place_clean:'clean',venue_security:'security',venue_clean:'clean'})[c.role];pool=WORK_TX[tag]||[];}
   else{pool=[...(typeof evPoolOf==='function'?evPoolOf(P.occ.group):[]),...(OFF_TX[P.occ.group]||OFF_TX.adult||[])];}
