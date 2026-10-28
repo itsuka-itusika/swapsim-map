@@ -135,3 +135,17 @@ test('late night and the last train have their own scenes at stations, night dis
  assert.ok(share(r.last,/終電|最終電車/)>.8);assert.equal(share(r.evening,/終電|最終電車|始発/),0);assert.ok(share(r.first,/始発|夜明け/)>.8);
  assert.ok(share(r.kabuki,/終電/)>.2);assert.ok(share(r.office,/終電|深夜|照明の半分/)>.5);assert.equal(share(r.dawn,/終電の時間を気にしながら/),0);
 });
+test('Tokyo hotels by type: guests, business travelers, visitors from abroad, banquets and hotel staff',()=>{
+ const r=JSON.parse(run(`(()=>{const go=(name,h,dow,d)=>{let f=MAP_DATA.specialPlaces.find(x=>x.name===name),t={y:2026,mo:10,d,dow,h:Math.floor(h),hf:h,mi:Math.round(h%1*60),rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,f.xy,Math.min(15,f.radius/2)),t).filter(c=>c.n>0),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<120;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,P.occ.label,P.sit.text,P.sit.state,P.place,!!P.isInbound])}return out};
+ let hs=MAP_DATA.specialPlaces.filter(f=>f.placeKind==='hotel');
+ return JSON.stringify({count:hs.length,styles:[...new Set(hs.map(f=>f.hotelStyle))],teikoku:go('帝国ホテル東京',8,3,28),wedding:go('帝国ホテル東京',14,6,31),night:go('ヒルトン東京',2,3,28),biz:go('京王プレッソイン新宿',13,3,28),ryokan:go('雷門旅館',2,6,31)})})()`));
+ assert.ok(r.count>250&&['luxury','city','business','ryokan'].every(s=>r.styles.includes(s)));
+ const roles=x=>new Set(x.map(p=>p[0]));
+ assert.ok(['place_hotel_inbound','place_hotel_business','place_hotel_staff_door'].every(k=>roles(r.teikoku).has(k)));
+ assert.ok(r.teikoku.every(p=>p[4]==='帝国ホテル東京'));assert.ok(r.teikoku.filter(p=>p[0]==='place_hotel_inbound').every(p=>p[5]&&p[1]==='観光客'));
+ assert.ok(r.teikoku.filter(p=>p[0]==='place_hotel_business').every(p=>/（正社員）$|役員/.test(p[1])&&!/都庁|区役所/.test(p[1])));
+ assert.ok(r.wedding.some(p=>p[0]==='place_hotel_banquet'&&/披露宴|宴会場|チャペル/.test(p[2])));
+ assert.ok(r.night.filter(p=>p[3]==='sleep').length>r.night.length*.6);
+ assert.ok(r.biz.some(p=>p[0]==='place_hotel_staff_housekeeping')&&!r.biz.some(p=>/ラウンジ/.test(p[2])));
+ assert.ok(!r.ryokan.some(p=>/ベッド/.test(p[2])));
+});

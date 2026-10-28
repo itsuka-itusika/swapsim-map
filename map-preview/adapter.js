@@ -1,3 +1,10 @@
+// Visitors from abroad: a foreign name and origin, and no domestic occupation or school grade.
+function makeInbound(P){
+ let markets=MAP_DATA.inbound.markets,total=markets.reduce((s,x)=>s+x.weight,0),v=rnd()*total,market=markets.find(x=>(v-=x.weight)<0)||markets.at(-1);
+ P.isInbound=true;P.originMarket=market.name;let nm=PersonContext.foreignName(market.name,P.sex,rnd);P.surname={k:nm.surname,r:nm.surname,c:100};P.given={k:nm.given,r:nm.given,p:.01,era:{cov:1}};P.nameApproximate=nm.approximated;
+ P.occ={label:'観光客',group:'visitor',cat:'visitor',kind:'visitor',p:1};
+ P.visitLabel='外国人観光客／国・地域：'+market.name;
+}
 // Reuse existing demographic, occupation, name, hobby and household generators.
 function mapPerson(c,t){
  const f=c.region,pref=PREFS.find(p=>p.code.slice(0,2)===f.id.slice(0,2));
@@ -84,17 +91,12 @@ function mapPerson(c,t){
    for(let i=0;i<12&&!ok();i++)P.sit=situation(P,t);
    P.mapSituation=ok()?P.sit.text:VisitorSituations.text({...c,role:'area_shopping'},P,t,rnd);
   }
-  if(c.role==='area_inbound'){
-   let markets=MAP_DATA.inbound.markets,total=markets.reduce((s,x)=>s+x.weight,0),v=rnd()*total,market=markets.find(x=>(v-=x.weight)<0)||markets.at(-1);
-   P.isInbound=true;P.originMarket=market.name;let nm=PersonContext.foreignName(market.name,P.sex,rnd);P.surname={k:nm.surname,r:nm.surname,c:100};P.given={k:nm.given,r:nm.given,p:.01,era:{cov:1}};P.nameApproximate=nm.approximated;if(['facility','prison'].includes(P.occ.group))P.occ={label:'職業不詳',group:'visitor',cat:'visitor',p:1};
-   // Visitors from abroad do not live in Japan, so domestic occupations and school grades do not apply.
-   P.occ={label:'観光客',group:'visitor',cat:'visitor',kind:'visitor',p:1};
-   P.visitLabel='外国人観光客／国・地域：'+market.name;
-  }
+  if(c.role==='area_inbound')makeInbound(P);
   if(!Nightlife.handles(c)&&P.mapSituation!==P.sit.text)P.sit={...P.sit,text:P.mapSituation,state:c.role==='area_office'?'work':'off',stateLabel:c.label};
   const local=VisitorSituations.local(c,P,t,rnd);if(local){P.mapSituation=local;P.sit={...P.sit,text:local,state:'off',stateLabel:c.label,source:'area-scene'};}
  }
 
+ if(c.inboundGuest)makeInbound(P);
  // Residential occupants are present at home/in the neighborhood, not at an off-site workplace.
  if(c.resident&&['work','commute','school'].includes(P.sit.state)){
   // A resident drawn at home cannot simultaneously be at a workplace or school.

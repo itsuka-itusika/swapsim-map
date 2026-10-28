@@ -32,6 +32,7 @@ const PlacesModel=(()=>{
  function roles(c,t){let k=kind(c);if(!k)return null;let h=t.hf??t.h,we=t.dow===0||t.dow===6||t.holiday,day=h>=10&&h<20,open=h>=9&&h<21,work=h>=8&&h<22,scale=Math.max(.05,Math.min(20,(c.area||c.areaM2||10000)/10000)),factor=we?1.35:1,rows=[];
  let add=(key,label,n,min,max,female,worker=false)=>rows.push({role:'place_'+key,label,w:n,min,max,female,placeWorker:worker});
  if(k==='hostel')k='hotel';
+ if(k==='hotel'&&typeof HotelModel!=='undefined'&&HotelModel.style(c))return HotelModel.roles(c,t);
  if(['library','bank','bath','tourist'].includes(k)){let actual=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=actual===null?(k==='bank'?h>=9&&h<15&&!we:k==='bath'?(c.allNight||h>=10):k==='library'?h>=9&&h<(we?17:20):h>=9&&h<18):actual;let labels={library:['図書館の利用者','図書館職員'],bank:['銀行の利用者','銀行員'],bath:['温浴施設の利用者','温浴施設の従業員'],tourist:['観光施設の来場者','観光施設の職員']}[k];add(k+'_guest',labels[0],active?scale*(k==='bath'?(h>=18||h<2?90:60)*(we?1.4:1):50):0,k==='bath'?12:6,89,k==='bath'?.45:.5);add(k+'_staff',labels[1],active?scale*8:scale*.2,20,69,.5,true)}
  if(k==='large_shop'){let hours=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=hours===null?open:hours;add('shop_guest','大型店舗の買い物客',active?scale*(day?80*factor:20):0,6,89,.52);add('shop_staff','大型店舗の販売員',scale*(active?14:work?2:0),18,69,.55,true)}
  if(k==='hotel'){add('hotel_guest','ホテルの宿泊客',scale*(h>=21||h<8?55:25),6,89,.5);add('hotel_staff','ホテル従業員',scale*(day?14:5),18,69,.55,true)}
@@ -41,8 +42,8 @@ const PlacesModel=(()=>{
  if(k==='observation'){add('observation_guest','展望施設の来場者',scale*(day?80*factor:open?25:0),6,84,.52);add('guide','展望施設の案内係',scale*(open?9:0),20,65,.55,true)}
  if(k==='shrine'||k==='temple'){let newyear=t.mo===1&&t.d<=3?4:1;add(k+'_guest','参拝者',scale*(h>=7&&h<18?25*factor*newyear:0),6,89,.52);add(k+'_worker',k==='shrine'?'神職・神社職員':'僧侶・寺院職員',scale*(h>=7&&h<18?3:.2),22,79,.4,true)}
  add('security','施設警備員',scale*(open?1.5:.4),20,69,.25,true);add('clean','施設の清掃スタッフ',scale*(work?2:.2),20,74,.55,true);return rows;}
- function assign(c,P){if(!c.role.startsWith('place_'))return;if(c.placeWorker)P.occ={label:c.label,group:'adult',cat:'special',kind:'employed',p:1};else if(['prison','facility'].includes(P.occ.group))P.occ={label:'無職',group:P.age>=65?'senior':'adult',cat:'none',p:1}}
- function apply(c,P){if(!c.role.startsWith('place_'))return;let pool=scenes[c.role.slice(6)];let text=pool[Math.floor(rnd()*pool.length)];P.mapSituation=text;P.visitLabel=c.label;P.sit={text,state:c.placeWorker?'work':'off',stateLabel:c.label,p:1}}
+ function assign(c,P){if(!c.role.startsWith('place_'))return;if(typeof HotelModel!=='undefined'&&HotelModel.assign(c,P))return;if(c.placeWorker)P.occ={label:c.label,group:'adult',cat:'special',kind:'employed',p:1};else if(['prison','facility'].includes(P.occ.group))P.occ={label:'無職',group:P.age>=65?'senior':'adult',cat:'none',p:1}}
+ function apply(c,P,t){if(!c.role.startsWith('place_'))return;if(typeof HotelModel!=='undefined'&&HotelModel.apply(c,P,t))return;let pool=scenes[c.role.slice(6)];let text=pool[Math.floor(rnd()*pool.length)];P.mapSituation=text;P.visitLabel=c.label;P.sit={text,state:c.placeWorker?'work':'off',stateLabel:c.label,p:1}}
  return {kind,roles,assign,apply,scenes};
 })();
 if(typeof module!=='undefined')module.exports=PlacesModel;
