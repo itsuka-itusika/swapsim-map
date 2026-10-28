@@ -20,7 +20,8 @@ const TimeSituations=(()=>{
  if(role==='student'||role==='area_student'){let kind=c.facility?.kind,stage=kind==='kindergarten'?'kindergarten':kind==='primary'?'elem':['high','middle'].includes(kind)?'teen':'college';let phase=studentPhase(stage,t);return kind==='high'?phase.replace(/^teen_/, 'high_'):phase}
  if(role==='general'&&(P.age<18||['student','college','kid'].includes(P.occ.group)))return homeStudent(P,t);
  if(role==='resident'||role==='patient'){if(h>=21||h<6)return 'facility_sleep';if(h>=7&&h<8||h>=12&&h<13||h>=18&&h<19)return 'facility_meal';return role+'_day'}
- if(role==='teacher'){if(h>=12&&h<13)return 'teacher_lunch';if(t.dow===0||t.dow===6||t.holiday||h<8.5||h>=15.5)return 'teacher_after';return t.mi>=45&&t.mi<55?'teacher_after':'teacher_work'}
+ // Kindergarten and university staff have their own pools; the original teacher scenes are set in a 中学・高校 classroom.
+ if(role==='teacher'){let st=c.facility?.kind,pre=st==='kindergarten'?'kteacher':['university','college'].includes(st)?'uteacher':'teacher';if(h>=12&&h<13)return pre+'_lunch';if(t.dow===0||t.dow===6||t.holiday||h<8.5||h>=15.5)return pre+'_after';return t.mi>=45&&t.mi<55?pre+'_after':pre+'_work'}
  if(['care','nurse','doctor'].includes(role))return role+'_work';
  if(role==='mesh_factory')return h>=12&&h<13?'work_lunch':'factory_work';
  if(role==='mesh_logistics')return h>=12&&h<13?'work_lunch':'logistics_work';
@@ -38,9 +39,13 @@ const TimeSituations=(()=>{
 
  // Residential components represent people at home or in the immediate neighborhood.
  // A nearby river alone does not establish an accessible fishing spot.
- function homeCompatible(text){return !/川辺|河原|釣り糸|釣り竿|キャンプ場|テントの|映画館|劇場|コンサート会場|ライブ会場|美術館|博物館|水族館|動物園|遊園地|ゴルフ場|スキー場|登山|山頂|海水浴|旅行先|空港|新幹線|ホテルに|旅館に/.test(text)}
+ // Neighborhood shops, cafes, parks and baths fit 住宅内・近隣; venues the map models as their own places
+ // (stadiums, malls, offices, schools, stations, hospitals, nightlife) do not.
+ function homeCompatible(text){if(/夢の中/.test(text))return true;return !/川辺|河原|釣り糸|釣り竿|キャンプ場|テントの|映画館|劇場|コンサート|ライブ会場|美術館|博物館|水族館|動物園|遊園地|ゴルフ場|スキー場|登山|山頂|海水浴|旅行先|空港|新幹線|ホテルに|旅館に|球場|スタジアム|スタンドで|ショッピングモール|デパート|百貨店|物産展|電車に乗|電車の中|電車で|車内で|会社で|職場で|オフィスで|出張|教室で|放課後の教室|キャンパス|学食|学園祭|模擬店|アルバイト先|バイト先|のアルバイトで|居酒屋|キャバクラ|パチンコ|カラオケ|ゲームセンター|ボウリング|病院の|歯医者の待合室|待合室で|ジムで|ジムの|ダンス教室|ヨガの教室|駐車場で/.test(text)}
  function reuse(k,c,P,t){
   if(typeof fromPool!=='function')return null;
+  // The original school pools have no kindergarten or university-staff scenes.
+  if(/^(kindergarten|kteacher|uteacher)_/.test(k))return null;
   // Existing engine already selects the worker's duty, shift and job-specific scene.
   if(c.role==='general'&&P.sit.state==='work')return P.sit.text;
   let ctx={P,t,h:t.hf??t.h,we:t.dow===0||t.dow===6||!!t.holiday,hol:holName(t),brk:isBreak(t),mo:t.mo,vacP:false,vac:schoolVac(t),season:seasonOf(t.mo),wx:wxOf(P.pref,t),eq:eqOf(P.pref,t)};

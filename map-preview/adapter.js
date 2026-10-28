@@ -19,9 +19,13 @@ function mapPerson(c,t){
    // It has no founder, so a random 私立 prefix could contradict the named school; the school name is shown instead.
    if(stage==='high'&&P.occ.school)P.occ={...P.occ,label:'高校'+(P.g-9)+'年生',tsushin:false};
    if(stage==='middle'&&P.occ.school)P.occ={...P.occ,label:'中学'+(P.g-6)+'年生'};}
-  else if(stage==='kindergarten'&&!P.occ.en){for(let i=0;i<32&&!P.occ.en;i++)P.occ=occupation(P,t);}
+  else if(stage==='kindergarten'){if(!P.occ.en){for(let i=0;i<32&&!P.occ.en;i++)P.occ=occupation(P,t);}
+   // A child drawn at a 幼稚園 attends that 幼稚園, not a randomly chosen 保育園 or こども園.
+   let type=/保育園/.test(c.facility.name)?'保育園':/こども園|子ども園|子供園/.test(c.facility.name)?'認定こども園':'幼稚園',cls=P.occ.label.match(/(年少|年中|年長)さん/);if(cls)P.occ={...P.occ,label:type+'の'+cls[0],en:type==='幼稚園'?'yochi':'hoiku',nur:true};}
  }
- if(['care','nurse','doctor','teacher'].includes(c.role)){let tag={care:'care',nurse:'nurse',doctor:'doctor',teacher:'teacher'}[c.role],job=JOB_OBJS.find(j=>j.tag===tag)||JOB_OBJS.find(j=>j.n.includes(c.label));P.occ={label:c.label,group:'adult',cat:job?.cat||'prof',tag:job?.tag||tag,job,p:1}}
+ if(['care','nurse','doctor','teacher'].includes(c.role)){let tag={care:'care',nurse:'nurse',doctor:'doctor',teacher:'teacher'}[c.role],job=JOB_OBJS.find(j=>j.tag===tag)||JOB_OBJS.find(j=>j.n.includes(c.label));P.occ={label:c.label,group:'adult',cat:job?.cat||'prof',tag:job?.tag||tag,job,p:1};
+  // Teachers take the title of the school they are drawn at.
+  if(c.role==='teacher'){let name=c.facility?.name||'',label={primary:'小学校の先生',middle:'中学校の先生',high:'高校の先生',university:'大学教員',college:/短期大学/.test(name)?'短期大学の教員':'専門学校の講師',kindergarten:/保育園/.test(name)?'保育士':/こども園|子ども園|子供園/.test(name)?'保育教諭':'幼稚園の先生'}[stage];if(label)P.occ.label=label;}}
  if(c.role==='general'&&['facility','prison'].includes(P.occ.group))P.occ={label:'無職',group:'senior',cat:'none',p:1};
  if(c.role==='area_student'&&P.occ.group!=='college'){for(let i=0;i<64&&P.occ.group!=='college';i++)P.occ=occupation(P,t);if(P.occ.group!=='college'){let y=Math.max(1,P.g-12);P.occ=OriginalStudent.college(y>=5?'grad':'univ',y);}}
  if(c.role==='area_office'){let jobs=JOB_OBJS.filter(j=>['office','it'].includes(j.tag)&&P.age>=(j.o.amin||22));let job=jobs[Math.floor(rnd()*jobs.length)];P.occ={label:job.n,group:'adult',cat:job.cat,tag:job.tag,job,p:1};}
@@ -100,7 +104,9 @@ function mapPerson(c,t){
  if(typeof PoliceModel!=='undefined')PoliceModel.apply(c,P,t);
  if(typeof EnvironmentScenes!=='undefined')EnvironmentScenes.apply(c,P,t);
  // Later map modules reuse original pools too; never leave the person somewhere other than the drawn spot.
- if(PersonContext.away(P.sit.text,c)){for(let i=0;i<32&&PersonContext.away(P.sit.text,c);i++)P.sit=situation(P,t);if(PersonContext.away(P.sit.text,c))P.sit={text:c.resident?'自宅で、ひと息ついているところでした':'近くを歩きながら、次に行く場所を考えているところでした',state:'off',stateLabel:c.label,p:1};P.mapSituation=P.sit.text}
+ // A reroll must also stay plausible for the spot: at home for residents, away from home for everyone else.
+ const fits=s=>!PersonContext.away(s.text,c)&&(c.resident?TimeSituations.homeCompatible(s.text):c.role==='general'||!/自宅|家で|布団|寝室|ソファ|リビング|自分の部屋/.test(s.text));
+ if(PersonContext.away(P.sit.text,c)){for(let i=0;i<32&&!fits(P.sit);i++)P.sit=situation(P,t);if(!fits(P.sit))P.sit={text:c.resident?'自宅で、ひと息ついているところでした':'近くを歩きながら、次に行く場所を考えているところでした',state:'off',stateLabel:c.label,p:1};P.mapSituation=P.sit.text}
  if(P.occ.job?.n==='MR（医薬情報担当者）')P.occ.label=P.occ.label.replace('MR（医薬情報担当者）','MR');
  P.health=settleHealth(P,t);if(c.role==='venue_ghost'){P.hb.preg=false;P.health={text:'幽霊のため健康状態は不明',items:[],p:1,note:'お遊び要素'};}P.body=bodyOf(P,t);
  P.place=(c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name||f.name);P.placeShort=P.place;

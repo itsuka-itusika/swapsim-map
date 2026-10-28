@@ -86,3 +86,18 @@ test('pupils drawn at an ordinary school are regular students of that school',()
  const r=JSON.parse(run(`(()=>{let out=[];for(let kind of ['high','middle']){let fs=MAP_DATA.facilities.filter(f=>f.kind===kind&&f.code.startsWith('131')).slice(0,30);for(let f of fs)for(let i=0;i<20;i++){let P=mapPerson({role:'student',label:'学生',min:kind==='high'?15:12,max:kind==='high'?18:15,female:.5,facility:f,region:MapModel.locate(f.xy,MAP_DATA.regions),roleP:.01},{y:2026,mo:10,d:28,dow:3,h:10,hf:10.2,mi:12});out.push([kind,P.occ.label,!!P.occ.tsushin])}}return JSON.stringify(out)})()`));
  for(let [kind,label,tsushin] of r){assert.match(label,kind==='high'?/^高校[1-3]年生$/:/^中学[1-3]年生$/);assert.equal(tsushin,false)}
 });
+test('inherited original pools fit the map spot: schools, kindergartens, teachers, visitors, residents and non-workers',()=>{
+ const r=JSON.parse(run(`(()=>{const T=(h,dow=3,d=28)=>({y:2026,mo:10,d,dow,h:Math.floor(h),hf:h,mi:Math.round(h%1*60),rand:false}),fac=k=>MAP_DATA.facilities.filter(f=>f.kind===k&&f.code.startsWith('131')).slice(0,25),reg=f=>MapModel.locate(f.xy,MAP_DATA.regions),out={kinder:[],kteach:[],uteach:[],visit:[],res:[],off:[]};
+ for(let f of fac('kindergarten'))for(let h of [10,12.5,14]){out.kinder.push([f.name,mapPerson({role:'student',label:'園児',min:3,max:5,female:.5,facility:f,region:reg(f),roleP:.01},T(h)).occ.label,mapPerson({role:'student',label:'園児',min:3,max:5,female:.5,facility:f,region:reg(f),roleP:.01},T(h)).sit.text]);out.kteach.push(mapPerson({role:'teacher',label:'教員',min:22,max:64,female:.8,facility:f,region:reg(f),roleP:.01},T(h)).sit.text)}
+ for(let f of fac('university'))for(let h of [10,12.5,16]){let P=mapPerson({role:'teacher',label:'教員',min:30,max:64,female:.3,facility:f,region:reg(f),roleP:.01},T(h));out.uteach.push([P.occ.label,P.sit.text])}
+ for(let f of fac('hospital'))for(let h of [10,15]){let P=mapPerson({role:'urban_visit',label:'患者の付き添い・来訪者',min:18,max:84,female:.55,urbanTag:'medical',facility:f,region:reg(f),roleP:.01},T(h));out.visit.push(P.sit.text)}
+ let p=LandProfile.create(envContext,[139.6466,35.6433],150);for(let h of [11,15,20])for(let dow of [3,6]){let t=T(h,dow,dow===6?31:28),parts=LandEstimator.estimate(p,t).filter(c=>c.role==='general'),tot=parts.reduce((s,c)=>s+c.n,0);for(let i=0;i<150;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.res.push(P.sit.text);if(['homemaker','senior','jobless','rest'].includes(P.occ.group))out.off.push(P.sit.text)}}
+ return JSON.stringify(out)})()`));
+ for(let [name,label] of r.kinder)assert.match(label,/保育園/.test(name)?/^保育園の/:/こども園|子ども園|子供園/.test(name)?/^認定こども園の/:/^幼稚園の/,name+' '+label);
+ assert.ok(!r.kinder.some(x=>/購買|給食当番|帰りの会|掃除の時間|授業/.test(x[2])),r.kinder.map(x=>x[2]).join('\n'));
+ assert.ok(!r.kteach.some(x=>/黒板|答案|授業|生徒/.test(x)));
+ assert.ok(r.uteach.every(x=>x[0]==='大学教員'&&!/黒板|生徒|給食/.test(x[1])));
+ assert.ok(r.visit.every(x=>/病棟|待合室|会計|面会|売店|入院/.test(x)),r.visit.join('\n'));
+ assert.ok(!r.res.some(x=>/球場|スタジアム|コンサート|ショッピングモール|会社で|職場で|教室で|居酒屋|パチンコ|ゲームセンター/.test(x)&&!/夢の中/.test(x)),r.res.filter(x=>/球場|スタジアム|コンサート|ショッピングモール|会社で|職場で|教室で|居酒屋|パチンコ|ゲームセンター/.test(x)).join('\n'));
+ assert.ok(r.off.length>30&&!r.off.some(x=>/仕事帰り|同僚|上司|職場で|会社で|残業/.test(x)),r.off.filter(x=>/仕事帰り|同僚|上司|職場で|会社で|残業/.test(x)).join('\n'));
+});

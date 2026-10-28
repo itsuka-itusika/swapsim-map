@@ -12,7 +12,7 @@ const EnvironmentScenes=(()=>{
   if(['area_office','teacher','nurse','doctor','care','mesh_factory','mesh_logistics','mesh_security','green_gardener','green_parkguard','place_shop_staff','place_food_staff','place_office_staff','place_security','place_clean','special_station','special_crew','special_station_clean','special_station_shop','special_theme_food','special_theme_shop','special_theme_clean','special_theme_security','venue_security','venue_clean'].includes(r))return 'work';
   return null;
  }
- const patterns={park:/公園|桜|花見|お花見|花びら|イチョウ|紅葉|散歩|歩いて/,shrine:/初詣|神社|寺|参拝|おみくじ|絵馬|三社祭/,shopping:/買い物|買物|店先|商店街|ショッピング|初売り|福袋/,visitor:/観光|街並み|三社祭|桜並木|初詣|神社|参拝|商店街|花見|お花見/,station:/駅|改札|ホーム|電車/,grave:/墓参り|お墓参り|墓前/,school:/教室|授業|学校|校庭|登校|先生|給食|学食|講義|ゼミ/,work:/職場|仕事|勤務|作業|会社|学校|園内|店|患者|工場|倉庫|配送|警備/};
+ const patterns={park:/公園|桜|花見|お花見|花びら|イチョウ|紅葉|散歩|歩いて/,shrine:/初詣|神社|寺|参拝|おみくじ|絵馬|三社祭/,shopping:/買い物|買物|店先|商店街|ショッピング|初売り|福袋/,visitor:/観光|街並み|三社祭|桜並木|初詣|神社|参拝|商店街|花見|お花見/,station:/駅|改札|ホーム(?!センター)|電車/,grave:/墓参り|お墓参り|墓前/,school:/教室|授業|学校|校庭|登校|先生|給食|学食|講義|ゼミ/,work:/職場|仕事|勤務|作業|会社|学校|園内|店|患者|工場|倉庫|配送|警備/};
  function ctxFor(P,t){let hol=holName(t),brk=isBreak(t),vacP=P.occ.group==='college'?univVac(t):P.occ.school||P.occ.en==='yochi'?schoolVac(t):false;return {P,t,h:t.hf??t.h,we:t.dow===0||t.dow===6||!!hol||brk,hol,brk,mo:t.mo,vacP,vac:vacP,season:seasonOf(t.mo),wx:wxOf(P.pref,t),eq:eqOf(P.pref,t)}}
  function compatible(e,c,P,kind){let o=e[3]||{},text=textOf(e),p=c.landComponent?.sampleXY||c.landComponent?.xy||c.area?.xy;
   if(!patterns[kind].test(text))return false;

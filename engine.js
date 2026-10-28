@@ -1388,7 +1388,7 @@ function situation(P, t) {
   // 自分の立場の自由時間の文のうち、入浴・身じたく・晩酌にあたるもの
   function ownSpecial(label) {
     const key = oc.group + '|' + label;
-    if (!SPECIAL_MEMO[key]) SPECIAL_MEMO[key] = offPoolsOf(oc.group).flatMap(([, list]) => list.filter(e => actLabel(textOf(e), oc.group) === label));
+    if (!SPECIAL_MEMO[key]) SPECIAL_MEMO[key] = offPoolsOf(oc.group).flatMap(([, list, f]) => list.filter(e => (!f || f(e)) && actLabel(textOf(e), oc.group) === label));
     return SPECIAL_MEMO[key];
   }
   // 通学の文（自分の立場の自由時間の文のうち「通学中」にあたるもの）
@@ -1493,7 +1493,8 @@ function offPoolsOf(g) {
   if (g === 'college') return [[1, OFF_TX.college, e => !(e[3] && e[3].camp)]];
   const own = OFF_TX[g];
   if (!own) return [[1, OFF_TX.adult]];
-  return ['homemaker', 'senior', 'jobless', 'rest'].includes(g) ? [[.7, own], [.3, OFF_TX.adult]] : [[1, own]];
+  // 大人全般の文のうち、勤め先があることを前提にした文（仕事帰り・同僚・上司など）は除く
+  return ['homemaker', 'senior', 'jobless', 'rest'].includes(g) ? [[.7, own], [.3, OFF_TX.adult, e => !/仕事帰り|仕事のあと|仕事終わり|同僚|上司|職場|会社|出勤|退勤|残業|取引先|始業前|昼休み|休憩時間|有給|代休|仕事の話/.test(textOf(e))]] : [[1, own]];
 }
 // 出来事の場面の文の出どころ（立場ごと。主婦・主夫や高齢者などは大人全般の文も）
 const EV_POOL_MEMO = {};
