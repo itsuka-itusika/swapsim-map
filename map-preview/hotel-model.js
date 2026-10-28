@@ -56,14 +56,14 @@ const HotelModel=(()=>{
  function phase(h){return h>=6.5&&h<10?'morning':h>=10&&h<17?'day':h>=17&&h<22?'evening':'night'}
  function assign(c,P){if(!c.hotelStyle||!c.role.startsWith('place_hotel_'))return false;if(c.placeWorker){P.occ={label:c.label,group:'adult',cat:'special',kind:'employed',p:1};return true}
   // Business travelers come from outside Tokyo on company business, so not as local public servants.
-  if(c.guestType==='business'){let jobs=JOB_OBJS.filter(j=>['office','sales','it','exec'].includes(j.tag)&&!j.o.pub&&P.age>=(j.o.amin||22)),job=jobs[Math.floor(rnd()*jobs.length)];if(job)P.occ={label:job.n+(job.tag==='exec'?'':'（正社員）'),group:'adult',cat:job.cat,tag:job.tag,job,kind:'employed',p:1}}
+  if(c.guestType==='business'){let jobs=JOB_OBJS.filter(j=>['office','sales','it','exec'].includes(j.tag)&&!j.o.pub&&P.age>=(j.o.amin||22)),job=jobs[Math.floor(rnd()*jobs.length)];if(job)P.occ={label:job.n+(job.n==='会社役員'?'':'（正社員）'),group:'adult',cat:job.cat,tag:job.tag,job,kind:'employed',p:1}}
   else if(['prison','facility'].includes(P.occ.group))P.occ={label:'無職',group:P.age>=65?'senior':'adult',cat:'none',p:1};return true}
  function apply(c,P,t){if(!c.hotelStyle||!c.role.startsWith('place_hotel_'))return false;let h=t.hf??t.h,ph=phase(h),text,state='off',label=c.stayLabel||c.label;
   if(c.placeWorker){state='work';label=c.label;let k=c.staffKey;if(c.hotelStyle==='ryokan'&&T.ryokan[k])text=pick(T.ryokan[k]);else if(k==='front')text=pick(h>=22||h<6?T.staff.front.night:T.staff.front.day);else if(k==='restaurant')text=pick(ph==='morning'?T.staff.restaurant.morning:T.staff.restaurant.other);else text=pick(T.staff[k])}
   else if(c.guestType==='banquet'){let we=t.dow===0||t.dow===6||t.holiday;text=pick(we?T.banquetWe:T.banquetWd);label=c.label}
-  else{let g=T[c.guestType];if((h>=0&&h<6||h>=23.5)&&rnd()<.85){text=pick(g.sleep);state='sleep'}else{let pool=g[ph];if(c.hotelStyle==='luxury'&&c.guestType!=='business'&&h>=13&&h<23&&rnd()<.35)pool=T.luxury.filter(x=>h>=17||!/バー|カナッペ/.test(x));if(['business','hostel','ryokan'].includes(c.hotelStyle))pool=pool.filter(x=>!/ラウンジ|ロビーのソファ/.test(x))||pool;text=pick(pool.length?pool:g[ph])}
-   // A 旅館 has futons, not beds.
-   if(c.hotelStyle==='ryokan')text=text.replace('ホテルのベッド','宿の布団').replace('ベッドに並べ','布団の上に並べ').replace('ベッド','布団')}
+  else{let g=T[c.guestType];if((h>=0&&h<6||h>=23.5)&&rnd()<.85){text=pick(g.sleep);state='sleep'}else{let pool=g[ph];if(c.hotelStyle==='luxury'&&c.guestType!=='business'&&h>=13&&h<23&&rnd()<.35)pool=T.luxury.filter(x=>h>=17||!/バー|カナッペ/.test(x));if(['business','hostel','ryokan'].includes(c.hotelStyle))pool=pool.filter(x=>!/ラウンジ|ロビーのソファ/.test(x))||pool;text=pick(pool.length?pool:g[ph])}}
+  // A 旅館 has futons, not beds, for guests and staff alike.
+  if(c.hotelStyle==='ryokan')text=text.replace('ホテルのベッド','宿の布団').replace('ベッドに並べ','布団の上に並べ').replace('ベッドのシーツ','布団のシーツ').replace(/ベッド/g,'布団');
   P.mapSituation=text;P.visitLabel=label;P.sit={...P.sit,text,state,stateLabel:label,p:1,source:'hotel'};return true}
  return {roles,assign,apply,style,STYLE};
 })();

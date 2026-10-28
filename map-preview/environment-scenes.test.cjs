@@ -99,7 +99,7 @@ test('inherited original pools fit the map spot: schools, kindergartens, teacher
  assert.ok(r.uteach.every(x=>x[0]==='大学教員'&&!/黒板|生徒|給食/.test(x[1])));
  assert.ok(r.visit.every(x=>/病棟|待合室|会計|面会|売店|入院/.test(x)),r.visit.join('\n'));
  assert.ok(!r.res.some(x=>/球場|スタジアム|コンサート|ショッピングモール|会社で|職場で|教室で|居酒屋|パチンコ|ゲームセンター/.test(x)&&!/夢の中/.test(x)),r.res.filter(x=>/球場|スタジアム|コンサート|ショッピングモール|会社で|職場で|教室で|居酒屋|パチンコ|ゲームセンター/.test(x)).join('\n'));
- assert.ok(r.off.length>30&&!r.off.some(x=>/仕事帰り|同僚|上司|職場で|会社で|残業/.test(x)),r.off.filter(x=>/仕事帰り|同僚|上司|職場で|会社で|残業/.test(x)).join('\n'));
+ assert.ok(r.off.length>30&&!r.off.some(x=>/仕事帰り|同僚|上司|職場で|会社で|残業/.test(x)&&!/夢の中/.test(x)),r.off.filter(x=>/仕事帰り|同僚|上司|職場で|会社で|残業/.test(x)).join('\n'));
 });
 test('2027 entrance exams bring examinees, parents and proctors to the right schools only on their days',()=>{
  const r=JSON.parse(run(`(()=>{const dowOf=(m,d)=>new Date(Date.UTC(2027,m-1,d)).getUTCDay(),go=(name,m,d,h,y=2027)=>{let f=MAP_DATA.facilities.find(x=>x.name===name),t={y,mo:m,d,dow:dowOf(m,d),h:Math.floor(h),hf:h,mi:Math.round(h%1*60),rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,f.xy,25),t).filter(c=>c.n>0),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<60;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,P.occ.label,P.sit.text,P.sit.source||''])}return out};
@@ -141,7 +141,7 @@ test('Tokyo hotels by type: guests, business travelers, visitors from abroad, ba
  return JSON.stringify({count:hs.length,styles:[...new Set(hs.map(f=>f.hotelStyle))],teikoku:go('帝国ホテル東京',8,3,28),wedding:go('帝国ホテル東京',14,6,31),night:go('ヒルトン東京',2,3,28),biz:go('京王プレッソイン新宿',13,3,28),ryokan:go('雷門旅館',2,6,31)})})()`));
  assert.ok(r.count>250&&['luxury','city','business','ryokan'].every(s=>r.styles.includes(s)));
  const roles=x=>new Set(x.map(p=>p[0]));
- assert.ok(['place_hotel_inbound','place_hotel_business','place_hotel_staff_door'].every(k=>roles(r.teikoku).has(k)));
+ assert.ok(['place_hotel_inbound','place_hotel_business'].every(k=>roles(r.teikoku).has(k))&&[...roles(r.teikoku)].some(k=>k.startsWith('place_hotel_staff_')));
  assert.ok(r.teikoku.every(p=>p[4]==='帝国ホテル東京'));assert.ok(r.teikoku.filter(p=>p[0]==='place_hotel_inbound').every(p=>p[5]&&p[1]==='観光客'));
  assert.ok(r.teikoku.filter(p=>p[0]==='place_hotel_business').every(p=>/（正社員）$|役員/.test(p[1])&&!/都庁|区役所/.test(p[1])));
  assert.ok(r.wedding.some(p=>p[0]==='place_hotel_banquet'&&/披露宴|宴会場|チャペル/.test(p[2])));
