@@ -2,11 +2,17 @@
 const OSMProfile=(()=>{
  const S=typeof MapSpatial!=='undefined'?MapSpatial:require('./spatial.js');
  function classification(t){
- const a=t.amenity,l=t.landuse,b=t.building;
- if(typeof PoiModel!=='undefined'&&PoiModel.closed(t))return null;
+ const a=t.amenity,l=t.landuse,b=t.building,n=t['name:ja']||t.name||'';
+ if(['disused','abandoned','construction','demolished'].some(k=>t[k]==='yes'||Object.keys(t).some(x=>x.startsWith(k+':'))))return null;
+ if(n&&a==='library')return ['public','library'];
+ if(n&&a==='bank')return ['public','bank'];
+ if(n&&a==='public_bath'&&/スーパー銭湯|天然温泉|健康ランド|スパ|温浴/i.test(n))return ['tourism','bath'];
+ if(n&&['hostel','guest_house'].includes(t.tourism))return ['tourism','hostel'];
+ if(n&&['zoo','aquarium','attraction','viewpoint','theme_park'].includes(t.tourism))return ['tourism','tourist'];
+ if(n&&(t.shop==='mall'||t.shop==='department_store'||t.shop==='electronics'&&/ヨドバシ|ビックカメラ|ヤマダデンキ|ヤマダ電機|LABI|エディオン|ケーズデンキ|ノジマ/i.test(n)||t.shop==='books'&&/ジュンク堂|紀伊國屋|紀伊国屋|丸善|三省堂書店|八重洲ブックセンター|有隣堂|MARUZEN/i.test(n)||t.shop==='clothes'&&/旗艦|UNIQLO TOKYO|ユニクロ銀座|ユニクロ新宿本店/i.test(n)))return ['mall','large_shop'];
+ if(t.shop||['cafe','restaurant','fast_food','bar','pub','food_court'].includes(a))return null;
  if(a==='police'&&/警察署$/.test(t.name||''))return ['public','police'];
  if(a==='fire_station')return ['public','fire_station'];
- if(['toilets','smoking_area'].includes(a))return ['public','poi'];
  if(t.tourism==='hotel')return ['commercial','hotel'];
  if(['museum','gallery'].includes(t.tourism))return ['tourism',t.tourism];
  if(a==='theatre')return ['tourism','theatre'];
@@ -31,7 +37,6 @@ const OSMProfile=(()=>{
  if(t.shop==='mall')return ['mall','shopping'];
  if(l==='industrial'||b==='industrial'||b==='warehouse'||t.man_made==='works')return ['industrial',b==='warehouse'?'warehouse':'factory'];
  if(t.office==='government'||['townhall','courthouse','police','fire_station'].includes(a))return ['public','government'];
- if(typeof PoiModel!=='undefined'&&PoiModel.spec(t))return ['commercial','poi'];
  if(t.office||b==='office'||l==='commercial')return ['office','office'];
  if(['museum','attraction','theme_park','gallery','zoo','aquarium'].includes(t.tourism))return ['tourism',t.tourism];
  if(['bar','pub','nightclub','karaoke'].includes(a))return ['commercial','night'];
