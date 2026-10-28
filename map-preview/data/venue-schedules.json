@@ -1,6 +1,6 @@
 {
   "updatedAt": "2026-10-28",
-  "notes": "公式日程を収録。終演・退場時刻は仮定。抜けている日は非開催と断定せず、施設・曜日・日付に基づく推定を使う。",
+  "notes": "公式日程を収録。終演・退場時刻は仮定。抜けている日は非開催と断定せず、施設・曜日・日付に基づく推定を使う。 audienceは来場者層の分類（性比・年齢構成はvenue-audience.jsの仮定）。",
   "events": [
     {
       "venue": "大井競馬場",
@@ -12,7 +12,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -24,7 +25,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -36,7 +38,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -48,7 +51,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -60,7 +64,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -72,7 +77,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -84,7 +90,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -96,7 +103,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -108,7 +116,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -120,7 +129,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -132,7 +142,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -144,7 +155,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -156,7 +168,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -168,7 +181,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -180,7 +194,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -192,7 +207,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -204,7 +220,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -216,7 +233,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -228,7 +246,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -240,7 +259,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -252,7 +272,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -264,7 +285,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -276,7 +298,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -288,7 +311,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -300,7 +324,8 @@
       "endsAssumed": 18.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -312,7 +337,8 @@
       "endsAssumed": 18.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "大井競馬場",
@@ -324,7 +350,8 @@
       "endsAssumed": 18.5,
       "url": "https://www.tokyocitykeiba.com/race/schedule/",
       "source": "東京シティ競馬",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "horse"
     },
     {
       "venue": "有明アリーナ",
@@ -336,7 +363,8 @@
       "endsAssumed": 22.0,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "rock"
     },
     {
       "venue": "有明アリーナ",
@@ -348,7 +376,8 @@
       "endsAssumed": 22.0,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "rock"
     },
     {
       "venue": "有明アリーナ",
@@ -360,7 +389,8 @@
       "endsAssumed": 20.5,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "veteran"
     },
     {
       "venue": "有明アリーナ",
@@ -372,7 +402,8 @@
       "endsAssumed": 19.5,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "veteran"
     },
     {
       "venue": "有明アリーナ",
@@ -384,7 +415,8 @@
       "endsAssumed": 20.5,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "male_idol"
     },
     {
       "venue": "有明アリーナ",
@@ -396,7 +428,8 @@
       "endsAssumed": 19.5,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "male_idol"
     },
     {
       "venue": "有明アリーナ",
@@ -408,7 +441,8 @@
       "endsAssumed": 18.5,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "male_idol"
     },
     {
       "venue": "有明アリーナ",
@@ -420,7 +454,8 @@
       "endsAssumed": 21.5,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "kpop_girl"
     },
     {
       "venue": "有明アリーナ",
@@ -432,7 +467,8 @@
       "endsAssumed": 19.5,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "kpop_girl"
     },
     {
       "venue": "有明アリーナ",
@@ -444,7 +480,8 @@
       "endsAssumed": 20.5,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "veteran"
     },
     {
       "venue": "有明アリーナ",
@@ -456,7 +493,8 @@
       "endsAssumed": 19.5,
       "url": "https://ariake-arena.tokyo/event/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "veteran"
     },
     {
       "venue": "有明アリーナ",
@@ -468,7 +506,8 @@
       "endsAssumed": 17.2,
       "url": "https://ariake-arena.tokyo/event/next/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "stage"
     },
     {
       "venue": "有明アリーナ",
@@ -480,7 +519,8 @@
       "endsAssumed": 22.2,
       "url": "https://ariake-arena.tokyo/event/next/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "stage"
     },
     {
       "venue": "有明アリーナ",
@@ -492,7 +532,8 @@
       "endsAssumed": 17.2,
       "url": "https://ariake-arena.tokyo/event/next/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "stage"
     },
     {
       "venue": "有明アリーナ",
@@ -504,7 +545,8 @@
       "endsAssumed": 22.2,
       "url": "https://ariake-arena.tokyo/event/next/",
       "source": "有明アリーナ公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "stage"
     },
     {
       "venue": "有明アリーナ",
@@ -516,7 +558,8 @@
       "endsAssumed": 18,
       "url": "https://ariake-arena.tokyo/event/next/",
       "source": "有明アリーナ公式・時刻仮定",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "extreme"
     },
     {
       "venue": "東京ドーム",
@@ -528,7 +571,8 @@
       "endsAssumed": 22,
       "url": "https://www.tokyo-dome.co.jp/dome/event/schedule.html",
       "source": "東京ドーム公式",
-      "basis": "公式予定"
+      "basis": "公式予定",
+      "audience": "awards"
     },
     {
       "venue": "東京ドーム",
@@ -540,7 +584,8 @@
       "endsAssumed": 21.5,
       "url": "https://www.tokyo-dome.co.jp/dome/topics/tohji_last_live_tokyo_mall.html",
       "source": "東京ドーム公式・時刻仮定",
-      "basis": "公式予定・時刻仮定"
+      "basis": "公式予定・時刻仮定",
+      "audience": "rock"
     }
   ]
 }
