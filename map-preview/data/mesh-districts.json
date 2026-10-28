@@ -1,0 +1,472 @@
+{
+  "basis": "Manually modeled characteristic districts, approximate circles. These are game-setting attributes, not surveyed zoning or observed visitor counts. No event is assumed to be happening.",
+  "districts": [
+    {
+      "name": "霞が関",
+      "xy": [
+        139.75,
+        35.674
+      ],
+      "radius": 650,
+      "tags": {
+        "government": 4,
+        "legal": 3
+      }
+    },
+    {
+      "name": "永田町",
+      "xy": [
+        139.744,
+        35.678
+      ],
+      "radius": 500,
+      "tags": {
+        "government": 4,
+        "politics": 4
+      }
+    },
+    {
+      "name": "虎ノ門・六本木の国際業務地区",
+      "xy": [
+        139.738,
+        35.663
+      ],
+      "radius": 950,
+      "tags": {
+        "international": 3,
+        "hotel": 3
+      }
+    },
+    {
+      "name": "本郷の大学・研究地区",
+      "xy": [
+        139.761,
+        35.713
+      ],
+      "radius": 800,
+      "tags": {
+        "research": 4,
+        "medical": 2
+      }
+    },
+    {
+      "name": "御茶ノ水の医療・学術地区",
+      "xy": [
+        139.765,
+        35.699
+      ],
+      "radius": 650,
+      "tags": {
+        "medical": 4,
+        "research": 3,
+        "specialty": 2
+      }
+    },
+    {
+      "name": "信濃町の医療・研究地区",
+      "xy": [
+        139.718,
+        35.681
+      ],
+      "radius": 400,
+      "tags": {
+        "medical": 4,
+        "research": 3
+      }
+    },
+    {
+      "name": "神保町の書店・出版地区",
+      "xy": [
+        139.758,
+        35.696
+      ],
+      "radius": 550,
+      "tags": {
+        "books": 4,
+        "publishing": 4
+      }
+    },
+    {
+      "name": "かっぱ橋道具街",
+      "xy": [
+        139.788,
+        35.714
+      ],
+      "radius": 450,
+      "tags": {
+        "specialty": 4,
+        "wholesale": 2
+      }
+    },
+    {
+      "name": "日暮里繊維街",
+      "xy": [
+        139.776,
+        35.728
+      ],
+      "radius": 450,
+      "tags": {
+        "specialty": 4,
+        "wholesale": 2
+      }
+    },
+    {
+      "name": "浅草橋の人形・手芸卸問屋街",
+      "xy": [
+        139.785,
+        35.698
+      ],
+      "radius": 450,
+      "tags": {
+        "specialty": 4,
+        "wholesale": 3
+      }
+    },
+    {
+      "name": "豊洲市場",
+      "xy": [
+        139.783,
+        35.643
+      ],
+      "radius": 450,
+      "tags": {
+        "market": 4,
+        "wholesale": 4
+      }
+    },
+    {
+      "name": "大田市場",
+      "xy": [
+        139.755,
+        35.581
+      ],
+      "radius": 450,
+      "tags": {
+        "market": 4,
+        "wholesale": 4
+      }
+    },
+    {
+      "name": "築地場外市場",
+      "xy": [
+        139.771,
+        35.665
+      ],
+      "radius": 350,
+      "tags": {
+        "market": 3,
+        "specialty": 3
+      }
+    },
+    {
+      "name": "上野の博物館・美術館地区",
+      "xy": [
+        139.775,
+        35.717
+      ],
+      "radius": 600,
+      "tags": {
+        "culture": 4
+      }
+    },
+    {
+      "name": "六本木の美術館地区",
+      "xy": [
+        139.728,
+        35.663
+      ],
+      "radius": 450,
+      "tags": {
+        "culture": 3
+      }
+    },
+    {
+      "name": "東銀座の劇場地区",
+      "xy": [
+        139.768,
+        35.67
+      ],
+      "radius": 350,
+      "tags": {
+        "theater": 4
+      }
+    },
+    {
+      "name": "池袋の劇場・芸術地区",
+      "xy": [
+        139.71,
+        35.729
+      ],
+      "radius": 550,
+      "tags": {
+        "theater": 3
+      }
+    },
+    {
+      "name": "渋谷の舞台・ライブ地区",
+      "xy": [
+        139.698,
+        35.661
+      ],
+      "radius": 600,
+      "tags": {
+        "theater": 3
+      }
+    },
+    {
+      "name": "東京ドームのスポーツ地区",
+      "xy": [
+        139.752,
+        35.706
+      ],
+      "radius": 250,
+      "tags": {
+        "sports": 4
+      }
+    },
+    {
+      "name": "神宮・国立競技場のスポーツ地区",
+      "xy": [
+        139.714,
+        35.677
+      ],
+      "radius": 650,
+      "tags": {
+        "sports": 4
+      }
+    },
+    {
+      "name": "有明のスポーツ施設地区",
+      "xy": [
+        139.788,
+        35.637
+      ],
+      "radius": 550,
+      "tags": {
+        "sports": 3
+      }
+    },
+    {
+      "name": "浅草寺周辺",
+      "xy": [
+        139.797,
+        35.715
+      ],
+      "radius": 200,
+      "tags": {
+        "temple": 4
+      }
+    },
+    {
+      "name": "明治神宮境内周辺",
+      "xy": [
+        139.699,
+        35.676
+      ],
+      "radius": 300,
+      "tags": {
+        "shrine": 4
+      }
+    },
+    {
+      "name": "柴又帝釈天周辺",
+      "xy": [
+        139.868,
+        35.758
+      ],
+      "radius": 250,
+      "tags": {
+        "temple": 4
+      }
+    },
+    {
+      "name": "増上寺周辺",
+      "xy": [
+        139.747,
+        35.657
+      ],
+      "radius": 200,
+      "tags": {
+        "temple": 4
+      }
+    },
+    {
+      "name": "西新宿のホテル地区",
+      "xy": [
+        139.691,
+        35.69
+      ],
+      "radius": 650,
+      "tags": {
+        "hotel": 4
+      }
+    },
+    {
+      "name": "品川駅高輪側の宿泊地区",
+      "xy": [
+        139.735,
+        35.628
+      ],
+      "radius": 500,
+      "tags": {
+        "hotel": 4
+      }
+    },
+    {
+      "name": "浅草の宿泊地区",
+      "xy": [
+        139.793,
+        35.71
+      ],
+      "radius": 600,
+      "tags": {
+        "hotel": 3
+      }
+    },
+    {
+      "name": "隅田川・両国の水辺",
+      "xy": [
+        139.79,
+        35.699
+      ],
+      "radius": 450,
+      "tags": {
+        "waterfront": 3
+      }
+    },
+    {
+      "name": "お台場海浜公園の水辺",
+      "xy": [
+        139.777,
+        35.63
+      ],
+      "radius": 450,
+      "tags": {
+        "waterfront": 4
+      }
+    },
+    {
+      "name": "二子玉川の水辺",
+      "xy": [
+        139.627,
+        35.609
+      ],
+      "radius": 450,
+      "tags": {
+        "waterfront": 3
+      }
+    },
+    {
+      "name": "巣鴨地蔵通り",
+      "xy": [
+        139.735,
+        35.736
+      ],
+      "radius": 350,
+      "tags": {
+        "senior_town": 4,
+        "specialty": 2
+      }
+    },
+    {
+      "name": "自由が丘の生活商業地区",
+      "xy": [
+        139.668,
+        35.608
+      ],
+      "radius": 550,
+      "tags": {
+        "lifestyle": 4
+      }
+    },
+    {
+      "name": "武蔵小山商店街",
+      "xy": [
+        139.705,
+        35.619
+      ],
+      "radius": 450,
+      "tags": {
+        "arcade": 4
+      }
+    },
+    {
+      "name": "戸越銀座商店街",
+      "xy": [
+        139.716,
+        35.615
+      ],
+      "radius": 450,
+      "tags": {
+        "arcade": 4
+      }
+    },
+    {
+      "name": "十条銀座商店街",
+      "xy": [
+        139.722,
+        35.762
+      ],
+      "radius": 400,
+      "tags": {
+        "arcade": 4
+      }
+    },
+    {
+      "name": "阿佐ヶ谷の商店街",
+      "xy": [
+        139.636,
+        35.704
+      ],
+      "radius": 450,
+      "tags": {
+        "arcade": 4
+      }
+    },
+    {
+      "name": "新大久保の多文化商業地区",
+      "xy": [
+        139.701,
+        35.702
+      ],
+      "radius": 650,
+      "tags": {
+        "multicultural": 4
+      }
+    },
+    {
+      "name": "池袋北口の多文化商業地区",
+      "xy": [
+        139.71,
+        35.733
+      ],
+      "radius": 350,
+      "tags": {
+        "multicultural": 4
+      }
+    },
+    {
+      "name": "西葛西の多文化商業地区",
+      "xy": [
+        139.86,
+        35.665
+      ],
+      "radius": 550,
+      "tags": {
+        "multicultural": 4
+      }
+    },
+    {
+      "name": "高田馬場の多文化商業地区",
+      "xy": [
+        139.704,
+        35.714
+      ],
+      "radius": 500,
+      "tags": {
+        "multicultural": 4
+      }
+    }
+  ]
+}
+

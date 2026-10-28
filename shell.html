@@ -1,0 +1,497 @@
+<title>集団入れ替わりシミュレーター（β）</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Shippori+Mincho+B1:wght@500;700;800&display=swap">
+<style>
+/* 役所の地紋用紙と朱肉。縦一列・スマホ優先、通知書カードが主役 */
+:root {
+  --paper: #E8EEEB;
+  --sheet: #F8FAF8;
+  --ink: #17231F;
+  --ink-2: #4D5E57;
+  --rule: #2E6A5D;
+  --rule-soft: #BCD0C8;
+  --cell: rgba(46,106,93,.07);
+  --guil: rgba(46,106,93,.075);
+  --tile: #D3DFDA;
+  --shu: #C8371E;
+  --shu-ink: #FFF5F0;
+  --c-sleep: #2D4A66;
+  --c-work: #C8371E;
+  --c-school: #C99325;
+  --c-move: #6E8A3A;
+  --c-off: #93B0A6;
+  --c-off1: #5A877B; --c-off2: #6F998D; --c-off3: #85AA9F; --c-off4: #9BBBB1; --c-off5: #B1CBC3; --c-off6: #C7DAD4;
+  --f-display: 'Shippori Mincho B1', 'Hiragino Mincho ProN', 'Yu Mincho', 'YuMincho', serif;
+  --f-body: 'BIZ UDPGothic', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0D1412; --sheet: #141E1B; --ink: #E1EBE6; --ink-2: #93A69E; --rule: #73B5A4; --rule-soft: #2A3C37;
+    --cell: rgba(115,181,164,.07); --guil: rgba(115,181,164,.06); --tile: #1F2C28; --shu: #E8573A; --shu-ink: #1C0C07;
+    --c-sleep: #6F92BD; --c-work: #E8573A; --c-school: #D9A940; --c-move: #93B25A; --c-off: #4F6A61;
+    --c-off1: #385449; --c-off2: #4B6A60; --c-off3: #5F8076; --c-off4: #74968C; --c-off5: #8AACA2; --c-off6: #A1C2B8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0D1412; --sheet: #141E1B; --ink: #E1EBE6; --ink-2: #93A69E; --rule: #73B5A4; --rule-soft: #2A3C37;
+  --cell: rgba(115,181,164,.07); --guil: rgba(115,181,164,.06); --tile: #1F2C28; --shu: #E8573A; --shu-ink: #1C0C07;
+  --c-sleep: #6F92BD; --c-work: #E8573A; --c-school: #D9A940; --c-move: #93B25A; --c-off: #4F6A61;
+    --c-off1: #385449; --c-off2: #4B6A60; --c-off3: #5F8076; --c-off4: #74968C; --c-off5: #8AACA2; --c-off6: #A1C2B8;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--f-body); font-size: 15px; line-height: 1.75;
+  font-feature-settings: "palt" 0;
+}
+.page {
+  max-width: 760px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 64px;
+  display: flex; flex-direction: column; gap: 28px;
+}
+h1, h2, h3 { font-family: var(--f-display); font-feature-settings: "palt" 1; text-wrap: balance; margin: 0; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--shu); outline-offset: 3px; }
+
+/* 見出し */
+.mast { display: flex; flex-direction: column; gap: 10px; }
+.eyebrow { margin: 0; font-size: 12px; letter-spacing: .18em; color: var(--rule); font-weight: 700; }
+.mast h1 { font-size: clamp(32px, 8.4vw, 54px); line-height: 1.12; font-weight: 800; letter-spacing: .01em; }
+.mast h1 .kana { color: var(--shu); }
+.lead { margin: 4px 0 0; max-width: 34em; color: var(--ink-2); }
+
+.beta { display: inline-block; vertical-align: .35em; margin-left: .35em; padding: .1em .5em; border: 1.5px solid var(--shu); border-radius: 4px; color: var(--shu); font-family: var(--f-body); font-weight: 700; font-size: .32em; letter-spacing: .06em; line-height: 1.3; }
+.beta.sm { font-size: 11px; vertical-align: .3em; letter-spacing: 0; }
+.subtitle { margin: -4px 0 0; font-family: var(--f-display); font-weight: 700; font-size: 13px; letter-spacing: .3em; text-transform: uppercase; color: var(--rule); }
+
+/* 詳細設定 */
+.opts { border-top: 1px dashed var(--rule-soft); padding-top: 8px; }
+.opts summary { list-style: none; cursor: pointer; display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; font-weight: 700; font-size: 14px; color: var(--rule); padding: 6px 0; }
+.opts summary::-webkit-details-marker { display: none; }
+.opts .arw { display: inline-block; font-size: 11px; transition: transform .15s; }
+.opts[open] .arw { transform: rotate(180deg); }
+.opts .cur { font-weight: 400; font-size: 12px; color: var(--shu); }
+.opt-body { display: grid; gap: 16px; padding: 10px 0 4px; }
+.opt { display: grid; gap: 6px; min-width: 0; }
+.opt .lbl, .switchrow .lbl { font-family: var(--f-display); font-weight: 700; font-size: 13px; letter-spacing: .12em; color: var(--rule); }
+.opt .lbl small { margin-left: 8px; font-family: var(--f-body); font-weight: 400; font-size: 11px; letter-spacing: 0; color: var(--ink-2); }
+.dd { position: relative; width: 100%; max-width: 320px; }
+.dd-btn {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer;
+  font-size: 15px; text-align: left; padding: 9px 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--sheet); color: var(--ink);
+}
+.place-note { font-size: 11px; color: var(--ink-2); }
+.dd-btn svg { flex: none; width: 14px; height: 14px; stroke: var(--rule); fill: none; stroke-width: 2; transition: transform .15s; }
+.dd-btn[aria-expanded="true"] { border-radius: 6px 6px 0 0; }
+.dd-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.dd-list {
+  position: absolute; left: 0; right: 0; top: 100%; z-index: 20; margin: 0; padding: 4px 0; list-style: none;
+  max-height: 300px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  background: var(--sheet); border: 1px solid var(--rule); border-top: 0; border-radius: 0 0 6px 6px;
+  box-shadow: 0 14px 28px -12px rgba(0,0,0,.35);
+}
+.dd-list .grp { font-size: 11px; color: var(--ink-2); padding: 10px 12px 3px; letter-spacing: .08em; }
+.dd-list [role="option"] { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; min-height: 40px; cursor: pointer; font-size: 15px; }
+.dd-list [role="option"].act, .dd-list [role="option"]:hover { background: var(--cell); }
+.dd-list [role="option"][aria-selected="true"] { color: var(--rule); font-weight: 700; }
+.dd-list [role="option"][aria-selected="true"]::after { content: "✓"; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button { border: 1px solid var(--rule-soft); background: var(--sheet); color: var(--ink); border-radius: 999px; padding: 4px 13px; min-height: 34px; font-size: 13px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.chips button[aria-pressed="true"] { background: var(--rule); border-color: var(--rule); color: var(--sheet); font-weight: 700; }
+.switchrow { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
+.switchrow small, .opt-save-status { display: block; margin-top: 2px; font-family: var(--f-body); font-weight: 400; font-size: 12px; letter-spacing: 0; color: var(--ink-2); }
+.opt-save-status { margin-bottom: 0; }
+.switch { flex: none; width: 50px; height: 30px; border: 0; border-radius: 999px; background: var(--rule-soft); position: relative; cursor: pointer; transition: background .15s; }
+.switch::after { content: ""; position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; border-radius: 50%; background: var(--sheet); box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .18s; }
+.switch[aria-checked="true"] { background: var(--shu); }
+.switch[aria-checked="true"]::after { transform: translateX(20px); }
+
+
+
+/* 誰かと誰かを入れ替える */
+.pair { display: grid; grid-template-columns: 1fr; gap: 6px; align-items: center; }
+.pp { display: grid; gap: 6px; min-width: 0; }
+.tag { justify-self: start; font-size: 12px; font-weight: 700; letter-spacing: .1em; padding: 1px 10px; border-radius: 999px; color: var(--sheet); }
+.tag.ta { background: var(--shu); }
+.tag.tb { background: var(--c-sleep); }
+.swapmark { display: grid; place-items: center; }
+.swapmark span { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--rule); color: var(--rule); background: var(--sheet); font-size: 20px; font-weight: 700; transform: rotate(90deg); }
+@media (min-width: 640px) {
+  .pair { grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); align-items: start; }
+  .swapmark { align-self: center; }
+  .swapmark span { transform: none; }
+}
+.form.mini { grid-template-columns: 1fr; }
+.form.mini .row { grid-column: span 1; grid-template-columns: 3.6em 1fr; }
+.form.mini dt { letter-spacing: .12em; font-size: 12px; }
+.form.mini dd { padding: 7px 10px; min-height: 2.6em; font-size: 14px; }
+.form.mini .name dd { font-size: 24px; line-height: 1.55; }
+.form.mini .sit dd { font-size: 14px; line-height: 1.8; min-height: 0; padding-block: 8px; }
+.after { display: grid; }
+.gap { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.gap li { font-size: 12px; padding: 2px 10px; border: 1px solid var(--rule-soft); border-radius: 999px; background: var(--sheet); }
+.gap li b { font-variant-numeric: tabular-nums; }
+.map g.on2 .t-fill, .map g.on2 .t-base { fill: var(--c-sleep); fill-opacity: 1; }
+.map figcaption b.b2 { color: var(--c-sleep); }
+.draws li.dh { display: block; padding: 14px 0 4px; font-family: var(--f-display); font-weight: 700; font-size: 14px; color: var(--ink); border-bottom: 1px solid var(--rule); }
+.crowd button > * { min-width: 0; }
+.crowd .fit { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.crowd .pairline .meta { font-size: .72em; }
+.crowd .pairline .arw { margin: 0 .35em; color: var(--rule); }
+.crowd button[aria-current="true"] { border-color: var(--rule); border-left-color: var(--shu); background: var(--cell); }
+.crowd .showing { justify-self: start; font-size: 11px; font-weight: 700; color: var(--sheet); background: var(--shu); border-radius: 999px; padding: 0 9px; }
+.notice.flash { animation: flash .7s ease-out; }
+@keyframes flash { 0% { box-shadow: 0 0 0 4px var(--shu), 0 18px 40px -28px rgba(20,40,34,.45); } 100% { box-shadow: 0 1px 0 var(--rule-soft), 0 18px 40px -28px rgba(20,40,34,.45); } }
+.crowd .mk { display: inline-block; width: .6em; height: .6em; border-radius: 50%; margin-right: .45em; vertical-align: .08em; }
+.crowd .mk.ma { background: var(--shu); }
+.crowd .mk.mb { background: var(--c-sleep); }
+
+/* ステージ：地図とボタン */
+.stage {
+  border-top: 2px solid var(--rule); border-bottom: 1px solid var(--rule);
+  padding-block: 16px 20px; display: flex; flex-direction: column; gap: 14px;
+}
+.clock { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 13px; color: var(--ink-2); }
+.clock strong { font-family: var(--f-display); font-size: 19px; color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+.stage-grid { display: grid; grid-template-columns: 1fr; gap: 18px; align-items: center; }
+@media (min-width: 620px) { .stage-grid { grid-template-columns: 1.35fr 1fr; } }
+.map { margin: 0; min-width: 0; }
+.map svg { display: block; width: 100%; max-width: 440px; height: auto; margin-inline: auto; }
+.map .t-base { fill: var(--tile); }
+.map .t-fill { fill: var(--rule); transition: fill .12s; }
+.map g.on .t-fill { fill: var(--shu); fill-opacity: 1; }
+.map g.on .t-base { fill: var(--shu); }
+.map .divider { stroke: var(--rule-soft); stroke-width: .05; fill: none; }
+.map figcaption { margin-top: 6px; font-size: 12px; color: var(--ink-2); text-align: center; min-height: 1.75em; }
+.map figcaption b { color: var(--shu); font-family: var(--f-display); font-size: 15px; }
+
+.controls { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.seal {
+  width: 148px; height: 148px; border-radius: 50%; border: 0; cursor: pointer;
+  background: var(--shu); color: var(--shu-ink);
+  box-shadow: inset 0 0 0 5px var(--shu), inset 0 0 0 7px var(--shu-ink), 0 6px 0 -2px rgba(0,0,0,.18);
+  display: grid; place-items: center; position: relative;
+  transition: transform .12s ease, box-shadow .12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.seal:hover { transform: translateY(-2px) rotate(-2deg); }
+.seal:active { transform: translateY(3px) scale(.96); box-shadow: inset 0 0 0 5px var(--shu), inset 0 0 0 7px var(--shu-ink), 0 2px 0 -2px rgba(0,0,0,.18); }
+.seal .v { writing-mode: vertical-rl; font-family: var(--f-display); font-weight: 800; font-size: 25px; line-height: 1.15; letter-spacing: .08em; }
+.seal[data-busy="1"] .v { font-size: 19px; }
+.mode { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; padding: 3px; gap: 2px; background: var(--sheet); }
+.mode button { border: 0; background: transparent; padding: 5px 14px; border-radius: 999px; font-size: 13px; cursor: pointer; color: var(--ink-2); }
+.mode button[aria-pressed="true"] { background: var(--rule); color: var(--sheet); font-weight: 700; }
+.hint { margin: 0; font-size: 12px; color: var(--ink-2); text-align: center; max-width: 22em; }
+
+/* 通知書 */
+.notice {
+  position: relative; scroll-margin-top: 16px;
+  background-color: var(--sheet);
+  background-image:
+    repeating-radial-gradient(circle at 0 0, transparent 0 9px, var(--guil) 9px 10px),
+    repeating-radial-gradient(circle at 100% 100%, transparent 0 9px, var(--guil) 9px 10px);
+  border: 1px solid var(--rule-soft);
+  box-shadow: 0 1px 0 var(--rule-soft), 0 18px 40px -28px rgba(20,40,34,.45);
+  padding: 22px 18px 18px; display: flex; flex-direction: column; gap: 14px;
+}
+.notice-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.notice-head h2 { font-size: 21px; letter-spacing: .14em; font-weight: 800; }
+.serial { font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.serial b { font-family: var(--f-display); font-size: 15px; color: var(--ink); letter-spacing: .06em; }
+.opening { margin: 0; font-size: 15px; min-height: 3.5em; }
+.opening .who { font-family: var(--f-display); font-weight: 700; font-size: 17px; }
+.form { margin: 0; border: 1.5px solid var(--rule); display: grid; grid-template-columns: 1fr 1fr; }
+.form .row { display: grid; grid-template-columns: 4.6em 1fr; border-top: 1px solid var(--rule); grid-column: span 2; min-width: 0; }
+.form .row:first-child { border-top: 0; }
+.form .row.half { grid-column: span 1; }
+.form .row.half.r { border-left: 1px solid var(--rule); }
+.form dt {
+  background: var(--cell); border-right: 1px solid var(--rule);
+  font-family: var(--f-display); font-weight: 700; font-size: 13px; letter-spacing: .3em;
+  display: flex; align-items: center; justify-content: center; padding: 8px 2px 8px 6px; color: var(--rule);
+}
+.form dd { margin: 0; padding: 9px 12px; min-height: 2.9em; min-width: 0; overflow-wrap: anywhere; display: flex; align-items: center; flex-wrap: wrap; gap: 0 .4em; }
+.form dd .sub { font-size: 12px; color: var(--ink-2); }
+.wxst { margin-left: .5em; color: var(--ink-2); font-size: .92em; white-space: nowrap; }
+.form dd .wx { font-size: .88em; color: var(--ink-2); white-space: nowrap; }
+[id$="place"] .sub { display: block; margin-top: 2px; }
+.form .name dd { font-family: var(--f-display); font-weight: 800; font-size: 30px; line-height: 1.6; letter-spacing: .06em; gap: 0 .5em; }
+.form .name rt { font-family: var(--f-body); font-weight: 400; font-size: 11px; letter-spacing: .12em; color: var(--ink-2); }
+.form .sit dd { font-size: 16px; line-height: 1.85; align-items: flex-start; min-height: 6.5em; padding-block: 12px; }
+.form .sit .when { font-family: var(--f-display); font-weight: 700; color: var(--shu); margin-right: .3em; }
+.blank { color: var(--rule-soft); letter-spacing: .2em; }
+.notice-foot .d { white-space: nowrap; }
+.notice-foot { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; font-size: 12px; color: var(--ink-2); padding-right: 96px; }
+.rarity { font-size: 13px; color: var(--ink-2); }
+.rarity .stars { font-size: 16px; letter-spacing: .08em; color: var(--shu); }
+.rarity .stars i { font-style: normal; color: var(--rule-soft); }
+.stamp {
+  position: absolute; right: 18px; bottom: 16px; width: 82px; height: 82px; border-radius: 50%;
+  border: 3px solid var(--shu); color: var(--shu); display: grid; place-items: center;
+  font-family: var(--f-display); font-weight: 800; font-size: 19px; line-height: 1.05; text-align: center;
+  transform: rotate(-12deg); opacity: .82; pointer-events: none; mix-blend-mode: multiply;
+  box-shadow: inset 0 0 0 3px transparent, inset 0 0 0 5px var(--shu);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .stamp { mix-blend-mode: normal; } }
+:root[data-theme="dark"] .stamp { mix-blend-mode: normal; }
+.stamp.pressed { animation: press .38s cubic-bezier(.2,.9,.3,1.3) both; }
+@keyframes press { 0% { transform: rotate(-12deg) scale(1.9); opacity: 0; } 60% { opacity: .9; } 100% { transform: rotate(-12deg) scale(1); opacity: .82; } }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; padding-right: 96px; }
+@media (max-width: 420px) { .actions { padding-right: 84px; } }
+.btn {
+  border: 1px solid var(--rule); background: var(--sheet); color: var(--rule); border-radius: 6px;
+  padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.btn:hover { background: var(--cell); }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: .45; cursor: default; pointer-events: none; }
+.btn { text-decoration: none; display: inline-flex; align-items: center; }
+.btn-x { background: var(--ink); border-color: var(--ink); color: var(--sheet); }
+.btn-x:hover { background: var(--ink); opacity: .88; }
+.copybox { width: 100%; min-height: 7em; font: 13px/1.6 var(--f-body); background: var(--sheet); color: var(--ink); border: 1px solid var(--rule-soft); padding: 8px; }
+.toast { font-size: 12px; color: var(--rule); align-self: center; }
+.shared { margin: -6px 0 0; padding-bottom: 12px; border-bottom: 1px dashed var(--rule-soft); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; font-size: 13px; color: var(--ink-2); }
+.btn-shu { background: var(--shu); border-color: var(--shu); color: var(--shu-ink); }
+.btn-shu:hover { background: var(--shu); opacity: .9; }
+
+/* セクション共通 */
+.sec { display: flex; flex-direction: column; gap: 12px; }
+.sec > h2 { font-size: 20px; font-weight: 800; letter-spacing: .06em; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.sec > h2 small { font-family: var(--f-body); font-size: 12px; font-weight: 400; color: var(--ink-2); letter-spacing: 0; }
+.sec .note { margin: 0; font-size: 12px; color: var(--ink-2); }
+
+/* 抽選の内訳 */
+.draws { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.draws li { display: grid; grid-template-columns: 5.2em 1fr auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--rule-soft); align-items: baseline; }
+.draws .k { font-family: var(--f-display); font-weight: 700; color: var(--rule); font-size: 13px; letter-spacing: .1em; }
+.draws .v { font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.draws .v .vs { font-size: .8em; font-weight: 400; color: var(--ink-2); }
+.draws .p { font-variant-numeric: tabular-nums; font-family: var(--f-display); font-weight: 700; font-size: 16px; text-align: right; white-space: nowrap; }
+.draws .bar { grid-column: 2 / 4; height: 5px; background: var(--tile); border-radius: 3px; overflow: hidden; }
+.draws .bar span { display: block; height: 100%; background: var(--rule); border-radius: 3px; }
+.draws .n { grid-column: 2 / 4; font-size: 12px; color: var(--ink-2); }
+.draws.empty { border-top: 1px dashed var(--rule-soft); }
+.draws.empty li { color: var(--ink-2); }
+
+/* いまの日本 */
+.stack { display: flex; height: 22px; border-radius: 4px; overflow: hidden; background: var(--tile); }
+.stack span { height: 100%; transition: flex-basis .5s ease; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px 16px; }
+.legend li { display: grid; grid-template-columns: 12px 1fr; gap: 0 8px; align-items: baseline; font-size: 13px; }
+.legend .sw { width: 12px; height: 12px; border-radius: 3px; align-self: center; }
+.legend b { font-family: var(--f-display); font-size: 18px; font-variant-numeric: tabular-nums; }
+.legend .ppl { grid-column: 2; font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+/* 同じ瞬間の人たち */
+.crowd { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.crowd button {
+  width: 100%; text-align: left; cursor: pointer; background: var(--sheet); border: 1px solid var(--rule-soft);
+  border-left: 3px solid var(--rule); padding: 10px 12px; display: grid; gap: 2px; border-radius: 0 6px 6px 0;
+}
+.crowd button:hover { border-color: var(--rule); }
+.crowd .who { font-family: var(--f-display); font-weight: 700; font-size: 16px; }
+.crowd .meta { font-size: 12px; color: var(--ink-2); }
+.crowd .doing { font-size: 13px; }
+.crowd-empty { font-size: 13px; color: var(--ink-2); margin: 0; }
+
+/* 履歴 */
+.hist { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+.hist li { border-bottom: 1px solid var(--rule-soft); }
+.hist .hrow { display: grid; grid-template-columns: auto 1fr; gap: 0 12px; padding: 7px 0; width: 100%; text-align: left; }
+.hist button.hrow { font: inherit; color: inherit; background: transparent; border: 0; border-left: 3px solid transparent; padding: 8px 6px 8px 8px; cursor: pointer; border-radius: 0 4px 4px 0; }
+.hist button.hrow:hover { background: var(--cell); }
+.hist button.hrow[aria-current="true"] { background: var(--cell); border-left-color: var(--shu); }
+.hist button.hrow .line { text-decoration: underline; text-decoration-color: var(--rule-soft); text-underline-offset: 3px; }
+.hist .showing { display: inline-block; margin-right: 6px; font-size: 11px; font-weight: 700; color: var(--sheet); background: var(--shu); border-radius: 999px; padding: 0 8px; text-decoration: none; }
+.hist .no { font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 12px; padding-top: 1px; }
+.hist .line { min-width: 0; overflow-wrap: anywhere; }
+.nw { white-space: nowrap; }
+.hist-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+
+/* データについて */
+.about { border-top: 2px solid var(--rule); padding-top: 16px; font-size: 13px; color: var(--ink-2); display: flex; flex-direction: column; gap: 8px; }
+.about h2 { font-size: 16px; color: var(--ink); }
+.about ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 2px; }
+.about p { margin: 0; max-width: 46em; }
+
+@media (max-width: 480px) {
+  .form .row.half { grid-column: span 2; }
+  .form .row.half.r { border-left: 0; }
+}
+@media (max-width: 420px) {
+  .form .name dd { font-size: 26px; }
+  .stamp { width: 72px; height: 72px; font-size: 17px; right: 14px; bottom: 14px; }
+  .draws li { grid-template-columns: 4.4em 1fr auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+
+<main class="page">
+  <header class="mast">
+    <p class="eyebrow">統計でえらぶ、日本のどこかの誰か</p>
+    <h1>集団入れ替わり<br>シミュレーター<span class="beta">β版</span></h1>
+    <p class="subtitle" lang="en">Mass Body-Swap Simulator</p>
+    <p class="lead">ボタンを押した瞬間、日本に住むおよそ1億2,300万人が、いっせいに誰かと入れ替わります。あなたが入るのは、人口・名字・名前・職業の統計をもとに選ばれた、日本のどこかの誰かです。</p>
+  </header>
+
+  <section class="stage" aria-label="入れ替わりの操作">
+    <div class="clock"><span id="clock-label">日本時間</span><strong id="clock">—</strong></div>
+    <div class="stage-grid">
+      <figure class="map">
+        <svg id="map" viewBox="0 0 15 11" role="img" aria-label="都道府県のタイル地図"></svg>
+        <figcaption id="mapcap">色が濃いほど、人口が多く入れ替わり先になりやすい都道府県です</figcaption>
+      </figure>
+      <div class="controls">
+        <button class="seal" id="go" type="button" aria-describedby="hint"><span class="v" id="go-label">入れ<br>替わる</span></button>
+        <div class="mode" role="group" aria-label="時刻の決め方">
+          <button type="button" id="mode-now" aria-pressed="true">いまの日本</button>
+          <button type="button" id="mode-rand" aria-pressed="false">ランダムな時刻</button>
+        </div>
+        <p class="hint" id="hint">「いまの日本」では、日本時間の現在時刻にその人が何をしているかまで決まります。</p>
+      </div>
+    </div>
+    <details class="opts" id="opts">
+      <summary><span class="arw" aria-hidden="true">▼</span>詳細設定<span class="cur" id="opts-cur"></span></summary>
+      <div class="opt-body">
+        <div class="opt"><span class="lbl" id="lbl-pref">場所</span>
+          <div class="dd" id="dd-pref">
+            <button type="button" class="dd-btn" id="opt-pref" aria-haspopup="listbox" aria-expanded="false" aria-controls="pref-list" aria-labelledby="lbl-pref opt-pref-val"><span id="opt-pref-val">指定なし</span><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 5l5 5 5-5"/></svg></button>
+            <ul class="dd-list" id="pref-list" role="listbox" aria-labelledby="lbl-pref" tabindex="-1" hidden></ul>
+          </div>
+        </div>
+        <div class="opt" id="opt-tokyo-ward" hidden>
+          <span class="lbl" id="lbl-tokyo-ward">東京23区</span>
+          <div class="dd" id="dd-tokyo-ward">
+            <button type="button" class="dd-btn" id="opt-tokyo-ward-select" aria-haspopup="listbox" aria-expanded="false" aria-controls="ward-list" aria-labelledby="lbl-tokyo-ward opt-tokyo-ward-val" aria-describedby="ward-place-note"><span id="opt-tokyo-ward-val">23区内（区指定なし）</span><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 5l5 5 5-5"/></svg></button>
+            <ul class="dd-list" id="ward-list" role="listbox" aria-labelledby="lbl-tokyo-ward" tabindex="-1" hidden></ul>
+          </div>
+          <small class="place-note" id="ward-place-note">住まいを指定します。通勤・通学や外出で現在地が変わることがあります。</small>
+        </div>
+        <div class="opt" role="group" aria-labelledby="lbl-sex"><span class="lbl" id="lbl-sex">性別</span>
+          <div class="chips" id="opt-sex"></div>
+        </div>
+        <div class="opt" role="group" aria-labelledby="lbl-age"><span class="lbl" id="lbl-age">年齢<small>複数選択可</small></span>
+          <div class="chips" id="opt-age"></div>
+        </div>
+        <div class="switchrow">
+          <span class="lbl" id="lbl-pair">誰かと誰かを入れ替える<small>日本のどこかの2人を入れ替えます。場所・性別・年齢は1人目に使います</small></span>
+          <button type="button" class="switch" id="opt-pair" role="switch" aria-checked="false" aria-labelledby="lbl-pair"></button>
+        </div>
+        <div class="switchrow">
+          <span class="lbl" id="lbl-real"><span id="real-name">本当に入れ替わる</span>（β版）<small>シミュレーションではなく現実に入れ替わりを発生させます</small></span>
+          <button type="button" class="switch" id="opt-real" role="switch" aria-checked="false" aria-labelledby="lbl-real"></button>
+        </div>
+        <div><button type="button" class="btn" id="opt-save">保存</button> <button type="button" class="btn" id="opt-reset">条件をリセット</button></div>
+        <p class="opt-save-status" id="opt-save-status" role="status"></p>
+      </div>
+    </details>
+  </section>
+
+  <article class="notice" id="notice" aria-live="polite">
+    <div class="shared" id="shared" hidden><span>共有された通知書です</span><button type="button" class="btn btn-shu" id="shared-go">自分も入れ替わる</button></div>
+    <header class="notice-head">
+      <h2><span id="notice-title">入れ替わり先のお知らせ</span><span class="beta sm">β</span></h2>
+      <span class="serial">第 <b id="serial">———</b> 号</span>
+    </header>
+    <p class="opening" id="opening">印のボタンを押すと、ここに入れ替わり先が記入されます。</p>
+    <div class="pair" id="pair" hidden>
+      <section class="pp" aria-label="1人目"><span class="tag ta">1人目</span><dl class="form mini" id="pa"></dl></section>
+      <div class="swapmark" aria-hidden="true"><span>⇄</span></div>
+      <section class="pp" aria-label="2人目"><span class="tag tb">2人目</span><dl class="form mini" id="pb"></dl></section>
+    </div>
+    <div class="after" id="after" hidden>
+      <ul class="gap" id="gap"></ul>
+    </div>
+    <dl class="form" id="single">
+      <div class="row"><dt>場所</dt><dd id="f-place"><span class="blank">未記入</span></dd></div>
+      <div class="row name"><dt>氏名</dt><dd id="f-name"><span class="blank">未記入</span></dd></div>
+      <div class="row half"><dt>性別</dt><dd id="f-sex"><span class="blank">—</span></dd></div>
+      <div class="row half r"><dt>年齢</dt><dd id="f-age"><span class="blank">—</span></dd></div>
+      <div class="row half"><dt>身長</dt><dd id="f-height"><span class="blank">—</span></dd></div>
+      <div class="row half r"><dt>体重</dt><dd id="f-weight"><span class="blank">—</span></dd></div>
+      <div class="row"><dt id="f-jobkey">職業</dt><dd id="f-job"><span class="blank">未記入</span></dd></div>
+      <div class="row"><dt>趣味</dt><dd id="f-hobby"><span class="blank">-</span></dd></div>
+      <div class="row" hidden><dt>家族構成</dt><dd id="f-family"><span class="blank">-</span></dd></div>
+      <div class="row"><dt>健康</dt><dd id="f-health"><span class="blank">未記入</span></dd></div>
+      <div class="row sit"><dt>状況</dt><dd id="f-sit"><span class="blank">未記入</span></dd></div>
+    </dl>
+    <footer class="notice-foot">
+      <span id="issued">発行日時　—</span>
+      <span class="rarity" id="rarity" hidden></span>
+    </footer>
+    <div class="stamp" id="stamp" hidden aria-hidden="true">入替<br>済</div>
+    <div class="actions">
+      <a class="btn btn-x" id="xpost" href="#" target="_blank" rel="noopener" hidden aria-disabled="true">Xでポスト</a>
+      <button class="btn" type="button" id="shareimg" hidden disabled>画像で共有</button>
+      <button class="btn" type="button" id="copy" disabled>結果をコピー</button>
+      <span class="toast" id="toast" role="status"></span>
+    </div>
+    <div id="copyfallback" hidden>
+      <textarea class="copybox" id="copytext" readonly aria-label="コピー用の結果テキスト"></textarea>
+    </div>
+  </article>
+
+  <section class="sec" aria-labelledby="bd-h">
+    <h2 id="bd-h">抽選の内訳 <small>それぞれの項目が出る確率</small></h2>
+    <ol class="draws empty" id="draws">
+      <li><span class="k">都道府県</span><span class="v">人口比で抽選</span><span class="p"></span></li>
+      <li><span class="k">名字</span><span class="v">全国の人数＋都道府県で多い名字</span><span class="p"></span></li>
+      <li><span class="k">名前</span><span class="v">生まれ年に多い名前</span><span class="p"></span></li>
+      <li><span class="k">職業</span><span class="v">年齢・性別ごとの就業率と職業構成</span><span class="p"></span></li>
+      <li><span class="k">状況</span><span class="v">時刻ごとの過ごし方の割合</span><span class="p"></span></li>
+    </ol>
+    <p class="note">確率はこのシミュレーターの中での値です。統計は大きな傾向に使い、細かな部分はゲームとして脚色しています。</p>
+  </section>
+
+  <section class="sec" aria-labelledby="now-h">
+    <h2 id="now-h"><span id="now-title">いまの日本</span> <small>同じ条件で3,000人を抽選した推定</small></h2>
+    <div class="stack" id="stack" aria-hidden="true"></div>
+    <ul class="legend" id="legend"></ul>
+  </section>
+
+  <section class="sec" aria-labelledby="crowd-h">
+    <h2 id="crowd-h"><span id="crowd-title">同じ瞬間に入れ替わった人たち</span> <small>押すと、上の通知書に表示します</small></h2>
+    <ul class="crowd" id="crowd"><li><p class="crowd-empty">入れ替わると、同じ瞬間に別の誰かと入れ替わった4人がここに並びます。</p></li></ul>
+  </section>
+
+  <section class="sec" aria-labelledby="hist-h">
+    <div class="hist-head">
+      <h2 id="hist-h" style="font-size:20px;font-weight:800;letter-spacing:.06em"><span class="nw">これまでの入れ替わり</span> <small style="display:inline-block;font-family:var(--f-body);font-size:12px;font-weight:400;letter-spacing:0;color:var(--ink-2)">押すと、上の通知書に表示します</small></h2>
+      <button class="btn" type="button" id="clear" hidden>記録を消す</button>
+    </div>
+    <ol class="hist" id="hist"><li><span class="no">—</span><span class="line">まだ記録はありません。記録はこのブラウザの中だけに残ります。</span></li></ol>
+  </section>
+
+  <footer class="about">
+    <h2>データについて</h2>
+    <ul>
+      <li>都道府県・市区町村：2020年国勢調査の全市区町村の人口比。政令市の区も人口比で選びます（区再編で対応しない場合は市全体の分布を使用）。</li>
+      <li>性別・年齢：同じ国勢調査の居住地域別・男女別・各歳人口を使用。年齢不詳は同性の年齢構成に按分し、100歳以上の各歳は推定します。</li>
+      <li>趣味・家族構成：社会生活基本調査（2021年）と国勢調査（2020年）。同居する子の人数は地域・親の年代別集計を使用。「2人以上」等の内訳は世帯人員から求めた平均人数に合わせて推定します。子の年齢・性別・一部の続き柄も推定です。</li>
+      <li>名字：名字ランキングの推計人数をもとに、都道府県ごとに多い名字を上乗せ。</li>
+      <li>名前：生まれ年ごとの名前ランキングを参考に、各世代・男女別に50候補を用意。世代に合う名前を補い、代表的な名前ほど出やすく抽選。</li>
+      <li>職業：居住地域・男女・5歳階級ごとの国勢調査の職業構成を反映し、人数の少ない区分は県や全国の分布と混ぜます。就業率にも地域差を加えます。東京23区では在学率・役員・自営・職業小分類も補正し、対応する分類がない職種はモデル配分を使います。</li>
+      <li>状況：社会生活基本調査・国民生活時間調査の時間帯別の傾向（睡眠、食事・家事・テレビなどの過ごし方）と、勤務・通学時間の目安。シフト勤務の仕事は出勤時刻がばらけます。祝日（振替休日を含む）・年末年始・お盆・学校の長期休みで、仕事や学校の有無が変わります。季節や行事の場面もあります。文面は創作です。</li>
+      <li>体格と健康：身長・体重や体調は、学校保健統計・国民健康・栄養調査・患者調査などを参考に、年齢や性別に応じて抽選します。体型は大人と子どもで別の基準を使い、乳幼児・妊娠中は区分を表示しません。</li>
+      <li>場所と天気：表示するのは現在地です。通勤・通学や外出に応じて、住まいから移動することがあります。天気は <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">クリエイティブ・コモンズ 表示4.0</a>）の県庁所在地の情報を使い、取得できない場合やランダムな時刻では季節・地域から推定します。荒天時は天気による状況の出し分けを止めます。<span id="wx-status" class="wxst"></span></li>
+      <li>空と暦：日照・月の満ち欠け、気象庁の季節の平年値、行事や試験の開催日を状況に反映します。「いまの日本」では <a href="https://www.p2pquake.net/" target="_blank" rel="noopener">P2P地震情報（地震情報の共有サービス）</a> を使い、直近の小さな揺れに気づく場面も出ます。大きな地震の際は出しません。</li>
+    </ul>
+    <p>数値は統計を元にした概算です。表示される人物はすべて架空で、実在の人物・団体とは関係ありません。</p>
+  </footer>
+</main>
+
+
+
+
+
+

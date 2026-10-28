@@ -1,0 +1,97 @@
+{
+  "basis": "Representative facilities within Tokyo 23 wards. Positions, modeled footprints, capacities and representative hours are assumptions; no daily calendar/actual visitor counts.",
+  "facilities": [
+    {
+      "id": "theme0",
+      "kind": "theme",
+      "name": "東京ドームシティ アトラクションズ",
+      "xy": [
+        139.753,
+        35.7056
+      ],
+      "radius": 120,
+      "capacity": 1800,
+      "open": 10,
+      "close": 21,
+      "style": "ride",
+      "source": "https://www.tokyo-dome.co.jp/tourists/attractions/"
+    },
+    {
+      "id": "theme1",
+      "kind": "theme",
+      "name": "浅草花やしき",
+      "xy": [
+        139.7948,
+        35.7154
+      ],
+      "radius": 60,
+      "capacity": 700,
+      "open": 10,
+      "close": 18,
+      "style": "ride",
+      "source": "https://www.hanayashiki.net/"
+    },
+    {
+      "id": "theme2",
+      "kind": "theme",
+      "name": "あらかわ遊園",
+      "xy": [
+        139.7524,
+        35.7506
+      ],
+      "radius": 100,
+      "capacity": 900,
+      "open": 9,
+      "close": 17,
+      "style": "ride",
+      "source": "https://www.city.arakawa.tokyo.jp/yuuen/",
+      "closedDow": 2
+    },
+    {
+      "id": "theme3",
+      "kind": "theme",
+      "name": "東京ジョイポリス",
+      "xy": [
+        139.7751,
+        35.6283
+      ],
+      "radius": 55,
+      "capacity": 900,
+      "open": 10,
+      "close": 20,
+      "style": "ride",
+      "source": "https://tokyo-joypolis.com/"
+    },
+    {
+      "id": "theme4",
+      "kind": "theme",
+      "name": "キッザニア東京",
+      "xy": [
+        139.7914,
+        35.6553
+      ],
+      "radius": 50,
+      "capacity": 1000,
+      "open": 9,
+      "close": 21,
+      "style": "kids",
+      "source": "https://www.kidzania.jp/tokyo/"
+    },
+    {
+      "id": "theme5",
+      "kind": "theme",
+      "name": "ワーナー ブラザース スタジオツアー東京",
+      "xy": [
+        139.649,
+        35.7441
+      ],
+      "radius": 150,
+      "capacity": 1800,
+      "open": 9,
+      "close": 20,
+      "style": "tour",
+      "source": "https://www.wbstudiotour.jp/"
+    }
+  ]
+}
+

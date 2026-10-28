@@ -1,0 +1,18 @@
+const fs=require('fs'),vm=require('vm');let ctx=vm.createContext({console});for(let f of ['model.js','land-model.js','green-model.js','area-model.js','mesh-model.js'])vm.runInContext(fs.readFileSync('map-preview/'+f,'utf8'),ctx);
+ctx.input={geo:JSON.parse(fs.readFileSync('map-preview/data/geography.json')),land:JSON.parse(fs.readFileSync('map-preview/data/land-zones.json')).zones,water:JSON.parse(fs.readFileSync('map-preview/data/water.json')).water,green:JSON.parse(fs.readFileSync('map-preview/data/green-zones.json')).zones,areas:JSON.parse(fs.readFileSync('map-preview/data/areas.json')).areas};
+const out=vm.runInContext(`(()=>{let regions=input.geo.regions.filter(f=>/^131(0[1-9]|1[0-9]|2[0-3])$/.test(f.id)),facilities=input.geo.facilities.filter(f=>regions.some(r=>r.id===f.code)),areas=input.areas.filter(a=>MapModel.locate(a.xy,regions));LandModel.configure(input.water,input.land);GreenModel.configure(input.green);let zones=[],cells=[],types={};
+// Additional approximate employment zones. Manual modeling boundaries, not surveyed land use.
+let extras=[['新砂・新木場の物流地区',139.818,35.647,139.852,35.674,6],['東雲・辰巳の物流地区',139.807,35.635,139.827,35.649,6],['若洲の工業地区',139.825,35.606,139.846,35.634,5],['京浜島の工業地区',139.751,35.558,139.771,35.575,5],['城南島の物流地区',139.773,35.568,139.792,35.587,6],['東海の物流地区',139.752,35.591,139.779,35.613,6],['足立入谷の工業・物流地区',139.742,35.800,139.768,35.815,5],['葛飾東四つ木の工業地区',139.835,35.723,139.850,35.737,5]];
+let bounds=[Math.min(...regions.map(f=>f.bbox[0])),Math.min(...regions.map(f=>f.bbox[1])),Math.max(...regions.map(f=>f.bbox[2])),Math.max(...regions.map(f=>f.bbox[3]))],lo=MeshModel.key(bounds.slice(0,2)),hi=MeshModel.key(bounds.slice(2));
+for(let x=lo[0];x<=hi[0];x++)for(let y=lo[1];y<=hi[1];y++){let p=MeshModel.xy(x,y),r=MapModel.locate(p,regions);if(!r)continue;let z=LandModel.at(p),type=0,zi=-1,weights=[];
+if(z){type=z.kind==='water'?8:z.kind==='industrial'?6:z.kind==='wildland'||z.kind==='cemetery'?2:9;z={...z,model:'land'}}else{z=GreenModel.at(p);if(z){type=2;z={...z,model:'green'}}}
+if(z){zi=zones.findIndex(a=>a.id===z.id);if(zi<0){zi=zones.length;zones.push(z)}}else{
+ for(let k of Object.keys(AreaModel.types)){let best=0,idx=-1;for(let i=0;i<areas.length;i++){let a=areas[i],tag=k==='night_worker'?'night':['cabaret_worker','adult_customer','adult_worker'].includes(k)?'adult':k,v=(a.tags[tag]||0)*Math.max(0,1-(MapModel.distance(p,a.xy)/a.radius)**2);if(['cabaret_worker','adult_customer','adult_worker'].includes(k))v*=k==='cabaret_worker'&&a.adultStyle==='sexservice'?0:a.adultBoost||1;if(v>best){best=v;idx=i}}if(best>.05)weights.push([idx,k,Math.round(best*100)/100])}
+ let score=k=>Math.max(0,...weights.filter(w=>w[1]===k).map(w=>w[2]));if(score('shopping')>1||score('tourist')>1)type=7;if(score('student')>.6)type=1;if(score('office')>1.3&&score('office')>=score('shopping'))type=3;if(score('night')>1.5||score('adult_customer')>2)type=4;
+ let e=extras.find(e=>p[0]>e[1]&&p[0]<e[3]&&p[1]>e[2]&&p[1]<e[4]);if(e){type=e[5]}
+ }
+ let residential=[1,.7,0,.12,.35,.08,.03,.5,0,0][type];cells.push([x,y,regions.indexOf(r),1,type,zi,residential,weights]);types[MeshModel.names[type]]=(types[MeshModel.names[type]]||0)+1;
+}
+return {regions:regions.map(r=>r.id),areas,cells,zones,types,extras};})()`,ctx);
+fs.writeFileSync('map-preview/data/mesh-23.json',JSON.stringify({version:1,size:100,basis:'Local approximately 100m grid; inferred attributes from existing neighborhood/facility/land polygons. Not observed 100m census counts. Default residential classification is provisional.',...out}));console.log('100m mesh',out.cells.length,out.types);
+

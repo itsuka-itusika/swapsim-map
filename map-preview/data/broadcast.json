@@ -1,0 +1,125 @@
+{
+  "basis": "Official company addresses; manually approximated coordinates and modeled footprint/capacity. Not actual staff counts or real employees. Shared buildings retain background office occupants.",
+  "facilities": [
+    {
+      "id": "broadcast0",
+      "name": "NHK放送センター",
+      "kind": "tv",
+      "xy": [
+        139.6957,
+        35.6657
+      ],
+      "radius": 120,
+      "capacity": 1800,
+      "source": "https://www.nhk-bc.co.jp/company/office.html"
+    },
+    {
+      "id": "broadcast1",
+      "name": "TBSテレビ",
+      "kind": "tv",
+      "xy": [
+        139.7347,
+        35.6725
+      ],
+      "radius": 75,
+      "capacity": 900,
+      "source": "https://www.tbsholdings.co.jp/about/corporate/companyprofile.html"
+    },
+    {
+      "id": "broadcast2",
+      "name": "TBSラジオ",
+      "kind": "radio",
+      "xy": [
+        139.7347,
+        35.6725
+      ],
+      "radius": 60,
+      "capacity": 100,
+      "source": "https://tbsradio.co.jp/company/"
+    },
+    {
+      "id": "broadcast3",
+      "name": "文化放送",
+      "kind": "radio",
+      "xy": [
+        139.7574,
+        35.6564
+      ],
+      "radius": 35,
+      "capacity": 160,
+      "source": "https://www.joqr.co.jp/annai/corporate_profile/"
+    },
+    {
+      "id": "broadcast4",
+      "name": "J-WAVE",
+      "kind": "radio",
+      "xy": [
+        139.7292,
+        35.6605
+      ],
+      "radius": 35,
+      "capacity": 90,
+      "source": "https://www.j-wave.co.jp/about_us/"
+    },
+    {
+      "id": "broadcast5",
+      "name": "日本テレビ",
+      "kind": "tv",
+      "xy": [
+        139.7599,
+        35.6643
+      ],
+      "radius": 70,
+      "capacity": 1100,
+      "source": "https://www.ntv.co.jp/info/"
+    },
+    {
+      "id": "broadcast6",
+      "name": "フジテレビ",
+      "kind": "tv",
+      "xy": [
+        139.7743,
+        35.6269
+      ],
+      "radius": 95,
+      "capacity": 1000,
+      "source": "https://www.fujitv.co.jp/company/"
+    },
+    {
+      "id": "broadcast7",
+      "name": "テレビ朝日",
+      "kind": "tv",
+      "xy": [
+        139.7307,
+        35.6592
+      ],
+      "radius": 70,
+      "capacity": 900,
+      "source": "https://www.tv-asahi.co.jp/company/"
+    },
+    {
+      "id": "broadcast8",
+      "name": "テレビ東京",
+      "kind": "tv",
+      "xy": [
+        139.735,
+        35.6648
+      ],
+      "radius": 60,
+      "capacity": 700,
+      "source": "https://www.tv-tokyo.co.jp/kaisha/"
+    },
+    {
+      "id": "broadcast9",
+      "name": "TOKYO MX",
+      "kind": "tv",
+      "xy": [
+        139.7434,
+        35.6852
+      ],
+      "radius": 35,
+      "capacity": 180,
+      "source": "https://www.mxtv.co.jp/company/company.html"
+    }
+  ]
+}

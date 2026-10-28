@@ -1,0 +1,7663 @@
+{
+  "source": "HeartRails Express https://express.heartrails.com/ ; retrieved 2026-10-27. Near same-name line stations merged within 450m; not claimed exhaustive/current operation.",
+  "basis": "Actual station coordinates; modeled radius and occupancy, not daily ridership or timetable.",
+  "facilities": [
+    {
+      "id": "station0",
+      "kind": "station",
+      "name": "東京駅",
+      "xy": [
+        139.766103,
+        35.681391
+      ],
+      "code": "13101",
+      "lines": [
+        "JR中央線",
+        "JR京浜東北線",
+        "JR京葉線",
+        "JR山手線",
+        "JR東海道本線",
+        "JR横須賀線",
+        "JR総武線快速",
+        "上越新幹線",
+        "東京メトロ丸ノ内線",
+        "東北新幹線",
+        "東海道新幹線",
+        "北陸新幹線",
+        "JR上野東京ライン"
+      ],
+      "capacity": 1800,
+      "radius": 100
+    },
+    {
+      "id": "station1",
+      "kind": "station",
+      "name": "神田駅",
+      "xy": [
+        139.770641,
+        35.691173
+      ],
+      "code": "13101",
+      "lines": [
+        "JR中央線",
+        "JR京浜東北線",
+        "JR山手線",
+        "東京メトロ銀座線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station2",
+      "kind": "station",
+      "name": "御茶ノ水駅",
+      "xy": [
+        139.764955,
+        35.699604
+      ],
+      "code": "13101",
+      "lines": [
+        "JR中央線",
+        "JR総武線",
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station3",
+      "kind": "station",
+      "name": "水道橋駅",
+      "xy": [
+        139.754312,
+        35.702039
+      ],
+      "code": "13101",
+      "lines": [
+        "JR中央線",
+        "JR総武線",
+        "都営三田線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station4",
+      "kind": "station",
+      "name": "飯田橋駅",
+      "xy": [
+        139.745143,
+        35.701835
+      ],
+      "code": "13101",
+      "lines": [
+        "JR中央線",
+        "JR総武線",
+        "東京メトロ南北線",
+        "東京メトロ有楽町線",
+        "東京メトロ東西線",
+        "都営大江戸線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station5",
+      "kind": "station",
+      "name": "市ケ谷駅",
+      "xy": [
+        139.735241,
+        35.691105
+      ],
+      "code": "13101",
+      "lines": [
+        "JR中央線",
+        "東京メトロ南北線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station6",
+      "kind": "station",
+      "name": "四ツ谷駅",
+      "xy": [
+        139.730644,
+        35.686041
+      ],
+      "code": "13101",
+      "lines": [
+        "JR中央線",
+        "JR総武線",
+        "東京メトロ丸ノ内線",
+        "東京メトロ南北線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station7",
+      "kind": "station",
+      "name": "信濃町駅",
+      "xy": [
+        139.720729,
+        35.680031
+      ],
+      "code": "13104",
+      "lines": [
+        "JR中央線",
+        "JR総武線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station8",
+      "kind": "station",
+      "name": "千駄ケ谷駅",
+      "xy": [
+        139.711644,
+        35.681231
+      ],
+      "code": "13113",
+      "lines": [
+        "JR中央線",
+        "JR総武線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station9",
+      "kind": "station",
+      "name": "代々木駅",
+      "xy": [
+        139.702042,
+        35.683061
+      ],
+      "code": "13113",
+      "lines": [
+        "JR中央線",
+        "JR山手線",
+        "JR総武線",
+        "都営大江戸線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station10",
+      "kind": "station",
+      "name": "新宿駅",
+      "xy": [
+        139.700464,
+        35.689729
+      ],
+      "code": "13104",
+      "lines": [
+        "JR中央線",
+        "JR埼京線",
+        "JR山手線",
+        "JR湘南新宿ライン",
+        "JR総武線",
+        "京王線",
+        "小田急小田原線",
+        "東京メトロ丸ノ内線",
+        "都営大江戸線",
+        "都営新宿線",
+        "相鉄・JR直通線"
+      ],
+      "capacity": 1800,
+      "radius": 100
+    },
+    {
+      "id": "station11",
+      "kind": "station",
+      "name": "大久保駅",
+      "xy": [
+        139.69732,
+        35.700784
+      ],
+      "code": "13104",
+      "lines": [
+        "JR中央線",
+        "JR総武線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station12",
+      "kind": "station",
+      "name": "東中野駅",
+      "xy": [
+        139.684436,
+        35.706529
+      ],
+      "code": "13114",
+      "lines": [
+        "JR中央線",
+        "JR総武線",
+        "都営大江戸線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station13",
+      "kind": "station",
+      "name": "中野駅",
+      "xy": [
+        139.665835,
+        35.705765
+      ],
+      "code": "13114",
+      "lines": [
+        "JR中央線",
+        "JR総武線",
+        "東京メトロ東西線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station14",
+      "kind": "station",
+      "name": "高円寺駅",
+      "xy": [
+        139.649664,
+        35.705327
+      ],
+      "code": "13115",
+      "lines": [
+        "JR中央線",
+        "JR総武線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station15",
+      "kind": "station",
+      "name": "阿佐ケ谷駅",
+      "xy": [
+        139.635868,
+        35.704818
+      ],
+      "code": "13115",
+      "lines": [
+        "JR中央線",
+        "JR総武線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station16",
+      "kind": "station",
+      "name": "荻窪駅",
+      "xy": [
+        139.620109,
+        35.704523
+      ],
+      "code": "13115",
+      "lines": [
+        "JR中央線",
+        "JR総武線",
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station17",
+      "kind": "station",
+      "name": "西荻窪駅",
+      "xy": [
+        139.599361,
+        35.703842
+      ],
+      "code": "13115",
+      "lines": [
+        "JR中央線",
+        "JR総武線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station18",
+      "kind": "station",
+      "name": "赤羽駅",
+      "xy": [
+        139.720928,
+        35.778026
+      ],
+      "code": "13117",
+      "lines": [
+        "JR京浜東北線",
+        "JR埼京線",
+        "JR宇都宮線",
+        "JR湘南新宿ライン",
+        "JR高崎線",
+        "JR上野東京ライン"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station19",
+      "kind": "station",
+      "name": "東十条駅",
+      "xy": [
+        139.726858,
+        35.763803
+      ],
+      "code": "13117",
+      "lines": [
+        "JR京浜東北線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station20",
+      "kind": "station",
+      "name": "王子駅",
+      "xy": [
+        139.73809,
+        35.752538
+      ],
+      "code": "13117",
+      "lines": [
+        "JR京浜東北線",
+        "東京メトロ南北線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station21",
+      "kind": "station",
+      "name": "上中里駅",
+      "xy": [
+        139.745769,
+        35.74728
+      ],
+      "code": "13117",
+      "lines": [
+        "JR京浜東北線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station22",
+      "kind": "station",
+      "name": "田端駅",
+      "xy": [
+        139.761229,
+        35.737781
+      ],
+      "code": "13117",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station23",
+      "kind": "station",
+      "name": "西日暮里駅",
+      "xy": [
+        139.766857,
+        35.731954
+      ],
+      "code": "13118",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線",
+        "東京メトロ千代田線",
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station24",
+      "kind": "station",
+      "name": "日暮里駅",
+      "xy": [
+        139.771287,
+        35.727908
+      ],
+      "code": "13118",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線",
+        "JR常磐線快速",
+        "京成本線",
+        "日暮里・舎人ライナー",
+        "JR上野東京ライン"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station25",
+      "kind": "station",
+      "name": "鶯谷駅",
+      "xy": [
+        139.778015,
+        35.721484
+      ],
+      "code": "13106",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station26",
+      "kind": "station",
+      "name": "上野駅",
+      "xy": [
+        139.777043,
+        35.71379
+      ],
+      "code": "13106",
+      "lines": [
+        "JR京浜東北線",
+        "JR宇都宮線",
+        "JR山手線",
+        "JR常磐線快速",
+        "JR高崎線",
+        "上越新幹線",
+        "東京メトロ日比谷線",
+        "東京メトロ銀座線",
+        "東北新幹線",
+        "北陸新幹線",
+        "JR上野東京ライン"
+      ],
+      "capacity": 1800,
+      "radius": 100
+    },
+    {
+      "id": "station27",
+      "kind": "station",
+      "name": "御徒町駅",
+      "xy": [
+        139.774727,
+        35.707282
+      ],
+      "code": "13106",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station28",
+      "kind": "station",
+      "name": "秋葉原駅",
+      "xy": [
+        139.773288,
+        35.698619
+      ],
+      "code": "13101",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線",
+        "JR総武線",
+        "つくばエクスプレス線",
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 1800,
+      "radius": 100
+    },
+    {
+      "id": "station29",
+      "kind": "station",
+      "name": "有楽町駅",
+      "xy": [
+        139.763806,
+        35.675441
+      ],
+      "code": "13101",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線",
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station30",
+      "kind": "station",
+      "name": "新橋駅",
+      "xy": [
+        139.758587,
+        35.666195
+      ],
+      "code": "13103",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線",
+        "JR東海道本線",
+        "JR横須賀線",
+        "新交通ゆりかもめ",
+        "東京メトロ銀座線",
+        "都営浅草線",
+        "JR上野東京ライン"
+      ],
+      "capacity": 1800,
+      "radius": 100
+    },
+    {
+      "id": "station31",
+      "kind": "station",
+      "name": "浜松町駅",
+      "xy": [
+        139.757135,
+        35.655391
+      ],
+      "code": "13103",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station32",
+      "kind": "station",
+      "name": "田町駅",
+      "xy": [
+        139.747575,
+        35.645737
+      ],
+      "code": "13103",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station33",
+      "kind": "station",
+      "name": "高輪ゲートウェイ駅",
+      "xy": [
+        139.740651,
+        35.635476
+      ],
+      "code": "13103",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station34",
+      "kind": "station",
+      "name": "品川駅",
+      "xy": [
+        139.738999,
+        35.62876
+      ],
+      "code": "13103",
+      "lines": [
+        "JR京浜東北線",
+        "JR山手線",
+        "JR東海道本線",
+        "JR横須賀線",
+        "京浜急行本線",
+        "東海道新幹線",
+        "JR上野東京ライン"
+      ],
+      "capacity": 1800,
+      "radius": 100
+    },
+    {
+      "id": "station35",
+      "kind": "station",
+      "name": "大井町駅",
+      "xy": [
+        139.73485,
+        35.606257
+      ],
+      "code": "13109",
+      "lines": [
+        "JR京浜東北線",
+        "東京りんかい線",
+        "東急大井町線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station36",
+      "kind": "station",
+      "name": "大森駅",
+      "xy": [
+        139.728079,
+        35.588903
+      ],
+      "code": "13111",
+      "lines": [
+        "JR京浜東北線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station37",
+      "kind": "station",
+      "name": "蒲田駅",
+      "xy": [
+        139.716032,
+        35.562517
+      ],
+      "code": "13111",
+      "lines": [
+        "JR京浜東北線",
+        "東急多摩川線",
+        "東急池上線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station38",
+      "kind": "station",
+      "name": "八丁堀駅",
+      "xy": [
+        139.777705,
+        35.674617
+      ],
+      "code": "13102",
+      "lines": [
+        "JR京葉線",
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station39",
+      "kind": "station",
+      "name": "越中島駅",
+      "xy": [
+        139.792713,
+        35.667946
+      ],
+      "code": "13108",
+      "lines": [
+        "JR京葉線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station40",
+      "kind": "station",
+      "name": "潮見駅",
+      "xy": [
+        139.817341,
+        35.658702
+      ],
+      "code": "13108",
+      "lines": [
+        "JR京葉線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station41",
+      "kind": "station",
+      "name": "新木場駅",
+      "xy": [
+        139.827402,
+        35.646172
+      ],
+      "code": "13108",
+      "lines": [
+        "JR京葉線",
+        "東京りんかい線",
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station42",
+      "kind": "station",
+      "name": "葛西臨海公園駅",
+      "xy": [
+        139.861529,
+        35.644392
+      ],
+      "code": "13123",
+      "lines": [
+        "JR京葉線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station43",
+      "kind": "station",
+      "name": "大崎駅",
+      "xy": [
+        139.728439,
+        35.619772
+      ],
+      "code": "13109",
+      "lines": [
+        "JR埼京線",
+        "JR山手線",
+        "JR湘南新宿ライン",
+        "東京りんかい線",
+        "相鉄・JR直通線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station44",
+      "kind": "station",
+      "name": "恵比寿駅",
+      "xy": [
+        139.71007,
+        35.646684
+      ],
+      "code": "13113",
+      "lines": [
+        "JR埼京線",
+        "JR山手線",
+        "JR湘南新宿ライン",
+        "東京メトロ日比谷線",
+        "相鉄・JR直通線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station45",
+      "kind": "station",
+      "name": "渋谷駅",
+      "xy": [
+        139.701238,
+        35.658871
+      ],
+      "code": "13113",
+      "lines": [
+        "JR埼京線",
+        "JR山手線",
+        "JR湘南新宿ライン",
+        "京王井の頭線",
+        "東京メトロ半蔵門線",
+        "東京メトロ銀座線",
+        "東京メトロ副都心線",
+        "東急東横線",
+        "東急田園都市線",
+        "相鉄・JR直通線"
+      ],
+      "capacity": 1800,
+      "radius": 100
+    },
+    {
+      "id": "station46",
+      "kind": "station",
+      "name": "池袋駅",
+      "xy": [
+        139.711085,
+        35.730256
+      ],
+      "code": "13116",
+      "lines": [
+        "JR埼京線",
+        "JR山手線",
+        "JR湘南新宿ライン",
+        "東京メトロ丸ノ内線",
+        "東京メトロ有楽町線",
+        "東京メトロ副都心線",
+        "東武東上本線",
+        "西武池袋線"
+      ],
+      "capacity": 1800,
+      "radius": 100
+    },
+    {
+      "id": "station47",
+      "kind": "station",
+      "name": "板橋駅",
+      "xy": [
+        139.719507,
+        35.745435
+      ],
+      "code": "13119",
+      "lines": [
+        "JR埼京線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station48",
+      "kind": "station",
+      "name": "十条駅",
+      "xy": [
+        139.722233,
+        35.760321
+      ],
+      "code": "13117",
+      "lines": [
+        "JR埼京線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station49",
+      "kind": "station",
+      "name": "北赤羽駅",
+      "xy": [
+        139.70569,
+        35.787007
+      ],
+      "code": "13117",
+      "lines": [
+        "JR埼京線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station50",
+      "kind": "station",
+      "name": "浮間舟渡駅",
+      "xy": [
+        139.691341,
+        35.791209
+      ],
+      "code": "13117",
+      "lines": [
+        "JR埼京線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station51",
+      "kind": "station",
+      "name": "尾久駅",
+      "xy": [
+        139.753846,
+        35.74683
+      ],
+      "code": "13117",
+      "lines": [
+        "JR宇都宮線",
+        "JR高崎線",
+        "JR上野東京ライン"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station52",
+      "kind": "station",
+      "name": "五反田駅",
+      "xy": [
+        139.723822,
+        35.625974
+      ],
+      "code": "13109",
+      "lines": [
+        "JR山手線",
+        "東急池上線",
+        "都営浅草線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station53",
+      "kind": "station",
+      "name": "目黒駅",
+      "xy": [
+        139.715775,
+        35.633923
+      ],
+      "code": "13109",
+      "lines": [
+        "JR山手線",
+        "東京メトロ南北線",
+        "東急目黒線",
+        "都営三田線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station54",
+      "kind": "station",
+      "name": "原宿駅",
+      "xy": [
+        139.702592,
+        35.670646
+      ],
+      "code": "13113",
+      "lines": [
+        "JR山手線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station55",
+      "kind": "station",
+      "name": "新大久保駅",
+      "xy": [
+        139.700261,
+        35.700875
+      ],
+      "code": "13104",
+      "lines": [
+        "JR山手線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station56",
+      "kind": "station",
+      "name": "高田馬場駅",
+      "xy": [
+        139.703715,
+        35.712677
+      ],
+      "code": "13104",
+      "lines": [
+        "JR山手線",
+        "東京メトロ東西線",
+        "西武新宿線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station57",
+      "kind": "station",
+      "name": "目白駅",
+      "xy": [
+        139.706228,
+        35.720476
+      ],
+      "code": "13116",
+      "lines": [
+        "JR山手線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station58",
+      "kind": "station",
+      "name": "大塚駅",
+      "xy": [
+        139.728584,
+        35.731412
+      ],
+      "code": "13116",
+      "lines": [
+        "JR山手線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station59",
+      "kind": "station",
+      "name": "巣鴨駅",
+      "xy": [
+        139.739303,
+        35.733445
+      ],
+      "code": "13116",
+      "lines": [
+        "JR山手線",
+        "都営三田線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station60",
+      "kind": "station",
+      "name": "駒込駅",
+      "xy": [
+        139.748053,
+        35.736825
+      ],
+      "code": "13116",
+      "lines": [
+        "JR山手線",
+        "東京メトロ南北線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station61",
+      "kind": "station",
+      "name": "北千住駅",
+      "xy": [
+        139.804872,
+        35.749677
+      ],
+      "code": "13121",
+      "lines": [
+        "JR常磐線各駅停車",
+        "JR常磐線快速",
+        "つくばエクスプレス線",
+        "東京メトロ千代田線",
+        "東京メトロ日比谷線",
+        "東武伊勢崎線"
+      ],
+      "capacity": 1800,
+      "radius": 100
+    },
+    {
+      "id": "station62",
+      "kind": "station",
+      "name": "綾瀬駅",
+      "xy": [
+        139.825019,
+        35.762222
+      ],
+      "code": "13121",
+      "lines": [
+        "JR常磐線各駅停車",
+        "東京メトロ千代田線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station63",
+      "kind": "station",
+      "name": "亀有駅",
+      "xy": [
+        139.847573,
+        35.766527
+      ],
+      "code": "13122",
+      "lines": [
+        "JR常磐線各駅停車"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station64",
+      "kind": "station",
+      "name": "金町駅",
+      "xy": [
+        139.870482,
+        35.769582
+      ],
+      "code": "13122",
+      "lines": [
+        "JR常磐線各駅停車"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station65",
+      "kind": "station",
+      "name": "三河島駅",
+      "xy": [
+        139.777131,
+        35.733383
+      ],
+      "code": "13118",
+      "lines": [
+        "JR常磐線快速"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station66",
+      "kind": "station",
+      "name": "南千住駅",
+      "xy": [
+        139.7994,
+        35.734033
+      ],
+      "code": "13118",
+      "lines": [
+        "JR常磐線快速",
+        "つくばエクスプレス線",
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station67",
+      "kind": "station",
+      "name": "西大井駅",
+      "xy": [
+        139.721729,
+        35.601616
+      ],
+      "code": "13109",
+      "lines": [
+        "JR横須賀線",
+        "JR湘南新宿ライン",
+        "相鉄・JR直通線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station68",
+      "kind": "station",
+      "name": "市ヶ谷駅",
+      "xy": [
+        139.735794,
+        35.692594
+      ],
+      "code": "13104",
+      "lines": [
+        "JR総武線",
+        "東京メトロ有楽町線",
+        "都営新宿線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station69",
+      "kind": "station",
+      "name": "浅草橋駅",
+      "xy": [
+        139.784427,
+        35.697403
+      ],
+      "code": "13106",
+      "lines": [
+        "JR総武線",
+        "都営浅草線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station70",
+      "kind": "station",
+      "name": "両国駅",
+      "xy": [
+        139.793334,
+        35.69579
+      ],
+      "code": "13107",
+      "lines": [
+        "JR総武線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station71",
+      "kind": "station",
+      "name": "錦糸町駅",
+      "xy": [
+        139.814136,
+        35.696802
+      ],
+      "code": "13107",
+      "lines": [
+        "JR総武線",
+        "JR総武線快速",
+        "東京メトロ半蔵門線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station72",
+      "kind": "station",
+      "name": "亀戸駅",
+      "xy": [
+        139.826262,
+        35.697345
+      ],
+      "code": "13108",
+      "lines": [
+        "JR総武線",
+        "東武亀戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station73",
+      "kind": "station",
+      "name": "平井駅",
+      "xy": [
+        139.842181,
+        35.70643
+      ],
+      "code": "13123",
+      "lines": [
+        "JR総武線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station74",
+      "kind": "station",
+      "name": "新小岩駅",
+      "xy": [
+        139.857777,
+        35.716903
+      ],
+      "code": "13122",
+      "lines": [
+        "JR総武線",
+        "JR総武線快速"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station75",
+      "kind": "station",
+      "name": "小岩駅",
+      "xy": [
+        139.881755,
+        35.733207
+      ],
+      "code": "13123",
+      "lines": [
+        "JR総武線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station76",
+      "kind": "station",
+      "name": "新日本橋駅",
+      "xy": [
+        139.77323,
+        35.688687
+      ],
+      "code": "13102",
+      "lines": [
+        "JR総武線快速"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station77",
+      "kind": "station",
+      "name": "馬喰町駅",
+      "xy": [
+        139.78238,
+        35.693365
+      ],
+      "code": "13102",
+      "lines": [
+        "JR総武線快速"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station78",
+      "kind": "station",
+      "name": "新御徒町駅",
+      "xy": [
+        139.781958,
+        35.707045
+      ],
+      "code": "13106",
+      "lines": [
+        "つくばエクスプレス線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station79",
+      "kind": "station",
+      "name": "浅草駅",
+      "xy": [
+        139.792389,
+        35.713817
+      ],
+      "code": "13106",
+      "lines": [
+        "つくばエクスプレス線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station80",
+      "kind": "station",
+      "name": "青井駅",
+      "xy": [
+        139.82038,
+        35.771782
+      ],
+      "code": "13121",
+      "lines": [
+        "つくばエクスプレス線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station81",
+      "kind": "station",
+      "name": "六町駅",
+      "xy": [
+        139.821816,
+        35.784963
+      ],
+      "code": "13121",
+      "lines": [
+        "つくばエクスプレス線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station82",
+      "kind": "station",
+      "name": "押上駅",
+      "xy": [
+        139.812935,
+        35.710702
+      ],
+      "code": "13107",
+      "lines": [
+        "京成押上線",
+        "東京メトロ半蔵門線",
+        "東武伊勢崎線",
+        "都営浅草線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station83",
+      "kind": "station",
+      "name": "京成曳舟駅",
+      "xy": [
+        139.820012,
+        35.718441
+      ],
+      "code": "13107",
+      "lines": [
+        "京成押上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station84",
+      "kind": "station",
+      "name": "八広駅",
+      "xy": [
+        139.828738,
+        35.727687
+      ],
+      "code": "13107",
+      "lines": [
+        "京成押上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station85",
+      "kind": "station",
+      "name": "四ツ木駅",
+      "xy": [
+        139.834918,
+        35.731962
+      ],
+      "code": "13122",
+      "lines": [
+        "京成押上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station86",
+      "kind": "station",
+      "name": "京成立石駅",
+      "xy": [
+        139.848558,
+        35.738281
+      ],
+      "code": "13122",
+      "lines": [
+        "京成押上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station87",
+      "kind": "station",
+      "name": "青砥駅",
+      "xy": [
+        139.856292,
+        35.745883
+      ],
+      "code": "13122",
+      "lines": [
+        "京成押上線",
+        "京成本線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station88",
+      "kind": "station",
+      "name": "京成高砂駅",
+      "xy": [
+        139.866875,
+        35.750932
+      ],
+      "code": "13122",
+      "lines": [
+        "京成押上線",
+        "京成本線",
+        "京成金町線",
+        "京成成田空港線",
+        "北総鉄道"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station89",
+      "kind": "station",
+      "name": "京成上野駅",
+      "xy": [
+        139.773571,
+        35.711232
+      ],
+      "code": "13106",
+      "lines": [
+        "京成本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station90",
+      "kind": "station",
+      "name": "新三河島駅",
+      "xy": [
+        139.773834,
+        35.73714
+      ],
+      "code": "13118",
+      "lines": [
+        "京成本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station91",
+      "kind": "station",
+      "name": "町屋駅",
+      "xy": [
+        139.781499,
+        35.742354
+      ],
+      "code": "13118",
+      "lines": [
+        "京成本線",
+        "東京メトロ千代田線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station92",
+      "kind": "station",
+      "name": "千住大橋駅",
+      "xy": [
+        139.796934,
+        35.74243
+      ],
+      "code": "13121",
+      "lines": [
+        "京成本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station93",
+      "kind": "station",
+      "name": "京成関屋駅",
+      "xy": [
+        139.81183,
+        35.744008
+      ],
+      "code": "13121",
+      "lines": [
+        "京成本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station94",
+      "kind": "station",
+      "name": "堀切菖蒲園駅",
+      "xy": [
+        139.827545,
+        35.747649
+      ],
+      "code": "13122",
+      "lines": [
+        "京成本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station95",
+      "kind": "station",
+      "name": "お花茶屋駅",
+      "xy": [
+        139.83988,
+        35.747585
+      ],
+      "code": "13122",
+      "lines": [
+        "京成本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station96",
+      "kind": "station",
+      "name": "京成小岩駅",
+      "xy": [
+        139.88371,
+        35.742158
+      ],
+      "code": "13123",
+      "lines": [
+        "京成本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station97",
+      "kind": "station",
+      "name": "江戸川駅",
+      "xy": [
+        139.896226,
+        35.737723
+      ],
+      "code": "13123",
+      "lines": [
+        "京成本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station98",
+      "kind": "station",
+      "name": "柴又駅",
+      "xy": [
+        139.875188,
+        35.756323
+      ],
+      "code": "13122",
+      "lines": [
+        "京成金町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station99",
+      "kind": "station",
+      "name": "京成金町駅",
+      "xy": [
+        139.870387,
+        35.768471
+      ],
+      "code": "13122",
+      "lines": [
+        "京成金町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station100",
+      "kind": "station",
+      "name": "泉岳寺駅",
+      "xy": [
+        139.74002,
+        35.638692
+      ],
+      "code": "13103",
+      "lines": [
+        "京浜急行本線",
+        "都営浅草線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station101",
+      "kind": "station",
+      "name": "北品川駅",
+      "xy": [
+        139.739191,
+        35.622458
+      ],
+      "code": "13109",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station102",
+      "kind": "station",
+      "name": "新馬場駅",
+      "xy": [
+        139.741366,
+        35.61762
+      ],
+      "code": "13109",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station103",
+      "kind": "station",
+      "name": "青物横丁駅",
+      "xy": [
+        139.742958,
+        35.609351
+      ],
+      "code": "13109",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station104",
+      "kind": "station",
+      "name": "鮫洲駅",
+      "xy": [
+        139.742227,
+        35.604977
+      ],
+      "code": "13109",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station105",
+      "kind": "station",
+      "name": "立会川駅",
+      "xy": [
+        139.738886,
+        35.598489
+      ],
+      "code": "13109",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station106",
+      "kind": "station",
+      "name": "大森海岸駅",
+      "xy": [
+        139.73544,
+        35.587576
+      ],
+      "code": "13109",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station107",
+      "kind": "station",
+      "name": "平和島駅",
+      "xy": [
+        139.73491,
+        35.57868
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station108",
+      "kind": "station",
+      "name": "大森町駅",
+      "xy": [
+        139.732027,
+        35.572431
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station109",
+      "kind": "station",
+      "name": "梅屋敷駅",
+      "xy": [
+        139.728266,
+        35.566873
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station110",
+      "kind": "station",
+      "name": "京急蒲田駅",
+      "xy": [
+        139.723681,
+        35.560796
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行本線",
+        "京浜急行空港線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station111",
+      "kind": "station",
+      "name": "雑色駅",
+      "xy": [
+        139.715005,
+        35.549725
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station112",
+      "kind": "station",
+      "name": "六郷土手駅",
+      "xy": [
+        139.7076,
+        35.540577
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station113",
+      "kind": "station",
+      "name": "糀谷駅",
+      "xy": [
+        139.72962,
+        35.5545
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行空港線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station114",
+      "kind": "station",
+      "name": "大鳥居駅",
+      "xy": [
+        139.739356,
+        35.552531
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行空港線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station115",
+      "kind": "station",
+      "name": "穴守稲荷駅",
+      "xy": [
+        139.746669,
+        35.550326
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行空港線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station116",
+      "kind": "station",
+      "name": "天空橋駅",
+      "xy": [
+        139.75423,
+        35.548908
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行空港線",
+        "東京モノレール羽田線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station117",
+      "kind": "station",
+      "name": "羽田空港第3ターミナル駅",
+      "xy": [
+        139.768968,
+        35.544676
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行空港線",
+        "東京モノレール羽田線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station118",
+      "kind": "station",
+      "name": "羽田空港第1・第2ターミナル駅",
+      "xy": [
+        139.785962,
+        35.549809
+      ],
+      "code": "13111",
+      "lines": [
+        "京浜急行空港線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station119",
+      "kind": "station",
+      "name": "笹塚駅",
+      "xy": [
+        139.667251,
+        35.673758
+      ],
+      "code": "13113",
+      "lines": [
+        "京王線",
+        "京王新線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station120",
+      "kind": "station",
+      "name": "代田橋駅",
+      "xy": [
+        139.659413,
+        35.671092
+      ],
+      "code": "13112",
+      "lines": [
+        "京王線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station121",
+      "kind": "station",
+      "name": "明大前駅",
+      "xy": [
+        139.650352,
+        35.668758
+      ],
+      "code": "13112",
+      "lines": [
+        "京王線",
+        "京王井の頭線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station122",
+      "kind": "station",
+      "name": "下高井戸駅",
+      "xy": [
+        139.641372,
+        35.66615
+      ],
+      "code": "13112",
+      "lines": [
+        "京王線",
+        "東急世田谷線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station123",
+      "kind": "station",
+      "name": "桜上水駅",
+      "xy": [
+        139.63129,
+        35.66768
+      ],
+      "code": "13112",
+      "lines": [
+        "京王線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station124",
+      "kind": "station",
+      "name": "上北沢駅",
+      "xy": [
+        139.62329,
+        35.668857
+      ],
+      "code": "13112",
+      "lines": [
+        "京王線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station125",
+      "kind": "station",
+      "name": "八幡山駅",
+      "xy": [
+        139.614927,
+        35.669982
+      ],
+      "code": "13115",
+      "lines": [
+        "京王線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station126",
+      "kind": "station",
+      "name": "芦花公園駅",
+      "xy": [
+        139.608247,
+        35.670479
+      ],
+      "code": "13112",
+      "lines": [
+        "京王線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station127",
+      "kind": "station",
+      "name": "千歳烏山駅",
+      "xy": [
+        139.60067,
+        35.667921
+      ],
+      "code": "13112",
+      "lines": [
+        "京王線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station128",
+      "kind": "station",
+      "name": "新線新宿駅",
+      "xy": [
+        139.698812,
+        35.68869
+      ],
+      "code": "13104",
+      "lines": [
+        "京王新線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station129",
+      "kind": "station",
+      "name": "初台駅",
+      "xy": [
+        139.686354,
+        35.68123
+      ],
+      "code": "13113",
+      "lines": [
+        "京王新線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station130",
+      "kind": "station",
+      "name": "幡ヶ谷駅",
+      "xy": [
+        139.676183,
+        35.677061
+      ],
+      "code": "13113",
+      "lines": [
+        "京王新線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station131",
+      "kind": "station",
+      "name": "神泉駅",
+      "xy": [
+        139.693579,
+        35.657244
+      ],
+      "code": "13113",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station132",
+      "kind": "station",
+      "name": "駒場東大前駅",
+      "xy": [
+        139.684308,
+        35.65868
+      ],
+      "code": "13110",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station133",
+      "kind": "station",
+      "name": "池ノ上駅",
+      "xy": [
+        139.67344,
+        35.660402
+      ],
+      "code": "13112",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station134",
+      "kind": "station",
+      "name": "下北沢駅",
+      "xy": [
+        139.66691,
+        35.661539
+      ],
+      "code": "13112",
+      "lines": [
+        "京王井の頭線",
+        "小田急小田原線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station135",
+      "kind": "station",
+      "name": "新代田駅",
+      "xy": [
+        139.660524,
+        35.662593
+      ],
+      "code": "13112",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station136",
+      "kind": "station",
+      "name": "東松原駅",
+      "xy": [
+        139.655535,
+        35.662634
+      ],
+      "code": "13112",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station137",
+      "kind": "station",
+      "name": "永福町駅",
+      "xy": [
+        139.642733,
+        35.67629
+      ],
+      "code": "13115",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station138",
+      "kind": "station",
+      "name": "西永福駅",
+      "xy": [
+        139.634936,
+        35.678918
+      ],
+      "code": "13115",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station139",
+      "kind": "station",
+      "name": "浜田山駅",
+      "xy": [
+        139.627528,
+        35.681603
+      ],
+      "code": "13115",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station140",
+      "kind": "station",
+      "name": "高井戸駅",
+      "xy": [
+        139.615115,
+        35.683253
+      ],
+      "code": "13115",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station141",
+      "kind": "station",
+      "name": "富士見ヶ丘駅",
+      "xy": [
+        139.607072,
+        35.684805
+      ],
+      "code": "13115",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station142",
+      "kind": "station",
+      "name": "久我山駅",
+      "xy": [
+        139.599211,
+        35.688138
+      ],
+      "code": "13115",
+      "lines": [
+        "京王井の頭線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station143",
+      "kind": "station",
+      "name": "新柴又駅",
+      "xy": [
+        139.879376,
+        35.75101
+      ],
+      "code": "13122",
+      "lines": [
+        "北総鉄道"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station144",
+      "kind": "station",
+      "name": "赤羽岩淵駅",
+      "xy": [
+        139.722103,
+        35.783417
+      ],
+      "code": "13117",
+      "lines": [
+        "埼玉高速鉄道",
+        "東京メトロ南北線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station145",
+      "kind": "station",
+      "name": "南新宿駅",
+      "xy": [
+        139.69867,
+        35.683483
+      ],
+      "code": "13113",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station146",
+      "kind": "station",
+      "name": "参宮橋駅",
+      "xy": [
+        139.693568,
+        35.678586
+      ],
+      "code": "13113",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station147",
+      "kind": "station",
+      "name": "代々木八幡駅",
+      "xy": [
+        139.688913,
+        35.669715
+      ],
+      "code": "13113",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station148",
+      "kind": "station",
+      "name": "代々木上原駅",
+      "xy": [
+        139.680153,
+        35.669159
+      ],
+      "code": "13113",
+      "lines": [
+        "小田急小田原線",
+        "東京メトロ千代田線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station149",
+      "kind": "station",
+      "name": "東北沢駅",
+      "xy": [
+        139.673014,
+        35.665379
+      ],
+      "code": "13112",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station150",
+      "kind": "station",
+      "name": "世田谷代田駅",
+      "xy": [
+        139.661557,
+        35.65834
+      ],
+      "code": "13112",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station151",
+      "kind": "station",
+      "name": "梅ヶ丘駅",
+      "xy": [
+        139.653628,
+        35.656024
+      ],
+      "code": "13112",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station152",
+      "kind": "station",
+      "name": "豪徳寺駅",
+      "xy": [
+        139.647381,
+        35.653807
+      ],
+      "code": "13112",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station153",
+      "kind": "station",
+      "name": "経堂駅",
+      "xy": [
+        139.635993,
+        35.650991
+      ],
+      "code": "13112",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station154",
+      "kind": "station",
+      "name": "千歳船橋駅",
+      "xy": [
+        139.624544,
+        35.647616
+      ],
+      "code": "13112",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station155",
+      "kind": "station",
+      "name": "祖師ヶ谷大蔵駅",
+      "xy": [
+        139.609659,
+        35.643236
+      ],
+      "code": "13112",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station156",
+      "kind": "station",
+      "name": "成城学園前駅",
+      "xy": [
+        139.598958,
+        35.640114
+      ],
+      "code": "13112",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station157",
+      "kind": "station",
+      "name": "喜多見駅",
+      "xy": [
+        139.587445,
+        35.636697
+      ],
+      "code": "13112",
+      "lines": [
+        "小田急小田原線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station158",
+      "kind": "station",
+      "name": "汐留駅",
+      "xy": [
+        139.759985,
+        35.662871
+      ],
+      "code": "13103",
+      "lines": [
+        "新交通ゆりかもめ",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station159",
+      "kind": "station",
+      "name": "竹芝駅",
+      "xy": [
+        139.762037,
+        35.654099
+      ],
+      "code": "13103",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station160",
+      "kind": "station",
+      "name": "日の出駅",
+      "xy": [
+        139.75906,
+        35.649136
+      ],
+      "code": "13103",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station161",
+      "kind": "station",
+      "name": "芝浦ふ頭駅",
+      "xy": [
+        139.757852,
+        35.641773
+      ],
+      "code": "13103",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station162",
+      "kind": "station",
+      "name": "お台場海浜公園駅",
+      "xy": [
+        139.778607,
+        35.629813
+      ],
+      "code": "13103",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station163",
+      "kind": "station",
+      "name": "台場駅",
+      "xy": [
+        139.771435,
+        35.625908
+      ],
+      "code": "13103",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station164",
+      "kind": "station",
+      "name": "東京国際クルーズターミナル駅",
+      "xy": [
+        139.773157,
+        35.621462
+      ],
+      "code": "13108",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station165",
+      "kind": "station",
+      "name": "テレコムセンター駅",
+      "xy": [
+        139.779327,
+        35.617593
+      ],
+      "code": "13108",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station166",
+      "kind": "station",
+      "name": "青海駅",
+      "xy": [
+        139.781132,
+        35.62467
+      ],
+      "code": "13108",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station167",
+      "kind": "station",
+      "name": "東京ビッグサイト駅",
+      "xy": [
+        139.791228,
+        35.630158
+      ],
+      "code": "13108",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station168",
+      "kind": "station",
+      "name": "有明駅",
+      "xy": [
+        139.793269,
+        35.634596
+      ],
+      "code": "13108",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station169",
+      "kind": "station",
+      "name": "有明テニスの森駅",
+      "xy": [
+        139.78888,
+        35.639964
+      ],
+      "code": "13108",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station170",
+      "kind": "station",
+      "name": "市場前駅",
+      "xy": [
+        139.78564,
+        35.645684
+      ],
+      "code": "13108",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station171",
+      "kind": "station",
+      "name": "新豊洲駅",
+      "xy": [
+        139.789996,
+        35.648718
+      ],
+      "code": "13108",
+      "lines": [
+        "新交通ゆりかもめ"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station172",
+      "kind": "station",
+      "name": "豊洲駅",
+      "xy": [
+        139.795414,
+        35.653792
+      ],
+      "code": "13108",
+      "lines": [
+        "新交通ゆりかもめ",
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station173",
+      "kind": "station",
+      "name": "東雲駅",
+      "xy": [
+        139.804395,
+        35.640987
+      ],
+      "code": "13108",
+      "lines": [
+        "東京りんかい線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station174",
+      "kind": "station",
+      "name": "国際展示場駅",
+      "xy": [
+        139.791617,
+        35.63441
+      ],
+      "code": "13108",
+      "lines": [
+        "東京りんかい線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station175",
+      "kind": "station",
+      "name": "東京テレポート駅",
+      "xy": [
+        139.778896,
+        35.62753
+      ],
+      "code": "13108",
+      "lines": [
+        "東京りんかい線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station176",
+      "kind": "station",
+      "name": "天王洲アイル駅",
+      "xy": [
+        139.750793,
+        35.620562
+      ],
+      "code": "13109",
+      "lines": [
+        "東京りんかい線",
+        "東京モノレール羽田線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station177",
+      "kind": "station",
+      "name": "品川シーサイド駅",
+      "xy": [
+        139.749549,
+        35.608524
+      ],
+      "code": "13109",
+      "lines": [
+        "東京りんかい線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station178",
+      "kind": "station",
+      "name": "中野坂上駅",
+      "xy": [
+        139.68291,
+        35.69792
+      ],
+      "code": "13114",
+      "lines": [
+        "東京メトロ丸ノ内分岐線",
+        "東京メトロ丸ノ内線",
+        "都営大江戸線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station179",
+      "kind": "station",
+      "name": "中野新橋駅",
+      "xy": [
+        139.673997,
+        35.692123
+      ],
+      "code": "13114",
+      "lines": [
+        "東京メトロ丸ノ内分岐線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station180",
+      "kind": "station",
+      "name": "中野富士見町駅",
+      "xy": [
+        139.666933,
+        35.690514
+      ],
+      "code": "13114",
+      "lines": [
+        "東京メトロ丸ノ内分岐線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station181",
+      "kind": "station",
+      "name": "方南町駅",
+      "xy": [
+        139.656498,
+        35.683496
+      ],
+      "code": "13115",
+      "lines": [
+        "東京メトロ丸ノ内分岐線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station182",
+      "kind": "station",
+      "name": "新大塚駅",
+      "xy": [
+        139.729971,
+        35.72569
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station183",
+      "kind": "station",
+      "name": "茗荷谷駅",
+      "xy": [
+        139.737184,
+        35.716989
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station184",
+      "kind": "station",
+      "name": "後楽園駅",
+      "xy": [
+        139.751864,
+        35.707898
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ丸ノ内線",
+        "東京メトロ南北線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station185",
+      "kind": "station",
+      "name": "本郷三丁目駅",
+      "xy": [
+        139.759914,
+        35.706671
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ丸ノ内線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station186",
+      "kind": "station",
+      "name": "淡路町駅",
+      "xy": [
+        139.767575,
+        35.695434
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station187",
+      "kind": "station",
+      "name": "大手町駅",
+      "xy": [
+        139.7662,
+        35.686564
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ丸ノ内線",
+        "東京メトロ千代田線",
+        "東京メトロ半蔵門線",
+        "東京メトロ東西線",
+        "都営三田線"
+      ],
+      "capacity": 1800,
+      "radius": 100
+    },
+    {
+      "id": "station188",
+      "kind": "station",
+      "name": "銀座駅",
+      "xy": [
+        139.763965,
+        35.671989
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ丸ノ内線",
+        "東京メトロ日比谷線",
+        "東京メトロ銀座線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station189",
+      "kind": "station",
+      "name": "霞ケ関駅",
+      "xy": [
+        139.750899,
+        35.673838
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ丸ノ内線",
+        "東京メトロ千代田線",
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station190",
+      "kind": "station",
+      "name": "国会議事堂前駅",
+      "xy": [
+        139.745219,
+        35.67393
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ丸ノ内線",
+        "東京メトロ千代田線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station191",
+      "kind": "station",
+      "name": "赤坂見附駅",
+      "xy": [
+        139.737047,
+        35.677021
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ丸ノ内線",
+        "東京メトロ銀座線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station192",
+      "kind": "station",
+      "name": "四谷三丁目駅",
+      "xy": [
+        139.720103,
+        35.687958
+      ],
+      "code": "13104",
+      "lines": [
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station193",
+      "kind": "station",
+      "name": "新宿御苑前駅",
+      "xy": [
+        139.71069,
+        35.688588
+      ],
+      "code": "13104",
+      "lines": [
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station194",
+      "kind": "station",
+      "name": "新宿三丁目駅",
+      "xy": [
+        139.704895,
+        35.690847
+      ],
+      "code": "13104",
+      "lines": [
+        "東京メトロ丸ノ内線",
+        "東京メトロ副都心線",
+        "都営新宿線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station195",
+      "kind": "station",
+      "name": "西新宿駅",
+      "xy": [
+        139.692778,
+        35.694298
+      ],
+      "code": "13104",
+      "lines": [
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station196",
+      "kind": "station",
+      "name": "新中野駅",
+      "xy": [
+        139.66903,
+        35.697491
+      ],
+      "code": "13114",
+      "lines": [
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station197",
+      "kind": "station",
+      "name": "東高円寺駅",
+      "xy": [
+        139.657822,
+        35.697802
+      ],
+      "code": "13115",
+      "lines": [
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station198",
+      "kind": "station",
+      "name": "新高円寺駅",
+      "xy": [
+        139.648068,
+        35.697985
+      ],
+      "code": "13115",
+      "lines": [
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station199",
+      "kind": "station",
+      "name": "南阿佐ヶ谷駅",
+      "xy": [
+        139.63576,
+        35.699624
+      ],
+      "code": "13115",
+      "lines": [
+        "東京メトロ丸ノ内線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station200",
+      "kind": "station",
+      "name": "北綾瀬駅",
+      "xy": [
+        139.832035,
+        35.777117
+      ],
+      "code": "13121",
+      "lines": [
+        "東京メトロ千代田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station201",
+      "kind": "station",
+      "name": "千駄木駅",
+      "xy": [
+        139.763243,
+        35.725549
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ千代田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station202",
+      "kind": "station",
+      "name": "根津駅",
+      "xy": [
+        139.765655,
+        35.7174
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ千代田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station203",
+      "kind": "station",
+      "name": "湯島駅",
+      "xy": [
+        139.769916,
+        35.708243
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ千代田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station204",
+      "kind": "station",
+      "name": "新御茶ノ水駅",
+      "xy": [
+        139.766014,
+        35.698072
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ千代田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station205",
+      "kind": "station",
+      "name": "二重橋前駅",
+      "xy": [
+        139.761948,
+        35.681071
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ千代田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station206",
+      "kind": "station",
+      "name": "日比谷駅",
+      "xy": [
+        139.758732,
+        35.674241
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ千代田線",
+        "東京メトロ日比谷線",
+        "都営三田線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station207",
+      "kind": "station",
+      "name": "赤坂駅",
+      "xy": [
+        139.738348,
+        35.67323
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ千代田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station208",
+      "kind": "station",
+      "name": "乃木坂駅",
+      "xy": [
+        139.726215,
+        35.666572
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ千代田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station209",
+      "kind": "station",
+      "name": "表参道駅",
+      "xy": [
+        139.712314,
+        35.665247
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ千代田線",
+        "東京メトロ半蔵門線",
+        "東京メトロ銀座線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station210",
+      "kind": "station",
+      "name": "明治神宮前駅",
+      "xy": [
+        139.703995,
+        35.669071
+      ],
+      "code": "13113",
+      "lines": [
+        "東京メトロ千代田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station211",
+      "kind": "station",
+      "name": "代々木公園駅",
+      "xy": [
+        139.689099,
+        35.669187
+      ],
+      "code": "13113",
+      "lines": [
+        "東京メトロ千代田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station212",
+      "kind": "station",
+      "name": "青山一丁目駅",
+      "xy": [
+        139.724159,
+        35.672765
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ半蔵門線",
+        "東京メトロ銀座線",
+        "都営大江戸線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station213",
+      "kind": "station",
+      "name": "永田町駅",
+      "xy": [
+        139.740258,
+        35.678757
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ半蔵門線",
+        "東京メトロ南北線",
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station214",
+      "kind": "station",
+      "name": "半蔵門駅",
+      "xy": [
+        139.74163,
+        35.685703
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ半蔵門線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station215",
+      "kind": "station",
+      "name": "九段下駅",
+      "xy": [
+        139.751948,
+        35.695589
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ半蔵門線",
+        "東京メトロ東西線",
+        "都営新宿線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station216",
+      "kind": "station",
+      "name": "神保町駅",
+      "xy": [
+        139.757606,
+        35.695966
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ半蔵門線",
+        "都営三田線",
+        "都営新宿線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station217",
+      "kind": "station",
+      "name": "三越前駅",
+      "xy": [
+        139.773147,
+        35.684908
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ半蔵門線",
+        "東京メトロ銀座線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station218",
+      "kind": "station",
+      "name": "水天宮前駅",
+      "xy": [
+        139.785377,
+        35.682683
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ半蔵門線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station219",
+      "kind": "station",
+      "name": "清澄白河駅",
+      "xy": [
+        139.798851,
+        35.682105
+      ],
+      "code": "13108",
+      "lines": [
+        "東京メトロ半蔵門線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station220",
+      "kind": "station",
+      "name": "住吉駅",
+      "xy": [
+        139.815681,
+        35.689073
+      ],
+      "code": "13108",
+      "lines": [
+        "東京メトロ半蔵門線",
+        "都営新宿線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station221",
+      "kind": "station",
+      "name": "白金台駅",
+      "xy": [
+        139.726133,
+        35.637917
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ南北線",
+        "都営三田線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station222",
+      "kind": "station",
+      "name": "白金高輪駅",
+      "xy": [
+        139.734104,
+        35.642903
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ南北線",
+        "都営三田線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station223",
+      "kind": "station",
+      "name": "麻布十番駅",
+      "xy": [
+        139.737051,
+        35.654682
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ南北線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station224",
+      "kind": "station",
+      "name": "六本木一丁目駅",
+      "xy": [
+        139.739,
+        35.665595
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ南北線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station225",
+      "kind": "station",
+      "name": "溜池山王駅",
+      "xy": [
+        139.741419,
+        35.673621
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ南北線",
+        "東京メトロ銀座線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station226",
+      "kind": "station",
+      "name": "東大前駅",
+      "xy": [
+        139.758025,
+        35.717633
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ南北線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station227",
+      "kind": "station",
+      "name": "本駒込駅",
+      "xy": [
+        139.753828,
+        35.724155
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ南北線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station228",
+      "kind": "station",
+      "name": "西ケ原駅",
+      "xy": [
+        139.742322,
+        35.746008
+      ],
+      "code": "13117",
+      "lines": [
+        "東京メトロ南北線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station229",
+      "kind": "station",
+      "name": "王子神谷駅",
+      "xy": [
+        139.735933,
+        35.765172
+      ],
+      "code": "13117",
+      "lines": [
+        "東京メトロ南北線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station230",
+      "kind": "station",
+      "name": "志茂駅",
+      "xy": [
+        139.732599,
+        35.777948
+      ],
+      "code": "13117",
+      "lines": [
+        "東京メトロ南北線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station231",
+      "kind": "station",
+      "name": "三ノ輪駅",
+      "xy": [
+        139.791485,
+        35.729623
+      ],
+      "code": "13106",
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station232",
+      "kind": "station",
+      "name": "入谷駅",
+      "xy": [
+        139.783924,
+        35.719862
+      ],
+      "code": "13106",
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station233",
+      "kind": "station",
+      "name": "仲御徒町駅",
+      "xy": [
+        139.776138,
+        35.706649
+      ],
+      "code": "13106",
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station234",
+      "kind": "station",
+      "name": "小伝馬町駅",
+      "xy": [
+        139.778433,
+        35.690737
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station235",
+      "kind": "station",
+      "name": "人形町駅",
+      "xy": [
+        139.782285,
+        35.686307
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ日比谷線",
+        "都営浅草線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station236",
+      "kind": "station",
+      "name": "茅場町駅",
+      "xy": [
+        139.780005,
+        35.679752
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ日比谷線",
+        "東京メトロ東西線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station237",
+      "kind": "station",
+      "name": "築地駅",
+      "xy": [
+        139.772603,
+        35.668115
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station238",
+      "kind": "station",
+      "name": "東銀座駅",
+      "xy": [
+        139.767253,
+        35.669464
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ日比谷線",
+        "都営浅草線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station239",
+      "kind": "station",
+      "name": "虎ノ門ヒルズ駅",
+      "xy": [
+        139.747793,
+        35.667444
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station240",
+      "kind": "station",
+      "name": "神谷町駅",
+      "xy": [
+        139.745069,
+        35.662978
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station241",
+      "kind": "station",
+      "name": "六本木駅",
+      "xy": [
+        139.731443,
+        35.662836
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ日比谷線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station242",
+      "kind": "station",
+      "name": "広尾駅",
+      "xy": [
+        139.722202,
+        35.652279
+      ],
+      "code": "13113",
+      "lines": [
+        "東京メトロ日比谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station243",
+      "kind": "station",
+      "name": "中目黒駅",
+      "xy": [
+        139.698621,
+        35.643854
+      ],
+      "code": "13110",
+      "lines": [
+        "東京メトロ日比谷線",
+        "東急東横線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station244",
+      "kind": "station",
+      "name": "地下鉄成増駅",
+      "xy": [
+        139.631497,
+        35.776557
+      ],
+      "code": "13119",
+      "lines": [
+        "東京メトロ有楽町線",
+        "東京メトロ副都心線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station245",
+      "kind": "station",
+      "name": "地下鉄赤塚駅",
+      "xy": [
+        139.644021,
+        35.769939
+      ],
+      "code": "13120",
+      "lines": [
+        "東京メトロ有楽町線",
+        "東京メトロ副都心線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station246",
+      "kind": "station",
+      "name": "平和台駅",
+      "xy": [
+        139.653762,
+        35.757863
+      ],
+      "code": "13120",
+      "lines": [
+        "東京メトロ有楽町線",
+        "東京メトロ副都心線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station247",
+      "kind": "station",
+      "name": "氷川台駅",
+      "xy": [
+        139.665567,
+        35.74955
+      ],
+      "code": "13120",
+      "lines": [
+        "東京メトロ有楽町線",
+        "東京メトロ副都心線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station248",
+      "kind": "station",
+      "name": "小竹向原駅",
+      "xy": [
+        139.678572,
+        35.743803
+      ],
+      "code": "13120",
+      "lines": [
+        "東京メトロ有楽町線",
+        "東京メトロ副都心線",
+        "西武有楽町線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station249",
+      "kind": "station",
+      "name": "千川駅",
+      "xy": [
+        139.689271,
+        35.738229
+      ],
+      "code": "13116",
+      "lines": [
+        "東京メトロ有楽町線",
+        "東京メトロ副都心線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station250",
+      "kind": "station",
+      "name": "要町駅",
+      "xy": [
+        139.698715,
+        35.73323
+      ],
+      "code": "13116",
+      "lines": [
+        "東京メトロ有楽町線",
+        "東京メトロ副都心線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station251",
+      "kind": "station",
+      "name": "東池袋駅",
+      "xy": [
+        139.719546,
+        35.725732
+      ],
+      "code": "13116",
+      "lines": [
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station252",
+      "kind": "station",
+      "name": "護国寺駅",
+      "xy": [
+        139.72754,
+        35.719044
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station253",
+      "kind": "station",
+      "name": "江戸川橋駅",
+      "xy": [
+        139.733538,
+        35.709495
+      ],
+      "code": "13105",
+      "lines": [
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station254",
+      "kind": "station",
+      "name": "麹町駅",
+      "xy": [
+        139.737613,
+        35.684006
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station255",
+      "kind": "station",
+      "name": "桜田門駅",
+      "xy": [
+        139.75149,
+        35.677405
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station256",
+      "kind": "station",
+      "name": "銀座一丁目駅",
+      "xy": [
+        139.767045,
+        35.67435
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station257",
+      "kind": "station",
+      "name": "新富町駅",
+      "xy": [
+        139.773711,
+        35.670462
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station258",
+      "kind": "station",
+      "name": "月島駅",
+      "xy": [
+        139.784233,
+        35.664871
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ有楽町線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station259",
+      "kind": "station",
+      "name": "辰巳駅",
+      "xy": [
+        139.81052,
+        35.645576
+      ],
+      "code": "13108",
+      "lines": [
+        "東京メトロ有楽町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station260",
+      "kind": "station",
+      "name": "落合駅",
+      "xy": [
+        139.687284,
+        35.710976
+      ],
+      "code": "13104",
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station261",
+      "kind": "station",
+      "name": "早稲田駅",
+      "xy": [
+        139.721319,
+        35.705723
+      ],
+      "code": "13104",
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station262",
+      "kind": "station",
+      "name": "神楽坂駅",
+      "xy": [
+        139.734546,
+        35.70379
+      ],
+      "code": "13104",
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station263",
+      "kind": "station",
+      "name": "竹橋駅",
+      "xy": [
+        139.756817,
+        35.690662
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station264",
+      "kind": "station",
+      "name": "日本橋駅",
+      "xy": [
+        139.773516,
+        35.682078
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ東西線",
+        "東京メトロ銀座線",
+        "都営浅草線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station265",
+      "kind": "station",
+      "name": "門前仲町駅",
+      "xy": [
+        139.796209,
+        35.671851
+      ],
+      "code": "13108",
+      "lines": [
+        "東京メトロ東西線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station266",
+      "kind": "station",
+      "name": "木場駅",
+      "xy": [
+        139.807042,
+        35.669351
+      ],
+      "code": "13108",
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station267",
+      "kind": "station",
+      "name": "東陽町駅",
+      "xy": [
+        139.817596,
+        35.669629
+      ],
+      "code": "13108",
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station268",
+      "kind": "station",
+      "name": "南砂町駅",
+      "xy": [
+        139.83065,
+        35.668796
+      ],
+      "code": "13108",
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station269",
+      "kind": "station",
+      "name": "西葛西駅",
+      "xy": [
+        139.859259,
+        35.664631
+      ],
+      "code": "13123",
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station270",
+      "kind": "station",
+      "name": "葛西駅",
+      "xy": [
+        139.872458,
+        35.663554
+      ],
+      "code": "13123",
+      "lines": [
+        "東京メトロ東西線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station271",
+      "kind": "station",
+      "name": "外苑前駅",
+      "xy": [
+        139.717857,
+        35.670527
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ銀座線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station272",
+      "kind": "station",
+      "name": "虎ノ門駅",
+      "xy": [
+        139.749832,
+        35.670236
+      ],
+      "code": "13103",
+      "lines": [
+        "東京メトロ銀座線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station273",
+      "kind": "station",
+      "name": "京橋駅",
+      "xy": [
+        139.770126,
+        35.676856
+      ],
+      "code": "13102",
+      "lines": [
+        "東京メトロ銀座線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station274",
+      "kind": "station",
+      "name": "末広町駅",
+      "xy": [
+        139.771713,
+        35.702972
+      ],
+      "code": "13101",
+      "lines": [
+        "東京メトロ銀座線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station275",
+      "kind": "station",
+      "name": "上野広小路駅",
+      "xy": [
+        139.772877,
+        35.70768
+      ],
+      "code": "13106",
+      "lines": [
+        "東京メトロ銀座線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station276",
+      "kind": "station",
+      "name": "稲荷町駅",
+      "xy": [
+        139.782593,
+        35.711273
+      ],
+      "code": "13106",
+      "lines": [
+        "東京メトロ銀座線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station277",
+      "kind": "station",
+      "name": "田原町駅",
+      "xy": [
+        139.790897,
+        35.709897
+      ],
+      "code": "13106",
+      "lines": [
+        "東京メトロ銀座線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station278",
+      "kind": "station",
+      "name": "浅草駅",
+      "xy": [
+        139.797592,
+        35.710733
+      ],
+      "code": "13106",
+      "lines": [
+        "東京メトロ銀座線",
+        "東武伊勢崎線",
+        "都営浅草線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station279",
+      "kind": "station",
+      "name": "雑司が谷駅",
+      "xy": [
+        139.714795,
+        35.720233
+      ],
+      "code": "13116",
+      "lines": [
+        "東京メトロ副都心線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station280",
+      "kind": "station",
+      "name": "西早稲田駅",
+      "xy": [
+        139.709101,
+        35.708242
+      ],
+      "code": "13104",
+      "lines": [
+        "東京メトロ副都心線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station281",
+      "kind": "station",
+      "name": "東新宿駅",
+      "xy": [
+        139.707593,
+        35.698915
+      ],
+      "code": "13104",
+      "lines": [
+        "東京メトロ副都心線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station282",
+      "kind": "station",
+      "name": "北参道駅",
+      "xy": [
+        139.705453,
+        35.678459
+      ],
+      "code": "13113",
+      "lines": [
+        "東京メトロ副都心線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station283",
+      "kind": "station",
+      "name": "明治神宮前〈原宿〉駅",
+      "xy": [
+        139.705367,
+        35.668497
+      ],
+      "code": "13113",
+      "lines": [
+        "東京メトロ副都心線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station284",
+      "kind": "station",
+      "name": "モノレール浜松町駅",
+      "xy": [
+        139.756747,
+        35.655666
+      ],
+      "code": "13103",
+      "lines": [
+        "東京モノレール羽田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station285",
+      "kind": "station",
+      "name": "大井競馬場前駅",
+      "xy": [
+        139.74708,
+        35.595006
+      ],
+      "code": "13109",
+      "lines": [
+        "東京モノレール羽田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station286",
+      "kind": "station",
+      "name": "流通センター駅",
+      "xy": [
+        139.748964,
+        35.58186
+      ],
+      "code": "13111",
+      "lines": [
+        "東京モノレール羽田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station287",
+      "kind": "station",
+      "name": "昭和島駅",
+      "xy": [
+        139.749918,
+        35.570656
+      ],
+      "code": "13111",
+      "lines": [
+        "東京モノレール羽田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station288",
+      "kind": "station",
+      "name": "整備場駅",
+      "xy": [
+        139.753366,
+        35.555125
+      ],
+      "code": "13111",
+      "lines": [
+        "東京モノレール羽田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station289",
+      "kind": "station",
+      "name": "新整備場駅",
+      "xy": [
+        139.786777,
+        35.542773
+      ],
+      "code": "13111",
+      "lines": [
+        "東京モノレール羽田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station290",
+      "kind": "station",
+      "name": "羽田空港第1ターミナル駅",
+      "xy": [
+        139.784653,
+        35.549163
+      ],
+      "code": "13111",
+      "lines": [
+        "東京モノレール羽田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station291",
+      "kind": "station",
+      "name": "羽田空港第2ターミナル駅",
+      "xy": [
+        139.787979,
+        35.550734
+      ],
+      "code": "13111",
+      "lines": [
+        "東京モノレール羽田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station292",
+      "kind": "station",
+      "name": "三軒茶屋駅",
+      "xy": [
+        139.670156,
+        35.643716
+      ],
+      "code": "13112",
+      "lines": [
+        "東急世田谷線",
+        "東急田園都市線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station293",
+      "kind": "station",
+      "name": "西太子堂駅",
+      "xy": [
+        139.666382,
+        35.644545
+      ],
+      "code": "13112",
+      "lines": [
+        "東急世田谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station294",
+      "kind": "station",
+      "name": "若林駅",
+      "xy": [
+        139.659911,
+        35.645933
+      ],
+      "code": "13112",
+      "lines": [
+        "東急世田谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station295",
+      "kind": "station",
+      "name": "松陰神社前駅",
+      "xy": [
+        139.655211,
+        35.643947
+      ],
+      "code": "13112",
+      "lines": [
+        "東急世田谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station296",
+      "kind": "station",
+      "name": "世田谷駅",
+      "xy": [
+        139.650945,
+        35.643564
+      ],
+      "code": "13112",
+      "lines": [
+        "東急世田谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station297",
+      "kind": "station",
+      "name": "上町駅",
+      "xy": [
+        139.646276,
+        35.643656
+      ],
+      "code": "13112",
+      "lines": [
+        "東急世田谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station298",
+      "kind": "station",
+      "name": "宮の坂駅",
+      "xy": [
+        139.64494,
+        35.647508
+      ],
+      "code": "13112",
+      "lines": [
+        "東急世田谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station299",
+      "kind": "station",
+      "name": "山下駅",
+      "xy": [
+        139.646509,
+        35.653844
+      ],
+      "code": "13112",
+      "lines": [
+        "東急世田谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station300",
+      "kind": "station",
+      "name": "松原駅",
+      "xy": [
+        139.642,
+        35.660048
+      ],
+      "code": "13112",
+      "lines": [
+        "東急世田谷線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station301",
+      "kind": "station",
+      "name": "多摩川駅",
+      "xy": [
+        139.668723,
+        35.589591
+      ],
+      "code": "13111",
+      "lines": [
+        "東急多摩川線",
+        "東急東横線",
+        "東急目黒線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station302",
+      "kind": "station",
+      "name": "沼部駅",
+      "xy": [
+        139.67326,
+        35.582526
+      ],
+      "code": "13111",
+      "lines": [
+        "東急多摩川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station303",
+      "kind": "station",
+      "name": "鵜の木駅",
+      "xy": [
+        139.680554,
+        35.575452
+      ],
+      "code": "13111",
+      "lines": [
+        "東急多摩川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station304",
+      "kind": "station",
+      "name": "下丸子駅",
+      "xy": [
+        139.685576,
+        35.571397
+      ],
+      "code": "13111",
+      "lines": [
+        "東急多摩川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station305",
+      "kind": "station",
+      "name": "武蔵新田駅",
+      "xy": [
+        139.692506,
+        35.567806
+      ],
+      "code": "13111",
+      "lines": [
+        "東急多摩川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station306",
+      "kind": "station",
+      "name": "矢口渡駅",
+      "xy": [
+        139.700389,
+        35.562462
+      ],
+      "code": "13111",
+      "lines": [
+        "東急多摩川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station307",
+      "kind": "station",
+      "name": "下神明駅",
+      "xy": [
+        139.726256,
+        35.608704
+      ],
+      "code": "13109",
+      "lines": [
+        "東急大井町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station308",
+      "kind": "station",
+      "name": "戸越公園駅",
+      "xy": [
+        139.718159,
+        35.608856
+      ],
+      "code": "13109",
+      "lines": [
+        "東急大井町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station309",
+      "kind": "station",
+      "name": "中延駅",
+      "xy": [
+        139.712526,
+        35.60571
+      ],
+      "code": "13109",
+      "lines": [
+        "東急大井町線",
+        "都営浅草線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station310",
+      "kind": "station",
+      "name": "荏原町駅",
+      "xy": [
+        139.707571,
+        35.60382
+      ],
+      "code": "13109",
+      "lines": [
+        "東急大井町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station311",
+      "kind": "station",
+      "name": "旗の台駅",
+      "xy": [
+        139.702286,
+        35.604923
+      ],
+      "code": "13109",
+      "lines": [
+        "東急大井町線",
+        "東急池上線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station312",
+      "kind": "station",
+      "name": "北千束駅",
+      "xy": [
+        139.693303,
+        35.606311
+      ],
+      "code": "13111",
+      "lines": [
+        "東急大井町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station313",
+      "kind": "station",
+      "name": "大岡山駅",
+      "xy": [
+        139.685909,
+        35.607456
+      ],
+      "code": "13111",
+      "lines": [
+        "東急大井町線",
+        "東急目黒線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station314",
+      "kind": "station",
+      "name": "緑が丘駅",
+      "xy": [
+        139.679482,
+        35.60638
+      ],
+      "code": "13110",
+      "lines": [
+        "東急大井町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station315",
+      "kind": "station",
+      "name": "自由が丘駅",
+      "xy": [
+        139.668664,
+        35.607224
+      ],
+      "code": "13110",
+      "lines": [
+        "東急大井町線",
+        "東急東横線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station316",
+      "kind": "station",
+      "name": "九品仏駅",
+      "xy": [
+        139.660992,
+        35.60538
+      ],
+      "code": "13112",
+      "lines": [
+        "東急大井町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station317",
+      "kind": "station",
+      "name": "尾山台駅",
+      "xy": [
+        139.653862,
+        35.606971
+      ],
+      "code": "13112",
+      "lines": [
+        "東急大井町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station318",
+      "kind": "station",
+      "name": "等々力駅",
+      "xy": [
+        139.647938,
+        35.608369
+      ],
+      "code": "13112",
+      "lines": [
+        "東急大井町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station319",
+      "kind": "station",
+      "name": "上野毛駅",
+      "xy": [
+        139.638917,
+        35.611957
+      ],
+      "code": "13112",
+      "lines": [
+        "東急大井町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station320",
+      "kind": "station",
+      "name": "二子玉川駅",
+      "xy": [
+        139.626685,
+        35.611788
+      ],
+      "code": "13112",
+      "lines": [
+        "東急大井町線",
+        "東急田園都市線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station321",
+      "kind": "station",
+      "name": "代官山駅",
+      "xy": [
+        139.703284,
+        35.648193
+      ],
+      "code": "13113",
+      "lines": [
+        "東急東横線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station322",
+      "kind": "station",
+      "name": "祐天寺駅",
+      "xy": [
+        139.690758,
+        35.637163
+      ],
+      "code": "13110",
+      "lines": [
+        "東急東横線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station323",
+      "kind": "station",
+      "name": "学芸大学駅",
+      "xy": [
+        139.68522,
+        35.628786
+      ],
+      "code": "13110",
+      "lines": [
+        "東急東横線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station324",
+      "kind": "station",
+      "name": "都立大学駅",
+      "xy": [
+        139.676393,
+        35.617835
+      ],
+      "code": "13110",
+      "lines": [
+        "東急東横線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station325",
+      "kind": "station",
+      "name": "田園調布駅",
+      "xy": [
+        139.667356,
+        35.596815
+      ],
+      "code": "13111",
+      "lines": [
+        "東急東横線",
+        "東急目黒線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station326",
+      "kind": "station",
+      "name": "大崎広小路駅",
+      "xy": [
+        139.722339,
+        35.622244
+      ],
+      "code": "13109",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station327",
+      "kind": "station",
+      "name": "戸越銀座駅",
+      "xy": [
+        139.714862,
+        35.615928
+      ],
+      "code": "13109",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station328",
+      "kind": "station",
+      "name": "荏原中延駅",
+      "xy": [
+        139.712196,
+        35.610056
+      ],
+      "code": "13109",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station329",
+      "kind": "station",
+      "name": "長原駅",
+      "xy": [
+        139.697881,
+        35.60219
+      ],
+      "code": "13111",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station330",
+      "kind": "station",
+      "name": "洗足池駅",
+      "xy": [
+        139.690896,
+        35.599648
+      ],
+      "code": "13111",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station331",
+      "kind": "station",
+      "name": "石川台駅",
+      "xy": [
+        139.685063,
+        35.596888
+      ],
+      "code": "13111",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station332",
+      "kind": "station",
+      "name": "雪が谷大塚駅",
+      "xy": [
+        139.681083,
+        35.592038
+      ],
+      "code": "13111",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station333",
+      "kind": "station",
+      "name": "御嶽山駅",
+      "xy": [
+        139.682473,
+        35.585236
+      ],
+      "code": "13111",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station334",
+      "kind": "station",
+      "name": "久が原駅",
+      "xy": [
+        139.685678,
+        35.579499
+      ],
+      "code": "13111",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station335",
+      "kind": "station",
+      "name": "千鳥町駅",
+      "xy": [
+        139.69142,
+        35.572983
+      ],
+      "code": "13111",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station336",
+      "kind": "station",
+      "name": "池上駅",
+      "xy": [
+        139.702822,
+        35.572025
+      ],
+      "code": "13111",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station337",
+      "kind": "station",
+      "name": "蓮沼駅",
+      "xy": [
+        139.708544,
+        35.564173
+      ],
+      "code": "13111",
+      "lines": [
+        "東急池上線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station338",
+      "kind": "station",
+      "name": "池尻大橋駅",
+      "xy": [
+        139.684319,
+        35.650603
+      ],
+      "code": "13110",
+      "lines": [
+        "東急田園都市線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station339",
+      "kind": "station",
+      "name": "駒沢大学駅",
+      "xy": [
+        139.661702,
+        35.633471
+      ],
+      "code": "13112",
+      "lines": [
+        "東急田園都市線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station340",
+      "kind": "station",
+      "name": "桜新町駅",
+      "xy": [
+        139.644779,
+        35.631666
+      ],
+      "code": "13112",
+      "lines": [
+        "東急田園都市線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station341",
+      "kind": "station",
+      "name": "用賀駅",
+      "xy": [
+        139.633928,
+        35.626436
+      ],
+      "code": "13112",
+      "lines": [
+        "東急田園都市線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station342",
+      "kind": "station",
+      "name": "不動前駅",
+      "xy": [
+        139.71469,
+        35.626526
+      ],
+      "code": "13109",
+      "lines": [
+        "東急目黒線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station343",
+      "kind": "station",
+      "name": "武蔵小山駅",
+      "xy": [
+        139.704524,
+        35.620538
+      ],
+      "code": "13109",
+      "lines": [
+        "東急目黒線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station344",
+      "kind": "station",
+      "name": "西小山駅",
+      "xy": [
+        139.698694,
+        35.615455
+      ],
+      "code": "13109",
+      "lines": [
+        "東急目黒線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station345",
+      "kind": "station",
+      "name": "洗足駅",
+      "xy": [
+        139.694367,
+        35.61043
+      ],
+      "code": "13110",
+      "lines": [
+        "東急目黒線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station346",
+      "kind": "station",
+      "name": "奥沢駅",
+      "xy": [
+        139.672355,
+        35.603947
+      ],
+      "code": "13112",
+      "lines": [
+        "東急目黒線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station347",
+      "kind": "station",
+      "name": "亀戸水神駅",
+      "xy": [
+        139.833422,
+        35.699976
+      ],
+      "code": "13108",
+      "lines": [
+        "東武亀戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station348",
+      "kind": "station",
+      "name": "東あずま駅",
+      "xy": [
+        139.831883,
+        35.707067
+      ],
+      "code": "13107",
+      "lines": [
+        "東武亀戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station349",
+      "kind": "station",
+      "name": "小村井駅",
+      "xy": [
+        139.827595,
+        35.710316
+      ],
+      "code": "13107",
+      "lines": [
+        "東武亀戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station350",
+      "kind": "station",
+      "name": "曳舟駅",
+      "xy": [
+        139.816634,
+        35.718418
+      ],
+      "code": "13107",
+      "lines": [
+        "東武亀戸線",
+        "東武伊勢崎線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station351",
+      "kind": "station",
+      "name": "とうきょうスカイツリー駅",
+      "xy": [
+        139.809332,
+        35.71043
+      ],
+      "code": "13107",
+      "lines": [
+        "東武伊勢崎線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station352",
+      "kind": "station",
+      "name": "東向島駅",
+      "xy": [
+        139.819306,
+        35.724324
+      ],
+      "code": "13107",
+      "lines": [
+        "東武伊勢崎線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station353",
+      "kind": "station",
+      "name": "鐘ヶ淵駅",
+      "xy": [
+        139.820344,
+        35.733712
+      ],
+      "code": "13107",
+      "lines": [
+        "東武伊勢崎線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station354",
+      "kind": "station",
+      "name": "堀切駅",
+      "xy": [
+        139.817727,
+        35.742977
+      ],
+      "code": "13121",
+      "lines": [
+        "東武伊勢崎線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station355",
+      "kind": "station",
+      "name": "牛田駅",
+      "xy": [
+        139.811816,
+        35.744555
+      ],
+      "code": "13121",
+      "lines": [
+        "東武伊勢崎線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station356",
+      "kind": "station",
+      "name": "小菅駅",
+      "xy": [
+        139.812935,
+        35.759039
+      ],
+      "code": "13121",
+      "lines": [
+        "東武伊勢崎線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station357",
+      "kind": "station",
+      "name": "五反野駅",
+      "xy": [
+        139.809643,
+        35.765852
+      ],
+      "code": "13121",
+      "lines": [
+        "東武伊勢崎線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station358",
+      "kind": "station",
+      "name": "梅島駅",
+      "xy": [
+        139.797916,
+        35.772437
+      ],
+      "code": "13121",
+      "lines": [
+        "東武伊勢崎線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station359",
+      "kind": "station",
+      "name": "西新井駅",
+      "xy": [
+        139.790372,
+        35.777323
+      ],
+      "code": "13121",
+      "lines": [
+        "東武伊勢崎線",
+        "東武大師線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station360",
+      "kind": "station",
+      "name": "竹ノ塚駅",
+      "xy": [
+        139.790788,
+        35.794368
+      ],
+      "code": "13121",
+      "lines": [
+        "東武伊勢崎線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station361",
+      "kind": "station",
+      "name": "大師前駅",
+      "xy": [
+        139.781647,
+        35.778989
+      ],
+      "code": "13121",
+      "lines": [
+        "東武大師線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station362",
+      "kind": "station",
+      "name": "北池袋駅",
+      "xy": [
+        139.716749,
+        35.741283
+      ],
+      "code": "13116",
+      "lines": [
+        "東武東上本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station363",
+      "kind": "station",
+      "name": "下板橋駅",
+      "xy": [
+        139.714785,
+        35.745721
+      ],
+      "code": "13116",
+      "lines": [
+        "東武東上本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station364",
+      "kind": "station",
+      "name": "大山駅",
+      "xy": [
+        139.702589,
+        35.748398
+      ],
+      "code": "13119",
+      "lines": [
+        "東武東上本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station365",
+      "kind": "station",
+      "name": "中板橋駅",
+      "xy": [
+        139.694628,
+        35.756214
+      ],
+      "code": "13119",
+      "lines": [
+        "東武東上本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station366",
+      "kind": "station",
+      "name": "ときわ台駅",
+      "xy": [
+        139.689015,
+        35.758771
+      ],
+      "code": "13119",
+      "lines": [
+        "東武東上本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station367",
+      "kind": "station",
+      "name": "上板橋駅",
+      "xy": [
+        139.67641,
+        35.763596
+      ],
+      "code": "13119",
+      "lines": [
+        "東武東上本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station368",
+      "kind": "station",
+      "name": "東武練馬駅",
+      "xy": [
+        139.661964,
+        35.768698
+      ],
+      "code": "13119",
+      "lines": [
+        "東武東上本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station369",
+      "kind": "station",
+      "name": "下赤塚駅",
+      "xy": [
+        139.644482,
+        35.770558
+      ],
+      "code": "13119",
+      "lines": [
+        "東武東上本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station370",
+      "kind": "station",
+      "name": "成増駅",
+      "xy": [
+        139.632708,
+        35.777723
+      ],
+      "code": "13119",
+      "lines": [
+        "東武東上本線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station371",
+      "kind": "station",
+      "name": "西武新宿駅",
+      "xy": [
+        139.7,
+        35.696254
+      ],
+      "code": "13104",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station372",
+      "kind": "station",
+      "name": "下落合駅",
+      "xy": [
+        139.695391,
+        35.715846
+      ],
+      "code": "13104",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station373",
+      "kind": "station",
+      "name": "中井駅",
+      "xy": [
+        139.686967,
+        35.715106
+      ],
+      "code": "13104",
+      "lines": [
+        "西武新宿線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station374",
+      "kind": "station",
+      "name": "新井薬師前駅",
+      "xy": [
+        139.672582,
+        35.715778
+      ],
+      "code": "13114",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station375",
+      "kind": "station",
+      "name": "沼袋駅",
+      "xy": [
+        139.663841,
+        35.719458
+      ],
+      "code": "13114",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station376",
+      "kind": "station",
+      "name": "野方駅",
+      "xy": [
+        139.652733,
+        35.719658
+      ],
+      "code": "13114",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station377",
+      "kind": "station",
+      "name": "都立家政駅",
+      "xy": [
+        139.644839,
+        35.722313
+      ],
+      "code": "13114",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station378",
+      "kind": "station",
+      "name": "鷺ノ宮駅",
+      "xy": [
+        139.63892,
+        35.722605
+      ],
+      "code": "13114",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station379",
+      "kind": "station",
+      "name": "下井草駅",
+      "xy": [
+        139.624688,
+        35.723852
+      ],
+      "code": "13115",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station380",
+      "kind": "station",
+      "name": "井荻駅",
+      "xy": [
+        139.615303,
+        35.72469
+      ],
+      "code": "13115",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station381",
+      "kind": "station",
+      "name": "上井草駅",
+      "xy": [
+        139.602937,
+        35.725326
+      ],
+      "code": "13115",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station382",
+      "kind": "station",
+      "name": "上石神井駅",
+      "xy": [
+        139.592266,
+        35.726189
+      ],
+      "code": "13120",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station383",
+      "kind": "station",
+      "name": "武蔵関駅",
+      "xy": [
+        139.576417,
+        35.7276
+      ],
+      "code": "13120",
+      "lines": [
+        "西武新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station384",
+      "kind": "station",
+      "name": "練馬駅",
+      "xy": [
+        139.654368,
+        35.737893
+      ],
+      "code": "13120",
+      "lines": [
+        "西武有楽町線",
+        "西武池袋線",
+        "西武豊島線",
+        "都営大江戸線"
+      ],
+      "capacity": 650,
+      "radius": 70
+    },
+    {
+      "id": "station385",
+      "kind": "station",
+      "name": "新桜台駅",
+      "xy": [
+        139.6683,
+        35.74077
+      ],
+      "code": "13120",
+      "lines": [
+        "西武有楽町線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station386",
+      "kind": "station",
+      "name": "椎名町駅",
+      "xy": [
+        139.694363,
+        35.726572
+      ],
+      "code": "13116",
+      "lines": [
+        "西武池袋線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station387",
+      "kind": "station",
+      "name": "東長崎駅",
+      "xy": [
+        139.683294,
+        35.73003
+      ],
+      "code": "13116",
+      "lines": [
+        "西武池袋線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station388",
+      "kind": "station",
+      "name": "江古田駅",
+      "xy": [
+        139.672814,
+        35.737557
+      ],
+      "code": "13120",
+      "lines": [
+        "西武池袋線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station389",
+      "kind": "station",
+      "name": "桜台駅",
+      "xy": [
+        139.662602,
+        35.738797
+      ],
+      "code": "13120",
+      "lines": [
+        "西武池袋線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station390",
+      "kind": "station",
+      "name": "中村橋駅",
+      "xy": [
+        139.637456,
+        35.736767
+      ],
+      "code": "13120",
+      "lines": [
+        "西武池袋線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station391",
+      "kind": "station",
+      "name": "富士見台駅",
+      "xy": [
+        139.62969,
+        35.735867
+      ],
+      "code": "13120",
+      "lines": [
+        "西武池袋線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station392",
+      "kind": "station",
+      "name": "練馬高野台駅",
+      "xy": [
+        139.616749,
+        35.740622
+      ],
+      "code": "13120",
+      "lines": [
+        "西武池袋線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station393",
+      "kind": "station",
+      "name": "石神井公園駅",
+      "xy": [
+        139.606981,
+        35.743563
+      ],
+      "code": "13120",
+      "lines": [
+        "西武池袋線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station394",
+      "kind": "station",
+      "name": "大泉学園駅",
+      "xy": [
+        139.586732,
+        35.749406
+      ],
+      "code": "13120",
+      "lines": [
+        "西武池袋線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station395",
+      "kind": "station",
+      "name": "豊島園駅",
+      "xy": [
+        139.647979,
+        35.742054
+      ],
+      "code": "13120",
+      "lines": [
+        "西武豊島線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station396",
+      "kind": "station",
+      "name": "三田駅",
+      "xy": [
+        139.748775,
+        35.64818
+      ],
+      "code": "13103",
+      "lines": [
+        "都営三田線",
+        "都営浅草線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station397",
+      "kind": "station",
+      "name": "芝公園駅",
+      "xy": [
+        139.749824,
+        35.654074
+      ],
+      "code": "13103",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station398",
+      "kind": "station",
+      "name": "御成門駅",
+      "xy": [
+        139.751535,
+        35.661215
+      ],
+      "code": "13103",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station399",
+      "kind": "station",
+      "name": "内幸町駅",
+      "xy": [
+        139.75561,
+        35.66975
+      ],
+      "code": "13101",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station400",
+      "kind": "station",
+      "name": "春日駅",
+      "xy": [
+        139.75325,
+        35.709598
+      ],
+      "code": "13105",
+      "lines": [
+        "都営三田線",
+        "都営大江戸線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station401",
+      "kind": "station",
+      "name": "白山駅",
+      "xy": [
+        139.752136,
+        35.721408
+      ],
+      "code": "13105",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station402",
+      "kind": "station",
+      "name": "千石駅",
+      "xy": [
+        139.744792,
+        35.727957
+      ],
+      "code": "13105",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station403",
+      "kind": "station",
+      "name": "西巣鴨駅",
+      "xy": [
+        139.728712,
+        35.743508
+      ],
+      "code": "13116",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station404",
+      "kind": "station",
+      "name": "新板橋駅",
+      "xy": [
+        139.720101,
+        35.748785
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station405",
+      "kind": "station",
+      "name": "板橋区役所前駅",
+      "xy": [
+        139.710102,
+        35.751284
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station406",
+      "kind": "station",
+      "name": "板橋本町駅",
+      "xy": [
+        139.705535,
+        35.761339
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station407",
+      "kind": "station",
+      "name": "本蓮沼駅",
+      "xy": [
+        139.702324,
+        35.768782
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station408",
+      "kind": "station",
+      "name": "志村坂上駅",
+      "xy": [
+        139.69538,
+        35.775725
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station409",
+      "kind": "station",
+      "name": "志村三丁目駅",
+      "xy": [
+        139.685937,
+        35.777391
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station410",
+      "kind": "station",
+      "name": "蓮根駅",
+      "xy": [
+        139.678993,
+        35.784335
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station411",
+      "kind": "station",
+      "name": "西台駅",
+      "xy": [
+        139.673971,
+        35.78699
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station412",
+      "kind": "station",
+      "name": "高島平駅",
+      "xy": [
+        139.661216,
+        35.789056
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station413",
+      "kind": "station",
+      "name": "新高島平駅",
+      "xy": [
+        139.654275,
+        35.790189
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station414",
+      "kind": "station",
+      "name": "西高島平駅",
+      "xy": [
+        139.64594,
+        35.791833
+      ],
+      "code": "13119",
+      "lines": [
+        "都営三田線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station415",
+      "kind": "station",
+      "name": "新宿西口駅",
+      "xy": [
+        139.699155,
+        35.693315
+      ],
+      "code": "13104",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station416",
+      "kind": "station",
+      "name": "若松河田駅",
+      "xy": [
+        139.718184,
+        35.699218
+      ],
+      "code": "13104",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station417",
+      "kind": "station",
+      "name": "牛込柳町駅",
+      "xy": [
+        139.725027,
+        35.699518
+      ],
+      "code": "13104",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station418",
+      "kind": "station",
+      "name": "牛込神楽坂駅",
+      "xy": [
+        139.735802,
+        35.700851
+      ],
+      "code": "13104",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station419",
+      "kind": "station",
+      "name": "上野御徒町駅",
+      "xy": [
+        139.774332,
+        35.707893
+      ],
+      "code": "13106",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station420",
+      "kind": "station",
+      "name": "蔵前駅",
+      "xy": [
+        139.790931,
+        35.703236
+      ],
+      "code": "13106",
+      "lines": [
+        "都営大江戸線",
+        "都営浅草線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station421",
+      "kind": "station",
+      "name": "森下駅",
+      "xy": [
+        139.797042,
+        35.68796
+      ],
+      "code": "13108",
+      "lines": [
+        "都営大江戸線",
+        "都営新宿線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station422",
+      "kind": "station",
+      "name": "勝どき駅",
+      "xy": [
+        139.776442,
+        35.658507
+      ],
+      "code": "13102",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station423",
+      "kind": "station",
+      "name": "築地市場駅",
+      "xy": [
+        139.766915,
+        35.664895
+      ],
+      "code": "13102",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station424",
+      "kind": "station",
+      "name": "大門駅",
+      "xy": [
+        139.75466,
+        35.656785
+      ],
+      "code": "13103",
+      "lines": [
+        "都営大江戸線",
+        "都営浅草線"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station425",
+      "kind": "station",
+      "name": "赤羽橋駅",
+      "xy": [
+        139.743642,
+        35.655007
+      ],
+      "code": "13103",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station426",
+      "kind": "station",
+      "name": "国立競技場駅",
+      "xy": [
+        139.714932,
+        35.679831
+      ],
+      "code": "13104",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station427",
+      "kind": "station",
+      "name": "都庁前駅",
+      "xy": [
+        139.69257,
+        35.690551
+      ],
+      "code": "13104",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station428",
+      "kind": "station",
+      "name": "西新宿五丁目駅",
+      "xy": [
+        139.684304,
+        35.689798
+      ],
+      "code": "13104",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station429",
+      "kind": "station",
+      "name": "落合南長崎駅",
+      "xy": [
+        139.683303,
+        35.723608
+      ],
+      "code": "13116",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station430",
+      "kind": "station",
+      "name": "新江古田駅",
+      "xy": [
+        139.670653,
+        35.732538
+      ],
+      "code": "13114",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station431",
+      "kind": "station",
+      "name": "練馬春日町駅",
+      "xy": [
+        139.640236,
+        35.751452
+      ],
+      "code": "13120",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station432",
+      "kind": "station",
+      "name": "光が丘駅",
+      "xy": [
+        139.628603,
+        35.758526
+      ],
+      "code": "13120",
+      "lines": [
+        "都営大江戸線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station433",
+      "kind": "station",
+      "name": "曙橋駅",
+      "xy": [
+        139.722881,
+        35.692402
+      ],
+      "code": "13104",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station434",
+      "kind": "station",
+      "name": "小川町駅",
+      "xy": [
+        139.767551,
+        35.695487
+      ],
+      "code": "13101",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station435",
+      "kind": "station",
+      "name": "岩本町駅",
+      "xy": [
+        139.775866,
+        35.695534
+      ],
+      "code": "13101",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station436",
+      "kind": "station",
+      "name": "馬喰横山駅",
+      "xy": [
+        139.782768,
+        35.69212
+      ],
+      "code": "13102",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station437",
+      "kind": "station",
+      "name": "浜町駅",
+      "xy": [
+        139.788154,
+        35.688516
+      ],
+      "code": "13102",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station438",
+      "kind": "station",
+      "name": "菊川駅",
+      "xy": [
+        139.806016,
+        35.688379
+      ],
+      "code": "13107",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station439",
+      "kind": "station",
+      "name": "西大島駅",
+      "xy": [
+        139.826206,
+        35.689349
+      ],
+      "code": "13108",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station440",
+      "kind": "station",
+      "name": "大島駅",
+      "xy": [
+        139.83565,
+        35.689905
+      ],
+      "code": "13108",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station441",
+      "kind": "station",
+      "name": "東大島駅",
+      "xy": [
+        139.845963,
+        35.690355
+      ],
+      "code": "13108",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station442",
+      "kind": "station",
+      "name": "船堀駅",
+      "xy": [
+        139.864258,
+        35.683795
+      ],
+      "code": "13123",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station443",
+      "kind": "station",
+      "name": "一之江駅",
+      "xy": [
+        139.882934,
+        35.686055
+      ],
+      "code": "13123",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station444",
+      "kind": "station",
+      "name": "瑞江駅",
+      "xy": [
+        139.89761,
+        35.693318
+      ],
+      "code": "13123",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station445",
+      "kind": "station",
+      "name": "篠崎駅",
+      "xy": [
+        139.903698,
+        35.706017
+      ],
+      "code": "13123",
+      "lines": [
+        "都営新宿線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station446",
+      "kind": "station",
+      "name": "西馬込駅",
+      "xy": [
+        139.705942,
+        35.586859
+      ],
+      "code": "13111",
+      "lines": [
+        "都営浅草線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station447",
+      "kind": "station",
+      "name": "馬込駅",
+      "xy": [
+        139.711772,
+        35.596435
+      ],
+      "code": "13111",
+      "lines": [
+        "都営浅草線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station448",
+      "kind": "station",
+      "name": "戸越駅",
+      "xy": [
+        139.716495,
+        35.614633
+      ],
+      "code": "13109",
+      "lines": [
+        "都営浅草線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station449",
+      "kind": "station",
+      "name": "高輪台駅",
+      "xy": [
+        139.730305,
+        35.631679
+      ],
+      "code": "13103",
+      "lines": [
+        "都営浅草線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station450",
+      "kind": "station",
+      "name": "宝町駅",
+      "xy": [
+        139.771767,
+        35.675461
+      ],
+      "code": "13102",
+      "lines": [
+        "都営浅草線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station451",
+      "kind": "station",
+      "name": "東日本橋駅",
+      "xy": [
+        139.784821,
+        35.692126
+      ],
+      "code": "13102",
+      "lines": [
+        "都営浅草線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station452",
+      "kind": "station",
+      "name": "本所吾妻橋駅",
+      "xy": [
+        139.804624,
+        35.70858
+      ],
+      "code": "13107",
+      "lines": [
+        "都営浅草線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station453",
+      "kind": "station",
+      "name": "三ノ輪橋駅",
+      "xy": [
+        139.791412,
+        35.732248
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station454",
+      "kind": "station",
+      "name": "荒川一中前駅",
+      "xy": [
+        139.788988,
+        35.733659
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station455",
+      "kind": "station",
+      "name": "荒川区役所前駅",
+      "xy": [
+        139.786456,
+        35.73493
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station456",
+      "kind": "station",
+      "name": "荒川二丁目駅",
+      "xy": [
+        139.784696,
+        35.738623
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station457",
+      "kind": "station",
+      "name": "荒川七丁目駅",
+      "xy": [
+        139.78417,
+        35.741975
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station458",
+      "kind": "station",
+      "name": "町屋駅前駅",
+      "xy": [
+        139.781145,
+        35.74275
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station459",
+      "kind": "station",
+      "name": "町屋二丁目駅",
+      "xy": [
+        139.776625,
+        35.743837
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station460",
+      "kind": "station",
+      "name": "東尾久三丁目駅",
+      "xy": [
+        139.774386,
+        35.745398
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station461",
+      "kind": "station",
+      "name": "熊野前駅",
+      "xy": [
+        139.769204,
+        35.749212
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線",
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 350,
+      "radius": 70
+    },
+    {
+      "id": "station462",
+      "kind": "station",
+      "name": "宮ノ前駅",
+      "xy": [
+        139.764955,
+        35.750135
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station463",
+      "kind": "station",
+      "name": "小台駅",
+      "xy": [
+        139.761779,
+        35.750579
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station464",
+      "kind": "station",
+      "name": "荒川遊園地前駅",
+      "xy": [
+        139.757767,
+        35.750744
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station465",
+      "kind": "station",
+      "name": "荒川車庫前駅",
+      "xy": [
+        139.752617,
+        35.750909
+      ],
+      "code": "13118",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station466",
+      "kind": "station",
+      "name": "梶原駅",
+      "xy": [
+        139.747403,
+        35.751162
+      ],
+      "code": "13117",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station467",
+      "kind": "station",
+      "name": "栄町駅",
+      "xy": [
+        139.742124,
+        35.750909
+      ],
+      "code": "13117",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station468",
+      "kind": "station",
+      "name": "王子駅前駅",
+      "xy": [
+        139.737661,
+        35.753199
+      ],
+      "code": "13117",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station469",
+      "kind": "station",
+      "name": "飛鳥山駅",
+      "xy": [
+        139.737382,
+        35.750248
+      ],
+      "code": "13117",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station470",
+      "kind": "station",
+      "name": "滝野川一丁目駅",
+      "xy": [
+        139.735376,
+        35.747374
+      ],
+      "code": "13117",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station471",
+      "kind": "station",
+      "name": "西ヶ原四丁目駅",
+      "xy": [
+        139.732779,
+        35.744501
+      ],
+      "code": "13117",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station472",
+      "kind": "station",
+      "name": "新庚申塚駅",
+      "xy": [
+        139.730451,
+        35.741348
+      ],
+      "code": "13116",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station473",
+      "kind": "station",
+      "name": "庚申塚駅",
+      "xy": [
+        139.729743,
+        35.739563
+      ],
+      "code": "13116",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station474",
+      "kind": "station",
+      "name": "巣鴨新田駅",
+      "xy": [
+        139.727769,
+        35.735488
+      ],
+      "code": "13116",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station475",
+      "kind": "station",
+      "name": "大塚駅前駅",
+      "xy": [
+        139.729593,
+        35.732082
+      ],
+      "code": "13116",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station476",
+      "kind": "station",
+      "name": "向原駅",
+      "xy": [
+        139.724894,
+        35.728938
+      ],
+      "code": "13116",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station477",
+      "kind": "station",
+      "name": "東池袋四丁目駅",
+      "xy": [
+        139.720012,
+        35.72528
+      ],
+      "code": "13116",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station478",
+      "kind": "station",
+      "name": "都電雑司ヶ谷駅",
+      "xy": [
+        139.718006,
+        35.724261
+      ],
+      "code": "13116",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station479",
+      "kind": "station",
+      "name": "鬼子母神前駅",
+      "xy": [
+        139.714916,
+        35.720403
+      ],
+      "code": "13116",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station480",
+      "kind": "station",
+      "name": "学習院下駅",
+      "xy": [
+        139.71247,
+        35.716248
+      ],
+      "code": "13116",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station481",
+      "kind": "station",
+      "name": "面影橋駅",
+      "xy": [
+        139.714444,
+        35.712981
+      ],
+      "code": "13104",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station482",
+      "kind": "station",
+      "name": "早稲田駅",
+      "xy": [
+        139.718928,
+        35.711848
+      ],
+      "code": "13104",
+      "lines": [
+        "都電荒川線"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station483",
+      "kind": "station",
+      "name": "赤土小学校前駅",
+      "xy": [
+        139.768989,
+        35.742454
+      ],
+      "code": "13118",
+      "lines": [
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station484",
+      "kind": "station",
+      "name": "足立小台駅",
+      "xy": [
+        139.770381,
+        35.754658
+      ],
+      "code": "13121",
+      "lines": [
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station485",
+      "kind": "station",
+      "name": "扇大橋駅",
+      "xy": [
+        139.770808,
+        35.763897
+      ],
+      "code": "13121",
+      "lines": [
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station486",
+      "kind": "station",
+      "name": "高野駅",
+      "xy": [
+        139.770679,
+        35.768359
+      ],
+      "code": "13121",
+      "lines": [
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station487",
+      "kind": "station",
+      "name": "江北駅",
+      "xy": [
+        139.770306,
+        35.774021
+      ],
+      "code": "13121",
+      "lines": [
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station488",
+      "kind": "station",
+      "name": "西新井大師西駅",
+      "xy": [
+        139.770094,
+        35.781505
+      ],
+      "code": "13121",
+      "lines": [
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station489",
+      "kind": "station",
+      "name": "谷在家駅",
+      "xy": [
+        139.770043,
+        35.788774
+      ],
+      "code": "13121",
+      "lines": [
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station490",
+      "kind": "station",
+      "name": "舎人公園駅",
+      "xy": [
+        139.770183,
+        35.79623
+      ],
+      "code": "13121",
+      "lines": [
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station491",
+      "kind": "station",
+      "name": "舎人駅",
+      "xy": [
+        139.770108,
+        35.8057
+      ],
+      "code": "13121",
+      "lines": [
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 160,
+      "radius": 45
+    },
+    {
+      "id": "station492",
+      "kind": "station",
+      "name": "見沼代親水公園駅",
+      "xy": [
+        139.770719,
+        35.814544
+      ],
+      "code": "13121",
+      "lines": [
+        "日暮里・舎人ライナー"
+      ],
+      "capacity": 160,
+      "radius": 45
+    }
+  ]
+}

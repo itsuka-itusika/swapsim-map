@@ -1,0 +1,1 @@
+{"name":"swapsim-map","version":"1.0.0","private":true,"description":"SwapSim 地図版の独立した静的サイト","scripts":{"build":"node build-web.mjs","test":"node --test map-preview/person-consistency.test.cjs map-preview/environment-scenes.test.cjs map-preview/area-land-regression.test.cjs map-preview/original-ui.test.cjs map-preview/venue-schedule.test.cjs"},"engines":{"node":">=20"}}

@@ -1,0 +1,1975 @@
+{
+  "basis": "Offline representative-point classification, not observed people; smaller nested facilities may take priority.",
+  "checked": 164,
+  "changed": 157,
+  "rows": [
+    {
+      "id": "osm-way-194569423",
+      "name": "東葛西さくら公園",
+      "xy": [
+        139.8826344893348,
+        35.6619905
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "東葛西さくら公園"
+    },
+    {
+      "id": "osm-way-194573261",
+      "name": "葛西東公園",
+      "xy": [
+        139.87657617543871,
+        35.6636627
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "葛西東公園"
+    },
+    {
+      "id": "osm-way-511054238",
+      "name": "仲町公園",
+      "xy": [
+        139.8755734536187,
+        35.6607156
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "仲町公園"
+    },
+    {
+      "id": "osm-way-511054239",
+      "name": "東葛西けやき公園",
+      "xy": [
+        139.87855941109387,
+        35.661074049999996
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "東葛西けやき公園"
+    },
+    {
+      "id": "osm-way-81366899",
+      "name": "国立科学博物館附属自然教育園",
+      "xy": [
+        139.719384853694,
+        35.6385268
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "国立科学博物館附属自然教育園"
+    },
+    {
+      "id": "osm-way-161011785",
+      "name": "東京都庭園美術館",
+      "xy": [
+        139.7192775579269,
+        35.636842900000005
+      ],
+      "expected": "tourism",
+      "before": "residential",
+      "after": "tourism",
+      "actualName": "東京都庭園美術館"
+    },
+    {
+      "id": "osm-way-161274269",
+      "name": "国立科学博物館 自然教育園",
+      "xy": [
+        139.72145846122683,
+        35.63611605
+      ],
+      "expected": "tourism",
+      "before": "residential",
+      "after": "tourism",
+      "actualName": "国立科学博物館 自然教育園"
+    },
+    {
+      "id": "osm-way-182482939",
+      "name": "どんぐり公園",
+      "xy": [
+        139.72210119506002,
+        35.6365096
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "どんぐり公園"
+    },
+    {
+      "id": "osm-way-182492269",
+      "name": "ザ・ハウス白金",
+      "xy": [
+        139.72363766728367,
+        35.63798165
+      ],
+      "expected": "public",
+      "before": "residential",
+      "after": "public",
+      "actualName": "ザ・ハウス白金"
+    },
+    {
+      "id": "osm-way-14948284",
+      "name": "大井競馬場",
+      "xy": [
+        139.7434009549923,
+        35.59230505
+      ],
+      "expected": "sports",
+      "before": "industrial",
+      "after": "sports",
+      "actualName": "大井競馬場"
+    },
+    {
+      "id": "osm-way-162931821",
+      "name": "しながわ区民公園",
+      "xy": [
+        139.7388435630554,
+        35.5922567
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "しながわ区民公園"
+    },
+    {
+      "id": "osm-way-638770052",
+      "name": "北浜川児童遊園",
+      "xy": [
+        139.7392986792553,
+        35.597913399999996
+      ],
+      "expected": "green",
+      "before": "commercial",
+      "after": "green",
+      "actualName": "北浜川児童遊園"
+    },
+    {
+      "id": "osm-way-20028327",
+      "name": "小石川後楽園",
+      "xy": [
+        139.74915081893698,
+        35.70536315
+      ],
+      "expected": "green",
+      "before": "green",
+      "after": "green",
+      "actualName": "小石川後楽園"
+    },
+    {
+      "id": "osm-way-20028328",
+      "name": "東京ドーム",
+      "xy": [
+        139.75197049070806,
+        35.70557055
+      ],
+      "expected": "sports",
+      "before": "tourism",
+      "after": "sports",
+      "actualName": "東京ドーム"
+    },
+    {
+      "id": "osm-way-659219165",
+      "name": "礫川公園",
+      "xy": [
+        139.75111356373884,
+        35.70774245
+      ],
+      "expected": "green",
+      "before": "transport",
+      "after": "green",
+      "actualName": "礫川公園"
+    },
+    {
+      "id": "osm-way-15772082",
+      "name": "明治神宮野球場",
+      "xy": [
+        139.71721299156846,
+        35.6745155
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "明治神宮野球場"
+    },
+    {
+      "id": "osm-way-27994730",
+      "name": "都立明治公園",
+      "xy": [
+        139.71374691284313,
+        35.6750442
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "都立明治公園"
+    },
+    {
+      "id": "osm-way-94104811",
+      "name": "明治神宮聖徳記念絵画館",
+      "xy": [
+        139.71762280122854,
+        35.678778
+      ],
+      "expected": "tourism",
+      "before": "residential",
+      "after": "tourism",
+      "actualName": "明治神宮聖徳記念絵画館"
+    },
+    {
+      "id": "osm-way-153182728",
+      "name": "東京体育館屋内プール",
+      "xy": [
+        139.71124436626286,
+        35.6790967
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "東京体育館屋内プール"
+    },
+    {
+      "id": "osm-way-209694997",
+      "name": "神宮前公園",
+      "xy": [
+        139.7138394759382,
+        35.6734881
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "神宮前公園"
+    },
+    {
+      "id": "osm-way-451878702",
+      "name": "東京体育館",
+      "xy": [
+        139.71210896660676,
+        35.679290449999996
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "東京体育館"
+    },
+    {
+      "id": "osm-way-499552718",
+      "name": "明治神宮外苑",
+      "xy": [
+        139.71834056474387,
+        35.67628805
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "明治神宮外苑"
+    },
+    {
+      "id": "osm-way-499552719",
+      "name": "新国立競技場",
+      "xy": [
+        139.71474419354024,
+        35.67795395
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "新国立競技場"
+    },
+    {
+      "id": "osm-relation-10071391",
+      "name": "MUFGスタジアム",
+      "xy": [
+        139.71351420013758,
+        35.67785955
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "MUFGスタジアム"
+    },
+    {
+      "id": "osm-way-43896730",
+      "name": "日本武道館",
+      "xy": [
+        139.74987041508774,
+        35.6933554
+      ],
+      "expected": "sports",
+      "before": "green",
+      "after": "sports",
+      "actualName": "日本武道館"
+    },
+    {
+      "id": "osm-way-343808353",
+      "name": "区立九段坂公園",
+      "xy": [
+        139.74853260922941,
+        35.6947174
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "区立九段坂公園"
+    },
+    {
+      "id": "osm-way-624081603",
+      "name": "北の丸公園",
+      "xy": [
+        139.75074109433575,
+        35.69222515
+      ],
+      "expected": "green",
+      "before": "green",
+      "after": "green",
+      "actualName": "北の丸公園"
+    },
+    {
+      "id": "osm-way-149130179",
+      "name": "有明コロシアム",
+      "xy": [
+        139.7901005356459,
+        35.636463199999994
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "有明コロシアム"
+    },
+    {
+      "id": "osm-way-454867861",
+      "name": "東京臨海広域防災公園",
+      "xy": [
+        139.79696523580174,
+        35.635024349999995
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "東京臨海広域防災公園"
+    },
+    {
+      "id": "osm-way-541648366",
+      "name": "有明テニスの森公園",
+      "xy": [
+        139.7880794573731,
+        35.63525835
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "有明テニスの森公園"
+    },
+    {
+      "id": "osm-way-746064107",
+      "name": "有明アリーナ",
+      "xy": [
+        139.7944631972959,
+        35.64334145
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "有明アリーナ"
+    },
+    {
+      "id": "osm-way-1116590462",
+      "name": "有明親水海浜公園",
+      "xy": [
+        139.78732691704263,
+        35.64067555
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "有明親水海浜公園"
+    },
+    {
+      "id": "osm-way-76187056",
+      "name": "江戸東京博物館",
+      "xy": [
+        139.79607759000396,
+        35.6964453
+      ],
+      "expected": "tourism",
+      "before": "commercial",
+      "after": "tourism",
+      "actualName": "江戸東京博物館"
+    },
+    {
+      "id": "osm-way-76187058",
+      "name": "両国国技館",
+      "xy": [
+        139.79345675578946,
+        35.696876
+      ],
+      "expected": "sports",
+      "before": "commercial",
+      "after": "sports",
+      "actualName": "両国国技館"
+    },
+    {
+      "id": "osm-way-157050769",
+      "name": "旧安田庭園",
+      "xy": [
+        139.79363143107113,
+        35.6982527
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "旧安田庭園"
+    },
+    {
+      "id": "osm-way-157050777",
+      "name": "都立横網町公園",
+      "xy": [
+        139.79641546716425,
+        35.699506400000004
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "都立横網町公園"
+    },
+    {
+      "id": "osm-way-448070333",
+      "name": "両国二丁目緑地広場",
+      "xy": [
+        139.7930731874331,
+        35.695357200000004
+      ],
+      "expected": "green",
+      "before": "transport",
+      "after": "green",
+      "actualName": "両国二丁目緑地広場"
+    },
+    {
+      "id": "osm-way-700615677",
+      "name": "東海ふ頭公園",
+      "xy": [
+        139.75597331436418,
+        35.57766685
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "東海ふ頭公園"
+    },
+    {
+      "id": "osm-way-1119284767",
+      "name": "東海緑道公園",
+      "xy": [
+        139.75518074924975,
+        35.58289285
+      ],
+      "expected": "green",
+      "before": "commercial",
+      "after": "green",
+      "actualName": "東海緑道公園"
+    },
+    {
+      "id": "osm-way-155164275",
+      "name": "都立夢の島公園",
+      "xy": [
+        139.82795855868375,
+        35.65110745
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "都立夢の島公園"
+    },
+    {
+      "id": "osm-way-776885969",
+      "name": "夢の島緑道公園",
+      "xy": [
+        139.83879350333558,
+        35.649379350000004
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "夢の島緑道公園"
+    },
+    {
+      "id": "osm-way-1117192942",
+      "name": "夢の島緑道公園",
+      "xy": [
+        139.8235782929724,
+        35.6472695
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "夢の島緑道公園"
+    },
+    {
+      "id": "osm-way-1467973204",
+      "name": "BumB 東京スポーツ文化館",
+      "xy": [
+        139.8302789281421,
+        35.6493695
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "BumB 東京スポーツ文化館"
+    },
+    {
+      "id": "osm-way-37721897",
+      "name": "青山霊園",
+      "xy": [
+        139.7226503194139,
+        35.6658106
+      ],
+      "expected": "religious",
+      "before": "residential",
+      "after": "religious",
+      "actualName": "青山霊園"
+    },
+    {
+      "id": "osm-way-103425082",
+      "name": "都立青山公園 南地区",
+      "xy": [
+        139.7245499238832,
+        35.66344115
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "都立青山公園 南地区"
+    },
+    {
+      "id": "osm-way-103425086",
+      "name": "国立新美術館",
+      "xy": [
+        139.72644112501024,
+        35.6653369
+      ],
+      "expected": "tourism",
+      "before": "residential",
+      "after": "tourism",
+      "actualName": "国立新美術館"
+    },
+    {
+      "id": "osm-way-109684527",
+      "name": "都立青山公園　北地区",
+      "xy": [
+        139.72461888392917,
+        35.67012175
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "青葉公園"
+    },
+    {
+      "id": "osm-way-109684528",
+      "name": "青葉公園",
+      "xy": [
+        139.7244646315827,
+        35.67056875
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "青葉公園"
+    },
+    {
+      "id": "osm-way-140349249",
+      "name": "玉窓寺墓地",
+      "xy": [
+        139.72297988668933,
+        35.6696877
+      ],
+      "expected": "religious",
+      "before": "residential",
+      "after": "religious",
+      "actualName": "玉窓寺墓地"
+    },
+    {
+      "id": "osm-way-304102216",
+      "name": "青山迎賓館",
+      "xy": [
+        139.7177597711012,
+        35.6670525
+      ],
+      "expected": "public",
+      "before": "residential",
+      "after": "public",
+      "actualName": "青山迎賓館"
+    },
+    {
+      "id": "osm-way-387807025",
+      "name": "南青山四丁目児童遊園",
+      "xy": [
+        139.71880270000003,
+        35.667153150000004
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "南青山四丁目児童遊園"
+    },
+    {
+      "id": "osm-way-387807026",
+      "name": "南青山四丁目緑地",
+      "xy": [
+        139.72041810612706,
+        35.66582865
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "南青山四丁目緑地"
+    },
+    {
+      "id": "osm-way-636057454",
+      "name": "SHARE GREEN MINAMI AOYAMA",
+      "xy": [
+        139.7248202072766,
+        35.668585
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "SHARE GREEN MINAMI AOYAMA"
+    },
+    {
+      "id": "osm-way-33439660",
+      "name": "東京国立博物館",
+      "xy": [
+        139.77596758202066,
+        35.719044800000006
+      ],
+      "expected": "tourism",
+      "before": "residential",
+      "after": "tourism",
+      "actualName": "東京国立博物館"
+    },
+    {
+      "id": "osm-way-254602421",
+      "name": "根岸ニ丁目児童遊園",
+      "xy": [
+        139.77518291784764,
+        35.72507305
+      ],
+      "expected": "green",
+      "before": "commercial",
+      "after": "green",
+      "actualName": "根岸ニ丁目児童遊園"
+    },
+    {
+      "id": "osm-way-560499632",
+      "name": "谷中清水町公園",
+      "xy": [
+        139.76937068194567,
+        35.7203009
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "谷中清水町公園"
+    },
+    {
+      "id": "osm-way-565362989",
+      "name": "根岸ニ丁目児童遊園",
+      "xy": [
+        139.77499442717087,
+        35.72497535
+      ],
+      "expected": "green",
+      "before": "commercial",
+      "after": "green",
+      "actualName": "根岸ニ丁目児童遊園"
+    },
+    {
+      "id": "osm-way-914133670",
+      "name": "下町風俗資料館付設展示場",
+      "xy": [
+        139.77097711367435,
+        35.721329749999995
+      ],
+      "expected": "tourism",
+      "before": "commercial",
+      "after": "tourism",
+      "actualName": "下町風俗資料館付設展示場"
+    },
+    {
+      "id": "osm-way-1026489342",
+      "name": "寛永寺谷中第一霊園",
+      "xy": [
+        139.7731967307783,
+        35.7247887
+      ],
+      "expected": "religious",
+      "before": "residential",
+      "after": "religious",
+      "actualName": "寛永寺谷中第一霊園"
+    },
+    {
+      "id": "osm-way-1026489343",
+      "name": "寛永寺谷中第二霊園",
+      "xy": [
+        139.77198529110768,
+        35.7235871
+      ],
+      "expected": "religious",
+      "before": "residential",
+      "after": "religious",
+      "actualName": "寛永寺谷中第二霊園"
+    },
+    {
+      "id": "osm-way-1366752123",
+      "name": "こどものひろば",
+      "xy": [
+        139.7707719173454,
+        35.7252543
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "こどものひろば"
+    },
+    {
+      "id": "osm-way-1366791502",
+      "name": "天王寺墓地",
+      "xy": [
+        139.76958960506258,
+        35.725921549999995
+      ],
+      "expected": "religious",
+      "before": "residential",
+      "after": "religious",
+      "actualName": "天王寺墓地"
+    },
+    {
+      "id": "osm-way-1371873297",
+      "name": "天王寺墓地",
+      "xy": [
+        139.77101731950464,
+        35.7248411
+      ],
+      "expected": "religious",
+      "before": "residential",
+      "after": "religious",
+      "actualName": "天王寺墓地"
+    },
+    {
+      "id": "osm-relation-5413419",
+      "name": "上野公園",
+      "xy": [
+        139.77392914567042,
+        35.714019050000005
+      ],
+      "expected": "green",
+      "before": "green",
+      "after": "green",
+      "actualName": "上野公園"
+    },
+    {
+      "id": "osm-relation-13744633",
+      "name": "谷中霊園",
+      "xy": [
+        139.7711363692395,
+        35.72436845
+      ],
+      "expected": "religious",
+      "before": "residential",
+      "after": "religious",
+      "actualName": "谷中霊園"
+    },
+    {
+      "id": "osm-way-57709875",
+      "name": "東京都立 雑司ヶ谷霊園",
+      "xy": [
+        139.72011595625,
+        35.72265795
+      ],
+      "expected": "religious",
+      "before": "mixed",
+      "after": "religious",
+      "actualName": "東京都立 雑司ヶ谷霊園"
+    },
+    {
+      "id": "osm-way-266064299",
+      "name": "雑司が谷旧宣教師館",
+      "xy": [
+        139.72058870214127,
+        35.72072515
+      ],
+      "expected": "tourism",
+      "before": "education",
+      "after": "tourism",
+      "actualName": "雑司が谷旧宣教師館"
+    },
+    {
+      "id": "osm-way-451891315",
+      "name": "豊島岡墓地",
+      "xy": [
+        139.72404089277094,
+        35.721551950000006
+      ],
+      "expected": "religious",
+      "before": "mixed",
+      "after": "religious",
+      "actualName": "豊島岡墓地"
+    },
+    {
+      "id": "osm-way-1081283573",
+      "name": "豊島区立雑司が谷一丁目公園",
+      "xy": [
+        139.72126008050466,
+        35.72065875
+      ],
+      "expected": "green",
+      "before": "mixed",
+      "after": "green",
+      "actualName": "豊島区立雑司が谷一丁目公園"
+    },
+    {
+      "id": "osm-way-103756470",
+      "name": "染井よしの桜の里公園",
+      "xy": [
+        139.74159962916667,
+        35.7385801
+      ],
+      "expected": "green",
+      "before": "mixed",
+      "after": "green",
+      "actualName": "染井よしの桜の里公園"
+    },
+    {
+      "id": "osm-way-176414059",
+      "name": "東京スイミングセンター",
+      "xy": [
+        139.73867876858333,
+        35.738150450000006
+      ],
+      "expected": "sports",
+      "before": "mixed",
+      "after": "sports",
+      "actualName": "東京スイミングセンター"
+    },
+    {
+      "id": "osm-way-214125381",
+      "name": "門と蔵のある広場",
+      "xy": [
+        139.74251596864514,
+        35.73788425
+      ],
+      "expected": "green",
+      "before": "mixed",
+      "after": "green",
+      "actualName": "門と蔵のある広場"
+    },
+    {
+      "id": "osm-way-566098102",
+      "name": "駒込西公園",
+      "xy": [
+        139.73939030311197,
+        35.737616450000004
+      ],
+      "expected": "green",
+      "before": "mixed",
+      "after": "green",
+      "actualName": "駒込西公園"
+    },
+    {
+      "id": "osm-way-566098109",
+      "name": "そめいよしの児童遊園",
+      "xy": [
+        139.7411302219025,
+        35.73784415
+      ],
+      "expected": "green",
+      "before": "education",
+      "after": "green",
+      "actualName": "そめいよしの児童遊園"
+    },
+    {
+      "id": "osm-way-1346878460",
+      "name": "駒ゴルフガーデン",
+      "xy": [
+        139.7438755103715,
+        35.73592865
+      ],
+      "expected": "sports",
+      "before": "mixed",
+      "after": "sports",
+      "actualName": "駒ゴルフガーデン"
+    },
+    {
+      "id": "osm-way-1347310788",
+      "name": "染井の杜広場",
+      "xy": [
+        139.7437875156304,
+        35.7363906
+      ],
+      "expected": "green",
+      "before": "mixed",
+      "after": "green",
+      "actualName": "染井の杜広場"
+    },
+    {
+      "id": "osm-relation-18472103",
+      "name": "巣鴨スポーツセンター",
+      "xy": [
+        139.74048330940394,
+        35.734772
+      ],
+      "expected": "sports",
+      "before": "mixed",
+      "after": "sports",
+      "actualName": "巣鴨スポーツセンター"
+    },
+    {
+      "id": "osm-relation-18545345",
+      "name": "染井霊園",
+      "xy": [
+        139.73738892894107,
+        35.739094300000005
+      ],
+      "expected": "religious",
+      "before": "mixed",
+      "after": "religious",
+      "actualName": "染井霊園"
+    },
+    {
+      "id": "osm-way-170295471",
+      "name": "林試の森公園",
+      "xy": [
+        139.7026845123029,
+        35.62534685
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "林試の森公園"
+    },
+    {
+      "id": "osm-way-199342919",
+      "name": "小山台公園",
+      "xy": [
+        139.6981091550965,
+        35.62503255
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "小山台公園"
+    },
+    {
+      "id": "osm-way-245621296",
+      "name": "武蔵小山 緑道公園",
+      "xy": [
+        139.700558305818,
+        35.61766865
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "武蔵小山 緑道公園"
+    },
+    {
+      "id": "osm-way-660890095",
+      "name": "月光原公園",
+      "xy": [
+        139.69968424805194,
+        35.62345895
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "月光原公園"
+    },
+    {
+      "id": "osm-way-883090247",
+      "name": "目黒区立月光町児童遊園",
+      "xy": [
+        139.69764185289273,
+        35.6233653
+      ],
+      "expected": "green",
+      "before": "commercial",
+      "after": "green",
+      "actualName": "目黒区立月光町児童遊園"
+    },
+    {
+      "id": "osm-way-27620248",
+      "name": "駒沢オリンピック公園総合運動場",
+      "xy": [
+        139.6623012000968,
+        35.62512115
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "駒沢オリンピック公園総合運動場"
+    },
+    {
+      "id": "osm-way-156779116",
+      "name": "駒沢体育館",
+      "xy": [
+        139.6608004768886,
+        35.6248366
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "駒沢体育館"
+    },
+    {
+      "id": "osm-way-156779117",
+      "name": "駒沢硬式野球場",
+      "xy": [
+        139.65745897164243,
+        35.6259256
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "駒沢硬式野球場"
+    },
+    {
+      "id": "osm-way-156779122",
+      "name": "駒沢軟式野球場",
+      "xy": [
+        139.66450438837342,
+        35.623115049999996
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "駒沢軟式野球場"
+    },
+    {
+      "id": "osm-way-156779125",
+      "name": "駒沢補助競技場",
+      "xy": [
+        139.6613086731993,
+        35.62702195
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "駒沢補助競技場"
+    },
+    {
+      "id": "osm-way-229538469",
+      "name": "駒沢オリンピック公園総合運動場陸上競技場",
+      "xy": [
+        139.66356749851082,
+        35.62560445
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "駒沢オリンピック公園総合運動場陸上競技場"
+    },
+    {
+      "id": "osm-way-381773342",
+      "name": "深沢二丁目広場",
+      "xy": [
+        139.66089823034372,
+        35.62156385
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "深沢二丁目広場"
+    },
+    {
+      "id": "osm-way-442132908",
+      "name": "駒沢一丁目公園",
+      "xy": [
+        139.66227111696534,
+        35.6298282
+      ],
+      "expected": "green",
+      "before": "mixed",
+      "after": "green",
+      "actualName": "駒沢一丁目公園"
+    },
+    {
+      "id": "osm-way-646116148",
+      "name": "円形花壇",
+      "xy": [
+        139.6587160977545,
+        35.6272102
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "円形花壇"
+    },
+    {
+      "id": "osm-way-646382596",
+      "name": "屋内球技場",
+      "xy": [
+        139.66282932531888,
+        35.62314165
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "屋内球技場"
+    },
+    {
+      "id": "osm-way-675835598",
+      "name": "大刈込",
+      "xy": [
+        139.6647552109216,
+        35.62583935
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "大刈込"
+    },
+    {
+      "id": "osm-way-880656343",
+      "name": "生産緑地地区",
+      "xy": [
+        139.65964070313078,
+        35.622336849999996
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "生産緑地地区"
+    },
+    {
+      "id": "osm-way-1071022118",
+      "name": "補助競技場",
+      "xy": [
+        139.66129955027412,
+        35.62688475
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "駒沢補助競技場"
+    },
+    {
+      "id": "osm-way-32203169",
+      "name": "砧公園",
+      "xy": [
+        139.62015594035825,
+        35.630497899999995
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "ファミリーパーク"
+    },
+    {
+      "id": "osm-way-46703211",
+      "name": "野球場兼競技場",
+      "xy": [
+        139.62475066360963,
+        35.62840355
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "野球場兼競技場"
+    },
+    {
+      "id": "osm-way-47003515",
+      "name": "ファミリーパーク",
+      "xy": [
+        139.61877020678742,
+        35.63075635
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "ファミリーパーク"
+    },
+    {
+      "id": "osm-way-47040754",
+      "name": "バードサンクチュアリー",
+      "xy": [
+        139.61657723330217,
+        35.6314935
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "バードサンクチュアリー"
+    },
+    {
+      "id": "osm-way-442043888",
+      "name": "いらか道 市民農園",
+      "xy": [
+        139.6264709652162,
+        35.6284656
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "いらか道 市民農園"
+    },
+    {
+      "id": "osm-way-25943922",
+      "name": "馬事公苑",
+      "xy": [
+        139.63359100545128,
+        35.636625800000004
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "馬事公苑"
+    },
+    {
+      "id": "osm-way-307515881",
+      "name": "ヤスフットサルスタジアム世田谷",
+      "xy": [
+        139.63145497847432,
+        35.639311750000005
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "ヤスフットサルスタジアム世田谷"
+    },
+    {
+      "id": "osm-way-640543386",
+      "name": "上用賀公園",
+      "xy": [
+        139.6290379324385,
+        35.63835095
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "上用賀公園"
+    },
+    {
+      "id": "osm-way-1347171816",
+      "name": "桜三丁目公園",
+      "xy": [
+        139.63687616687977,
+        35.638905699999995
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "桜三丁目公園"
+    },
+    {
+      "id": "osm-way-1348217627",
+      "name": "馬事公苑",
+      "xy": [
+        139.63635850504596,
+        35.6354926
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "馬事公苑"
+    },
+    {
+      "id": "osm-relation-18550855",
+      "name": "周回走路",
+      "xy": [
+        139.6328605902506,
+        35.63624235
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "周回走路"
+    },
+    {
+      "id": "osm-way-23061245",
+      "name": "小石川植物園",
+      "xy": [
+        139.74415654934768,
+        35.72022455
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "小石川植物園"
+    },
+    {
+      "id": "osm-way-208019989",
+      "name": "八千代町児童遊園",
+      "xy": [
+        139.74877596643216,
+        35.71424365
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "八千代町児童遊園"
+    },
+    {
+      "id": "osm-way-414322198",
+      "name": "小石川四丁目児童遊園",
+      "xy": [
+        139.74421305219923,
+        35.715616499999996
+      ],
+      "expected": "green",
+      "before": "education",
+      "after": "green",
+      "actualName": "小石川四丁目児童遊園"
+    },
+    {
+      "id": "osm-way-459173214",
+      "name": "東京大学総合研究博物館・小石川分館",
+      "xy": [
+        139.74114923337405,
+        35.7214169
+      ],
+      "expected": "tourism",
+      "before": "residential",
+      "after": "tourism",
+      "actualName": "東京大学総合研究博物館・小石川分館"
+    },
+    {
+      "id": "osm-way-459173235",
+      "name": "柴田記念館",
+      "xy": [
+        139.74697123277264,
+        35.71919585
+      ],
+      "expected": "tourism",
+      "before": "residential",
+      "after": "tourism",
+      "actualName": "柴田記念館"
+    },
+    {
+      "id": "osm-way-570446703",
+      "name": "薬園保存園",
+      "xy": [
+        139.74555295937705,
+        35.718854199999996
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "薬園保存園"
+    },
+    {
+      "id": "osm-way-570447412",
+      "name": "分類標本園",
+      "xy": [
+        139.74487820000002,
+        35.7193623
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "分類標本園"
+    },
+    {
+      "id": "osm-way-971576635",
+      "name": "小石川三丁目緑地",
+      "xy": [
+        139.74546331553927,
+        35.7147103
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "小石川三丁目緑地"
+    },
+    {
+      "id": "osm-way-971576636",
+      "name": "久堅公園",
+      "xy": [
+        139.74180267538364,
+        35.71833595
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "久堅公園"
+    },
+    {
+      "id": "osm-way-33078986",
+      "name": "旧古河庭園",
+      "xy": [
+        139.74623879299537,
+        35.74245105
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "旧古河庭園"
+    },
+    {
+      "id": "osm-way-560042878",
+      "name": "無量寺 西墓地",
+      "xy": [
+        139.74405275746946,
+        35.74297835
+      ],
+      "expected": "religious",
+      "before": "residential",
+      "after": "religious",
+      "actualName": "無量寺 西墓地"
+    },
+    {
+      "id": "osm-way-926980084",
+      "name": "豊島区 駒込六丁目児童遊園",
+      "xy": [
+        139.74342095051534,
+        35.7401696
+      ],
+      "expected": "green",
+      "before": "mixed",
+      "after": "green",
+      "actualName": "豊島区 駒込六丁目児童遊園"
+    },
+    {
+      "id": "osm-way-157214425",
+      "name": "中央区総合スポーツセンター",
+      "xy": [
+        139.78936479002317,
+        35.6878375
+      ],
+      "expected": "sports",
+      "before": "commercial",
+      "after": "sports",
+      "actualName": "中央区総合スポーツセンター"
+    },
+    {
+      "id": "osm-way-157214547",
+      "name": "浜町公園",
+      "xy": [
+        139.7888337756524,
+        35.6881989
+      ],
+      "expected": "green",
+      "before": "commercial",
+      "after": "green",
+      "actualName": "浜町公園"
+    },
+    {
+      "id": "osm-way-156919945",
+      "name": "猿江二丁目公園",
+      "xy": [
+        139.81513823487785,
+        35.685817
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "猿江二丁目公園"
+    },
+    {
+      "id": "osm-way-579804203",
+      "name": "横十間川親水公園",
+      "xy": [
+        139.82066436878915,
+        35.68126085
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "横十間川親水公園"
+    },
+    {
+      "id": "osm-way-752327976",
+      "name": "扇橋三丁目公園",
+      "xy": [
+        139.81900321072337,
+        35.684043450000004
+      ],
+      "expected": "green",
+      "before": "education",
+      "after": "green",
+      "actualName": "扇橋三丁目公園"
+    },
+    {
+      "id": "osm-relation-10288221",
+      "name": "猿江恩賜公園",
+      "xy": [
+        139.81849744379173,
+        35.68849815
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "猿江恩賜公園"
+    },
+    {
+      "id": "osm-relation-10288254",
+      "name": "猿江恩賜公園",
+      "xy": [
+        139.8192368669873,
+        35.690776150000005
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "猿江恩賜公園"
+    },
+    {
+      "id": "osm-way-1475091687",
+      "name": "舎人公園陸上競技場",
+      "xy": [
+        139.76898092684303,
+        35.80067365
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "舎人公園陸上競技場"
+    },
+    {
+      "id": "osm-relation-10118100",
+      "name": "舎人公園",
+      "xy": [
+        139.7733173673123,
+        35.79866285
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "舎人公園"
+    },
+    {
+      "id": "osm-way-36725778",
+      "name": "板橋区立 緑ヶ丘第二公園",
+      "xy": [
+        139.67839734355206,
+        35.75876735
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "板橋区立 緑ヶ丘第二公園"
+    },
+    {
+      "id": "osm-way-80704101",
+      "name": "平和公園",
+      "xy": [
+        139.68115664256476,
+        35.7632312
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "平和公園"
+    },
+    {
+      "id": "osm-way-105737431",
+      "name": "上板橋体育館",
+      "xy": [
+        139.67559241332754,
+        35.7572
+      ],
+      "expected": "sports",
+      "before": "residential",
+      "after": "sports",
+      "actualName": "上板橋体育館"
+    },
+    {
+      "id": "osm-way-610037816",
+      "name": "水久保公園",
+      "xy": [
+        139.684375584026,
+        35.761251349999995
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "水久保公園"
+    },
+    {
+      "id": "osm-way-659993041",
+      "name": "東新児童遊園",
+      "xy": [
+        139.6820052703862,
+        35.75348755
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "東新児童遊園"
+    },
+    {
+      "id": "osm-way-667728419",
+      "name": "緑ヶ丘第一公園",
+      "xy": [
+        139.68098184351643,
+        35.75707265
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "緑ヶ丘第一公園"
+    },
+    {
+      "id": "osm-relation-17981647",
+      "name": "城北中央公園",
+      "xy": [
+        139.67358439761517,
+        35.755619949999996
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "城北中央公園"
+    },
+    {
+      "id": "osm-way-161935429",
+      "name": "清花公園",
+      "xy": [
+        139.73351560658452,
+        35.5852664
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "清花公園"
+    },
+    {
+      "id": "osm-way-162931814",
+      "name": "アザラシ館",
+      "xy": [
+        139.73778259627056,
+        35.58877785
+      ],
+      "expected": "tourism",
+      "before": "residential",
+      "after": "tourism",
+      "actualName": "アザラシ館"
+    },
+    {
+      "id": "osm-way-162931817",
+      "name": "しながわ水族館",
+      "xy": [
+        139.73747281791282,
+        35.5886394
+      ],
+      "expected": "tourism",
+      "before": "residential",
+      "after": "tourism",
+      "actualName": "しながわ水族館"
+    },
+    {
+      "id": "osm-way-174236885",
+      "name": "大森北公園",
+      "xy": [
+        139.73547106056708,
+        35.5867819
+      ],
+      "expected": "green",
+      "before": "commercial",
+      "after": "green",
+      "actualName": "大森北公園"
+    },
+    {
+      "id": "osm-way-195263962",
+      "name": "品川区立大井海岸公園",
+      "xy": [
+        139.73368530900262,
+        35.5884506
+      ],
+      "expected": "green",
+      "before": "commercial",
+      "after": "green",
+      "actualName": "品川区立大井海岸公園"
+    },
+    {
+      "id": "osm-way-700644710",
+      "name": "平和の森公園",
+      "xy": [
+        139.73975174749245,
+        35.58026655
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "平和の森公園"
+    },
+    {
+      "id": "osm-way-33440458",
+      "name": "東京都美術館",
+      "xy": [
+        139.77314560368728,
+        35.717106
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "東京都美術館"
+    },
+    {
+      "id": "osm-way-145344062",
+      "name": "法隆寺宝物館",
+      "xy": [
+        139.77408643580696,
+        35.71866475
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "法隆寺宝物館"
+    },
+    {
+      "id": "osm-way-145344185",
+      "name": "表慶館",
+      "xy": [
+        139.77524338572425,
+        35.7186087
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "表慶館"
+    },
+    {
+      "id": "osm-way-152340249",
+      "name": "黒田記念館",
+      "xy": [
+        139.7733212437072,
+        35.71891125
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "黒田記念館"
+    },
+    {
+      "id": "osm-way-203960903",
+      "name": "国立西洋美術館",
+      "xy": [
+        139.77594239293836,
+        35.7155512
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "国立西洋美術館"
+    },
+    {
+      "id": "osm-way-305945115",
+      "name": "藤堂家墓所",
+      "xy": [
+        139.7717876377854,
+        35.7170598
+      ],
+      "expected": "religious",
+      "before": "green",
+      "after": "religious",
+      "actualName": "藤堂家墓所"
+    },
+    {
+      "id": "osm-way-509544637",
+      "name": "子供動物園すてっぷ",
+      "xy": [
+        139.77161155474266,
+        35.7138396
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "子供動物園すてっぷ"
+    },
+    {
+      "id": "osm-way-511585928",
+      "name": "ビオトープ浮島",
+      "xy": [
+        139.76907639999996,
+        35.71277619999999
+      ],
+      "expected": "green",
+      "before": "waterfront",
+      "after": "waterfront",
+      "actualName": "不忍池"
+    },
+    {
+      "id": "osm-way-553277397",
+      "name": "ぼたん苑",
+      "xy": [
+        139.77185121864864,
+        35.715136650000005
+      ],
+      "expected": "green",
+      "before": "green",
+      "after": "green",
+      "actualName": "ぼたん苑"
+    },
+    {
+      "id": "osm-way-1065775336",
+      "name": "恩賜上野動物園",
+      "xy": [
+        139.7688959744384,
+        35.71534255
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "恩賜上野動物園（西園）"
+    },
+    {
+      "id": "osm-way-1065775337",
+      "name": "恩賜上野動物園（東園）",
+      "xy": [
+        139.77150449251496,
+        35.7163812
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "恩賜上野動物園（東園）"
+    },
+    {
+      "id": "osm-way-1065775338",
+      "name": "恩賜上野動物園（西園）",
+      "xy": [
+        139.76988111161,
+        35.7140306
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "恩賜上野動物園（西園）"
+    },
+    {
+      "id": "osm-relation-21311152",
+      "name": "恩賜上野動物園",
+      "xy": [
+        139.76988111161,
+        35.7140306
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "恩賜上野動物園（西園）"
+    },
+    {
+      "id": "osm-way-191044572",
+      "name": "葛西臨海水族園",
+      "xy": [
+        139.86204924571183,
+        35.6406595
+      ],
+      "expected": "tourism",
+      "before": "green",
+      "after": "tourism",
+      "actualName": "葛西臨海水族園"
+    },
+    {
+      "id": "osm-way-689336469",
+      "name": "葛西臨海公園",
+      "xy": [
+        139.85948341156484,
+        35.642210649999996
+      ],
+      "expected": "green",
+      "before": "green",
+      "after": "green",
+      "actualName": "葛西臨海公園"
+    },
+    {
+      "id": "osm-way-693987762",
+      "name": "日本庭園",
+      "xy": [
+        139.85884798976076,
+        35.6415852
+      ],
+      "expected": "green",
+      "before": "green",
+      "after": "green",
+      "actualName": "日本庭園"
+    },
+    {
+      "id": "osm-way-693993053",
+      "name": "鳥類園",
+      "xy": [
+        139.8671378481784,
+        35.64052005
+      ],
+      "expected": "green",
+      "before": "residential",
+      "after": "green",
+      "actualName": "鳥類園"
+    },
+    {
+      "id": "osm-way-162843767",
+      "name": "夢の島東少年野球場",
+      "xy": [
+        139.8376226163399,
+        35.6491896
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "夢の島東少年野球場"
+    },
+    {
+      "id": "osm-way-654165797",
+      "name": "新木場緑道公園",
+      "xy": [
+        139.84052474902245,
+        35.6401425
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "新木場緑道公園"
+    },
+    {
+      "id": "osm-way-777393957",
+      "name": "新木場一丁目公園",
+      "xy": [
+        139.83538590707693,
+        35.64163845
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "新木場一丁目公園"
+    },
+    {
+      "id": "osm-way-777395545",
+      "name": "新木場一丁目第二公園",
+      "xy": [
+        139.83544787348742,
+        35.6433319
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "新木場一丁目第二公園"
+    },
+    {
+      "id": "osm-way-777681076",
+      "name": "新木場一丁目緑地公園",
+      "xy": [
+        139.8358912071136,
+        35.644405250000005
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "新木場一丁目緑地公園"
+    },
+    {
+      "id": "osm-way-783195576",
+      "name": "イーノの森 Dog Garden",
+      "xy": [
+        139.8362038589512,
+        35.65002765
+      ],
+      "expected": "green",
+      "before": "industrial",
+      "after": "green",
+      "actualName": "イーノの森 Dog Garden"
+    }
+  ]
+}

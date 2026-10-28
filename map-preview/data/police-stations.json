@@ -1,0 +1,1004 @@
+{
+  "source": "https://www.npa.go.jp/about/overview/kankatsu/R08_keisatusyo.csv",
+  "geocoder": "https://msearch.gsi.go.jp/",
+  "asOf": "2026-04-01",
+  "license": "CC BY 4.0",
+  "features": [
+    {
+      "id": "police-05",
+      "name": "中央警察署",
+      "xy": [
+        139.776825,
+        35.680511
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都中央区日本橋兜町14-2",
+      "source": "警察庁2026年4月・国土地理院住所検索",
+      "precision": "住所点を中心とする概略円"
+    },
+    {
+      "id": "police-06",
+      "name": "久松警察署",
+      "xy": [
+        139.784698,
+        35.688137
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都中央区日本橋久松町8-1",
+      "source": "警察庁2026年4月・国土地理院住所検索",
+      "precision": "住所点を中心とする概略円"
+    },
+    {
+      "id": "police-33",
+      "name": "牛込警察署",
+      "xy": [
+        139.731506,
+        35.699303
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都新宿区南山伏町1-15",
+      "source": "警察庁2026年4月・国土地理院住所検索",
+      "precision": "住所点を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-343691431",
+      "name": "麹町警察署",
+      "xy": [
+        139.7427431,
+        35.6841374
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都千代田区麹町1-4-5",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420766507",
+      "name": "丸の内警察署",
+      "xy": [
+        139.760181,
+        35.675367
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都千代田区有楽町1-9-2",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1072641932",
+      "name": "神田警察署",
+      "xy": [
+        139.7625545,
+        35.6927259
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都千代田区神田錦町3-3-2",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-467041442",
+      "name": "万世橋警察署",
+      "xy": [
+        139.7718235,
+        35.697296
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都千代田区外神田1-16-5",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420795861",
+      "name": "築地警察署",
+      "xy": [
+        139.771377,
+        35.670155
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都中央区築地1-6-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-573259067",
+      "name": "月島警察署",
+      "xy": [
+        139.7779201,
+        35.6525584
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都中央区晴海3-16-14",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420780322",
+      "name": "愛宕警察署",
+      "xy": [
+        139.752824,
+        35.660989
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都港区新橋6-18-12",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-387771787",
+      "name": "三田警察署",
+      "xy": [
+        139.745603,
+        35.642722
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都港区芝浦4-2-12",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-252677810",
+      "name": "高輪警察署",
+      "xy": [
+        139.7330756,
+        35.6356567
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都港区高輪3-15-20",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-343449457",
+      "name": "麻布警察署",
+      "xy": [
+        139.732877225,
+        35.6643807375
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都港区六本木4-7-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-577536941",
+      "name": "赤坂警察署",
+      "xy": [
+        139.7324166,
+        35.6757126
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都港区赤坂4-18-19",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-298975813",
+      "name": "東京湾岸警察署",
+      "xy": [
+        139.7749648,
+        35.6191959
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都江東区青海2-7-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1406081991",
+      "name": "品川警察署",
+      "xy": [
+        139.7450065,
+        35.6145549
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都品川区東品川3-14-32",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1063753086",
+      "name": "大井警察署",
+      "xy": [
+        139.7306332,
+        35.5990742
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都品川区大井5-10-2",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1063625488",
+      "name": "大崎警察署",
+      "xy": [
+        139.7246136,
+        35.62177
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都品川区大崎4-2-10",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420796595",
+      "name": "荏原警察署",
+      "xy": [
+        139.706229,
+        35.612052
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都品川区荏原6-19-10",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-366529898",
+      "name": "大森警察署",
+      "xy": [
+        139.7340114,
+        35.5732973
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都大田区大森中1-1-16",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420789985",
+      "name": "田園調布警察署",
+      "xy": [
+        139.677305,
+        35.589135
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都大田区田園調布1-1-8",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-269668396",
+      "name": "蒲田警察署",
+      "xy": [
+        139.7203685,
+        35.5583527
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都大田区蒲田本町2-3-3",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1145456441",
+      "name": "池上警察署",
+      "xy": [
+        139.6986861,
+        35.5750018
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都大田区池上3-20-10",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-1303500451",
+      "name": "東京空港警察署",
+      "xy": [
+        139.78391325714284,
+        35.55513867142857
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都大田区羽田空港3-4-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-519946899",
+      "name": "世田谷警察署",
+      "xy": [
+        139.6666582,
+        35.6401167
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都世田谷区三軒茶屋2-4-4",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-356274671",
+      "name": "北沢警察署",
+      "xy": [
+        139.6520895,
+        35.6582445
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都世田谷区松原6-4-14",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-283009901",
+      "name": "玉川警察署",
+      "xy": [
+        139.6479486,
+        35.6129459
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都世田谷区中町2-9-22",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-313856211",
+      "name": "成城警察署",
+      "xy": [
+        139.6160861,
+        35.6532845
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都世田谷区千歳台3-19-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420790522",
+      "name": "目黒警察署",
+      "xy": [
+        139.7050865,
+        35.6379645
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都目黒区中目黒2-7-13",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-734895919",
+      "name": "碑文谷警察署",
+      "xy": [
+        139.6813936,
+        35.6210773
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都目黒区碑文谷4-24-17",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-109037638",
+      "name": "渋谷警察署",
+      "xy": [
+        139.70390066666667,
+        35.65776308333333
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都渋谷区渋谷3-8-15",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-209969132",
+      "name": "原宿警察署",
+      "xy": [
+        139.70752772857142,
+        35.671829585714285
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都渋谷区神宮前1-4-17",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420766870",
+      "name": "代々木警察署",
+      "xy": [
+        139.683135,
+        35.679847
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都渋谷区本町1-11-3",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-295416420",
+      "name": "新宿警察署",
+      "xy": [
+        139.6943522,
+        35.6926501
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都新宿区西新宿6-1-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1179085881",
+      "name": "戸塚警察署",
+      "xy": [
+        139.7109812,
+        35.7135967
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都新宿区西早稲田3-30-13",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420771524",
+      "name": "四谷警察署",
+      "xy": [
+        139.7204914,
+        35.6865445
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都新宿区左門町6-5",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1800595798",
+      "name": "中野警察署",
+      "xy": [
+        139.6762817,
+        35.6977136
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都中野区中央2-47-2",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-635585887",
+      "name": "野方警察署",
+      "xy": [
+        139.6603435,
+        35.7098651
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都中野区中野4-12-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-440097318",
+      "name": "杉並警察署",
+      "xy": [
+        139.63704,
+        35.6989306
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都杉並区成田東4-38-16",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1220022346",
+      "name": "高井戸警察署",
+      "xy": [
+        139.6114896,
+        35.6904723
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都杉並区宮前1-16-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420796942",
+      "name": "荻窪警察署",
+      "xy": [
+        139.607473,
+        35.711424
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都杉並区桃井3-1-3",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420775102",
+      "name": "富坂警察署",
+      "xy": [
+        139.747044,
+        35.710539
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都文京区小石川2-14-2",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1104760353",
+      "name": "大塚警察署",
+      "xy": [
+        139.7284527,
+        35.717066
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都文京区音羽2-12-26",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-372721285",
+      "name": "本富士警察署",
+      "xy": [
+        139.7637494,
+        35.7075143
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都文京区本郷7-1-7",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-1347122871",
+      "name": "駒込警察署",
+      "xy": [
+        139.74832976,
+        35.73110078
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都文京区本駒込2-28-18",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-513034571",
+      "name": "巣鴨警察署",
+      "xy": [
+        139.7303538,
+        35.7318119
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都豊島区北大塚1-15-15",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-706029517",
+      "name": "池袋警察署",
+      "xy": [
+        139.7067525,
+        35.7283058
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都豊島区西池袋1-7-5",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420790419",
+      "name": "目白警察署",
+      "xy": [
+        139.711381,
+        35.720037
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都豊島区目白2-10-2",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-1347235123",
+      "name": "滝野川警察署",
+      "xy": [
+        139.74151645,
+        35.7472546875
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都北区西ケ原2-4-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420789895",
+      "name": "王子警察署",
+      "xy": [
+        139.7383053,
+        35.7593475
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都北区王子3-22-22",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-1348019634",
+      "name": "赤羽警察署",
+      "xy": [
+        139.73379138,
+        35.7743782
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都北区神谷3-10-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420786154",
+      "name": "板橋警察署",
+      "xy": [
+        139.710713,
+        35.750395
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都板橋区板橋2-60-13",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-624991719",
+      "name": "高島平警察署",
+      "xy": [
+        139.6588793,
+        35.7858005
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都板橋区高島平3-12-32",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-299240645",
+      "name": "練馬警察署",
+      "xy": [
+        139.6558948,
+        35.7368921
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都練馬区豊玉北5-2-7",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-713445758",
+      "name": "光が丘警察署",
+      "xy": [
+        139.6316063,
+        35.7596417
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都練馬区光が丘2-9-8",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-8263114780",
+      "name": "石神井警察署",
+      "xy": [
+        139.5993584,
+        35.7425973
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都練馬区石神井町6-17-26",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420765910",
+      "name": "上野警察署",
+      "xy": [
+        139.779459,
+        35.712346
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都台東区東上野4-2-4",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420765959",
+      "name": "下谷警察署",
+      "xy": [
+        139.7879508,
+        35.7259025
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都台東区下谷3-15-9",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420788015",
+      "name": "浅草警察署",
+      "xy": [
+        139.797846,
+        35.718984
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都台東区浅草4-47-11",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-145647124",
+      "name": "蔵前警察署",
+      "xy": [
+        139.78993934,
+        35.70123638
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都台東区蔵前1-3-24",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420776919",
+      "name": "尾久警察署",
+      "xy": [
+        139.763792,
+        35.750869
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都荒川区西尾久3-8-5",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-260998262",
+      "name": "南千住警察署",
+      "xy": [
+        139.7942673,
+        35.734339
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都荒川区南千住6-45-43",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-237208081",
+      "name": "荒川警察署",
+      "xy": [
+        139.78455728,
+        35.73446714000001
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都荒川区荒川3-1-2",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420770217",
+      "name": "千住警察署",
+      "xy": [
+        139.803488,
+        35.747
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都足立区千住1-38-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-2561707439",
+      "name": "西新井警察署",
+      "xy": [
+        139.7891494,
+        35.7734739
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都足立区西新井栄町1-16-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-157875996",
+      "name": "竹の塚警察署",
+      "xy": [
+        139.80288252692307,
+        35.790991019230766
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都足立区保木間1-16-4",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420795925",
+      "name": "綾瀬警察署",
+      "xy": [
+        139.830673,
+        35.777784
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都足立区谷中4-1-24",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420788504",
+      "name": "深川警察署",
+      "xy": [
+        139.806208,
+        35.673656
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都江東区木場3-18-6",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420771878",
+      "name": "城東警察署",
+      "xy": [
+        139.826984,
+        35.678517
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都江東区北砂2-1-24",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-544473585",
+      "name": "本所警察署",
+      "xy": [
+        139.8142604,
+        35.7056053
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都墨田区横川4-8-9",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-539938509",
+      "name": "向島警察署",
+      "xy": [
+        139.8274276,
+        35.7114391
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都墨田区文花3-18-9",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-750039940",
+      "name": "亀有警察署",
+      "xy": [
+        139.8621983,
+        35.7619022
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都葛飾区新宿4-22-19",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-1420797223",
+      "name": "葛飾警察署",
+      "xy": [
+        139.8389172,
+        35.7380321
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都葛飾区立石2-7-9",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-node-734837930",
+      "name": "小松川警察署",
+      "xy": [
+        139.863725,
+        35.702561
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都江戸川区松島1-19-22",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-510724372",
+      "name": "葛西警察署",
+      "xy": [
+        139.87951346,
+        35.66151306
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都江戸川区東葛西6-39-1",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    },
+    {
+      "id": "police-osm-way-514642458",
+      "name": "小岩警察署",
+      "xy": [
+        139.88754198,
+        35.73383914
+      ],
+      "radius": 20,
+      "kind": "police",
+      "address": "東京都江戸川区東小岩6-9-17",
+      "source": "警察庁2026年4月・OpenStreetMap",
+      "precision": "OpenStreetMap位置を中心とする概略円"
+    }
+  ],
+  "unmatched": [
+    {
+      "name": "志村警察署",
+      "error": "OpenStreetMapに署の位置を確認できず",
+      "query": "東京都板橋区東坂下2-21-17",
+      "candidate": "東京都板橋区東坂下二丁目２１番１７号"
+    }
+  ]
+}

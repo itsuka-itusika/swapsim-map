@@ -1,0 +1,1336 @@
+{
+  "basis": "Model assumptions; no live OSM in this comparison; legacy UI ward census normalization applied",
+  "rows": [
+    {
+      "name": "明治神宮の森",
+      "p": [
+        139.6993,
+        35.6764
+      ],
+      "radius": 70,
+      "time": "weekday13",
+      "land": {
+        "green": 1
+      },
+      "current": {
+        "population": 3.82,
+        "roles": {
+          "green_walk": 44.4,
+          "green_tourist": 26.6,
+          "green_gardener": 7.3,
+          "green_parkguard": 4,
+          "green_run": 17.7
+        }
+      },
+      "legacy": {
+        "population": 9.75,
+        "roles": {
+          "urban_shrine": 13,
+          "urban_visit": 47.3,
+          "green_walk": 17.6,
+          "green_tourist": 10.6,
+          "green_gardener": 2.9,
+          "green_parkguard": 1.6,
+          "green_run": 7
+        }
+      }
+    },
+    {
+      "name": "明治神宮の森",
+      "p": [
+        139.6993,
+        35.6764
+      ],
+      "radius": 70,
+      "time": "sunday13",
+      "land": {
+        "green": 1
+      },
+      "current": {
+        "population": 5.17,
+        "roles": {
+          "green_walk": 45.8,
+          "green_tourist": 27.5,
+          "green_gardener": 5.4,
+          "green_parkguard": 3,
+          "green_run": 18.3
+        }
+      },
+      "legacy": {
+        "population": 12.3,
+        "roles": {
+          "urban_shrine": 12.4,
+          "urban_visit": 45,
+          "green_walk": 19.5,
+          "green_tourist": 11.7,
+          "green_gardener": 2.3,
+          "green_parkguard": 1.3,
+          "green_run": 7.8
+        }
+      }
+    },
+    {
+      "name": "明治神宮の森",
+      "p": [
+        139.6993,
+        35.6764
+      ],
+      "radius": 70,
+      "time": "friday23",
+      "land": {
+        "green": 1
+      },
+      "current": {
+        "population": 0.06,
+        "roles": {
+          "green_parkguard": 100
+        }
+      },
+      "legacy": {
+        "population": 0.06,
+        "roles": {
+          "green_parkguard": 100
+        }
+      }
+    },
+    {
+      "name": "明治神宮の森",
+      "p": [
+        139.6993,
+        35.6764
+      ],
+      "radius": 300,
+      "time": "weekday13",
+      "land": {
+        "green": 1
+      },
+      "current": {
+        "population": 70.12,
+        "roles": {
+          "green_walk": 44.4,
+          "green_tourist": 26.6,
+          "green_gardener": 7.3,
+          "green_parkguard": 4,
+          "green_run": 17.7
+        }
+      },
+      "legacy": {
+        "population": 125.1,
+        "roles": {
+          "urban_shrine": 9.5,
+          "urban_visit": 34.5,
+          "green_walk": 24.8,
+          "green_tourist": 14.9,
+          "green_gardener": 4.1,
+          "green_parkguard": 2.3,
+          "green_run": 9.9
+        }
+      }
+    },
+    {
+      "name": "明治神宮の森",
+      "p": [
+        139.6993,
+        35.6764
+      ],
+      "radius": 300,
+      "time": "sunday13",
+      "land": {
+        "green": 1
+      },
+      "current": {
+        "population": 95,
+        "roles": {
+          "green_walk": 45.8,
+          "green_tourist": 27.5,
+          "green_gardener": 5.4,
+          "green_parkguard": 3,
+          "green_run": 18.3
+        }
+      },
+      "legacy": {
+        "population": 160.97,
+        "roles": {
+          "urban_shrine": 8.9,
+          "urban_visit": 32.2,
+          "green_walk": 27,
+          "green_tourist": 16.2,
+          "green_gardener": 3.2,
+          "green_parkguard": 1.8,
+          "green_run": 10.8
+        }
+      }
+    },
+    {
+      "name": "明治神宮の森",
+      "p": [
+        139.6993,
+        35.6764
+      ],
+      "radius": 300,
+      "time": "friday23",
+      "land": {
+        "green": 1
+      },
+      "current": {
+        "population": 1.13,
+        "roles": {
+          "green_parkguard": 100
+        }
+      },
+      "legacy": {
+        "population": 1.13,
+        "roles": {
+          "green_parkguard": 100
+        }
+      }
+    },
+    {
+      "name": "大学",
+      "p": [
+        139.763123,
+        35.712522
+      ],
+      "radius": 70,
+      "time": "weekday13",
+      "land": {
+        "education": 1
+      },
+      "current": {
+        "population": 567.41,
+        "roles": {
+          "student": 90,
+          "teacher": 6,
+          "urban_visit": 2.2,
+          "urban_school_admin": 1.8
+        }
+      },
+      "legacy": {
+        "population": 745.25,
+        "roles": {
+          "urban_research": 3.3,
+          "urban_medical_admin": 0.6,
+          "general": 16,
+          "area_office": 1.8,
+          "area_student": 3.5,
+          "area_tourist": 1.8,
+          "student": 68.5,
+          "teacher": 4.6
+        }
+      }
+    },
+    {
+      "name": "大学",
+      "p": [
+        139.763123,
+        35.712522
+      ],
+      "radius": 70,
+      "time": "sunday13",
+      "land": {
+        "education": 1
+      },
+      "current": {
+        "population": 43.56,
+        "roles": {
+          "student": 93.7,
+          "teacher": 3.1,
+          "urban_visit": 2.3,
+          "urban_school_admin": 0.8
+        }
+      },
+      "legacy": {
+        "population": 282.38,
+        "roles": {
+          "urban_research": 1.1,
+          "urban_medical_admin": 0.2,
+          "general": 71.7,
+          "area_office": 0.4,
+          "area_student": 6.3,
+          "area_tourist": 5.4,
+          "student": 14.5,
+          "teacher": 0.5
+        }
+      }
+    },
+    {
+      "name": "大学",
+      "p": [
+        139.763123,
+        35.712522
+      ],
+      "radius": 70,
+      "time": "friday23",
+      "land": {
+        "education": 1
+      },
+      "current": {
+        "population": 0,
+        "roles": {}
+      },
+      "legacy": {
+        "population": 239.46,
+        "roles": {
+          "urban_research": 0.2,
+          "urban_medical_admin": 0,
+          "general": 99.5,
+          "area_office": 0.1,
+          "area_tourist": 0.2
+        }
+      }
+    },
+    {
+      "name": "大学",
+      "p": [
+        139.763123,
+        35.712522
+      ],
+      "radius": 300,
+      "time": "weekday13",
+      "land": {
+        "education": 0.1535401750198871,
+        "medical": 0.0501193317422429,
+        "residential": 0.7852028639618209,
+        "mixed": 0.005568814638026996,
+        "commercial": 0.005568814638026996
+      },
+      "current": {
+        "population": 5550.03,
+        "roles": {
+          "student": 25.9,
+          "teacher": 1.7,
+          "urban_visit": 1.2,
+          "urban_school_admin": 0.5,
+          "patient": 2.1,
+          "nurse": 0.8,
+          "doctor": 0.3,
+          "urban_medical_admin": 0.4,
+          "general": 65.5,
+          "resident": 0.9,
+          "care": 0.3,
+          "area_shopping": 0.4,
+          "area_night_worker": 0
+        }
+      },
+      "legacy": {
+        "population": 5670.74,
+        "roles": {
+          "urban_research": 7.6,
+          "urban_medical_admin": 1.4,
+          "general": 42.5,
+          "area_office": 3.7,
+          "area_student": 7.3,
+          "area_tourist": 3.7,
+          "resident": 1.8,
+          "care": 0.6,
+          "student": 26.5,
+          "teacher": 1.8,
+          "patient": 2.1,
+          "nurse": 0.8,
+          "doctor": 0.3
+        }
+      }
+    },
+    {
+      "name": "大学",
+      "p": [
+        139.763123,
+        35.712522
+      ],
+      "radius": 300,
+      "time": "sunday13",
+      "land": {
+        "education": 0.1535401750198871,
+        "medical": 0.0501193317422429,
+        "residential": 0.7852028639618209,
+        "mixed": 0.005568814638026996,
+        "commercial": 0.005568814638026996
+      },
+      "current": {
+        "population": 6623.53,
+        "roles": {
+          "student": 1.7,
+          "teacher": 0.1,
+          "urban_visit": 0.5,
+          "urban_school_admin": 0,
+          "patient": 1.8,
+          "nurse": 0.7,
+          "doctor": 0.2,
+          "urban_medical_admin": 0.3,
+          "general": 93.3,
+          "resident": 0.7,
+          "care": 0.2,
+          "area_shopping": 0.4,
+          "area_night_worker": 0
+        }
+      },
+      "legacy": {
+        "population": 5138.19,
+        "roles": {
+          "urban_research": 1,
+          "urban_medical_admin": 0.2,
+          "general": 79.7,
+          "area_office": 0.3,
+          "area_student": 5.6,
+          "area_tourist": 4.7,
+          "resident": 1.9,
+          "care": 0.6,
+          "student": 2.3,
+          "teacher": 0.1,
+          "patient": 2.3,
+          "nurse": 0.9,
+          "doctor": 0.3
+        }
+      }
+    },
+    {
+      "name": "大学",
+      "p": [
+        139.763123,
+        35.712522
+      ],
+      "radius": 300,
+      "time": "friday23",
+      "land": {
+        "education": 0.1535401750198871,
+        "medical": 0.0501193317422429,
+        "residential": 0.7852028639618209,
+        "mixed": 0.005568814638026996,
+        "commercial": 0.005568814638026996
+      },
+      "current": {
+        "population": 7404.77,
+        "roles": {
+          "patient": 0.8,
+          "nurse": 0.2,
+          "doctor": 0.1,
+          "urban_medical_admin": 0,
+          "general": 98.2,
+          "resident": 0.7,
+          "care": 0.1,
+          "area_night_worker": 0
+        }
+      },
+      "legacy": {
+        "population": 5020.65,
+        "roles": {
+          "urban_research": 0.1,
+          "urban_medical_admin": 0,
+          "general": 95.9,
+          "area_office": 0.1,
+          "area_tourist": 0.1,
+          "resident": 2,
+          "care": 0.2,
+          "patient": 1.2,
+          "nurse": 0.3,
+          "doctor": 0.1
+        }
+      }
+    },
+    {
+      "name": "歌舞伎町",
+      "p": [
+        139.7034,
+        35.6945
+      ],
+      "radius": 70,
+      "time": "weekday13",
+      "land": {
+        "commercial": 1
+      },
+      "current": {
+        "population": 28.96,
+        "roles": {
+          "area_shopping": 6,
+          "area_night": 18,
+          "area_night_worker": 4.5,
+          "area_tourist": 18,
+          "area_inbound": 35.9,
+          "area_adult_customer": 12,
+          "area_adult_worker": 5.7
+        }
+      },
+      "legacy": {
+        "population": 523.13,
+        "roles": {
+          "general": 12.1,
+          "area_subculture": 3.1,
+          "area_shopping": 9.3,
+          "area_tourist": 8.5,
+          "area_inbound": 16.7,
+          "area_night": 10.8,
+          "area_night_worker": 2.7,
+          "area_adult_customer": 24.5,
+          "area_adult_worker": 12.2
+        }
+      }
+    },
+    {
+      "name": "歌舞伎町",
+      "p": [
+        139.7034,
+        35.6945
+      ],
+      "radius": 70,
+      "time": "sunday13",
+      "land": {
+        "commercial": 1
+      },
+      "current": {
+        "population": 28.96,
+        "roles": {
+          "area_shopping": 6.8,
+          "area_night": 16.4,
+          "area_night_worker": 4.1,
+          "area_tourist": 18.8,
+          "area_inbound": 37.7,
+          "area_adult_customer": 10.9,
+          "area_adult_worker": 5.2
+        }
+      },
+      "legacy": {
+        "population": 604.28,
+        "roles": {
+          "general": 17.8,
+          "area_subculture": 3.5,
+          "area_shopping": 10.1,
+          "area_tourist": 8.5,
+          "area_inbound": 16.6,
+          "area_night": 9.4,
+          "area_night_worker": 2.3,
+          "area_adult_customer": 21.2,
+          "area_adult_worker": 10.6
+        }
+      }
+    },
+    {
+      "name": "歌舞伎町",
+      "p": [
+        139.7034,
+        35.6945
+      ],
+      "radius": 70,
+      "time": "friday23",
+      "land": {
+        "commercial": 1
+      },
+      "current": {
+        "population": 301.72,
+        "roles": {
+          "area_night": 61.1,
+          "area_night_worker": 15.3,
+          "area_tourist": 0.2,
+          "area_inbound": 0.5,
+          "area_adult_customer": 12.7,
+          "area_adult_worker": 6.1,
+          "area_cabaret_worker": 4.1
+        }
+      },
+      "legacy": {
+        "population": 1227.41,
+        "roles": {
+          "general": 10.3,
+          "area_tourist": 0.1,
+          "area_inbound": 0.2,
+          "area_night": 37,
+          "area_night_worker": 9.1,
+          "area_cabaret_worker": 4.1,
+          "area_adult_customer": 26.1,
+          "area_adult_worker": 13
+        }
+      }
+    },
+    {
+      "name": "歌舞伎町",
+      "p": [
+        139.7034,
+        35.6945
+      ],
+      "radius": 300,
+      "time": "weekday13",
+      "land": {
+        "commercial": 0.984089101034222,
+        "medical": 0.015910898965791377
+      },
+      "current": {
+        "population": 611.85,
+        "roles": {
+          "area_shopping": 4.9,
+          "area_night": 14.8,
+          "area_night_worker": 3.7,
+          "area_tourist": 16.3,
+          "area_inbound": 29.6,
+          "area_adult_customer": 7.8,
+          "area_adult_worker": 3.8,
+          "area_subculture": 4.6,
+          "patient": 7.8,
+          "nurse": 2.9,
+          "doctor": 1,
+          "urban_visit": 2,
+          "urban_medical_admin": 0.8
+        }
+      },
+      "legacy": {
+        "population": 8454.59,
+        "roles": {
+          "general": 14,
+          "area_subculture": 3,
+          "area_shopping": 10.9,
+          "area_tourist": 9.4,
+          "area_inbound": 16.3,
+          "area_night": 10.1,
+          "area_night_worker": 2.5,
+          "area_adult_customer": 22.1,
+          "area_adult_worker": 11,
+          "urban_visit": 0,
+          "patient": 0.5,
+          "nurse": 0.2,
+          "doctor": 0.1
+        }
+      }
+    },
+    {
+      "name": "歌舞伎町",
+      "p": [
+        139.7034,
+        35.6945
+      ],
+      "radius": 300,
+      "time": "sunday13",
+      "land": {
+        "commercial": 0.984089101034222,
+        "medical": 0.015910898965791377
+      },
+      "current": {
+        "population": 611.85,
+        "roles": {
+          "area_shopping": 5.6,
+          "area_night": 13.4,
+          "area_night_worker": 3.3,
+          "area_tourist": 16.9,
+          "area_inbound": 30.7,
+          "area_adult_customer": 7.2,
+          "area_adult_worker": 3.4,
+          "area_subculture": 5.1,
+          "patient": 7.8,
+          "nurse": 2.9,
+          "doctor": 1,
+          "urban_visit": 2,
+          "urban_medical_admin": 0.8
+        }
+      },
+      "legacy": {
+        "population": 9911.98,
+        "roles": {
+          "general": 20.2,
+          "area_subculture": 3.3,
+          "area_shopping": 11.6,
+          "area_tourist": 9.2,
+          "area_inbound": 16,
+          "area_night": 8.6,
+          "area_night_worker": 2.1,
+          "area_adult_customer": 18.8,
+          "area_adult_worker": 9.4,
+          "urban_visit": 0,
+          "patient": 0.5,
+          "nurse": 0.2,
+          "doctor": 0.1
+        }
+      }
+    },
+    {
+      "name": "歌舞伎町",
+      "p": [
+        139.7034,
+        35.6945
+      ],
+      "radius": 300,
+      "time": "friday23",
+      "land": {
+        "commercial": 0.984089101034222,
+        "medical": 0.015910898965791377
+      },
+      "current": {
+        "population": 5485.42,
+        "roles": {
+          "area_night": 65,
+          "area_night_worker": 16.2,
+          "area_tourist": 0.3,
+          "area_inbound": 0.5,
+          "area_adult_customer": 9.7,
+          "area_adult_worker": 4.7,
+          "area_cabaret_worker": 3.1,
+          "patient": 0.4,
+          "nurse": 0.1,
+          "doctor": 0,
+          "urban_medical_admin": 0
+        }
+      },
+      "legacy": {
+        "population": 18705.57,
+        "roles": {
+          "general": 12.6,
+          "area_tourist": 0.1,
+          "area_inbound": 0.2,
+          "area_night": 36.5,
+          "area_night_worker": 9,
+          "area_cabaret_worker": 4,
+          "area_adult_customer": 24.9,
+          "area_adult_worker": 12.5,
+          "patient": 0.1,
+          "nurse": 0,
+          "doctor": 0
+        }
+      }
+    },
+    {
+      "name": "田園調布",
+      "p": [
+        139.665,
+        35.598
+      ],
+      "radius": 70,
+      "time": "weekday13",
+      "land": {
+        "residential": 1
+      },
+      "current": {
+        "population": 143.55,
+        "roles": {
+          "general": 100
+        }
+      },
+      "legacy": {
+        "population": 137.71,
+        "roles": {
+          "general": 100
+        }
+      }
+    },
+    {
+      "name": "田園調布",
+      "p": [
+        139.665,
+        35.598
+      ],
+      "radius": 70,
+      "time": "sunday13",
+      "land": {
+        "residential": 1
+      },
+      "current": {
+        "population": 244.03,
+        "roles": {
+          "general": 100
+        }
+      },
+      "legacy": {
+        "population": 234.1,
+        "roles": {
+          "general": 100
+        }
+      }
+    },
+    {
+      "name": "田園調布",
+      "p": [
+        139.665,
+        35.598
+      ],
+      "radius": 70,
+      "time": "friday23",
+      "land": {
+        "residential": 1
+      },
+      "current": {
+        "population": 287.09,
+        "roles": {
+          "general": 100
+        }
+      },
+      "legacy": {
+        "population": 275.41,
+        "roles": {
+          "general": 100
+        }
+      }
+    },
+    {
+      "name": "田園調布",
+      "p": [
+        139.665,
+        35.598
+      ],
+      "radius": 300,
+      "time": "weekday13",
+      "land": {
+        "residential": 0.8281622911694669,
+        "mixed": 0.06046141607000782,
+        "education": 0.03977724741447883,
+        "transport": 0.0405727923627684,
+        "commercial": 0.007159904534606197,
+        "medical": 0.023866348448687305
+      },
+      "current": {
+        "population": 2944.2,
+        "roles": {
+          "general": 81.6,
+          "student": 2.7,
+          "teacher": 0.3,
+          "urban_visit": 0.3,
+          "urban_school_admin": 0.1,
+          "special_passenger": 8.9,
+          "special_station": 0.2,
+          "special_crew": 0.1,
+          "special_station_clean": 0.1,
+          "special_station_shop": 0.1,
+          "area_shopping": 1.1,
+          "area_night_worker": 0,
+          "resident": 2,
+          "care": 0.7,
+          "urban_medical_admin": 0.5,
+          "patient": 0.9,
+          "nurse": 0.3,
+          "doctor": 0.1
+        }
+      },
+      "legacy": {
+        "population": 2811.02,
+        "roles": {
+          "general": 79.2,
+          "resident": 2.1,
+          "care": 0.7,
+          "student": 2.9,
+          "teacher": 0.4,
+          "patient": 1.9,
+          "nurse": 0.7,
+          "doctor": 0.2,
+          "special_passenger": 11.2,
+          "special_station": 0.3,
+          "special_crew": 0.1,
+          "special_station_clean": 0.1,
+          "special_station_shop": 0.2
+        }
+      }
+    },
+    {
+      "name": "田園調布",
+      "p": [
+        139.665,
+        35.598
+      ],
+      "radius": 300,
+      "time": "sunday13",
+      "land": {
+        "residential": 0.8281622911694669,
+        "mixed": 0.06046141607000782,
+        "education": 0.03977724741447883,
+        "transport": 0.0405727923627684,
+        "commercial": 0.007159904534606197,
+        "medical": 0.023866348448687305
+      },
+      "current": {
+        "population": 4544.99,
+        "roles": {
+          "general": 89.8,
+          "teacher": 0.1,
+          "urban_school_admin": 0,
+          "special_passenger": 5.7,
+          "special_station": 0.1,
+          "special_crew": 0,
+          "special_station_clean": 0.1,
+          "special_station_shop": 0.1,
+          "area_shopping": 0.9,
+          "area_night_worker": 0,
+          "resident": 1.3,
+          "care": 0.4,
+          "urban_medical_admin": 0.3,
+          "patient": 0.6,
+          "nurse": 0.2,
+          "doctor": 0.1,
+          "urban_visit": 0.1
+        }
+      },
+      "legacy": {
+        "population": 4281.06,
+        "roles": {
+          "general": 88.4,
+          "resident": 1.4,
+          "care": 0.5,
+          "teacher": 0.1,
+          "patient": 1.2,
+          "nurse": 0.5,
+          "doctor": 0.2,
+          "special_passenger": 7.4,
+          "special_station": 0.2,
+          "special_crew": 0.1,
+          "special_station_clean": 0.1,
+          "special_station_shop": 0.1
+        }
+      }
+    },
+    {
+      "name": "田園調布",
+      "p": [
+        139.665,
+        35.598
+      ],
+      "radius": 300,
+      "time": "friday23",
+      "land": {
+        "residential": 0.8281622911694669,
+        "mixed": 0.06046141607000782,
+        "education": 0.03977724741447883,
+        "transport": 0.0405727923627684,
+        "commercial": 0.007159904534606197,
+        "medical": 0.023866348448687305
+      },
+      "current": {
+        "population": 4964.95,
+        "roles": {
+          "general": 96.8,
+          "special_passenger": 1.3,
+          "special_station": 0.1,
+          "special_crew": 0,
+          "special_station_clean": 0.1,
+          "area_night_worker": 0,
+          "resident": 1.2,
+          "care": 0.1,
+          "urban_medical_admin": 0,
+          "patient": 0.3,
+          "nurse": 0.1,
+          "doctor": 0
+        }
+      },
+      "legacy": {
+        "population": 4644,
+        "roles": {
+          "general": 95.8,
+          "resident": 1.3,
+          "care": 0.1,
+          "patient": 0.6,
+          "nurse": 0.1,
+          "doctor": 0,
+          "special_passenger": 1.7,
+          "special_station": 0.2,
+          "special_crew": 0.1,
+          "special_station_clean": 0.1
+        }
+      }
+    },
+    {
+      "name": "丸の内",
+      "p": [
+        139.7635,
+        35.681
+      ],
+      "radius": 70,
+      "time": "weekday13",
+      "land": {
+        "office": 1
+      },
+      "current": {
+        "population": 310.34,
+        "roles": {
+          "area_office": 90,
+          "urban_visit": 8,
+          "mesh_security": 2
+        }
+      },
+      "legacy": {
+        "population": 247.26,
+        "roles": {
+          "general": 4,
+          "area_office": 34.9,
+          "area_shopping": 17.4,
+          "area_tourist": 17.4,
+          "area_inbound": 26.2
+        }
+      }
+    },
+    {
+      "name": "丸の内",
+      "p": [
+        139.7635,
+        35.681
+      ],
+      "radius": 70,
+      "time": "sunday13",
+      "land": {
+        "office": 1
+      },
+      "current": {
+        "population": 31.03,
+        "roles": {
+          "area_office": 90,
+          "urban_visit": 8,
+          "mesh_security": 2
+        }
+      },
+      "legacy": {
+        "population": 201.71,
+        "roles": {
+          "general": 8.4,
+          "area_office": 3.4,
+          "area_shopping": 26.7,
+          "area_tourist": 24.6,
+          "area_inbound": 36.9
+        }
+      }
+    },
+    {
+      "name": "丸の内",
+      "p": [
+        139.7635,
+        35.681
+      ],
+      "radius": 70,
+      "time": "friday23",
+      "land": {
+        "office": 1
+      },
+      "current": {
+        "population": 7.76,
+        "roles": {
+          "area_office": 90,
+          "urban_visit": 8,
+          "mesh_security": 2
+        }
+      },
+      "legacy": {
+        "population": 24.79,
+        "roles": {
+          "general": 80,
+          "area_office": 7,
+          "area_tourist": 5.2,
+          "area_inbound": 7.8
+        }
+      }
+    },
+    {
+      "name": "丸の内",
+      "p": [
+        139.7635,
+        35.681
+      ],
+      "radius": 300,
+      "time": "weekday13",
+      "land": {
+        "office": 0.6801909307875922,
+        "transport": 0.11774065234685682,
+        "residential": 0.1527446300715976,
+        "green": 0.04932378679395336
+      },
+      "current": {
+        "population": 5955.68,
+        "roles": {
+          "area_office": 58.6,
+          "urban_visit": 5.2,
+          "mesh_security": 1.3,
+          "special_passenger": 28.4,
+          "special_station": 0.7,
+          "special_crew": 0.2,
+          "special_station_clean": 0.3,
+          "special_station_shop": 0.4,
+          "general": 4.5,
+          "green_walk": 0.1,
+          "green_tourist": 0.1,
+          "green_gardener": 0,
+          "green_parkguard": 0,
+          "green_run": 0
+        }
+      },
+      "legacy": {
+        "population": 5926.7,
+        "roles": {
+          "green_walk": 0.2,
+          "green_tourist": 0.1,
+          "green_gardener": 0,
+          "green_parkguard": 0,
+          "green_run": 0.1,
+          "general": 3,
+          "area_office": 24.3,
+          "area_shopping": 12.1,
+          "area_tourist": 12.1,
+          "area_inbound": 18.2,
+          "special_passenger": 28.3,
+          "special_station": 0.7,
+          "special_crew": 0.2,
+          "special_station_clean": 0.3,
+          "special_station_shop": 0.4
+        }
+      }
+    },
+    {
+      "name": "丸の内",
+      "p": [
+        139.7635,
+        35.681
+      ],
+      "radius": 300,
+      "time": "sunday13",
+      "land": {
+        "office": 0.6801909307875922,
+        "transport": 0.11774065234685682,
+        "residential": 0.1527446300715976,
+        "green": 0.04932378679395336
+      },
+      "current": {
+        "population": 2660.63,
+        "roles": {
+          "area_office": 13.1,
+          "urban_visit": 1.2,
+          "mesh_security": 0.3,
+          "special_passenger": 63.7,
+          "special_station": 1.6,
+          "special_crew": 0.5,
+          "special_station_clean": 0.8,
+          "special_station_shop": 1,
+          "general": 17.3,
+          "green_walk": 0.3,
+          "green_tourist": 0.2,
+          "green_gardener": 0,
+          "green_parkguard": 0,
+          "green_run": 0.1
+        }
+      },
+      "legacy": {
+        "population": 5182.79,
+        "roles": {
+          "green_walk": 0.2,
+          "green_tourist": 0.1,
+          "green_gardener": 0,
+          "green_parkguard": 0,
+          "green_run": 0.1,
+          "general": 5.8,
+          "area_office": 2.2,
+          "area_shopping": 17.4,
+          "area_tourist": 16,
+          "area_inbound": 23.9,
+          "special_passenger": 32.3,
+          "special_station": 0.8,
+          "special_crew": 0.3,
+          "special_station_clean": 0.4,
+          "special_station_shop": 0.5
+        }
+      }
+    },
+    {
+      "name": "丸の内",
+      "p": [
+        139.7635,
+        35.681
+      ],
+      "radius": 300,
+      "time": "friday23",
+      "land": {
+        "office": 0.6801909307875922,
+        "transport": 0.11774065234685682,
+        "residential": 0.1527446300715976,
+        "green": 0.04932378679395336
+      },
+      "current": {
+        "population": 1138.58,
+        "roles": {
+          "area_office": 7.7,
+          "urban_visit": 0.7,
+          "mesh_security": 0.2,
+          "special_passenger": 37.2,
+          "special_station": 3.7,
+          "special_crew": 1.2,
+          "special_station_clean": 1.8,
+          "general": 47.6,
+          "green_walk": 0,
+          "green_tourist": 0,
+          "green_parkguard": 0,
+          "green_run": 0
+        }
+      },
+      "legacy": {
+        "population": 928.51,
+        "roles": {
+          "green_walk": 0,
+          "green_tourist": 0,
+          "green_parkguard": 0,
+          "green_run": 0,
+          "general": 37.9,
+          "area_office": 3.1,
+          "area_tourist": 2.3,
+          "area_inbound": 3.5,
+          "special_passenger": 45.1,
+          "special_station": 4.5,
+          "special_crew": 1.4,
+          "special_station_clean": 2.2
+        }
+      }
+    },
+    {
+      "name": "大井ふ頭",
+      "p": [
+        139.759,
+        35.602
+      ],
+      "radius": 70,
+      "time": "weekday13",
+      "land": {
+        "industrial": 1
+      },
+      "current": {
+        "population": 40.02,
+        "roles": {
+          "mesh_factory": 70,
+          "area_office": 15,
+          "urban_technical": 10,
+          "mesh_security": 5
+        }
+      },
+      "legacy": {
+        "population": 5.36,
+        "roles": {
+          "land_logistics": 96.7,
+          "land_security": 3.3
+        }
+      }
+    },
+    {
+      "name": "大井ふ頭",
+      "p": [
+        139.759,
+        35.602
+      ],
+      "radius": 70,
+      "time": "sunday13",
+      "land": {
+        "industrial": 1
+      },
+      "current": {
+        "population": 12.01,
+        "roles": {
+          "mesh_factory": 70,
+          "area_office": 15,
+          "urban_technical": 10,
+          "mesh_security": 5
+        }
+      },
+      "legacy": {
+        "population": 5.36,
+        "roles": {
+          "land_logistics": 96.7,
+          "land_security": 3.3
+        }
+      }
+    },
+    {
+      "name": "大井ふ頭",
+      "p": [
+        139.759,
+        35.602
+      ],
+      "radius": 70,
+      "time": "friday23",
+      "land": {
+        "industrial": 1
+      },
+      "current": {
+        "population": 6.4,
+        "roles": {
+          "mesh_factory": 70,
+          "area_office": 15,
+          "urban_technical": 10,
+          "mesh_security": 5
+        }
+      },
+      "legacy": {
+        "population": 0.89,
+        "roles": {
+          "land_logistics": 91.7,
+          "land_security": 8.3
+        }
+      }
+    },
+    {
+      "name": "大井ふ頭",
+      "p": [
+        139.759,
+        35.602
+      ],
+      "radius": 300,
+      "time": "weekday13",
+      "land": {
+        "industrial": 1
+      },
+      "current": {
+        "population": 735.13,
+        "roles": {
+          "mesh_factory": 70,
+          "area_office": 15,
+          "urban_technical": 10,
+          "mesh_security": 5
+        }
+      },
+      "legacy": {
+        "population": 102.37,
+        "roles": {
+          "land_logistics": 96.7,
+          "land_security": 3.3
+        }
+      }
+    },
+    {
+      "name": "大井ふ頭",
+      "p": [
+        139.759,
+        35.602
+      ],
+      "radius": 300,
+      "time": "sunday13",
+      "land": {
+        "industrial": 1
+      },
+      "current": {
+        "population": 220.54,
+        "roles": {
+          "mesh_factory": 70,
+          "area_office": 15,
+          "urban_technical": 10,
+          "mesh_security": 5
+        }
+      },
+      "legacy": {
+        "population": 102.37,
+        "roles": {
+          "land_logistics": 96.7,
+          "land_security": 3.3
+        }
+      }
+    },
+    {
+      "name": "大井ふ頭",
+      "p": [
+        139.759,
+        35.602
+      ],
+      "radius": 300,
+      "time": "friday23",
+      "land": {
+        "industrial": 1
+      },
+      "current": {
+        "population": 117.62,
+        "roles": {
+          "mesh_factory": 70,
+          "area_office": 15,
+          "urban_technical": 10,
+          "mesh_security": 5
+        }
+      },
+      "legacy": {
+        "population": 16.97,
+        "roles": {
+          "land_logistics": 91.7,
+          "land_security": 8.3
+        }
+      }
+    }
+  ]
+}
