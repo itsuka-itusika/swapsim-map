@@ -29,3 +29,12 @@ test('distinctive streets use their own scenes and every subculture area defines
  const r=JSON.parse(x);for(const [name,[n]] of Object.entries(r))assert.ok(n>=5,name+' '+n);assert.ok(r['巣鴨地蔵通り商店街'][1]>=50);
  assert.equal(run(`PersonContext.away('海浜公園の砂浜から、レインボーブリッジを眺めているところでした',{role:'area_shopping'})`),false);
 });
+test('detention house and courts follow daily routines with role-specific scenes',()=>{
+ const r=JSON.parse(run(`(()=>{let out={};for(const [name,d,dow,h] of [['東京拘置所',28,3,10],['東京拘置所',28,3,22],['東京高等裁判所・東京地方裁判所・東京簡易裁判所',28,3,14]]){let f=MAP_DATA.publicAreas.find(x=>x.name===name),p=LandProfile.create(envContext,f.xy,40),t={y:2026,mo:10,d,dow,h,hf:h+.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),labels=new Set(),texts=[];for(let i=0;i<150;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);labels.add(P.occ.label);texts.push(P.sit.text)}out[name+h]={labels:[...labels],texts}}return JSON.stringify(out)})()`));
+ const day=r['東京拘置所10'],night=r['東京拘置所22'],court=r['東京高等裁判所・東京地方裁判所・東京簡易裁判所14'];
+ assert.ok(day.labels.includes('未決拘禁者（拘置所に収容中）'));assert.ok(new Set(day.texts).size>=6);
+ assert.ok(!night.texts.some(x=>/事務書類|運動の時間|面会室/.test(x)),night.texts.join());
+ assert.ok(court.labels.includes('裁判官')&&court.labels.includes('裁判所書記官'),court.labels.join());
+ // No hearings, parties or tours on a Saturday.
+ assert.equal(run(`CivicModel.roles(MAP_DATA.publicAreas.find(x=>x.name==='東京高等裁判所・東京地方裁判所・東京簡易裁判所'),{y:2026,mo:10,d:31,dow:6,h:11,hf:11}).filter(c=>c.w>0&&/prosecutor|lawyer|party|audience|saibanin/.test(c.role)).length`),0);
+});
