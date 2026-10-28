@@ -82,7 +82,11 @@ function mapPerson(c,t){
  SpecialFacilities.apply(c,P,t);
  if(c.role==='special_passenger'){let trip=PersonContext.station(P,t,originalSituation);if(trip){P.visitLabel=trip.label;P.sit={...P.sit,text:trip.text,state:'commute',stateLabel:trip.label};P.mapSituation=trip.text;}}
  UrbanContext.apply(c,P,t);
- if(c.resident&&P.occ.group==='adult'&&P.occ.cat!=='none'&&t.dow>0&&t.dow<6&&!t.holiday&&t.h>=9&&t.h<17&&P.sit.state==='off'&&!P.hb.bed&&!P.hb.leave){let prefix=['office','it'].includes(P.occ.tag)&&rnd()<.4?'今日は在宅勤務で、休憩中。':'今日は仕事が休みで、';P.sit={...P.sit,text:prefix+P.sit.text};P.mapSituation=P.sit.text;}
+ if(c.resident&&P.occ.group==='adult'&&P.occ.cat!=='none'&&t.dow>0&&t.dow<6&&!t.holiday&&t.h>=9&&t.h<17&&P.sit.state==='off'&&!P.hb.bed&&!P.hb.leave){
+  // Explain a weekday at home only sometimes and in varied words; scenes that already say why are left alone.
+  let shift=['medical','care','retail','food','transport','security','factory','clean','hotel'].includes(P.occ.tag),h=t.hf??t.h,prefix=null;
+  if(!/休み|休日|在宅|有給|夜勤|非番|代休|夢の中|眠|寝/.test(P.sit.text)&&rnd()<.15)prefix=['office','it'].includes(P.occ.tag)&&rnd()<.5?'在宅勤務の昼休みに、':shift?(h<13&&rnd()<.5?'夜勤明けで、':'シフトが休みの日で、'):['有給休暇をとった日で、','代休の日で、','今日は休みで、','平日の休みを使って、'][Math.floor(rnd()*4)];
+  if(prefix){P.sit={...P.sit,text:prefix+P.sit.text};P.mapSituation=P.sit.text;}}
  if(typeof VenueModel!=='undefined')VenueModel.apply(c,P,t);
  if(typeof CivicModel!=='undefined')CivicModel.apply(c,P,t);
  if(typeof PlacesModel!=='undefined')PlacesModel.apply(c,P,t);

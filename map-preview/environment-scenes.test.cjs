@@ -44,3 +44,8 @@ test('juvenile classification home and immigration detention have their own rout
  assert.ok(r['東京少年鑑別所23'].filter(x=>x[0]==='civic_juvenile').every(x=>/消灯後/.test(x[3])));
  const held=r['東京出入国在留管理局11'].filter(x=>x[0]==='civic_imm_detainee');assert.ok(held.length>0);assert.ok(held.every(x=>/^[ァ-ヶー・]+$/.test(x[2])),held.map(x=>x[2]).join());
 });
+test('night-only sleep scenes stay at night and weekday-off explanations stay occasional',()=>{
+ assert.equal(run(`entryOK(SLEEP_TX.any.find(e=>/夜中に喉が渇いて/.test(textOf(e))),{h:14,P:{age:40,sex:'m',occ:{}}})`),false);
+ const share=run(`(()=>{let a=MAP_DATA.areas.find(x=>x.name==='三軒茶屋'),p=LandProfile.create(envContext,a.xy,500),t={y:2026,mo:10,d:28,dow:3,h:13,hf:13.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t).filter(c=>c.resident),tot=parts.reduce((s,c)=>s+c.n,0),n=0,hit=0;for(let i=0;i<400;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);if(P.occ.group!=='adult')continue;n++;if(/^(今日は仕事が休みで|在宅勤務の昼休みに|夜勤明けで|シフトが休みの日で|有給休暇をとった日で|代休の日で|今日は休みで|平日の休みを使って)、/.test(P.sit.text))hit++}return hit/Math.max(1,n)})()`);
+ assert.ok(share>0&&share<.22,String(share));
+});

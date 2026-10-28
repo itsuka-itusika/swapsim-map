@@ -11,3 +11,4 @@ test('audiences skew by event type and betting venues follow their calendars',()
  assert.ok(x.boat[0]<=.15&&x.boat[1]>50,JSON.stringify(x.boat));assert.ok(x.winsSat);assert.ok(!x.winsWed);assert.equal(x.arena[0],'rock');assert.equal(x.sumo,'sumo');assert.ok(x.sumoDay&&!x.notSumo);
  const texts=run(`Object.values(VenueAudience.profiles).length`);assert.ok(texts>25);
 });
+test('closed off-track betting halls have no customers during their closure',()=>{const x=JSON.parse(run(`(()=>{let f=MAP_DATA.landmarks.find(v=>v.name==='場外馬券売り場（渋谷）'),sat={...T,dow:6,h:13,hf:13};return JSON.stringify([VenueSchedule.resolve(f,{...sat,d:31}).mode,VenueSchedule.resolve(f,{...sat,y:2027,mo:1,d:9}).mode])})()`));assert.equal(x[0],'event');assert.equal(x[1],'none')});

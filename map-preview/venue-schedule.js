@@ -11,6 +11,7 @@ const VenueSchedule=(()=>{
  if(matches.length){let entry=matches.find(e=>h>=e.opens&&h<e.endsAssumed)||matches.find(e=>h<e.opens)||matches.at(-1);return shape(entry,'公式予定')}
  if(name==='大井競馬場'&&ds>='2026-10-01'&&ds<='2026-12-31')return {mode:'none',basis:'公式競馬日程',phase:'競馬開催日以外',occupancy:0,url:'https://www.tokyocitykeiba.com/race/schedule/'};
  // One venue/date receives one stable modeled event (VenueAudience), not a fresh dice roll on every click.
+ if(c.closedFrom&&ds>=c.closedFrom&&(!c.closedUntil||ds<=c.closedUntil))return {mode:'none',basis:'公式案内',phase:c.closureNote||'休業期間',occupancy:0};
  let planned=typeof VenueAudience!=='undefined'?VenueAudience.plan(name,kind,t):null;
  return planned?shape(planned,'自動推定'):{mode:'none',basis:'自動推定',phase:'通常利用の想定',occupancy:0,estimated:true};
  }
