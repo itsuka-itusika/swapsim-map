@@ -60,7 +60,7 @@ function renderOptions(){
  for(const key of ['pair','real'])el('opt-'+key).setAttribute('aria-checked',String(options[key]));
  el('real-name').textContent=options.pair?'本当に入れ替える':'本当に入れ替わる';
  setDrawLabel();
- el('opts-cur').textContent=[options.sex?options.sex==='f'?'女性':'男性':'',options.dec?.length?options.dec.map(n=>n===9?'90代以上':n*10+'代').join('・'):'',options.pair?'2人を入れ替え':'',options.real?'本当に入れ替わる':''].filter(Boolean).join('・');
+ el('opts-cur').textContent=[options.sex?options.sex==='f'?'女性':'男性':'',options.dec?.length?options.dec.map(n=>n===9?'90代以上':n*10+'代').join('・'):'',options.pair&&options.real?'本当に入れ替える':options.pair?'2人を入れ替え':'',options.real&&!options.pair?'本当に入れ替わる':''].filter(Boolean).join('・');
  el('opt-save-status').textContent='「保存」を押すと、次回もこの設定で開きます。';
 }
 el('opt-sex').onclick=e=>{const b=e.target.closest('button');if(b){options.sex=b.dataset.v||null;renderOptions()}};

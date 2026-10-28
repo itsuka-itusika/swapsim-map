@@ -1,12 +1,12 @@
 /* Game assumptions: projected occupancy, not measured visitor counts or schedules. */
 const PlacesModel=(()=>{
  const scenes={
- library_guest:['図書館の本棚から本を選んでいるところでした','閲覧席で資料に目を通しているところでした'],
- library_staff:['本の貸し出しを受け付けているところでした','返却された本を棚に戻しているところでした'],
+ library_guest:['図書館の本棚から本を選んでいるところでした','閲覧席で資料に目を通しているところでした','予約していた本を、カウンターで受け取ったところでした','学習席で、資格試験の問題集を解いているところでした','新聞コーナーで、各紙の見出しを読み比べているところでした','郷土資料の棚で、昔の地図を広げているところでした','雑誌の最新号を手に取り、ソファ席に腰を下ろしたところでした'],
+ library_staff:['本の貸し出しを受け付けているところでした','返却された本を棚に戻しているところでした','レファレンスの窓口で、調べものの相談に乗っているところでした','新しく入った本に、ラベルとフィルムを貼っているところでした','児童書コーナーで、おはなし会の準備をしているところでした'],
  bank_guest:['銀行の窓口で手続きの順番を待っているところでした'],
  bank_staff:['銀行の窓口で手続きの書類を確認しているところでした'],
- bath_guest:['浴場で入浴を終え、休憩しているところでした'],
- bath_staff:['浴場の受付で来館者を案内しているところでした'],
+ bath_guest:['浴場で入浴を終え、休憩しているところでした','サウナで、12分計の針を見つめているところでした','水風呂から上がり、外気浴の椅子で目を閉じているところでした','露天風呂で、肩までつかって空を見上げているところでした','休憩処のリクライニングチェアで、漫画を読んでいるところでした','風呂上がりに、食事処で冷えた飲み物を頼んだところでした','岩盤浴の部屋で、じんわり汗をかいているところでした'],
+ bath_staff:['浴場の受付で来館者を案内しているところでした','受付で、館内着とタオルのセットを渡しているところでした','浴場の床を、デッキブラシで磨いているところでした','サウナ室で、熱した石に水をかけて蒸気を立てているところでした'],
  tourist_guest:['施設の案内板を読み、見どころを探しているところでした','施設を見て回りながら、写真を撮っているところでした'],
  tourist_staff:['来場者に施設の案内をしているところでした'],
  hotel_guest:['客室で荷物を整理し、次の予定を確認しているところでした','ロビーで待ち合わせの相手を探しているところでした'],
@@ -32,7 +32,7 @@ const PlacesModel=(()=>{
  function roles(c,t){let k=kind(c);if(!k)return null;let h=t.hf??t.h,we=t.dow===0||t.dow===6||t.holiday,day=h>=10&&h<20,open=h>=9&&h<21,work=h>=8&&h<22,scale=Math.max(.05,Math.min(20,(c.area||c.areaM2||10000)/10000)),factor=we?1.35:1,rows=[];
  let add=(key,label,n,min,max,female,worker=false)=>rows.push({role:'place_'+key,label,w:n,min,max,female,placeWorker:worker});
  if(k==='hostel')k='hotel';
- if(['library','bank','bath','tourist'].includes(k)){let actual=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=actual===null?(k==='bank'?h>=9&&h<15&&!we:k==='bath'?h>=10&&h<23:h>=9&&h<18):actual;let labels={library:['図書館の利用者','図書館職員'],bank:['銀行の利用者','銀行員'],bath:['浴場の利用者','浴場の従業員'],tourist:['観光施設の来場者','観光施設の職員']}[k];add(k+'_guest',labels[0],active?scale*50:0,6,89,.5);add(k+'_staff',labels[1],active?scale*8:scale*.2,20,69,.5,true)}
+ if(['library','bank','bath','tourist'].includes(k)){let actual=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=actual===null?(k==='bank'?h>=9&&h<15&&!we:k==='bath'?(c.allNight||h>=10):k==='library'?h>=9&&h<(we?17:20):h>=9&&h<18):actual;let labels={library:['図書館の利用者','図書館職員'],bank:['銀行の利用者','銀行員'],bath:['温浴施設の利用者','温浴施設の従業員'],tourist:['観光施設の来場者','観光施設の職員']}[k];add(k+'_guest',labels[0],active?scale*(k==='bath'?(h>=18||h<2?90:60)*(we?1.4:1):50):0,k==='bath'?12:6,89,k==='bath'?.45:.5);add(k+'_staff',labels[1],active?scale*8:scale*.2,20,69,.5,true)}
  if(k==='large_shop'){let hours=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=hours===null?open:hours;add('shop_guest','大型店舗の買い物客',active?scale*(day?80*factor:20):0,6,89,.52);add('shop_staff','大型店舗の販売員',scale*(active?14:work?2:0),18,69,.55,true)}
  if(k==='hotel'){add('hotel_guest','ホテルの宿泊客',scale*(h>=21||h<8?55:25),6,89,.5);add('hotel_staff','ホテル従業員',scale*(day?14:5),18,69,.55,true)}
  if(k==='museum'||k==='theatre'){let open=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=open===true||open===null&&(k==='museum'?h>=10&&h<17:h>=12&&h<21);add(k+'_guest',k==='museum'?'文化施設の来場者':'劇場の来場者',active?scale*50*factor:0,6,89,.55);add(k+'_staff',k==='museum'?'文化施設の職員':'劇場の職員',active?scale*8:scale*.3,20,69,.5,true)}

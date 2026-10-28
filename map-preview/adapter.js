@@ -25,7 +25,9 @@ function mapPerson(c,t){
  UrbanContext.assign(c,P);
  SpecialFacilities.assign(c,P);
  BroadcastModel.assign(c,P);
- if(c.role==='mesh_factory'||c.role==='mesh_logistics'||c.role==='mesh_security')P.occ={label:c.label,group:'adult',cat:'special',kind:'employed',p:1};
+ // Factory and warehouse workers take a concrete original-engine job (溶接工, 倉庫のピッキングスタッフ, ...).
+ if(c.role==='mesh_factory'||c.role==='mesh_logistics'){let tag=c.role==='mesh_factory'?'factory':'warehouse',jobs=JOB_OBJS.filter(j=>j.tag===tag&&j.cat!=='管理'&&P.age>=(j.o.amin||18)),job=jobs[Math.floor(rnd()*jobs.length)];P.occ=job?{label:job.n,group:'adult',cat:job.cat,tag:job.tag,job,kind:'employed',p:1}:{label:c.label,group:'adult',cat:'special',kind:'employed',p:1};}
+ if(c.role==='mesh_security')P.occ={label:c.label,group:'adult',cat:'special',kind:'employed',p:1};
  LandModel.assign(c,P);
  GreenModel.assign(c,P);
  Nightlife.assign(c,P);
@@ -64,8 +66,8 @@ function mapPerson(c,t){
   if(c.role==='area_inbound'){
    let markets=MAP_DATA.inbound.markets,total=markets.reduce((s,x)=>s+x.weight,0),v=rnd()*total,market=markets.find(x=>(v-=x.weight)<0)||markets.at(-1);
    P.isInbound=true;P.originMarket=market.name;let nm=PersonContext.foreignName(market.name,P.sex,rnd);P.surname={k:nm.surname,r:nm.surname,c:100};P.given={k:nm.given,r:nm.given,p:.01,era:{cov:1}};P.nameApproximate=nm.approximated;if(['facility','prison'].includes(P.occ.group))P.occ={label:'職業不詳',group:'visitor',cat:'visitor',p:1};
-   // Japanese school grades do not apply to visiting children.
-   if(P.age<18&&(P.occ.school||['student','kid'].includes(P.occ.group)||/年生|園児|未就学/.test(P.occ.label)))P.occ={...P.occ,label:P.age<6?'未就学児':'学生'};
+   // Visitors from abroad do not live in Japan, so domestic occupations and school grades do not apply.
+   P.occ={label:'観光客',group:'visitor',cat:'visitor',kind:'visitor',p:1};
    P.visitLabel='外国人観光客／国・地域：'+market.name;
   }
   if(!Nightlife.handles(c)&&P.mapSituation!==P.sit.text)P.sit={...P.sit,text:P.mapSituation,state:c.role==='area_office'?'work':'off',stateLabel:c.label};

@@ -4,6 +4,10 @@ const LandEstimator=(()=>{
  const M=typeof MapModel!=='undefined'?MapModel:require('./model.js'),S=typeof MapSpatial!=='undefined'?MapSpatial:require('./spatial.js');
  const row=(role,label,w,min=20,max=69,female=.5,extra={})=>({role,label,w,min,max,female,...extra});
  const weekend=t=>t.dow===0||t.dow===6||t.holiday;
+ // Game emphasis over the census mix: fashion streets get more hairdressers and apparel staff, Akihabara maid-cafe staff.
+ function styleRows(area,t,factor=1){let tag=area?.tags||{},h=t.hf??t.h,open=h>=10&&h<20?1:h>=9&&h<21?.3:0,f=tag.fashion||0,out=[];
+  if(f>=1.5&&open)out.push(row('urban_hairdresser','美容師',.12*f*open*factor,20,49,.6,{jobTag:'salon',jobName:'美容師',urbanTag:'hair'}),row('urban_apparel','アパレル店員',.15*f*open*factor,18,44,.65,{jobTag:'shop',jobName:'アパレルの販売員',urbanTag:'apparel'}));
+  if(area?.sources?.electronics?.name==='秋葉原'&&h>=11&&h<22)out.push(row('urban_maidcafe','メイドカフェの店員',.5*(tag.electronics||0)/4*factor,18,29,.95,{jobTag:'food',urbanTag:'maidcafe'}));return out}
  function timeFactor(type,subtype,t){let h=t.hf??t.h,we=weekend(t);if(type==='residential'||type==='mixed')return h>=9&&h<17?(we?.85:.5):h>=7&&h<21?.8:1;
  if(type==='office'||type==='public')return h>=9&&h<18?(we?.1:1):h>=7&&h<21?.2:.025;
  if(type==='education')return h>=8&&h<18?(we?.08:1):.01;
@@ -30,9 +34,10 @@ const LandEstimator=(()=>{
   let area=c.areaTag,tag=area?.tags||{},out=c.type==='office'?[row('area_office','勤務・業務中',.9,22,64,.45),row('urban_visit','業務での来訪者',.08,22,69,.5,{urbanTag:'office'}),row('mesh_security','施設警備員',.02,22,69,.2)]:[row('general','住宅内・近隣の滞在者',1,0,99,.5,{resident:true})];
   const coeff=c.type==='office'?.08:c.type==='mixed'?.3:.08;
   for(let k of ['student','tourist','inbound',...(c.type==='mixed'?['shopping','subculture']:[])]){let strength=tag[k]||0,d=AreaModel.types[k],source=area?.sources?.[k];if(strength>0&&source&&d)out.push(row('area_'+k,d[0],strength*coeff*AreaModel.activity(k,t),d[1],d[2],k==='subculture'?(source.subcultureFemale??d[3]):k==='shopping'?(source.shoppingFemale??d[3]):d[3],{area:source}));}
+  out.push(...styleRows(area,t,c.type==='mixed'?.6:c.type==='office'?.2:.25));
   return out;
  }
- if(c.type==='industrial')return [row(c.subtype==='warehouse'?'mesh_logistics':'mesh_factory',c.subtype==='warehouse'?'倉庫・物流の勤務者':'製造業の勤務者',.7,20,69,.25),row('area_office','管理・事務職',.15,22,64,.45),row('urban_technical','設備・技術職',.1,22,64,.2,{jobTag:'factory'}),row('mesh_security','施設警備員',.05,22,69,.2)];
+ if(c.type==='industrial')return [row(c.subtype==='warehouse'?'mesh_logistics':'mesh_factory',c.subtype==='warehouse'?'倉庫・物流施設で勤務中':'工場で勤務中',.7,20,69,.25),row('area_office','管理・事務職',.15,22,64,.45),row('urban_technical','機械保全の技術者',.1,22,64,.2,{jobTag:'factory',jobName:'機械保全の技術者'}),row('mesh_security','施設警備員',.05,22,69,.2)];
  if(c.type==='public')return [row('urban_official','公共施設の職員',.85,22,65,.5,{jobTag:'office',urbanTag:'government'}),row('urban_visit','公共施設への来訪者',.15,18,84,.5,{urbanTag:'government'})];
  if(c.type==='religious')return [row('urban_visit','参拝・境内の来訪者',.9,6,89,.52,{urbanTag:c.subtype}),row('urban_'+c.subtype,c.subtype==='shrine'?'神社の職員':'寺院の職員',.1,22,74,.5,{urbanTag:c.subtype,jobTag:'office'})];
  if(c.type==='agriculture')return [row('land_grounds','農地の管理作業員',.9,25,79,.35,{zone:c}),row('land_hike','近隣の散策者',.1,12,79,.5,{zone:c})];
@@ -42,6 +47,7 @@ const LandEstimator=(()=>{
  const add=(k,w)=>{let d=AreaModel.types[k],source=area.sources?.[k]||area;if(w>0&&d)out.push(row('area_'+k,d[0],w*AreaModel.activity(k,t),d[1],d[2],k==='subculture'?(source.subcultureFemale??d[3]):k==='shopping'?(source.shoppingFemale??(tag.fashion>=3?.62:d[3])):d[3],{area:source}))};
  if(tag.student>0)add('student',tag.student*.25);
  if(c.type==='tourism'){add('tourist',3);add('inbound',tag.inbound||1)}else{add('shopping',c.subtype==='night'?.2:2);add('night',c.subtype==='night'?4:(tag.night||0)*.25);add('night_worker',c.subtype==='night'?1:.12);add('subculture',(tag.subculture||0)*.6);add('tourist',(tag.tourist||0)*.3);add('inbound',(tag.inbound||0)*.3);if(area.adultArea&&area.adultWeight>0){let a=area.adultArea,weight=area.adultWeight;for(let [k,factor] of [['adult_customer',.32],['adult_worker',.16],['cabaret_worker',.05]]){if(k==='cabaret_worker'&&a.adultStyle==='sexservice')continue;let d=AreaModel.types[k];out.push(row('area_'+k,d[0],weight*factor*AreaModel.activity(k,t),d[1],d[2],d[3],{area:a}))}}}
+ out.push(...styleRows(area,t));
  if(tag.publishing>=2)out.push(row('urban_editor','編集者',.12,22,69,.5,{jobTag:'office',urbanTag:'publishing'}));
  if(c.subtype==='books'||tag.books>=2)out.push(row('urban_books','書店員',.2,20,69,.5,{jobTag:'retail',urbanTag:'books'}));
  if(c.subtype==='hotel')out.push(row('urban_hotel','ホテルの従業員',.5,20,65,.5,{jobTag:'hotel',urbanTag:'hotel'}));

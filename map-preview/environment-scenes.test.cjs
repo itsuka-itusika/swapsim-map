@@ -49,3 +49,12 @@ test('night-only sleep scenes stay at night and weekday-off explanations stay oc
  const share=run(`(()=>{let a=MAP_DATA.areas.find(x=>x.name==='三軒茶屋'),p=LandProfile.create(envContext,a.xy,500),t={y:2026,mo:10,d:28,dow:3,h:13,hf:13.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t).filter(c=>c.resident),tot=parts.reduce((s,c)=>s+c.n,0),n=0,hit=0;for(let i=0;i<400;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);if(P.occ.group!=='adult')continue;n++;if(/^(今日は仕事が休みで|在宅勤務の昼休みに|夜勤明けで|シフトが休みの日で|有給休暇をとった日で|代休の日で|今日は休みで|平日の休みを使って)、/.test(P.sit.text))hit++}return hit/Math.max(1,n)})()`);
  assert.ok(share>0&&share<.22,String(share));
 });
+test('street-specific workers, concrete factory jobs, visitors from abroad, libraries and baths',()=>{
+ const r=JSON.parse(run(`(()=>{const go=(xy,r,h,dow,d,n=300)=>{let p=LandProfile.create(envContext,xy,r),t={y:2026,mo:10,d,dow,h,hf:h+.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<n;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,P.occ.label])}return out};const A=n=>MAP_DATA.areas.find(a=>a.name===n).xy,L=n=>MAP_DATA.landmarks.find(a=>a.name===n).xy;
+ return JSON.stringify({harajuku:go(A('原宿・表参道'),300,14,6,31),akiba:go(A('秋葉原'),300,15,6,31),factory:go([139.7880,35.6280],200,10,3,28,120),library:go(L('国立国会図書館 東京本館'),40,11,3,28,80),bath:go(L('スパ ラクーア'),30,21,6,31,80)})})()`));
+ const has=(rows,re)=>rows.some(x=>re.test(x[1]));
+ assert.ok(has(r.harajuku,/^美容師$/)&&has(r.harajuku,/^アパレル店員$/));assert.ok(has(r.akiba,/^メイドカフェの店員$/));
+ assert.ok(!has(r.factory,/製造業の勤務者|設備・技術職/));assert.ok(has(r.factory,/工|検査員|職人|オペレーター/));
+ assert.ok(r.harajuku.filter(x=>x[0]==='area_inbound').every(x=>x[1]==='観光客'));
+ assert.ok(r.library.some(x=>x[0].startsWith('place_library')));assert.ok(r.bath.some(x=>x[0].startsWith('place_bath')));
+});
