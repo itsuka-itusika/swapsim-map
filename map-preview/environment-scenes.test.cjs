@@ -82,3 +82,7 @@ test('market and shopping streets give their visitors only shopping or sightseei
  const pools=run(`JSON.stringify([...Object.values(MAP_DATA.storyScenes.visitor).flat(),...MAP_DATA.areas.flatMap(a=>(a.scenes||[]).map(s=>s[2]))])`);
  assert.ok(r.length>200);for(let text of r)assert.ok(pools.includes(JSON.stringify(text))||/買い物|店|土産|観光|商店街|市場/.test(text),text);
 });
+test('pupils drawn at an ordinary school are regular students of that school',()=>{
+ const r=JSON.parse(run(`(()=>{let out=[];for(let kind of ['high','middle']){let fs=MAP_DATA.facilities.filter(f=>f.kind===kind&&f.code.startsWith('131')).slice(0,30);for(let f of fs)for(let i=0;i<20;i++){let P=mapPerson({role:'student',label:'学生',min:kind==='high'?15:12,max:kind==='high'?18:15,female:.5,facility:f,region:MapModel.locate(f.xy,MAP_DATA.regions),roleP:.01},{y:2026,mo:10,d:28,dow:3,h:10,hf:10.2,mi:12});out.push([kind,P.occ.label,!!P.occ.tsushin])}}return JSON.stringify(out)})()`));
+ for(let [kind,label,tsushin] of r){assert.match(label,kind==='high'?/^高校[1-3]年生$/:/^中学[1-3]年生$/);assert.equal(tsushin,false)}
+});

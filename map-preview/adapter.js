@@ -14,7 +14,11 @@ function mapPerson(c,t){
  if(c.role==='resident')P.occ={label:'無職（高齢者施設で暮らしている）',group:'facility',cat:'facility',p:1};
  if(c.role==='student'){
   if(['university','college'].includes(stage)){if(!(P.occ.group==='college'&&(stage==='university'?(!P.occ.senmon&&!/^短期/.test(P.occ.label)):(/短期/.test(c.facility.name)?/^短期/.test(P.occ.label):!!P.occ.senmon)))){let y=P.g-12,k=stage==='college'?(/短期/.test(c.facility.name)?'tan':'sen'):y>=5?'grad':'univ';P.occ=OriginalStudent.college(k,k==='tan'?Math.max(1,Math.min(2,y)):k==='sen'?Math.max(1,Math.min(3,y)):Math.max(1,y));}}
-  else if(stage==='primary'||['middle','high'].includes(stage)){/* occupation() already uses the original school-year labels for the corrected birth cohort. */if(!P.occ.school){for(let i=0;i<32&&!P.occ.school;i++)P.occ=occupation(P,t);}}
+  else if(stage==='primary'||['middle','high'].includes(stage)){/* occupation() already uses the original school-year labels for the corrected birth cohort. */if(!P.occ.school){for(let i=0;i<32&&!P.occ.school;i++)P.occ=occupation(P,t);}
+   // The school dataset lists ordinary full-time schools only, so pupils drawn there are not 通信制, 高専 or 特別支援学校 students.
+   // It has no founder, so a random 私立 prefix could contradict the named school; the school name is shown instead.
+   if(stage==='high'&&P.occ.school)P.occ={...P.occ,label:'高校'+(P.g-9)+'年生',tsushin:false};
+   if(stage==='middle'&&P.occ.school)P.occ={...P.occ,label:'中学'+(P.g-6)+'年生'};}
   else if(stage==='kindergarten'&&!P.occ.en){for(let i=0;i<32&&!P.occ.en;i++)P.occ=occupation(P,t);}
  }
  if(['care','nurse','doctor','teacher'].includes(c.role)){let tag={care:'care',nurse:'nurse',doctor:'doctor',teacher:'teacher'}[c.role],job=JOB_OBJS.find(j=>j.tag===tag)||JOB_OBJS.find(j=>j.n.includes(c.label));P.occ={label:c.label,group:'adult',cat:job?.cat||'prof',tag:job?.tag||tag,job,p:1}}
