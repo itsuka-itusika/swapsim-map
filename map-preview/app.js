@@ -18,8 +18,7 @@ tiles.on('tileerror',()=>{el('status').textContent='背景地図の一部を読�
 let circle=L.circle([selected[1],selected[0]],{radius,color:'#2E6A5D',fillOpacity:.12}).addTo(map),pin=L.circleMarker([selected[1],selected[0]],{radius:6,color:'#fff',fillColor:'#C8371E',fillOpacity:1}).addTo(map),layer=L.layerGroup().addTo(map);
 function dateNow(){el('clock').textContent=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}
 function time(){let t=jstNow();t.rand=false;t.holiday=!!holName(t);t.venueEvent='auto';return t}
-function weatherStatus(){el('weather-status').textContent='天気：'+MapWeather.status()}
-async function updateWeather(){await MapWeather.load(storage);weatherStatus()}
+async function updateWeather(){await MapWeather.load(storage)}
 function facilitiesOnMap(){layer.clearLayers();let bounds=map.getBounds();if(map.getZoom()<13)return;let list=facilities.filter(f=>['station','tv','radio','theme'].includes(f.kind)&&bounds.contains([f.xy[1],f.xy[0]])).slice(0,180);for(let f of list){let color='#3b809d';L.circleMarker([f.xy[1],f.xy[0]],{radius:4,color,weight:1,fillOpacity:.8}).bindTooltip(esc(f.name)).on('click',e=>{L.DomEvent.stopPropagation(e);choose(f.xy)}).addTo(layer)}if(map.getZoom()>=15){let landmarks=[...(MAP_DATA.policeStations||[]),...(MAP_DATA.specialPlaces||[])].filter(f=>bounds.contains([f.xy[1],f.xy[0]])).filter((f,i,a)=>a.findIndex(x=>x.name===f.name)===i).slice(0,120);for(let f of landmarks)L.circleMarker([f.xy[1],f.xy[0]],{radius:5,color:'#fff',weight:1,fillColor:f.type==='religious'?'#ad7354':'#855894',fillOpacity:.9}).bindTooltip(esc(f.name)).on('click',e=>{L.DomEvent.stopPropagation(e);choose(f.xy)}).addTo(layer)}}
 function choose(p){selected=p;circle.setLatLng([p[1],p[0]]).setRadius(radius);pin.setLatLng([p[1],p[0]]);refresh()}
 function refresh(){
@@ -101,5 +100,5 @@ async function drawMesh(){
 el('mesh-toggle').checked=false;el('mesh-toggle').onchange=drawMesh;
 el('mesh-mode').innerHTML='<option value="land">土地用途・敷地（標準）</option><option value="legacy">旧100mメッシュ（比較用）</option>';
 el('mesh-mode').onchange=drawMesh;
-dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh()}},1000);let lastMinute=time().mi;weatherStatus();updateWeather();facilitiesOnMap();refresh();drawMesh();
+dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh()}},1000);let lastMinute=time().mi;updateWeather();facilitiesOnMap();refresh();drawMesh();
 
