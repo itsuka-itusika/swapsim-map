@@ -464,7 +464,7 @@ function occupation(P, t) {
   let opts;
   if (a >= 65) opts = sex === 'm' ? [['無職（年金生活）', 'senior', .94], ['無職（療養中）', 'rest', .06]] : [['主婦（年金生活）', 'senior', .6], ['無職（年金生活）', 'senior', .34], ['無職（療養中）', 'rest', .06]];
   else if (sex === 'f') opts = [['専業主婦', 'homemaker', a < 25 ? .15 : a < 35 ? .6 : .75], ['無職（求職中）', 'jobless', .12], ['無職（療養中）', 'rest', .06], ['家事手伝い', 'homemaker', a < 30 ? .1 : .03], ['無職（資格の勉強中）', 'jobless', a < 35 ? .06 : .02]];
-  else opts = [['無職（求職中）', 'jobless', .4], ['無職（療養中）', 'rest', .2], ['専業主夫', 'homemaker', a >= 28 ? .08 : .01], ['家事手伝い', 'homemaker', .1], ['無職（資格の勉強中）', 'jobless', a < 35 ? .12 : .04], ['無職', 'jobless', .12]];
+  else opts = [['無職（求職中）', 'jobless', .4], ['無職（療養中）', 'rest', .2], ['専業主夫', 'homemaker', a >= 28 ? .03 : .005], ['家事手伝い', 'homemaker', .1], ['無職（資格の勉強中）', 'jobless', a < 35 ? .12 : .04], ['無職', 'jobless', .12]];
   const r = pickW(opts, o => o[2]);
   pp *= r.p;
   return { label: r.v[0], group: r.v[1], p: pp, cat: 'none' };

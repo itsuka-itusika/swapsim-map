@@ -5,13 +5,20 @@ function mapPerson(c,t){
  let sa=c.resident?LandEstimator.sampleResident(c,t,()=>pickSexAge(null,pref,'metro',f.id),rnd):pickSexAge(null,pref,'metro',f.id);if(c.role!=='general')sa={age:PersonContext.age(c,rnd),sex:rnd()<c.female?'f':'m'};
  const bandAge=()=>{let total=c.ageBands.reduce((s,b)=>s+b[2],0),v=rnd()*total,b=c.ageBands.find(b=>(v-=b[2])<0)||c.ageBands.at(-1);return b[0]+Math.floor(rnd()*(b[1]-b[0]+1))};
  if(c.ageBands)sa.age=bandAge();
+ // Hostesses, hosts and sex workers are concentrated in their twenties; past the mid-thirties they are rare.
+ const nightBands=c.role==='area_cabaret_worker'&&sa.sex==='f'?[[20,24,10],[25,29,7],[30,34,2],[35,39,.5],[40,45,.1]]:c.role==='area_host_worker'?[[20,24,10],[25,29,6],[30,34,1.5],[35,39,.3]]:c.role==='area_adult_worker'&&sa.sex==='f'?[[20,24,8],[25,29,8],[30,34,3.5],[35,39,1.2],[40,49,.3]]:null;
+ if(nightBands){let v=rnd()*nightBands.reduce((s,b)=>s+b[2],0),b=nightBands.find(b=>(v-=b[2])<0)||nightBands[0];sa.age=b[0]+Math.floor(rnd()*(b[1]-b[0]+1))}
  // During class hours most domestic pupils are at school; keep about one in ten of those drawn elsewhere.
- if(!c.resident&&!c.custody&&!['general','student','area_student','resident','patient','area_inbound'].includes(c.role)&&PersonContext.schoolTime(t))for(let i=0;i<32;i++){let g=gradeIndex(birthOf(sa.age,t),t);if(g<1||g>12||rnd()<.1)break;sa.age=c.ageBands?bandAge():PersonContext.age(c,rnd)}
+ if(!c.resident&&!c.custody&&!['general','student','area_student','resident','patient','area_inbound','exam_taker'].includes(c.role)&&PersonContext.schoolTime(t))for(let i=0;i<32;i++){let g=gradeIndex(birthOf(sa.age,t),t);if(g<1||g>12||rnd()<.1)break;sa.age=c.ageBands?bandAge():PersonContext.age(c,rnd)}
  const P={pref,muni,censusCode:f.id,ward:null,urb:urbOf(pref,muni),age:sa.age,sex:sa.sex,t};P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);
  const stage=c.facility?.kind;
+ // Exam takers are drawn in the grade that sits the exam (高3・浪人, 中3, 小6).
+ if(c.role==='exam_taker'){let gs=ExamSchedule.grades[c.exam.who],v=rnd(),target=(gs.find(g=>(v-=g[1])<0)||gs[0])[0];for(let i=0;i<64&&P.g!==target;i++){P.age=c.min+Math.floor(rnd()*(c.max-c.min+1));P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);}}
  if(c.role==='student'||c.role==='area_student'){let bounds=c.role==='area_student'?[13,21]:{primary:[1,6],middle:[7,9],high:[10,12],university:[13,21],college:[13,21],kindergarten:[-2,0]}[stage];for(let i=0;bounds&&(P.g<bounds[0]||P.g>bounds[1])&&i<64;i++){P.age=c.min+Math.floor(rnd()*(c.max-c.min+1));P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);}}
  P.occ=occupation(P,t);
  if(c.role==='resident')P.occ={label:'無職（高齢者施設で暮らしている）',group:'facility',cat:'facility',p:1};
+ if(c.role==='exam_taker'){if(P.g>=13)P.occ={label:'浪人生',group:'student',ronin:true,kindLabel:'所属',p:1,cat:'student'};else for(let i=0;i<32&&(!P.occ.school||/高専/.test(P.occ.label));i++)P.occ=occupation(P,t);}
+ if(c.role==='exam_parent'&&['student','college','kid','baby','facility','prison'].includes(P.occ.group))P.occ={label:'会社員',group:'adult',cat:'事務',p:1};
  if(c.role==='student'){
   if(['university','college'].includes(stage)){if(!(P.occ.group==='college'&&(stage==='university'?(!P.occ.senmon&&!/^短期/.test(P.occ.label)):(/短期/.test(c.facility.name)?/^短期/.test(P.occ.label):!!P.occ.senmon)))){let y=P.g-12,k=stage==='college'?(/短期/.test(c.facility.name)?'tan':'sen'):y>=5?'grad':'univ';P.occ=OriginalStudent.college(k,k==='tan'?Math.max(1,Math.min(2,y)):k==='sen'?Math.max(1,Math.min(3,y)):Math.max(1,y));}}
   else if(stage==='primary'||['middle','high'].includes(stage)){/* occupation() already uses the original school-year labels for the corrected birth cohort. */if(!P.occ.school){for(let i=0;i<32&&!P.occ.school;i++)P.occ=occupation(P,t);}
@@ -103,11 +110,12 @@ function mapPerson(c,t){
  if(typeof PlacesModel!=='undefined')PlacesModel.apply(c,P,t);
  if(typeof PoliceModel!=='undefined')PoliceModel.apply(c,P,t);
  if(typeof EnvironmentScenes!=='undefined')EnvironmentScenes.apply(c,P,t);
+ if(typeof ExamSchedule!=='undefined')ExamSchedule.apply(c,P,t);
  // Later map modules reuse original pools too; never leave the person somewhere other than the drawn spot.
  // A reroll must also stay plausible for the spot: at home for residents, away from home for everyone else.
  const fits=s=>!PersonContext.away(s.text,c)&&(c.resident?TimeSituations.homeCompatible(s.text):c.role==='general'||!/自宅|家で|布団|寝室|ソファ|リビング|自分の部屋/.test(s.text));
  if(PersonContext.away(P.sit.text,c)){for(let i=0;i<32&&!fits(P.sit);i++)P.sit=situation(P,t);if(!fits(P.sit))P.sit={text:c.resident?'自宅で、ひと息ついているところでした':'近くを歩きながら、次に行く場所を考えているところでした',state:'off',stateLabel:c.label,p:1};P.mapSituation=P.sit.text}
- if(P.occ.job?.n==='MR（医薬情報担当者）')P.occ.label=P.occ.label.replace('MR（医薬情報担当者）','MR');
+ P.occ={...P.occ,label:JobLabels.short(P.occ.label)};
  P.health=settleHealth(P,t);if(c.role==='venue_ghost'){P.hb.preg=false;P.health={text:'幽霊のため健康状態は不明',items:[],p:1,note:'お遊び要素'};}P.body=bodyOf(P,t);
  P.place=(c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name||f.name);P.placeShort=P.place;
  P.wxText=wxLabel(P.pref,t)+(t.rand||typeof MapWeather==='undefined'||MapWeather.status()!=='東京の実況'?'（推定）':'');

@@ -1,6 +1,6 @@
 /* Condition on the selected visit/work role before selecting existing swapsim text. */
 const Nightlife=(()=>{
- const roles=new Set(['area_night','area_night_worker','area_cabaret_worker','area_adult_customer','area_adult_worker']);
+ const roles=new Set(['area_night','area_night_worker','area_cabaret_worker','area_host_worker','area_adult_customer','area_adult_worker']);
  const fallback={
  dining:[12,5,'運ばれてきた料理を取り分けながら、次に何を頼むか友人と話しているところでした',{a:[20,89]}],
  entertainment:[12,5,'カラオケの曲一覧を見ながら、次に歌う曲を迷っているところでした',{a:[20,89]}],
@@ -35,7 +35,7 @@ const Nightlife=(()=>{
  function extraPool(kind){return extra[kind].map((text,i)=>{let end=kind==='entertainment'&&[4,5,9].includes(i)?24:5;return [18,end,text,{a:[20,89],...(/立ち飲み|次の一杯/.test(text)?{np:1}:{})}]})}
  function handles(c){return roles.has(c.role)}
  function assign(c,P){
-  let tags=c.role==='area_night_worker'?['food','izakaya']:c.role==='area_cabaret_worker'?['cabaret']:c.role==='area_adult_worker'?['adultservice']:null;
+  let tags=c.role==='area_night_worker'?['food','izakaya']:c.role==='area_cabaret_worker'?['cabaret']:c.role==='area_host_worker'?['host']:c.role==='area_adult_worker'?['adultservice']:null;
   if(!tags)return;
   let jobs=JOB_OBJS.filter(j=>tags.includes(j.tag)&&j[P.sex]>0&&P.age>=(j.o.amin||20)&&P.age<=(j.o.amax||69));
   if(!jobs.length)throw Error('No eligible nightlife job: '+c.role);

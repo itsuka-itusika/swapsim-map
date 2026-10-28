@@ -53,7 +53,7 @@ test('street-specific workers, concrete factory jobs, visitors from abroad, libr
  const r=JSON.parse(run(`(()=>{const go=(xy,r,h,dow,d,n=300)=>{let p=LandProfile.create(envContext,xy,r),t={y:2026,mo:10,d,dow,h,hf:h+.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<n;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,P.occ.label])}return out};const A=n=>MAP_DATA.areas.find(a=>a.name===n).xy,L=n=>MAP_DATA.landmarks.find(a=>a.name===n).xy;
  return JSON.stringify({harajuku:go(A('原宿・表参道'),300,14,6,31),akiba:go(A('秋葉原'),300,15,6,31),factory:go([139.7880,35.6280],200,10,3,28,120),library:go(L('国立国会図書館 東京本館'),40,11,3,28,80),bath:go(L('スパ ラクーア'),30,21,6,31,80)})})()`));
  const has=(rows,re)=>rows.some(x=>re.test(x[1]));
- assert.ok(has(r.harajuku,/^美容師$/)&&has(r.harajuku,/^アパレル店員$/));assert.ok(has(r.akiba,/^メイドカフェの店員$/));
+ assert.ok(has(r.harajuku,/^美容師$/)&&has(r.harajuku,/^アパレル店員$/));assert.ok(has(r.akiba,/^メイドカフェ店員$/));
  assert.ok(!has(r.factory,/製造業の勤務者|設備・技術職/));assert.ok(has(r.factory,/工|検査員|職人|オペレーター/));
  assert.ok(r.harajuku.filter(x=>x[0]==='area_inbound').every(x=>x[1]==='観光客'));
  assert.ok(r.library.some(x=>x[0].startsWith('place_library')));assert.ok(r.bath.some(x=>x[0].startsWith('place_bath')));
@@ -100,4 +100,23 @@ test('inherited original pools fit the map spot: schools, kindergartens, teacher
  assert.ok(r.visit.every(x=>/病棟|待合室|会計|面会|売店|入院/.test(x)),r.visit.join('\n'));
  assert.ok(!r.res.some(x=>/球場|スタジアム|コンサート|ショッピングモール|会社で|職場で|教室で|居酒屋|パチンコ|ゲームセンター/.test(x)&&!/夢の中/.test(x)),r.res.filter(x=>/球場|スタジアム|コンサート|ショッピングモール|会社で|職場で|教室で|居酒屋|パチンコ|ゲームセンター/.test(x)).join('\n'));
  assert.ok(r.off.length>30&&!r.off.some(x=>/仕事帰り|同僚|上司|職場で|会社で|残業/.test(x)),r.off.filter(x=>/仕事帰り|同僚|上司|職場で|会社で|残業/.test(x)).join('\n'));
+});
+test('2027 entrance exams bring examinees, parents and proctors to the right schools only on their days',()=>{
+ const r=JSON.parse(run(`(()=>{const dowOf=(m,d)=>new Date(Date.UTC(2027,m-1,d)).getUTCDay(),go=(name,m,d,h,y=2027)=>{let f=MAP_DATA.facilities.find(x=>x.name===name),t={y,mo:m,d,dow:dowOf(m,d),h:Math.floor(h),hf:h,mi:Math.round(h%1*60),rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,f.xy,25),t).filter(c=>c.n>0),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<60;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,P.occ.label,P.sit.text,P.sit.source||''])}return out};
+ return JSON.stringify({kyotsu:go('東京大学',1,16,10),kyotsuOther:go('東京大学',1,20,10),chuju:go('開成中学校',2,1,10),publicMiddle:go('麹町中学校',2,1,10),toritsu:go('日比谷高等学校',2,22,10),result:go('日比谷高等学校',3,2,10),lastYear:go('東京大学',1,17,10,2026)})})()`));
+ const takers=x=>x.filter(p=>p[0]==='exam_taker');
+ assert.ok(takers(r.kyotsu).length>30&&takers(r.kyotsu).every(p=>/^(高校3年生|浪人生|通信制高校の3年生|特別支援学校 高等部3年生)$/.test(p[1])&&p[3]==='exam'),JSON.stringify(takers(r.kyotsu).slice(0,5)));
+ assert.ok(r.kyotsu.filter(p=>p[0]==='teacher').every(p=>/試験|受験生|答案/.test(p[2])));
+ assert.equal(takers(r.kyotsuOther).length,0);assert.equal(takers(r.lastYear).length,0);assert.equal(takers(r.publicMiddle).length,0);
+ assert.ok(takers(r.chuju).length>20&&takers(r.chuju).every(p=>p[1]==='小学6年生'));assert.ok(r.chuju.some(p=>p[0]==='exam_parent'));
+ assert.ok(takers(r.toritsu).every(p=>/中学3年生$/.test(p[1])));assert.ok(takers(r.result).some(p=>/掲示板/.test(p[2])));
+});
+test('night-work ages, hosts, fewer stay-at-home husbands and concise job names',()=>{
+ const r=JSON.parse(run(`(()=>{let xy=MAP_DATA.areas.find(a=>a.name==='歌舞伎町').xy,t={y:2026,mo:10,d:30,dow:5,h:22,hf:22.5,mi:30,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,xy,200),t).filter(c=>/cabaret|host|adult_worker/.test(c.role)),tot=parts.reduce((s,c)=>s+c.n,0),night=[];for(let i=0;i<500;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);night.push([P.occ.label,P.age,P.sex])}
+ let wife=0,husband=0,labels=[];for(let i=0;i<20000;i++){let P={pref:PREFS.find(p=>p.n==='東京都'),age:28+Math.floor(Math.random()*35),sex:Math.random()<.5?'m':'f',t};P.muni=P.pref.munis[0];P.urb='metro';P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);let o=occupation(P,t);if(o.label==='専業主婦')wife++;if(o.label==='専業主夫')husband++;if(i<3000)labels.push(JobLabels.short(o.label))}
+ return JSON.stringify({night,wife,husband,host:JOB_OBJS.some(j=>j.n==='ホスト'),labels})})()`));
+ const f=r.night.filter(x=>/キャバクラ嬢|風俗嬢/.test(x[0]));assert.ok(f.length>200);assert.ok(f.filter(x=>x[1]>=35).length/f.length<.08,String(f.filter(x=>x[1]>=35).length/f.length));
+ assert.ok(r.host&&r.night.some(x=>x[0]==='ホスト'&&x[2]==='m'));assert.ok(r.night.filter(x=>x[0]==='ホスト').every(x=>x[1]<40));
+ assert.ok(r.husband*20<r.wife,r.husband+' / '+r.wife);
+ assert.ok(!r.labels.some(x=>/^(倉庫のピッキングスタッフ|飲食店のホールスタッフ|コンビニの店員|県庁の職員|市役所の職員|自動車部品工場の作業員)/.test(x)));
 });
