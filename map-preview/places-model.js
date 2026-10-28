@@ -20,7 +20,7 @@ const PlacesModel=(()=>{
  temple_worker:['境内を掃きながら、参拝に訪れた人を迎えているところでした','本堂の準備を終え、使った道具を片づけているところでした'],
  security:['施設内を巡回し、次の担当者に伝えることを記録しているところでした','出入口の様子を見ながら、道を尋ねた人に案内しているところでした'],
  clean:['通路を掃除し、人が通るのを待ってから作業を再開したところでした','施設内のごみを集め、清掃道具を片づけているところでした']};
- function kind(c){if(['mall','complex','observation','shrine','temple'].includes(c.placeKind))return c.placeKind;if(c.source==='OpenStreetMap'&&c.name&&c.name!==c.subtype&&['hotel','museum','gallery','theatre','fire_station'].includes(c.subtype))return c.subtype==='gallery'?'museum':c.subtype;return null}
+ function kind(c){if(['mall','complex','observation','shrine','temple','hotel','museum','theatre','fire_station'].includes(c.placeKind))return c.placeKind;if(c.source==='OpenStreetMap'&&c.name&&c.name!==c.subtype&&['hotel','museum','gallery','theatre','fire_station'].includes(c.subtype))return c.subtype==='gallery'?'museum':c.subtype;return null}
  function roles(c,t){let k=kind(c);if(!k)return null;let h=t.hf??t.h,we=t.dow===0||t.dow===6||t.holiday,day=h>=10&&h<20,open=h>=9&&h<21,work=h>=8&&h<22,scale=Math.max(.05,Math.min(20,(c.area||c.areaM2||10000)/10000)),factor=we?1.35:1,rows=[];
  let add=(key,label,n,min,max,female,worker=false)=>rows.push({role:'place_'+key,label,w:n,min,max,female,placeWorker:worker});
  if(k==='hotel'){add('hotel_guest','ホテルの宿泊客',scale*(h>=21||h<8?55:25),6,89,.5);add('hotel_staff','ホテル従業員',scale*(day?14:5),18,69,.55,true)}
