@@ -81,7 +81,7 @@ function resultLabel(P){const name=X=>X.displayName||X.surname.k+' '+X.given.k;r
 function renderCrowd(){
  el('crowd-title').textContent='同じ瞬間に入れ替わった人たち';
  // Sex is shown by name color (male blue, female red); the job replaces it in the brackets.
- const name=P=>P.displayName||P.surname.k+' '+P.given.k,sex=P=>P.sex==='f'?'女性':'男性',job=P=>P.occ.label.replace(/（[^（）]*）$/,''),who=P=>`<span class="sex-${P.sex==='f'?'f':'m'}" title="${sex(P)}">${esc(name(P))}</span><span class="meta">（${P.age}歳 ${esc(job(P))}）</span>`;
+ const name=P=>P.displayName||P.surname.k+' '+P.given.k,job=P=>P.occ.label.replace(/（[^（）]*）$/,''),who=P=>`<span class="sex-${P.sex==='f'?'f':'m'}">${esc(name(P))}<span class="sr">（${P.sex==='f'?'女性':'男性'}）</span></span><span class="meta">（${P.age}歳 ${esc(job(P))}）</span>`;
  el('crowd').innerHTML=crowd.map((R,i)=>`<li><button type="button" data-crowd="${i}"${currentPerson===R?' aria-current="true"':''}>${currentPerson===R?'<span class="showing">通知書に表示中</span>':''}<span class="who">${who(R.A)}<span class="arw" aria-label="と"> ⇄ </span>${who(R.B)}</span><small>${esc(R.A.place)} ⇄ ${esc(R.B.place)}</small><span class="doing"><span class="mk sex-${R.A.sex==='f'?'f':'m'}" aria-hidden="true"></span>${esc(R.A.surname.k)}さんは、${esc(R.A.sit.text)}。</span><span class="doing"><span class="mk sex-${R.B.sex==='f'?'f':'m'}" aria-hidden="true"></span>${esc(R.B.surname.k)}さんは、${esc(R.B.sit.text)}。</span></button></li>`).join('');
 }
 el('crowd').onclick=e=>{const b=e.target.closest('[data-crowd]');if(b&&!drawing){showResult(crowd[+b.dataset.crowd]);renderCrowd()}};
