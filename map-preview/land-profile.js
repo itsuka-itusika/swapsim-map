@@ -27,7 +27,9 @@ const LandProfile=(()=>{
  function classify(q){let region=ctx.regions.at(q)[0];if(!region)return null;let water=ctx.waters.at(q)[0];if(water)return {...water,type:'waterfront',subtype:'water',region,precision:water.source?.includes('W09')?'polygon':'approximate-polygon'};
  let police=ctx.police.at(q).sort((a,b)=>M.distance(q,a.xy)-M.distance(q,b.xy))[0];if(police)return {...police,region};
  let civic=ctx.publicAreas.at(q).sort((a,b)=>S.area(a.geometry)-S.area(b.geometry))[0];if(civic){if(civic.civicKind==='military'){let hospital=ctx.facilities.at(q).find(f=>f.kind==='hospital'&&/自衛隊中央病院/.test(f.name)&&S.contains(f.xy,civic));if(hospital)return {...hospital,type:'medical',subtype:'hospital',facilities:[hospital],region};}return {...civic,region};}
- let special=ctx.specialPlaces.at(q).sort((a,b)=>(a.area||Infinity)-(b.area||Infinity))[0];if(special){let station=ctx.facilities.at(q).find(f=>f.kind==='station'&&M.distance(q,f.xy)<=Math.min(20,f.radius||20));if(station){let s={...station,radius:Math.min(20,station.radius||20),precision:'modeled-footprint'};return {...s,facilities:[s],region};}return {...special,region};}
+ let special=ctx.specialPlaces.at(q).sort((a,b)=>(a.area||Infinity)-(b.area||Infinity))[0];if(special){let station=ctx.facilities.at(q).find(f=>f.kind==='station'&&M.distance(q,f.xy)<=Math.min(20,f.radius||20));if(station){let s={...station,radius:Math.min(20,station.radius||20),precision:'modeled-footprint'};return {...s,facilities:[s],region};}
+  // Indoor amusement parks inside a building (ナンジャタウン in サンシャインシティ, ジョイポリス in デックス) keep their own visitors.
+  let theme=ctx.facilities.at(q).find(f=>f.kind==='theme');if(theme)return {...theme,type:'tourism',subtype:'theme',facilities:[theme],precision:'modeled-footprint',region};return {...special,region};}
  let landmark=ctx.landmarks.at(q).sort((a,b)=>S.area(a.geometry)-S.area(b.geometry))[0];
  let media=ctx.facilities.at(q).filter(f=>['tv','radio'].includes(f.kind));
  // Dedicated broadcast workplaces override generic buildings. Do not spread their circles into protected green footprints.

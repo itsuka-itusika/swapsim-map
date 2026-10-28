@@ -31,8 +31,25 @@ const PersonContext=(()=>{
   if(AIR.test(text)&&!(['airfield','terminal'].includes(land?.subtype)||/空港/.test(place)))return true;
   if(SEA.test(text)&&land?.type!=='waterfront')return true;
   return /新幹線の運転席/.test(text)&&!/^(東京|品川|上野)駅$/.test(place)}
+ // Age profiles [min, max, weight] for roles that differ from the census mix. Visitors from abroad follow arrival
+ // statistics (twenties and thirties dominate); drivers, guards and cleaners skew older; shop, hotel and station staff younger.
+ const ROLE_BANDS=[
+  [c=>c.role==='area_inbound'||c.inboundGuest,[[3,9,4],[10,19,7],[20,29,27],[30,39,25],[40,49,17],[50,59,12],[60,69,6],[70,79,2]]],
+  [c=>c.role==='road_taxi_driver',[[28,39,6],[40,49,13],[50,59,22],[60,69,35],[70,79,24]]],
+  [c=>c.role==='road_bus_driver',[[25,34,8],[35,44,20],[45,54,32],[55,65,40]]],
+  [c=>/^road_(truck|trailer|dump|delivery)_driver$/.test(c.role),[[22,29,10],[30,39,20],[40,49,30],[50,59,27],[60,69,13]]],
+  [c=>/security|guard/.test(c.role)&&!/police/.test(c.role),[[20,29,12],[30,39,10],[40,49,14],[50,59,18],[60,69,32],[70,74,14]]],
+  [c=>/clean|housekeeping/.test(c.role),[[20,39,10],[40,49,14],[50,59,22],[60,69,36],[70,74,18]]],
+  [c=>/^(place_(shop|food|cinema)_staff|special_station_shop|special_theme_(shop|food)|urban_apparel)$/.test(c.role),[[18,24,30],[25,34,25],[35,44,18],[45,54,15],[55,64,9],[65,69,3]]],
+  [c=>/^place_hotel_staff_(front|bell|door|concierge|restaurant|banquet)$/.test(c.role),[[20,29,40],[30,39,28],[40,49,18],[50,65,14]]],
+  [c=>/^special_(station|crew)$/.test(c.role),[[20,29,30],[30,39,28],[40,49,22],[50,59,20]]],
+  [c=>/^police_(patrol|traffic|desk|investigation)$/.test(c.role),[[20,29,33],[30,39,27],[40,49,22],[50,59,18]]],
+  [c=>c.role==='nurse',[[22,29,26],[30,39,26],[40,49,25],[50,59,17],[60,65,6]]],
+  [c=>c.role==='care',[[20,29,14],[30,39,18],[40,49,24],[50,59,24],[60,65,20]]],
+  [c=>c.role==='urban_hairdresser',[[20,24,25],[25,29,30],[30,34,20],[35,39,12],[40,49,13]]]];
+ function roleBands(c){return ROLE_BANDS.find(([test])=>test(c))?.[1]||null}
  function schoolTime(t){let h=t.hf??t.h;return t.dow>0&&t.dow<6&&!t.holiday&&!(typeof holName==='function'&&holName(t))&&!(typeof schoolVac==='function'&&schoolVac(t))&&h>=8.5&&h<15}
  // Picks a name style uniformly, without implying any nationality distribution.
  function anyForeignName(sex,r=Math.random){let keys=[...Object.keys(names),null];return foreignName(keys[Math.floor(r()*keys.length)],sex,r)}
- return {foreignName,anyForeignName,age,station,away,schoolTime};
+ return {foreignName,anyForeignName,age,station,away,schoolTime,roleBands};
 })();

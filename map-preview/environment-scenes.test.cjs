@@ -164,3 +164,16 @@ test('roads carry drivers and passengers by road type and hour, and major cinema
  assert.ok(r.cinemas>=30);assert.ok(r.cinema.filter(p=>p[0]==='place_cinema_guest').length>40&&r.cinemaStaff);
  assert.equal(r.cinemaClosed.filter(p=>p[0]==='place_cinema_guest').length,0);
 });
+test('role age profiles, amusement parks, SHIBUYA109 and station rush hours',()=>{
+ const r=JSON.parse(run(`(()=>{const T=(h,dow,d)=>({y:2026,mo:10,d,dow,h:Math.floor(h),hf:h,mi:Math.round(h%1*60),rand:false}),region=MAP_DATA.regions.find(x=>x.id==='13104'),ages=(role,min,max,extra={})=>{let a=[];for(let i=0;i<300;i++)a.push(mapPerson({role,label:extra.label||role,min,max,female:.5,region,roleP:.01,...extra},T(14,3,28)).age);return a.reduce((s,x)=>s+x,0)/a.length};
+ const people=(xy,rad,t,role)=>{let parts=LandEstimator.estimate(LandProfile.create(envContext,xy,rad),t).filter(c=>role.test(c.role)),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<150&&parts.length;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,P.age,P.sex,P.sit.text,P.place])}return out};
+ const st=MAP_DATA.facilities.find(x=>x.kind==='station'&&x.name==='新宿駅'),namja=MAP_DATA.facilities.find(x=>x.name==='ナンジャタウン'),arakawa=MAP_DATA.facilities.find(x=>x.name==='あらかわ遊園'),s109=MAP_DATA.specialPlaces.find(x=>x.placeVariant==='shibuya109');
+ return JSON.stringify({inbound:ages('area_inbound',6,79,{area:MAP_DATA.areas.find(a=>a.name==='歌舞伎町')}),taxi:ages('road_taxi_driver',28,79,{road:{name:'国道',region},landComponent:{name:'国道',type:'road'},subtype:'n'}),shop:ages('place_shop_staff',18,69,{placeWorker:true,label:'販売員'}),
+  rushWd:people(st.xy,30,T(8,3,28),/^special_passenger$/),rushSat:people(st.xy,30,T(8,6,31),/^special_passenger$/),namja:people(namja.xy,20,T(14,6,31),/^special_theme_guest$/),arakawa:people(arakawa.xy,40,T(11,0,1),/^special_theme_guest$/),s109:people(s109.xy,15,T(15,6,31),/^place_s109_guest$/)})})()`));
+ assert.ok(r.inbound>30&&r.inbound<40,String(r.inbound));assert.ok(r.taxi>55,String(r.taxi));assert.ok(r.shop<40,String(r.shop));
+ const RUSH=/満員|ラッシュ|乗り換え|整列乗車|人波|人だかり|遅延|快速|定期|振替|駅ナカ|部活帰り|塾へ/,share=(x,re)=>x.filter(p=>re.test(p[3])).length/Math.max(1,x.length);
+ assert.ok(share(r.rushWd,RUSH)>.5,String(share(r.rushWd,RUSH)));assert.ok(share(r.rushSat,/満員電車から|整列乗車|通学定期|帰宅ラッシュ/)===0);
+ assert.ok(r.namja.length>50&&r.namja.every(p=>p[4]==='ナンジャタウン'));assert.ok(r.namja.filter(p=>p[1]<30).length/r.namja.length>.5);
+ assert.ok(r.arakawa.filter(p=>p[1]<13).every(p=>!/子どもに|子どもを乗せ|わが子/.test(p[3])));
+ assert.ok(r.s109.filter(p=>p[2]==='f').length/r.s109.length>.7&&r.s109.filter(p=>p[1]<30).length/r.s109.length>.7);
+});

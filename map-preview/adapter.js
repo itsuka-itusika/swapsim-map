@@ -20,6 +20,8 @@ function mapPerson(c,t){
   :c.role==='area_night'?(youth?[[20,24,24],[25,29,22],[30,34,16],[35,39,11],[40,44,9],[45,49,7],[50,54,5],[55,59,4],[60,64,2]]:[[20,24,15],[25,29,16],[30,34,14],[35,39,12],[40,44,11],[45,49,10],[50,54,9],[55,59,7],[60,64,6]])
   :c.role==='area_adult_customer'?(youth?[[20,24,12],[25,29,17],[30,34,16],[35,39,14],[40,44,12],[45,49,10],[50,54,8],[55,59,6],[60,69,5]]:[[20,24,9],[25,29,14],[30,34,15],[35,39,14],[40,44,13],[45,49,12],[50,54,10],[55,59,7],[60,69,6]]):null;
  if(nightBands){let v=rnd()*nightBands.reduce((s,b)=>s+b[2],0),b=nightBands.find(b=>(v-=b[2])<0)||nightBands[0];sa.age=b[0]+Math.floor(rnd()*(b[1]-b[0]+1))}
+ // Jobs and visitor groups whose age profile differs clearly from the resident population (approximate national statistics).
+ else if(!c.ageBands&&c.role!=='general'){let bands=PersonContext.roleBands(c);if(bands){bands=bands.map(([a,b,w])=>[Math.max(a,c.min??0),Math.min(b,c.max??99),w]).filter(b=>b[0]<=b[1]);if(bands.length){let v=rnd()*bands.reduce((s,b)=>s+b[2],0),b=bands.find(b=>(v-=b[2])<0)||bands[0];sa.age=b[0]+Math.floor(rnd()*(b[1]-b[0]+1))}}}
  // During class hours most domestic pupils are at school; keep about one in ten of those drawn elsewhere.
  if(!c.resident&&!c.custody&&!['general','student','area_student','resident','patient','area_inbound','exam_taker'].includes(c.role)&&PersonContext.schoolTime(t))for(let i=0;i<32;i++){let g=gradeIndex(birthOf(sa.age,t),t);if(g<1||g>12||rnd()<.1)break;sa.age=c.ageBands?bandAge():PersonContext.age(c,rnd)}
  const P={pref,muni,censusCode:f.id,ward:null,urb:urbOf(pref,muni),age:sa.age,sex:sa.sex,t};P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);
@@ -106,7 +108,10 @@ function mapPerson(c,t){
  }
  TimeSituations.apply(c,P,t);
  SpecialFacilities.apply(c,P,t);
- if(c.role==='special_passenger'){let trip=PersonContext.station(P,t,originalSituation);if(trip){P.visitLabel=trip.label;P.sit={...P.sit,text:trip.text,state:'commute',stateLabel:trip.label};P.mapSituation=trip.text;}}
+ if(c.role==='special_passenger'){let trip=PersonContext.station(P,t,originalSituation);if(trip){P.visitLabel=trip.label;P.sit={...P.sit,text:trip.text,state:'commute',stateLabel:trip.label};P.mapSituation=trip.text;}
+  // Weekday rush hours: crowded trains and transfer corridors, most often at stations served by several lines.
+  let h=t.hf??t.h,weekday=t.dow>0&&t.dow<6&&!t.holiday&&!holName(t),am=h>=7&&h<9.5,pm=h>=17.5&&h<20,lines=c.facility?.lines?.length||1;
+  if(weekday&&(am||pm)&&!P.hb?.leave&&!P.hb?.bed&&P.age>=12&&rnd()<(lines>=3?.75:lines>=2?.55:.35)){let student=['student','college','kid'].includes(P.occ.group),pool=MAP_DATA.specialSituations[(am?'rush_am':'rush_pm')+(student&&rnd()<.6?'_student':'')],text=pool[Math.floor(rnd()*pool.length)];if(student&&/会社/.test(text))text=pool[0];P.visitLabel=am?(student?'通学ラッシュの駅':'通勤ラッシュの駅'):'帰宅ラッシュの駅';P.sit={...P.sit,text,state:'commute',stateLabel:P.visitLabel};P.mapSituation=text}}
  UrbanContext.apply(c,P,t);
  if(c.resident&&P.occ.group==='adult'&&P.occ.cat!=='none'&&t.dow>0&&t.dow<6&&!t.holiday&&t.h>=9&&t.h<17&&P.sit.state==='off'&&!P.hb.bed&&!P.hb.leave){
   // Explain a weekday at home only sometimes and in varied words; scenes that already say why are left alone.

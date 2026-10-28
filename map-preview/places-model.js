@@ -10,6 +10,9 @@ const PlacesModel=(()=>{
  tourist_guest:['施設の案内板を読み、見どころを探しているところでした','施設を見て回りながら、写真を撮っているところでした'],
  tourist_staff:['来場者に施設の案内をしているところでした'],
  hotel_guest:['客室で荷物を整理し、次の予定を確認しているところでした','ロビーで待ち合わせの相手を探しているところでした'],
+ // SHIBUYA109: a fashion building for teens and twenties.
+ s109_guest:['店頭で、店員さんのコーディネートを参考に新作を手に取っているところでした','試着室の前で、友達に二着のどちらが似合うか聞いているところでした','エスカレーターで上の階へ向かいながら、気になるブランドの場所を確かめているところでした','109の前で、待ち合わせの友達を探しているところでした','ショッパーの袋を提げて、プリクラ機のあるフロアへ向かうところでした','韓国コスメの売り場で、新色のリップを手の甲に試しているところでした'],
+ s109_staff:['店頭のマネキンの着こなしを、新作に替えているところでした','レジで会計をしながら、今日のコーデを客に褒められたところでした','SNSに載せる新作の写真を、店の奥で撮っているところでした','セール品の棚を整え、サイズ別に並べ直しているところでした'],
  cinema_guest:['発券機で、真ん中の列の空席を探しているところでした','売店でポップコーンを塩とキャラメルのどちらにするか迷っているところでした','予告編が始まり、スマートフォンの電源を切ったところでした','暗いシアターで、スクリーンの展開に息をのんだところでした','上映中、隣の席の人と同時に笑ってしまったところでした','エンドロールが終わるまで、席を立たずに見届けているところでした','上映が終わり、ロビーで連れと感想を言い合っているところでした'],
  cinema_mini:['上映後のトークイベントで、監督の話に聞き入っているところでした','名作の特集上映で、古いフィルムの色合いを味わっているところでした','小さなロビーで、次回上映のチラシを一枚ずつ手に取っているところでした'],
  cinema_kid:['アニメ映画の上映前に、入場者特典のカードを開けているところでした','ポップコーンを抱えて、スクリーンの前の席で足をぶらぶらさせているところでした'],
@@ -38,6 +41,7 @@ const PlacesModel=(()=>{
  if(k==='hostel')k='hotel';
  if(k==='hotel'&&typeof HotelModel!=='undefined'&&HotelModel.style(c))return HotelModel.roles(c,t);
  if(['library','bank','bath','tourist'].includes(k)){let actual=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=actual===null?(k==='bank'?h>=9&&h<15&&!we:k==='bath'?(c.allNight||h>=10):k==='library'?h>=9&&h<(we?17:20):h>=9&&h<18):actual;let labels={library:['図書館の利用者','図書館職員'],bank:['銀行の利用者','銀行員'],bath:['温浴施設の利用者','温浴施設の従業員'],tourist:['観光施設の来場者','観光施設の職員']}[k];add(k+'_guest',labels[0],active?scale*(k==='bath'?(h>=18||h<2?90:60)*(we?1.4:1):50):0,k==='bath'?12:6,89,k==='bath'?.45:.5);add(k+'_staff',labels[1],active?scale*8:scale*.2,20,69,.5,true)}
+ if(k==='large_shop'&&c.placeVariant==='shibuya109'){let hours=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=hours===null?h>=10&&h<21:hours;rows.push({role:'place_s109_guest',label:'SHIBUYA109の買い物客',w:active?scale*(day?120*factor:30):0,min:12,max:64,female:.85,ageBands:[[12,17,24],[18,24,46],[25,29,17],[30,44,10],[45,64,3]]});add('s109_staff','ショップ店員',scale*(active?18:work?3:0),18,39,.9,true);add('security','施設警備員',scale*(active?1.5:.4),20,69,.25,true);add('clean','施設の清掃スタッフ',scale*(work?2:.2),20,74,.55,true);return rows}
  if(k==='large_shop'){let hours=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=hours===null?open:hours;add('shop_guest','大型店舗の買い物客',active?scale*(day?80*factor:20):0,6,89,.52);add('shop_staff','大型店舗の販売員',scale*(active?14:work?2:0),18,69,.55,true)}
  if(k==='hotel'){add('hotel_guest','ホテルの宿泊客',scale*(h>=21||h<8?55:25),6,89,.5);add('hotel_staff','ホテル従業員',scale*(day?14:5),18,69,.55,true)}
  if(k==='museum'||k==='theatre'){let open=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=open===true||open===null&&(k==='museum'?h>=10&&h<17:h>=12&&h<21);add(k+'_guest',k==='museum'?'文化施設の来場者':'劇場の来場者',active?scale*50*factor:0,6,89,.55);add(k+'_staff',k==='museum'?'文化施設の職員':'劇場の職員',active?scale*8:scale*.3,20,69,.5,true)}
