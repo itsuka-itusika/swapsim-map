@@ -36,8 +36,9 @@ const LandProfile=(()=>{
  let base=ctx.zones.at(q).sort((a,b)=>(a.kind==='palace'?-1:0)-(b.kind==='palace'?-1:0)||(S.area(a.geometry)-S.area(b.geometry)))[0];
  if(base?.kind==='palace')return {...base,region};
  let polys=index.at(q).filter(f=>f.geometry).sort((a,b)=>Number(specific(b))-Number(specific(a))||a.area-b.area),f=polys[0];
- if(f&&(specific(f)||f.tags?.building||['green','waterfront'].includes(f.type)))return {...f,region,areaTag:tagAt(q,f.type)};
+ if(f&&specific(f))return {...f,region,areaTag:tagAt(q,f.type)};
  let namedPoint=index.query(S.box(q,20)).filter(x=>!x.geometry&&['hotel','museum','gallery','theatre','fire_station'].includes(x.subtype)&&x.tags?.name&&M.distance(q,x.xy)<=15).sort((a,b)=>M.distance(a.xy,q)-M.distance(b.xy,q))[0];if(namedPoint)return {...namedPoint,region,areaTag:tagAt(q,namedPoint.type)};
+ if(f&&(f.tags?.building||['green','waterfront'].includes(f.type)))return {...f,region,areaTag:tagAt(q,f.type)};
  if(base)return {...base,region,areaTag:tagAt(q,base.type)};
  let fs=facilityIndex.at(q).sort((a,b)=>M.distance(a.xy,q)-M.distance(b.xy,q));if(fs.length)return {...fs[0],facilities:[fs[0]],region};
  if(f)return {...f,region,areaTag:tagAt(q,f.type)};

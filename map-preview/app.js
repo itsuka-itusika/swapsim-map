@@ -42,7 +42,7 @@ function renderEstimate(p,r,t,evidence){
  const state={live:'施設情報を更新済み',cache:'保存済みの施設情報を使用',stale:'保存済みの旧施設情報を使用',unavailable:'施設情報を取得できないため収録データで推定',busy:'施設情報の取得待ち'}[evidence?.status]||'収録データで推定中・施設情報を確認します';
  el('status').textContent=`${p[1].toFixed(5)}, ${p[0].toFixed(5)} ｜ 半径${r}m ｜ ${state} ｜ 計算 ${Math.round(performance.now()-begin)}ms`;
  if(landProfile.coverage<.99)el('status').textContent+=' ｜ 対象区域内の部分のみ集計';
- el('details').innerHTML=parts.slice().sort((a,b)=>b.n-a.n).map(x=>`<p>${esc((x.facility?.schoolPolicy?.displayName||x.facility?.name||x.area?.name||x.zone?.name||x.landComponent?.name||x.region.name)+(x.facility&&x.landType==='education'?'（'+SchoolPolicy.label(x.facility)+'）':''))}・${esc(x.label)} <b>${(x.n/n*100).toFixed(1)}%</b><progress max="100" value="${x.n/n*100}"></progress></p>`).join('');
+ el('details').innerHTML=parts.slice().sort((a,b)=>b.n-a.n).map(x=>`<p>${esc((x.facility?.schoolPolicy?.displayName||x.facility?.name||x.landComponent?.name||x.zone?.name||x.area?.name||x.region.name)+(x.facility&&x.landType==='education'?'（'+SchoolPolicy.label(x.facility)+'）':''))}・${esc(x.label)} <b>${(x.n/n*100).toFixed(1)}%</b><progress max="100" value="${x.n/n*100}"></progress></p>`).join('');
  el('draw').disabled=!n;if(!n)el('status').textContent+=' ｜ 範囲内に抽選対象者がいません';
  document.querySelectorAll('[data-radius]').forEach(b=>{let active=+b.dataset.radius===r;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
  if(typeof meshLayer!=='undefined')drawMesh();
