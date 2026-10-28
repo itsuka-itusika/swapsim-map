@@ -1,6 +1,6 @@
 'use strict';
 const el=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let selected=[139.7006,35.6595],radius=300,parts=[],regions=MAP_DATA.regions,facilities=MAP_DATA.facilities,history=[],nowMode=true;
+let selected=[139.7006,35.6595],radius=300,parts=[],regions=MAP_DATA.regions,facilities=MAP_DATA.facilities,history=[];
 // Census is used only by residential components or explicit missing-data fallback.
 for(let f of regions){f.density=censusMass(f.id)/f.area;let area=MAP_DATA.zoning.residentialAreaKm2[f.id];f.residentialDensity=area?censusMass(f.id)/area:f.density;}
 if(MAP_DATA.mesh)MeshModel.configure(MAP_DATA.mesh); // old visualization/comparison only
@@ -16,9 +16,9 @@ const map=L.map('map',{minZoom:10,maxZoom:18,maxBounds:[[35.48,139.48],[35.86,13
 let tiles=L.tileLayer('https://tile.openstreetmap.jp/styles/osm-bright-ja/{z}/{x}/{y}.png',{maxZoom:18,updateWhenIdle:true,updateWhenZooming:false,keepBuffer:1,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | <a href="https://openmaptiles.org/">&copy; OpenMapTiles</a> | <a href="https://www.osm.jp/">OpenStreetMap Japan</a>'}).addTo(map);
 tiles.on('tileerror',()=>{el('status').textContent='背景地図の一部を読み込めません。通信状態を確認してください。地域・施設データは引き続き利用できます。'});
 let circle=L.circle([selected[1],selected[0]],{radius,color:'#2E6A5D',fillOpacity:.12}).addTo(map),pin=L.circleMarker([selected[1],selected[0]],{radius:6,color:'#fff',fillColor:'#C8371E',fillOpacity:1}).addTo(map),layer=L.layerGroup().addTo(map);
-function dateNow(){let t=jstNow();el('date').value=`${t.y}-${String(t.mo).padStart(2,'0')}-${String(t.d).padStart(2,'0')}T${String(t.h).padStart(2,'0')}:${String(t.mi).padStart(2,'0')}`}
-function time(){if(nowMode){dateNow();let t=jstNow();t.rand=false;t.holiday=!!holName(t);t.venueEvent='auto';return t}let d=new Date(el('date').value+'+09:00');if(!Number.isFinite(+d))return null;let [y,mo,day,h,mi]=el('date').value.match(/\d+/g).map(Number);let dow=new Date(Date.UTC(y,mo-1,day)).getUTCDay();let t={y,mo,d:day,h,mi,hf:h+mi/60,dow,rand:true};t.holiday=!!holName(t);t.venueEvent='auto';return t}
-function weatherStatus(){el('weather-status').textContent=nowMode?'天気：'+MapWeather.status():'天気：指定日時の季節から推定'}
+function dateNow(){el('clock').textContent=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}
+function time(){let t=jstNow();t.rand=false;t.holiday=!!holName(t);t.venueEvent='auto';return t}
+function weatherStatus(){el('weather-status').textContent='天気：'+MapWeather.status()}
 async function updateWeather(){await MapWeather.load(storage);weatherStatus()}
 function facilitiesOnMap(){layer.clearLayers();let bounds=map.getBounds();if(map.getZoom()<13)return;let list=facilities.filter(f=>['station','tv','radio','theme'].includes(f.kind)&&bounds.contains([f.xy[1],f.xy[0]])).slice(0,180);for(let f of list){let color='#3b809d';L.circleMarker([f.xy[1],f.xy[0]],{radius:4,color,weight:1,fillOpacity:.8}).bindTooltip(esc(f.name)).on('click',e=>{L.DomEvent.stopPropagation(e);choose(f.xy)}).addTo(layer)}if(map.getZoom()>=15){let landmarks=[...(MAP_DATA.policeStations||[]),...(MAP_DATA.specialPlaces||[])].filter(f=>bounds.contains([f.xy[1],f.xy[0]])).filter((f,i,a)=>a.findIndex(x=>x.name===f.name)===i).slice(0,120);for(let f of landmarks)L.circleMarker([f.xy[1],f.xy[0]],{radius:5,color:'#fff',weight:1,fillColor:f.type==='religious'?'#ad7354':'#855894',fillOpacity:.9}).bindTooltip(esc(f.name)).on('click',e=>{L.DomEvent.stopPropagation(e);choose(f.xy)}).addTo(layer)}}
 function choose(p){selected=p;circle.setLatLng([p[1],p[0]]).setRadius(radius);pin.setLatLng([p[1],p[0]]);refresh()}
@@ -52,10 +52,37 @@ function renderEstimate(p,r,t,evidence){
 }
 map.on('click',e=>choose([e.latlng.lng,e.latlng.lat]));map.on('moveend',()=>{facilitiesOnMap();drawMesh()});
 document.querySelectorAll('[data-radius]').forEach(b=>b.onclick=()=>{radius=+b.dataset.radius;choose(selected)});
-el('date').onchange=()=>{nowMode=false;weatherStatus();refresh()};el('now').onclick=()=>{nowMode=true;dateNow();weatherStatus();updateWeather();refresh()};
 el('search').onclick=()=>{let q=el('query').value.trim();if(!q){el('results').textContent='施設名か市区町村名を入力してください。';return}let list=[...(MAP_DATA.policeStations||[]),...(MAP_DATA.specialPlaces||[]),...(MAP_DATA.publicAreas||[]),...(MAP_DATA.landmarks||[]),...MAP_DATA.landZones,...MAP_DATA.greenZones,...MAP_DATA.areas,...facilities].filter(f=>f.name.includes(q)||(f.aliases||[]).some(n=>n.includes(q))).filter((f,i,a)=>a.findIndex(x=>x.name===f.name)===i).slice(0,15).map(f=>({name:f.name,xy:f.xy}));if(!list.length)list=regions.filter(f=>f.name.includes(q)).slice(0,10).map(f=>({name:f.name,xy:[(f.bbox[0]+f.bbox[2])/2,(f.bbox[1]+f.bbox[3])/2]}));el('results').innerHTML=list.length?list.map((f,i)=>`<button class="facility" data-result="${i}">${esc(f.name)}</button>`).join(''):'該当する収録施設・地域がありません。';document.querySelectorAll('[data-result]').forEach(b=>b.onclick=()=>{let f=list[+b.dataset.result];map.setView([f.xy[1],f.xy[0]],17);choose(f.xy);el('results').innerHTML=''})};el('query').onkeydown=e=>{if(e.key==='Enter')el('search').click()};
-let issuedCount=0,currentPerson=null;
-el('draw').onclick=()=>{if(nowMode)updateWeather();let c=MapModel.pick(parts);if(!c)return;try{let total=parts.reduce((s,x)=>s+x.n,0),P=mapPerson({...c,roleP:c.n/total},time());P.serial=++issuedCount;currentPerson=P;el('person').innerHTML=MapNotice.html(P,c);el('copy').onclick=async()=>{let text=MapNotice.text(P);try{await navigator.clipboard.writeText(text);el('toast').textContent='コピーしました'}catch{let box=document.createElement('textarea');box.value=text;box.readOnly=true;box.className='copybox';el('person').appendChild(box);box.select();el('toast').textContent='表示された文章をコピーしてください'}};let name=P.displayName||P.surname.k+' '+P.given.k;history.unshift(`${name} ／ ${P.age}歳 ／ ${P.occ.label}`);history=history.slice(0,12);el('history').innerHTML=history.map(s=>`<p>${esc(s)}</p>`).join('');stampIt(!reduceMotion);el('go-label').innerHTML='次の<br>誰かへ';scrollToNotice(true);el('notice').classList.remove('flash');if(!reduceMotion){void el('notice').offsetWidth;el('notice').classList.add('flash')}}catch(e){el('person').textContent='人物生成に失敗しました：'+e.message;console.error(e)}};
+let issuedCount=0,currentPerson=null,crowd=[];
+const options={sex:null,dec:null,pair:false,real:false},optionsKey='swapsim-map-options-v1';
+try{const saved=JSON.parse(storage?.getItem(optionsKey)||'null');if(saved){options.sex=['m','f'].includes(saved.sex)?saved.sex:null;options.dec=Array.isArray(saved.dec)?saved.dec.filter(n=>Number.isInteger(n)&&n>=0&&n<=9):null;options.pair=saved.pair===true;options.real=saved.real===true}}catch{}
+function renderOptions(){
+ el('opt-sex').innerHTML=[['','指定なし'],['m','男性'],['f','女性']].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${(options.sex||'')===v}">${l}</button>`).join('');
+ el('opt-age').innerHTML=[['','指定なし'],...Array.from({length:10},(_,n)=>[String(n),n===9?'90代以上':n*10+'代'])].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${v===''?!options.dec?.length:!!options.dec?.includes(+v)}">${l}</button>`).join('');
+ for(const key of ['pair','real'])el('opt-'+key).setAttribute('aria-checked',String(options[key]));
+ el('real-name').textContent=options.pair?'本当に入れ替える':'本当に入れ替わる';
+ el('go-label').innerHTML=options.pair?'入れ<br>替える':'入れ<br>替わる';
+ el('opts-cur').textContent=[options.sex?options.sex==='f'?'女性':'男性':'',options.dec?.length?options.dec.map(n=>n===9?'90代以上':n*10+'代').join('・'):'',options.pair?'2人を入れ替え':'',options.real?'本当に入れ替わる':''].filter(Boolean).join('・');
+ el('opt-save-status').textContent='「保存」を押すと、次回もこの設定で開きます。';
+}
+el('opt-sex').onclick=e=>{const b=e.target.closest('button');if(b){options.sex=b.dataset.v||null;renderOptions()}};
+el('opt-age').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.v==='')options.dec=null;else{const set=new Set(options.dec||[]),v=+b.dataset.v;set.has(v)?set.delete(v):set.add(v);options.dec=set.size?[...set].sort((a,b)=>a-b):null}renderOptions()};
+for(const key of ['pair','real'])el('opt-'+key).onclick=()=>{options[key]=!options[key];renderOptions()};
+el('opt-save').onclick=()=>{try{if(!storage)throw Error();storage.setItem(optionsKey,JSON.stringify(options));el('opt-save-status').textContent='条件を保存しました。次回もこの設定で開きます。'}catch{el('opt-save-status').textContent='このブラウザでは設定を保存できません。今回の設定はそのまま使えます。'}};
+el('opt-reset').onclick=()=>{Object.assign(options,{sex:null,dec:null,pair:false,real:false});try{storage?.removeItem(optionsKey)}catch{}renderOptions()};
+function samplePerson(t,filtered=false){
+ const eligible=parts.filter(c=>(!filtered||!options.sex||(options.sex==='f'?c.female!==0:c.female!==1))&&(!filtered||!options.dec?.length||options.dec.some(d=>(c.max??110)>=d*10&&(c.min??0)<=(d===9?110:d*10+9))));
+ const total=eligible.reduce((sum,c)=>sum+c.n,0);if(!total)throw Error('この範囲には指定条件の人物が見つかりません。条件や半径を変更してください。');
+ for(let i=0;i<2000;i++){const c=MapModel.pick(eligible);if(!c)break;const P=mapPerson({...c,roleP:c.n/total},t);if(!filtered||((!options.sex||P.sex===options.sex)&&(!options.dec?.length||options.dec.includes(Math.min(9,Math.floor(P.age/10))))))return P}
+ throw Error('この範囲には指定条件の人物が見つかりません。条件や半径を変更してください。');
+}
+function sampleResult(t,filtered=false){const A=samplePerson(t,filtered);if(!options.pair)return A;const B=samplePerson(t);return {kind:'pair',A,B,t,gap:pairGap(A,B)}}
+function showResult(P){currentPerson=P;el('person').innerHTML=MapNotice.html(P);el('copy').onclick=async()=>{const text=MapNotice.text(P);try{await navigator.clipboard.writeText(text);el('toast').textContent='コピーしました'}catch{const box=document.createElement('textarea');box.value=text;box.readOnly=true;box.className='copybox';el('person').appendChild(box);box.select();el('toast').textContent='表示された文章をコピーしてください'}};stampIt(!reduceMotion);scrollToNotice(true);if(!reduceMotion)el('notice').classList.add('flash')}
+function resultLabel(P){const name=X=>X.displayName||X.surname.k+' '+X.given.k;return P.kind==='pair'?`${name(P.A)}（${P.A.age}歳） ⇄ ${name(P.B)}（${P.B.age}歳）`:`${name(P)} ／ ${P.age}歳 ／ ${P.occ.label}`}
+function renderCrowd(){el('crowd-title').textContent=options.pair?'同じ瞬間に入れ替わったほかの2組':'同じ瞬間に入れ替わった人たち';el('crowd').innerHTML=crowd.map((P,i)=>`<li><button type="button" data-crowd="${i}"><span class="who">${esc(resultLabel(P))}</span><small>${esc((P.A||P).place)}</small></button></li>`).join('')}
+el('crowd').onclick=e=>{const b=e.target.closest('[data-crowd]');if(b)showResult(crowd[+b.dataset.crowd])};
+el('draw').onclick=()=>{if(!parts.length)return;el('draw').disabled=true;try{updateWeather();const t=time();refresh();const P=sampleResult(t,true),others=Array.from({length:options.pair?2:4},()=>sampleResult(t));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount);crowd=others;showResult(P);renderCrowd();history.unshift(resultLabel(P));history=history.slice(0,12);el('history').innerHTML=history.map(s=>`<p>${esc(s)}</p>`).join('')}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e)}finally{el('draw').disabled=!parts.length}};
+renderOptions();
 el('test').onclick=()=>{if(!parts.length)return;let n=parts.reduce((s,p)=>s+p.n,0),theory=parts.filter(p=>p.role==='resident').reduce((s,p)=>s+p.n,0)/n,count=0;for(let i=0;i<10000;i++)count+=MapModel.pick(parts).role==='resident';el('test-result').textContent=`施設入居者：理論 ${(theory*100).toFixed(2)}% ／ 1万回の実測 ${(count/100).toFixed(2)}%`};
 const meshLayer=L.layerGroup().addTo(map);
 let overlaySequence=0,overlaySignature=null;
@@ -76,5 +103,5 @@ async function drawMesh(){
 el('mesh-toggle').checked=false;el('mesh-toggle').onchange=drawMesh;
 el('mesh-mode').innerHTML='<option value="land">土地用途・敷地（標準）</option><option value="legacy">旧100mメッシュ（比較用）</option>';
 el('mesh-mode').onchange=drawMesh;
-dateNow();weatherStatus();updateWeather();facilitiesOnMap();refresh();drawMesh();
+dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh()}},1000);let lastMinute=time().mi;weatherStatus();updateWeather();facilitiesOnMap();refresh();drawMesh();
 
