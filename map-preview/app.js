@@ -33,13 +33,11 @@ function refresh(){
 function renderEstimate(p,r,t,evidence){
  const begin=performance.now();currentEvidence=evidence;let key=p.join(',')+'/'+r,features=evidence?.features||emptyFeatures,entry=geometryProfiles.get(key);if(!entry||entry.features!==features){entry={features,profile:LandProfile.create(landContext,p,r,features)};geometryProfiles.set(key,entry);if(geometryProfiles.size>8)geometryProfiles.delete(geometryProfiles.keys().next().value)}landProfile=entry.profile;parts=LandEstimator.estimate(landProfile,t);
  const region=MapModel.locate(p,regions),center=landProfile.classify(p),n=parts.reduce((s,x)=>s+x.n,0);
- el('place').textContent=center?.name||region?.name||'東京23区の対象外';
  const sorted=Object.entries(landProfile.weights).sort((a,b)=>b[1]-a[1]);
  const cultureLabels={subculture:'サブカル・オタク文化',electronics:'電気街',korean_commerce:'韓国系商業',books:'古書・書店',publishing:'出版',inbound:'外国人観光客',night:'夜型',youth:'若者',fashion:'ファッション'};
  const cultures=Object.entries(landProfile.tags).filter(([k,v])=>cultureLabels[k]&&v/(Math.PI*r*r)>.3).map(([k])=>cultureLabels[k]);
  const subtypes=[...new Set(landProfile.parts.filter(x=>x.areaM2>Math.PI*r*r*.03).map(x=>({night:'歓楽街',shopping:'買い物',fashion:'若者・ファッション',subculture:'サブカル',student:'学生居住型',family:'ファミリー型',senior:'高齢者型',suburban:'低層住宅地',forest:'森林',university:'大学',primary:'小学校',middle:'中学校',high:'高校',playground:'児童公園',warehouse:'倉庫・物流',racecourse:'競馬場',dome:'ドーム',stadium:'スタジアム',arena:'アリーナ・体育館',cemetery:'霊園・墓地',books:'書店・古書'}[x.subtype])).filter(Boolean))];
  el('mesh-attributes').innerHTML=sorted.map(([k,v])=>'<span class="district-label" style="border-color:'+LandProfile.colors[k]+'">'+esc(LandProfile.labels[k])+' '+(v*100).toFixed(1)+'%</span>').join('')+'<div class="attribute-chips">'+[...subtypes,...cultures].map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>';
- el('total').textContent=n>0&&n<1?'1人未満':`約 ${Math.round(n<100?n:n/10)*(n<100?1:10)} 人`;
  el('population-scope').textContent='土地の割合は面積から、人物の割合は滞在人数から推定しています。';
  const venues=landProfile.parts.filter(c=>VenueModel.kind(c)&&VenueModel.kind(c)!=='cemetery');el('venue-status').innerHTML=venues.map(c=>{let v=VenueSchedule.resolve(c,t),info=v.event?`${v.event.title}／${v.phase}（終了・退場時刻は推定）`:v.phase||v.basis,link=v.event?.url||v.url;return '<span>'+esc(c.name)+'：'+esc(v.basis)+(v.event?'（2026年10月28日確認）':'')+'・'+esc(info)+(link?' <a href="'+esc(link)+'" target="_blank" rel="noopener">日程出典</a>':'')+'</span>'}).join('<br>');
  const state={live:'施設情報を更新済み',cache:'保存済みの施設情報を使用',stale:'保存済みの旧施設情報を使用',unavailable:'施設情報を取得できないため収録データで推定',busy:'施設情報の取得待ち'}[evidence?.status]||'収録データで推定中・施設情報を確認します';
