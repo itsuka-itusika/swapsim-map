@@ -8,7 +8,7 @@ for(let f of regions){f.density=censusMass(f.id)/f.area;let area=MAP_DATA.zoning
 if(MAP_DATA.mesh)MeshModel.configure(MAP_DATA.mesh); // old visualization/comparison only
 const landContext=LandProfile.configure(MAP_DATA);
 const profileCache=ProfileCache.create({storage,seeds:MAP_DATA.osmSeeds});
-let landProfile=null,currentEvidence=null,refreshSequence=0,profileTimer=null;
+let landProfile=null,currentEvidence=null,refreshSequence=0,profileTimer=null,estimateMinute=null;
 const emptyFeatures=[],geometryProfiles=new Map();
 GreenModel.configure(MAP_DATA.greenZones);
 LandModel.configure(MAP_DATA.waters,MAP_DATA.landZones);
@@ -17,8 +17,10 @@ const map=L.map('map',{minZoom:10,maxZoom:18,maxBounds:[[35.48,139.48],[35.86,13
 let tiles=L.tileLayer('https://tile.openstreetmap.jp/styles/osm-bright-ja/{z}/{x}/{y}.png',{maxZoom:18,updateWhenIdle:true,updateWhenZooming:false,keepBuffer:1,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | <a href="https://openmaptiles.org/">&copy; OpenMapTiles</a> | <a href="https://www.osm.jp/">OpenStreetMap Japan</a>'}).addTo(map);
 tiles.on('tileerror',()=>{el('status').textContent='背景地図の一部を読み込めません。通信状態を確認してください。地域・施設データは引き続き利用できます。'});
 let circle=L.circle([selected[1],selected[0]],{radius,color:'#2E6A5D',fillOpacity:.12}).addTo(map),pin=L.circleMarker([selected[1],selected[0]],{radius:6,color:'#fff',fillColor:'#C8371E',fillOpacity:1}).addTo(map),layer=L.layerGroup().addTo(map);
-function dateNow(){el('clock').textContent=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}
+const clockFormatter=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+function dateNow(){el('clock').textContent=clockFormatter.format(new Date())}
 function time(){let t=jstNow();t.rand=false;t.holiday=!!holName(t);t.venueEvent='auto';return t}
+function minuteKey(t){return [t.y,t.mo,t.d,t.h,t.mi].join('/')}
 async function updateWeather(){await MapWeather.load(storage)}
 function facilitiesOnMap(){layer.clearLayers()}
 function choose(p){selected=p;circle.setLatLng([p[1],p[0]]).setRadius(radius);pin.setLatLng([p[1],p[0]]);refresh()}
@@ -31,7 +33,7 @@ function refresh(){
  profileTimer=setTimeout(async()=>{let evidence=await profileCache.get(p,r);if(seq!==refreshSequence)return;renderEstimate(p,r,t,evidence)},400);
 }
 function renderEstimate(p,r,t,evidence){
- const begin=performance.now();currentEvidence=evidence;let key=p.join(',')+'/'+r,features=evidence?.features||emptyFeatures,entry=geometryProfiles.get(key);if(!entry||entry.features!==features){entry={features,profile:LandProfile.create(landContext,p,r,features)};geometryProfiles.set(key,entry);if(geometryProfiles.size>8)geometryProfiles.delete(geometryProfiles.keys().next().value)}landProfile=entry.profile;parts=LandEstimator.estimate(landProfile,t);
+ const begin=performance.now();currentEvidence=evidence;let key=p.join(',')+'/'+r,features=evidence?.features||emptyFeatures,entry=geometryProfiles.get(key);if(!entry||entry.features!==features){entry={features,profile:LandProfile.create(landContext,p,r,features)};geometryProfiles.set(key,entry);if(geometryProfiles.size>8)geometryProfiles.delete(geometryProfiles.keys().next().value)}landProfile=entry.profile;parts=LandEstimator.estimate(landProfile,t);estimateMinute=minuteKey(t);
  const region=MapModel.locate(p,regions),center=landProfile.classify(p),n=parts.reduce((s,x)=>s+x.n,0);
  const sorted=Object.entries(landProfile.weights).sort((a,b)=>b[1]-a[1]);
  const cultureLabels={subculture:'サブカル・オタク文化',electronics:'電気街',korean_commerce:'韓国系商業',books:'古書・書店',publishing:'出版',inbound:'外国人観光客',night:'夜型',youth:'若者',fashion:'ファッション'};
@@ -79,12 +81,12 @@ function sampleResult(t,filtered=false){return options.pair?samplePair(t,filtere
 function showResult(P){currentPerson=P;el('person').innerHTML=MapNotice.html(P);el('copy').onclick=async()=>{const text=MapNotice.text(P);try{await navigator.clipboard.writeText(text);el('toast').textContent='コピーしました'}catch{const box=document.createElement('textarea');box.value=text;box.readOnly=true;box.className='copybox';el('person').appendChild(box);box.select();el('toast').textContent='表示された文章をコピーしてください'}};stampIt(!reduceMotion);scrollToNotice(true);if(!reduceMotion)el('notice').classList.add('flash')}
 function resultLabel(P){const name=X=>X.displayName||X.surname.k+' '+X.given.k;return P.kind==='pair'?`${name(P.A)}（${P.A.age}歳） ⇄ ${name(P.B)}（${P.B.age}歳）`:`${name(P)} ／ ${P.age}歳 ／ ${P.occ.label}`}
 function renderCrowd(){
- el('crowd-title').textContent=crowd.length===2?'同じ瞬間に入れ替わったほかの2組':'同じ瞬間に入れ替わった人たち';
+ el('crowd-title').textContent='同じ瞬間に入れ替わった人たち';
  const name=P=>P.displayName||P.surname.k+' '+P.given.k,sex=P=>P.sex==='f'?'女性':'男性';
  el('crowd').innerHTML=crowd.map((R,i)=>`<li><button type="button" data-crowd="${i}"${currentPerson===R?' aria-current="true"':''}>${currentPerson===R?'<span class="showing">通知書に表示中</span>':''}<span class="who">${esc(name(R.A))}<span class="meta">（${R.A.age}歳 ${sex(R.A)}）</span><span class="arw" aria-label="と"> ⇄ </span>${esc(name(R.B))}<span class="meta">（${R.B.age}歳 ${sex(R.B)}）</span></span><small>${esc(R.A.place)} ⇄ ${esc(R.B.place)}</small><span class="doing"><span class="mk ma" aria-hidden="true"></span>${esc(R.A.surname.k)}さんは、${esc(R.A.sit.text)}。</span><span class="doing"><span class="mk mb" aria-hidden="true"></span>${esc(R.B.surname.k)}さんは、${esc(R.B.sit.text)}。</span></button></li>`).join('');
 }
 el('crowd').onclick=e=>{const b=e.target.closest('[data-crowd]');if(b){showResult(crowd[+b.dataset.crowd]);renderCrowd()}};
-el('draw').onclick=()=>{if(!parts.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;try{updateWeather();const t=time();refresh();const P=sampleResult(t,true),others=Array.from({length:options.pair?2:4},()=>samplePair(t));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount);crowd=others;showResult(P);renderCrowd();history.unshift(resultLabel(P));history=history.slice(0,12);el('history').innerHTML=history.map(s=>`<p>${esc(s)}</p>`).join('')}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e)}finally{el('draw').disabled=!parts.length}};
+el('draw').onclick=()=>{if(!parts.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();const P=sampleResult(t,true),others=Array.from({length:4},()=>samplePair(t));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount);crowd=others;showResult(P);renderCrowd();history.unshift(resultLabel(P));history=history.slice(0,12);el('history').innerHTML=history.map(s=>`<p>${esc(s)}</p>`).join('')}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e)}finally{el('draw').disabled=!parts.length}};
 renderOptions();
 el('test').onclick=()=>{if(!parts.length)return;let n=parts.reduce((s,p)=>s+p.n,0),theory=parts.filter(p=>p.role==='resident').reduce((s,p)=>s+p.n,0)/n,count=0;for(let i=0;i<10000;i++)count+=MapModel.pick(parts).role==='resident';el('test-result').textContent=`施設入居者：理論 ${(theory*100).toFixed(2)}% ／ 1万回の実測 ${(count/100).toFixed(2)}%`};
 const meshLayer=L.layerGroup().addTo(map);
