@@ -25,7 +25,9 @@ const PersonContext=(()=>{
  function station(P,t,originalSituation){if(P.hb?.leave||P.hb?.bed||originalSituation?.state!=='commute')return null;let h=t.hf??t.h,weekday=t.dow>0&&t.dow<6&&!t.holiday,student=['student','college','kid'].includes(P.occ.group),worker=P.occ.group==='adult'&&!['none','prison','facility'].includes(P.occ.cat),going=h>=5&&h<10,returning=h>=15&&h<21.5;if(weekday&&(student||worker)&&(going||returning)){let label=student?(going?'通学中':'学校から帰る途中'):(going?'通勤中':'仕事から帰る途中');let pool=student?(going?['通学の電車を待ちながら、今日の授業を思い出しているところでした','改札を通り、友達から届いた連絡を確かめているところでした']:['帰りの電車を待ちながら、友達と今日の出来事を話しているところでした','学校からの帰り道、次の電車の時刻を確かめているところでした']):(going?['通勤の電車を待ちながら、今日の仕事の予定を思い出しているところでした','改札を通り、いつものホームへ足を向けているところでした']:['仕事帰りにホームで電車を待ち、夕食をどうするか考えているところでした','帰りの電車の時刻を見ながら、今日の仕事を思い返しているところでした']);return {label,text:pick(pool,Math.random)}}return null}
  // Original scenes may happen anywhere in Japan; a map person is at the drawn spot inside the 23 wards.
  const AWAY=/バスツアー|紅葉の名所|紅葉狩りに出かけた|山道|山頂|登山|ゲレンデ|スキー場|海水浴|潮干狩り|海沿いの道|ビーチ|高速道路|サービスエリア|道の駅|日帰りの温泉|温泉に向かう|帰省ラッシュ|新幹線の中|新幹線の通路|田んぼ|稲刈り|刈り取った稲|みかん畑|茶畑|牧場|漁に出|漁船|漁港|港から|雪下ろし|宵山|山鉾|横浜スタジアム/,AIR=/機内|保安検査場|着陸|離陸/,SEA=/甲板|船の当直|船のブリッジ|網を引|海図/;
- function away(text,c){if(/夢の中で/.test(text))return false;if(AWAY.test(text))return true;let land=c?.landComponent,place=c?.facility?.name||land?.name||'';
+ function away(text,c){if(/夢の中で/.test(text))return false;
+  // People drawn on a road are on that road; expressway and highway scenes are where they are.
+  if(c?.landComponent?.type==='road')return false;if(AWAY.test(text))return true;let land=c?.landComponent,place=c?.facility?.name||land?.name||'';
   if(AIR.test(text)&&!(['airfield','terminal'].includes(land?.subtype)||/空港/.test(place)))return true;
   if(SEA.test(text)&&land?.type!=='waterfront')return true;
   return /新幹線の運転席/.test(text)&&!/^(東京|品川|上野)駅$/.test(place)}

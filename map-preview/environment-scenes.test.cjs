@@ -149,3 +149,18 @@ test('Tokyo hotels by type: guests, business travelers, visitors from abroad, ba
  assert.ok(r.biz.some(p=>p[0]==='place_hotel_staff_housekeeping')&&!r.biz.some(p=>/ラウンジ/.test(p[2])));
  assert.ok(!r.ryokan.some(p=>/ベッド/.test(p[2])));
 });
+test('roads carry drivers and passengers by road type and hour, and major cinemas have audiences',()=>{
+ const r=JSON.parse(run(`(()=>{const T=(h,dow,d)=>({y:2026,mo:10,d,dow,h:Math.floor(h),hf:h,mi:Math.round(h%1*60),rand:false}),at=(k,re=/^131(0[1-9]|1[0-9]|2[0-3])$/)=>{let x=MAP_DATA.roads.find(r=>r.k===k&&r.c.length>=4&&re.test(MapModel.locate([r.c[2],r.c[3]],MAP_DATA.regions)?.id||''));return [x.c[2],x.c[3]]},go=(pt,h,dow,d,rad=40)=>{let t=T(h,dow,d),parts=LandEstimator.estimate(LandProfile.create(envContext,pt,rad),t).filter(c=>c.n>0),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<150&&parts.length;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,P.occ.label,P.sit.text,P.sit.source||'',P.place,P.age])}return out};
+ const cin=MAP_DATA.specialPlaces.find(x=>x.name==='TOHOシネマズ日比谷');
+ const shares=(pt,h,dow,d)=>{let rows=LandEstimator.estimate(LandProfile.create(envContext,pt,40),T(h,dow,d)).filter(c=>c.role.startsWith('road_')),tot=rows.reduce((s,c)=>s+c.n,0),g=re=>rows.filter(c=>re.test(c.role)).reduce((s,c)=>s+c.n,0)/tot;return {freight:g(/truck|trailer/),car:g(/car_/),taxi:g(/taxi/)}};
+ return JSON.stringify({sx3:shares(at('x'),3,3,28),sx14:shares(at('x'),14,6,31),sn:shares(at('n',/^131(01|02|03|04|13)$/),23.8,5,30),kinds:[...new Set(MAP_DATA.roads.map(r=>r.k))],xNight:go(at('x'),3,3,28),xDay:go(at('x'),14,6,31),nNight:go(at('n',/^131(01|02|03|04|13)$/),23.8,5,30),cinema:go(cin.xy,14,6,31,10),cinemaClosed:go(cin.xy,4,3,28,10),cinemas:MAP_DATA.specialPlaces.filter(f=>f.placeKind==='cinema').length,cinemaStaff:LandEstimator.estimate(LandProfile.create(envContext,cin.xy,10),T(14,6,31)).some(c=>c.role==='place_cinema_staff'&&c.n>0)})})()`));
+ assert.deepEqual(r.kinds.sort(),['n','p','x']);
+ const road=x=>x.filter(p=>p[0].startsWith('road_'));
+ assert.ok(road(r.xNight).length>50&&road(r.xNight).every(p=>p[3]==='road'));
+ const share=(x,re)=>road(x).filter(p=>re.test(p[0])).length/Math.max(1,road(x).length);
+ assert.ok(r.sx3.freight>r.sx14.freight&&r.sx14.car>r.sx3.car,JSON.stringify([r.sx3,r.sx14]));assert.ok(r.sn.taxi>.2,JSON.stringify(r.sn));
+ assert.ok(road(r.xNight).some(p=>p[4]==='首都高速道路'||p[4]==='高速道路'));
+ assert.ok(road(r.xNight).filter(p=>/driver/.test(p[0])).every(p=>p[5]>=18));
+ assert.ok(r.cinemas>=30);assert.ok(r.cinema.filter(p=>p[0]==='place_cinema_guest').length>40&&r.cinemaStaff);
+ assert.equal(r.cinemaClosed.filter(p=>p[0]==='place_cinema_guest').length,0);
+});
