@@ -26,13 +26,14 @@ const TimeSituations=(()=>{
  if(role==='mesh_factory')return h>=12&&h<13?'work_lunch':'factory_work';
  if(role==='mesh_logistics')return h>=12&&h<13?'work_lunch':'logistics_work';
  if(role==='mesh_security')return 'security_work';
- if(role==='area_office'){if(h>=12&&h<13)return 'work_lunch';return h<9?'work_early':h>=18?'work_late':'office_work'}
+ if(role==='area_office'){if(h>=12&&h<13)return 'work_lunch';return h>=1.5&&h<5?'work_allnight':h>=22.5||h<1.5?'work_midnight':h<9?'work_early':h>=18?'work_late':'office_work'}
  if(role==='general'){
   if(P.sit.state==='sleep')return 'home_sleep';
   if(P.sit.state==='work'){let tag=P.occ.tag||'';return ['factory','build','garage'].includes(tag)?'factory_work':['warehouse','truck','delivery','route'].includes(tag)?'logistics_work':['food','izakaya','bakery','kyushoku'].includes(tag)?'food_work':['retail','shop','sales','hotel','beauty','conveni'].includes(tag)?'service_work':tag==='care'||tag==='helper'?'care_work':tag==='nurse'?'nurse_work':tag==='doctor'?'doctor_work':tag==='teacher'?'teacher_after':'office_work'}
   if(P.sit.state==='commute')return null;
   let prefix=P.occ.group==='homemaker'?'homemaker':P.occ.group==='senior'?'senior':'worker_off';
-  return prefix+'_'+(h<10?'morning':h<16?'day':h<19?'evening':'night');
+  // After 23:00 the at-home scenes turn to the late night (終電で帰宅, 夜更かし ...).
+  return prefix+'_'+(h>=23||h<4?'late':h<10?'morning':h<16?'day':h<19?'evening':'night');
  }
  return null;
  }
@@ -51,7 +52,7 @@ const TimeSituations=(()=>{
   let ctx={P,t,h:t.hf??t.h,we:t.dow===0||t.dow===6||!!t.holiday,hol:holName(t),brk:isBreak(t),mo:t.mo,vacP:false,vac:schoolVac(t),season:seasonOf(t.mo),wx:wxOf(P.pref,t),eq:eqOf(P.pref,t)};
   let list=[],re=null,tag=P.occ.tag||'';
   if(k==='home_sleep')list=[...(SLEEP_TX.any||[]),...(SLEEP_TX[P.age<6?'baby':P.age<18?'kid':P.age>=65?'senior':'adult']||[])];
-  else if(k.startsWith('homemaker_')||k.startsWith('senior_')){list=OFF_TX[k.startsWith('homemaker')?'homemaker':'senior']||[];re=!/night|evening/.test(k)?null:/夕|夜|晩|寝|テレビ|食|入浴|風呂|片づけ|洗|準備|読書|本/;}
+  else if(k.startsWith('homemaker_')||k.startsWith('senior_')){list=OFF_TX[k.startsWith('homemaker')?'homemaker':'senior']||[];re=!/night|evening|late/.test(k)?null:/夕|夜|晩|寝|テレビ|食|入浴|風呂|片づけ|洗|準備|読書|本/;}
   else if(k.startsWith('worker_off_')){list=OFF_TX.adult||[];}
   else if(k==='work_lunch'){list=typeof LUNCH_TX!=='undefined'?LUNCH_TX:[];re=/昼|弁当|定食|食|休憩/;}
   else if(k.startsWith('media_'))return null;

@@ -128,3 +128,10 @@ test('night districts skew young: visitors, staff and customers, most of all in 
  if(r['歌舞伎町'].area_adult_customer)assert.ok(mean(r['歌舞伎町'].area_adult_customer)<41);
  assert.ok(mean(r['新橋・汐留'].area_night_worker)<39);
 });
+test('late night and the last train have their own scenes at stations, night districts and offices',()=>{
+ const r=JSON.parse(run(`(()=>{const st=MAP_DATA.facilities.find(f=>f.kind==='station'&&/新宿/.test(f.name)),go=(xy,rad,h,role)=>{let t={y:2026,mo:10,d:30,dow:5,h:Math.floor(h),hf:h,mi:Math.round(h%1*60),rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,xy,rad),t).filter(c=>c.role===role),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<80&&parts.length;i++){let c=MapModel.pick(parts);out.push(mapPerson({...c,roleP:c.n/tot},t).sit.text)}return out};const A=n=>MAP_DATA.areas.find(a=>a.name===n).xy;
+ return JSON.stringify({evening:go(st.xy,30,19,'special_passenger'),last:go(st.xy,30,0.3,'special_passenger'),first:go(st.xy,30,4.8,'special_passenger'),kabuki:go(A('歌舞伎町'),150,23.8,'area_night'),office:go(A('丸の内・大手町'),150,23.5,'area_office'),dawn:go(A('丸の内・大手町'),150,4.5,'area_office')})})()`));
+ const share=(a,re)=>a.filter(x=>re.test(x)).length/Math.max(1,a.length);
+ assert.ok(share(r.last,/終電|最終電車/)>.8);assert.equal(share(r.evening,/終電|最終電車|始発/),0);assert.ok(share(r.first,/始発|夜明け/)>.8);
+ assert.ok(share(r.kabuki,/終電/)>.2);assert.ok(share(r.office,/終電|深夜|照明の半分/)>.5);assert.equal(share(r.dawn,/終電の時間を気にしながら/),0);
+});

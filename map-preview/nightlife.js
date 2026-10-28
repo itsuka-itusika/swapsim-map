@@ -32,6 +32,15 @@ const Nightlife=(()=>{
  'ライブが終わり、アンコールを待ちながら拍手を続けているところでした'
  ]
  };
+ const late=[
+ [23.25,25,'終電の時刻をスマートフォンで確かめ、二軒目を切り上げるか迷っているところでした',{a:[20,89]}],
+ [23.25,25,'終電に間に合うよう会計を急いでもらい、店を飛び出したところでした',{a:[20,89]}],
+ [23.25,25,'「もう一軒」と誘う友人を振り切り、駅へ向かって早足で歩いているところでした',{a:[20,89]}],
+ [23.25,25,'終電に乗る友人たちを改札まで見送り、一人で次の店を探し始めたところでした',{a:[20,89]}],
+ [0.75,5,'終電を逃し、朝まで開いている店をみんなで探しているところでした',{a:[20,89]}],
+ [0.75,5,'終電を逃して入ったファミレスで、ドリンクバーのおかわりを取りに立ったところでした',{a:[20,89]}],
+ [0.75,5,'タクシー乗り場の長い列を見て、始発まで待つことに決めたところでした',{a:[20,89]}],
+ [2,5,'始発までの時間を、カラオケのフリータイムでやり過ごしているところでした',{a:[20,89]}]];
  function extraPool(kind){return extra[kind].map((text,i)=>{let end=kind==='entertainment'&&[4,5,9].includes(i)?24:5;return [18,end,text,{a:[20,89],...(/立ち飲み|次の一杯/.test(text)?{np:1}:{})}]})}
  function handles(c){return roles.has(c.role)}
  function assign(c,P){
@@ -54,6 +63,8 @@ const Nightlife=(()=>{
    const seen=new Set();pool=Object.values(OFF_TX).flat().filter(e=>{let x=textOf(e);if(!re.test(x)||/ホテル|宿泊|お土産|帰国|公民館|囲碁クラブ|自宅|家で|部屋で|アルバイト|バイト|接客|注文を受け|キャバクラ|性風俗|仕事|上司/.test(x)||seen.has(x))return false;seen.add(x);return true});
    pool.push(...extraPool(entertainment?'entertainment':'dining'));
    backup=entertainment?fallback.entertainment:fallback.dining;
+   // Around the last train (about 23:15-1:00) and after it, many night visitors are deciding how to get home.
+   if((h>=23.25||h<5)&&rnd()<.5){pool=late.filter(e=>inWin(h,e[0],e[1]));label='終電前後の街にいる'}
   }else if(c.role==='area_adult_customer'){
    pool=c.area?.adultStyle==='sexservice'?ADULT_VENUE_TX.filter(e=>/性風俗店/.test(textOf(e))):ADULT_VENUE_TX;label='成人向け店舗の利用客';
   }else{
