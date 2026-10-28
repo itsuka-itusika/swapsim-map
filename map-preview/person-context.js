@@ -29,5 +29,6 @@ const PersonContext=(()=>{
   if(AIR.test(text)&&!(['airfield','terminal'].includes(land?.subtype)||/空港/.test(place)))return true;
   if(SEA.test(text)&&land?.type!=='waterfront')return true;
   return /新幹線の運転席/.test(text)&&!/^(東京|品川|上野)駅$/.test(place)}
- return {foreignName,age,station,away};
+ function schoolTime(t){let h=t.hf??t.h;return t.dow>0&&t.dow<6&&!t.holiday&&!(typeof holName==='function'&&holName(t))&&!(typeof schoolVac==='function'&&schoolVac(t))&&h>=8.5&&h<15}
+ return {foreignName,age,station,away,schoolTime};
 })();

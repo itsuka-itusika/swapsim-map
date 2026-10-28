@@ -19,3 +19,7 @@ test('named school-holiday scenes are limited to their own season',()=>{
  assert.ok(lines.length>10);
  for(const l of lines)assert.match(l,/\b(m|md): /,l.trim());
 });
+test('pupils are mostly in class on school-day afternoons but out in the city on Saturdays',()=>{
+ const kids=run(`(()=>{let a=MAP_DATA.areas.find(x=>x.name==='渋谷駅周辺'),p=LandProfile.create(envContext,a.xy,300),out=[];for(const [d,dow] of [[28,3],[31,6]]){let t={y:2026,mo:10,d,dow,h:14,hf:14,mi:0,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),n=0;for(let i=0;i<1200;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);if(P.age>=6&&P.age<=17&&!['student','resident','general','area_inbound'].includes(c.role))n++}out.push(n)}return out})()`);
+ assert.ok(kids[0]*4<kids[1],String(kids));
+});

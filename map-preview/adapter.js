@@ -3,7 +3,10 @@ function mapPerson(c,t){
  const f=c.region,pref=PREFS.find(p=>p.code.slice(0,2)===f.id.slice(0,2));
  const muni=pref.munis.find(m=>m.code===f.id)||pref.munis.find(m=>f.name.startsWith(m.n))||{n:f.name,code:f.id};
  let sa=c.resident?LandEstimator.sampleResident(c,t,()=>pickSexAge(null,pref,'metro',f.id),rnd):pickSexAge(null,pref,'metro',f.id);if(c.role!=='general')sa={age:PersonContext.age(c,rnd),sex:rnd()<c.female?'f':'m'};
- if(c.ageBands){let total=c.ageBands.reduce((s,b)=>s+b[2],0),v=rnd()*total,b=c.ageBands.find(b=>(v-=b[2])<0)||c.ageBands.at(-1);sa.age=b[0]+Math.floor(rnd()*(b[1]-b[0]+1));}
+ const bandAge=()=>{let total=c.ageBands.reduce((s,b)=>s+b[2],0),v=rnd()*total,b=c.ageBands.find(b=>(v-=b[2])<0)||c.ageBands.at(-1);return b[0]+Math.floor(rnd()*(b[1]-b[0]+1))};
+ if(c.ageBands)sa.age=bandAge();
+ // During class hours most domestic pupils are at school; keep about one in ten of those drawn elsewhere.
+ if(!c.resident&&!['general','student','area_student','resident','patient','area_inbound'].includes(c.role)&&PersonContext.schoolTime(t))for(let i=0;i<32;i++){let g=gradeIndex(birthOf(sa.age,t),t);if(g<1||g>12||rnd()<.1)break;sa.age=c.ageBands?bandAge():PersonContext.age(c,rnd)}
  const P={pref,muni,censusCode:f.id,ward:null,urb:urbOf(pref,muni),age:sa.age,sex:sa.sex,t};P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);
  const stage=c.facility?.kind;
  if(c.role==='student'||c.role==='area_student'){let bounds=c.role==='area_student'?[13,21]:{primary:[1,6],middle:[7,9],high:[10,12],university:[13,21],college:[13,21],kindergarten:[-2,0]}[stage];for(let i=0;bounds&&(P.g<bounds[0]||P.g>bounds[1])&&i<64;i++){P.age=c.min+Math.floor(rnd()*(c.max-c.min+1));P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);}}
@@ -61,6 +64,8 @@ function mapPerson(c,t){
   if(c.role==='area_inbound'){
    let markets=MAP_DATA.inbound.markets,total=markets.reduce((s,x)=>s+x.weight,0),v=rnd()*total,market=markets.find(x=>(v-=x.weight)<0)||markets.at(-1);
    P.isInbound=true;P.originMarket=market.name;let nm=PersonContext.foreignName(market.name,P.sex,rnd);P.surname={k:nm.surname,r:nm.surname,c:100};P.given={k:nm.given,r:nm.given,p:.01,era:{cov:1}};P.nameApproximate=nm.approximated;if(['facility','prison'].includes(P.occ.group))P.occ={label:'職業不詳',group:'visitor',cat:'visitor',p:1};
+   // Japanese school grades do not apply to visiting children.
+   if(P.age<18&&(P.occ.school||['student','kid'].includes(P.occ.group)||/年生|園児|未就学/.test(P.occ.label)))P.occ={...P.occ,label:P.age<6?'未就学児':'学生'};
    P.visitLabel='外国人観光客／国・地域：'+market.name;
   }
   if(!Nightlife.handles(c)&&P.mapSituation!==P.sit.text)P.sit={...P.sit,text:P.mapSituation,state:c.role==='area_office'?'work':'off',stateLabel:c.label};
