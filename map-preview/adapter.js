@@ -131,7 +131,9 @@ function mapPerson(c,t){
  if(PersonContext.away(P.sit.text,c)){for(let i=0;i<32&&!fits(P.sit);i++)P.sit=situation(P,t);if(!fits(P.sit))P.sit={text:c.resident?'自宅で、ひと息ついているところでした':'近くを歩きながら、次に行く場所を考えているところでした',state:'off',stateLabel:c.label,p:1};P.mapSituation=P.sit.text}
  P.occ={...P.occ,label:JobLabels.short(P.occ.label)};
  P.health=settleHealth(P,t);if(c.role==='venue_ghost'){P.hb.preg=false;P.health={text:'幽霊のため健康状態は不明',items:[],p:1,note:'お遊び要素'};}P.body=bodyOf(P,t);
- P.place=(c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name||f.name);P.placeShort=P.place;
+ P.place=(c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name||f.name);
+ // Without a specific facility or named place, show the town and the kind of spot (西新宿 自宅, 銀座 市街地).
+ if(typeof PlaceLabel!=='undefined')P.place=PlaceLabel.label(c,P,P.place);P.placeShort=P.place;
  P.wxText=wxLabel(P.pref,t)+(t.rand||typeof MapWeather==='undefined'||MapWeather.status()!=='東京の実況'?'（推定）':'');
  P.logp=Math.log10(Math.max(1e-12,P.surname.c/12300))+Math.log10(Math.max(1e-12,P.given.p*P.given.era.cov))+Math.log10(Math.max(1e-12,c.roleP||P.occ.p||1))+Math.log10(Math.max(1e-12,P.sit.p||1))-SIT_MED[t.h%24];
  P.stars=RARITY.findIndex(th=>P.logp>th)+1||5;
