@@ -1,11 +1,12 @@
 'use strict';
 const el=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let selected=[139.7006,35.6595],radius=300,parts=[],regions=MAP_DATA.regions,facilities=MAP_DATA.facilities,history=[];
+let storage=null;try{storage=localStorage}catch{}
+const initialSelection=SelectionCache.load(storage);
+let selected=initialSelection.point,radius=initialSelection.radius,parts=[],regions=MAP_DATA.regions,facilities=MAP_DATA.facilities,history=[];
 // Census is used only by residential components or explicit missing-data fallback.
 for(let f of regions){f.density=censusMass(f.id)/f.area;let area=MAP_DATA.zoning.residentialAreaKm2[f.id];f.residentialDensity=area?censusMass(f.id)/area:f.density;}
 if(MAP_DATA.mesh)MeshModel.configure(MAP_DATA.mesh); // old visualization/comparison only
 const landContext=LandProfile.configure(MAP_DATA);
-let storage=null;try{storage=localStorage}catch{}
 const profileCache=ProfileCache.create({storage,seeds:MAP_DATA.osmSeeds});
 let landProfile=null,currentEvidence=null,refreshSequence=0,profileTimer=null;
 const emptyFeatures=[],geometryProfiles=new Map();
@@ -83,7 +84,7 @@ function renderCrowd(){
  el('crowd').innerHTML=crowd.map((R,i)=>`<li><button type="button" data-crowd="${i}"${currentPerson===R?' aria-current="true"':''}>${currentPerson===R?'<span class="showing">通知書に表示中</span>':''}<span class="who">${esc(name(R.A))}<span class="meta">（${R.A.age}歳 ${sex(R.A)}）</span><span class="arw" aria-label="と"> ⇄ </span>${esc(name(R.B))}<span class="meta">（${R.B.age}歳 ${sex(R.B)}）</span></span><small>${esc(R.A.place)} ⇄ ${esc(R.B.place)}</small><span class="doing"><span class="mk ma" aria-hidden="true"></span>${esc(R.A.surname.k)}さんは、${esc(R.A.sit.text)}。</span><span class="doing"><span class="mk mb" aria-hidden="true"></span>${esc(R.B.surname.k)}さんは、${esc(R.B.sit.text)}。</span></button></li>`).join('');
 }
 el('crowd').onclick=e=>{const b=e.target.closest('[data-crowd]');if(b){showResult(crowd[+b.dataset.crowd]);renderCrowd()}};
-el('draw').onclick=()=>{if(!parts.length)return;el('draw').disabled=true;try{updateWeather();const t=time();refresh();const P=sampleResult(t,true),others=Array.from({length:options.pair?2:4},()=>samplePair(t));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount);crowd=others;showResult(P);renderCrowd();history.unshift(resultLabel(P));history=history.slice(0,12);el('history').innerHTML=history.map(s=>`<p>${esc(s)}</p>`).join('')}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e)}finally{el('draw').disabled=!parts.length}};
+el('draw').onclick=()=>{if(!parts.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;try{updateWeather();const t=time();refresh();const P=sampleResult(t,true),others=Array.from({length:options.pair?2:4},()=>samplePair(t));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount);crowd=others;showResult(P);renderCrowd();history.unshift(resultLabel(P));history=history.slice(0,12);el('history').innerHTML=history.map(s=>`<p>${esc(s)}</p>`).join('')}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e)}finally{el('draw').disabled=!parts.length}};
 renderOptions();
 el('test').onclick=()=>{if(!parts.length)return;let n=parts.reduce((s,p)=>s+p.n,0),theory=parts.filter(p=>p.role==='resident').reduce((s,p)=>s+p.n,0)/n,count=0;for(let i=0;i<10000;i++)count+=MapModel.pick(parts).role==='resident';el('test-result').textContent=`施設入居者：理論 ${(theory*100).toFixed(2)}% ／ 1万回の実測 ${(count/100).toFixed(2)}%`};
 const meshLayer=L.layerGroup().addTo(map);
