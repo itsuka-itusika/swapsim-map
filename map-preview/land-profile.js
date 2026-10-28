@@ -35,7 +35,7 @@ const LandProfile=(()=>{
  if(landmark)return {...landmark,region,areaTag:tagAt(q,landmark.type)};
  let base=ctx.zones.at(q).sort((a,b)=>(a.kind==='palace'?-1:0)-(b.kind==='palace'?-1:0)||(S.area(a.geometry)-S.area(b.geometry)))[0];
  if(base?.kind==='palace')return {...base,region};
- let polys=index.at(q).filter(f=>f.geometry).sort((a,b)=>Number(specific(b))-Number(specific(a))||a.area-b.area),f=polys[0];
+ let polys=index.at(q).filter(f=>f.geometry&&!(f.type==='commercial'&&PoiModel.spec(f.tags))).sort((a,b)=>Number(specific(b))-Number(specific(a))||a.area-b.area),f=polys[0];
  if(f&&specific(f))return {...f,region,areaTag:tagAt(q,f.type)};
  let namedPoint=index.query(S.box(q,20)).filter(x=>!x.geometry&&['hotel','museum','gallery','theatre','fire_station'].includes(x.subtype)&&x.tags?.name&&M.distance(q,x.xy)<=15).sort((a,b)=>M.distance(a.xy,q)-M.distance(b.xy,q))[0];if(namedPoint)return {...namedPoint,region,areaTag:tagAt(q,namedPoint.type)};
  if(f&&(f.tags?.building||['green','waterfront'].includes(f.type)))return {...f,region,areaTag:tagAt(q,f.type)};
@@ -52,10 +52,10 @@ const LandProfile=(()=>{
  }
  for(let q of S.samples(p,r,N)){let f=classify(q);if(!f)continue;let tag=f.areaTag,signature=tag?Object.entries(tag.sources).sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>k+':'+v.id).join(',')+'/'+(tag.adultArea?.id||''):'';let key=f.id+'/'+f.region.id+'/'+(tag?.id||'')+'/'+signature;if(!buckets.has(key))buckets.set(key,{...f,sampleXY:q,areaTag:tag?{...tag,tags:{},adultWeight:0}:null,areaM2:0,samples:0});let b=buckets.get(key);b.areaM2+=unit;b.samples++;landWeights[f.type]=(landWeights[f.type]||0)+unit;if(tag){for(let [k,v] of Object.entries(tag.tags)){b.areaTag.tags[k]=(b.areaTag.tags[k]||0)+v;tagTotals[k]=(tagTotals[k]||0)+unit*v}b.areaTag.adultWeight+=tag.adultWeight;}}
  // Store occupants are separate overlays: small tenants do not replace a whole building.
- let parts=[...buckets.values()];let stores=ctx.stores.query(bbox).filter(f=>M.distance(p,f.xy)<=r),live=raw.filter(f=>(f.tags?.name||f.tags?.['name:ja'])&&(f.tags?.shop||['restaurant','cafe','fast_food','bar','pub'].includes(f.tags?.amenity))&&f.tags?.shop!=='mall'&&M.distance(p,f.xy)<=r);
- for(const f of live){if(stores.some(x=>x.name===f.name&&M.distance(x.xy,f.xy)<30))continue;stores.push({...f,placeKind:'small_store',storeKind:f.tags.shop==='convenience'?'convenience':['restaurant','cafe','fast_food','bar','pub'].includes(f.tags.amenity)?'food':'shop',area:80});}
+ let parts=[...buckets.values()];const territorialArea=parts.reduce((sum,f)=>sum+f.areaM2,0);let stores=ctx.stores.query(bbox).filter(f=>M.distance(p,f.xy)<=r),live=osm.filter(f=>{let spec=PoiModel.spec(f.tags),named=f.tags?.name||f.tags?.['name:ja'];return spec&&(named||['toilets','smoking'].includes(spec.kind))&&!PoiModel.closed(f.tags)&&M.distance(p,f.xy)<=r});
+ for(const f of live){if(stores.some(x=>normalize(x.name)===normalize(f.name)&&M.distance(x.xy,f.xy)<30)||[...ctx.specialPlaces.query(S.box(f.xy,40)),...ctx.facilities.query(S.box(f.xy,40))].some(x=>normalize(x.name)===normalize(f.name)&&M.distance(x.xy,f.xy)<40))continue;let spec=PoiModel.spec(f.tags);stores.push({...f,name:(f.tags?.name||f.tags?.['name:ja']||spec.label),placeKind:'small_store',storeKind:spec.kind,storeLabel:spec.label,area:80});}
  for(const f of stores){let region=ctx.regions.at(f.xy)[0];if(region)parts.push({...f,region,type:'commercial',areaM2:80,area:80});}
- for(let b of parts)if(b.areaTag){for(let k of Object.keys(b.areaTag.tags))b.areaTag.tags[k]/=b.samples;b.areaTag.adultWeight/=b.samples;}let total=parts.reduce((s,f)=>s+f.areaM2,0),weights=Object.fromEntries(Object.entries(landWeights).map(([k,v])=>[k,v/(total||1)])),order=Object.keys(weights).sort((a,b)=>weights[b]-weights[a]);
+ for(let b of parts)if(b.areaTag){for(let k of Object.keys(b.areaTag.tags))b.areaTag.tags[k]/=b.samples;b.areaTag.adultWeight/=b.samples;}let total=territorialArea,weights=Object.fromEntries(Object.entries(landWeights).map(([k,v])=>[k,v/(total||1)])),order=Object.keys(weights).sort((a,b)=>weights[b]-weights[a]);
  return {point:p,radius:r,parts,weights,primaryType:order[0]||'mixed',secondaryType:order[1]||null,tags:tagTotals,features:osm,coverage:total/(Math.PI*r*r),sampleCount:N,classify,context:ctx};
  }
  return {configure,create,labels,colors,kindType};

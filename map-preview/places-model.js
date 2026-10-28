@@ -1,6 +1,46 @@
 /* Game assumptions: projected occupancy, not measured visitor counts or schedules. */
 const PlacesModel=(()=>{
  const scenes={
+ toilets_guest:['公衆トイレの入口で順番を待っているところでした','公衆トイレを利用し、手を洗っているところでした'],
+ smoking_guest:['喫煙所で、周囲に気を配りながら一服しているところでした','喫煙所で休憩を取っているところでした'],
+ salon_guest:['鏡の前の席で、髪を整えてもらっているところでした'],
+ salon_staff:['客の希望を聞き、施術の準備をしているところでした'],
+ laundry_guest:['洗濯が終わるのを待っているところでした'],
+ laundry_staff:['預かった衣類を確認しているところでした'],
+ bank_guest:['窓口で手続きの順番を待っているところでした'],
+ bank_staff:['窓口で手続きの書類を確認しているところでした'],
+ post_guest:['郵便物を持って窓口の順番を待っているところでした'],
+ post_staff:['郵便物を受け取り、手続きの案内をしているところでした'],
+ pharmacy_guest:['薬の受け取りを待っているところでした'],
+ pharmacy_staff:['薬や商品の説明をしているところでした'],
+ clinic_guest:['診療を待合室で待っているところでした'],
+ clinic_staff:['診療の準備や患者の案内をしているところでした'],
+ library_guest:['図書館の本棚を見て、読みたい本を探しているところでした'],
+ library_staff:['本の貸し出し手続きをしているところでした'],
+ cinema_guest:['映画の上映を待ちながら、座席を探しているところでした'],
+ cinema_staff:['映画の来場者を案内しているところでした'],
+ gym_guest:['運動器具を使い、トレーニングをしているところでした'],
+ gym_staff:['利用者に器具の使い方を説明しているところでした'],
+ bath_guest:['浴場で入浴を終え、休憩しているところでした'],
+ bath_staff:['浴場の受付で利用者を案内しているところでした'],
+ bowling_guest:['ボウリングの順番を待っているところでした'],
+ bowling_staff:['利用者にレーンを案内しているところでした'],
+ arcade_guest:['ゲーム機の前で、ゲームを楽しんでいるところでした'],
+ arcade_staff:['ゲーム機の周りを確認しているところでした'],
+ fuel_guest:['給油を終え、車に戻るところでした'],
+ fuel_staff:['給油所で車両や設備を確認しているところでした'],
+ repair_guest:['車の作業が終わるのを待っているところでした'],
+ repair_staff:['車の点検作業をしているところでした'],
+ zoo_guest:['動物を眺め、案内板を読んでいるところでした'],
+ zoo_staff:['来園者を案内し、施設内を確認しているところでした'],
+ aquarium_guest:['水槽の前に立ち、泳ぐ魚を眺めているところでした'],
+ aquarium_staff:['来館者に展示の順路を案内しているところでした'],
+ viewpoint_guest:['景色を眺め、写真を撮っているところでした'],
+ viewpoint_staff:['来場者に施設を案内しているところでした'],
+ camp_guest:['キャンプの道具を整え、ひと休みしているところでした'],
+ camp_staff:['利用者を迎え、施設の案内をしているところでした'],
+ police_guest:['警察施設で相談や手続きを待っているところでした'],
+ police_staff:['警察施設で連絡事項を確認しているところでした'],
  store_guest:['店内で商品を手に取り、買うものを選んでいるところでした','会計の順番を待っているところでした'],
  store_staff:['店内で商品の補充をしているところでした','レジで客の会計をしているところでした'],
  diner_guest:['席で注文した料理を待っているところでした','飲み物を口にしながら、店内でひと休みしているところでした'],
@@ -27,7 +67,15 @@ const PlacesModel=(()=>{
  function kind(c){if(['mall','complex','observation','shrine','temple','hotel','museum','theatre','fire_station','small_store'].includes(c.placeKind))return c.placeKind;if(c.source==='OpenStreetMap'&&c.name&&c.name!==c.subtype&&['hotel','museum','gallery','theatre','fire_station'].includes(c.subtype))return c.subtype==='gallery'?'museum':c.subtype;return null}
  function roles(c,t){let k=kind(c);if(!k)return null;let h=t.hf??t.h,we=t.dow===0||t.dow===6||t.holiday,day=h>=10&&h<20,open=h>=9&&h<21,work=h>=8&&h<22,scale=Math.max(.05,Math.min(20,(c.area||c.areaM2||10000)/10000)),factor=we?1.35:1,rows=[];
  let add=(key,label,n,min,max,female,worker=false)=>rows.push({role:'place_'+key,label,w:n,min,max,female,placeWorker:worker});
- if(k==='small_store'){let opened=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=opened===null?(c.storeKind==='convenience'||h>=9&&h<21):opened;let dining=c.storeKind==='food';add(dining?'diner_guest':'store_guest',dining?'飲食店の客':'店舗の客',active?(dining?5:3):0,6,89,.5);add(dining?'diner_staff':'store_staff',dining?'飲食店の従業員':c.storeKind==='convenience'?'コンビニ店員':'店舗の従業員',active?2:.2,18,69,.55,true);return rows;}
+ if(k==='small_store'){
+  let kind=c.storeKind||'shop',label=c.storeLabel||({'convenience':'コンビニ','food':'飲食店','shop':'店舗'}[kind]||'施設'),opened=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null;
+  let active=opened===null?(['convenience','toilets','smoking','hotel'].includes(kind)||kind==='bar'?kind==='bar'?h>=17||h<2:true:h>=9&&h<21):opened;
+  let selfService=['toilets','smoking'].includes(kind),guestKind=kind==='bar'?'diner':kind==='food'?'diner':kind==='bakery'?'store':kind==='hotel'?'hotel':(scenes[kind+'_guest']?kind:'store'),staffKind=guestKind;
+  let guest=kind==='toilets'||kind==='smoking'?.18:kind==='hotel'?6:kind==='zoo'||kind==='aquarium'?20:kind==='food'||kind==='bar'?5:3;
+  add(guestKind+'_guest',label+'の利用者',active?guest:0,kind==='smoking'?20:6,89,.5);
+  if(!selfService){let staffLabel=({convenience:'コンビニ店員',salon:'美容師',bank:'銀行員',post:'郵便局員',pharmacy:'薬局の職員',clinic:'医療従事者',police:'警察職員',food:'飲食店の従業員',bar:'飲食店の従業員',hotel:'宿泊施設の従業員'})[kind]||label+'の従業員';add(staffKind+'_staff',staffLabel,active?2:.2,18,69,.55,true)}
+  return rows;
+ }
  if(k==='hotel'){add('hotel_guest','ホテルの宿泊客',scale*(h>=21||h<8?55:25),6,89,.5);add('hotel_staff','ホテル従業員',scale*(day?14:5),18,69,.55,true)}
  if(k==='museum'||k==='theatre'){let open=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null,active=open===true||open===null&&(k==='museum'?h>=10&&h<17:h>=12&&h<21);add(k+'_guest',k==='museum'?'文化施設の来場者':'劇場の来場者',active?scale*50*factor:0,6,89,.55);add(k+'_staff',k==='museum'?'文化施設の職員':'劇場の職員',active?scale*8:scale*.3,20,69,.5,true)}
  if(k==='fire_station')add('fire_staff','消防職員',scale*(day?22:10),20,64,.15,true);

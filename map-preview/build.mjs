@@ -26,7 +26,7 @@ data.policeStations=JSON.parse(read('map-preview/data/police-stations.json')).fe
 data.specialPlaces=[...JSON.parse(read('map-preview/data/special-places.json')).features,...JSON.parse(read('map-preview/data/named-venues.json')).features];
 data.landmarks=JSON.parse(read('map-preview/data/landmarks.json')).features;
 data.publicAreas=JSON.parse(read('map-preview/data/public-areas.json')).features;
-data.namedStores=JSON.parse(read('map-preview/data/named-stores.json')).features;
+data.namedStores=[...JSON.parse(read('map-preview/data/named-stores.json')).features,...JSON.parse(read('map-preview/data/sushi-stores.json')).features];
 data.osmSeeds=fs.existsSync('map-preview/data/osm-seeds.json')?JSON.parse(read('map-preview/data/osm-seeds.json')).entries:[];
 const meshIndex=new Map(data.mesh.cells.map(c=>[c[0]+','+c[1],c]));
 for(let f of data.facilities){let x=Math.floor((f.xy[0]-139)*111195*Math.cos(35.7*Math.PI/180)/100),y=Math.floor((f.xy[1]-35)*111195/100),c=meshIndex.get(x+','+y);if(!c)continue;let flag=['tv','radio'].includes(f.kind)?8:f.kind==='station'?16:f.kind==='theme'?32:f.kind==='hospital'?2:f.kind==='care'?4:1;c[8]=(c[8]||0)|flag;if(c[4]===0&&flag===1&&['university','college','high'].includes(f.kind))c[4]=1;}
@@ -39,7 +39,7 @@ data.timeSituations=JSON.parse(read('map-preview/data/time-situations.json'));
 // Keep original polygon geometry; mesh classifications are legacy comparison data only.
 
 data.inbound=JSON.parse(read('map-preview/data/inbound.json'));
-let extra='const MAP_DATA='+JSON.stringify(data)+';\n'+['school-policy.js','broadcast-model.js','special-facilities.js','model.js','land-model.js','green-model.js','area-model.js','visitor-situations.js','nightlife.js','subculture.js','mesh-model.js','mesh-attributes.js','urban-context.js','time-situations.js','spatial.js','osm-profile.js','profile-cache.js','land-profile.js','land-estimator.js','venue-schedule.js','venue-model.js','civic-model.js','places-model.js','police-model.js','person-context.js','environment-scenes.js','map-weather.js','adapter.js','app.js'].map(p=>p==='adapter.js'?originalRuntime+'\n'+clean(read('map-preview/'+p)):clean(read('map-preview/'+p))).join('\n');
+let extra='const MAP_DATA='+JSON.stringify(data)+';\n'+['poi-model.js','school-policy.js','broadcast-model.js','special-facilities.js','model.js','land-model.js','green-model.js','area-model.js','visitor-situations.js','nightlife.js','subculture.js','mesh-model.js','mesh-attributes.js','urban-context.js','time-situations.js','spatial.js','osm-profile.js','profile-cache.js','land-profile.js','land-estimator.js','venue-schedule.js','venue-model.js','civic-model.js','places-model.js','police-model.js','person-context.js','environment-scenes.js','map-weather.js','adapter.js','app.js'].map(p=>p==='adapter.js'?originalRuntime+'\n'+clean(read('map-preview/'+p)):clean(read('map-preview/'+p))).join('\n');
 let template=read('map-preview/index.html').replace('<!--ORIGINAL_NOTICE-->',()=>noticeTemplate).replace('/* ORIGINAL_STYLES */',()=>originalStyles);let scripts='<script>'+read('map-preview/vendor/leaflet.js')+'\n'+bundle+'\n'+extra+'<\/script>';
 let html=template.replace('<link rel="stylesheet" href="vendor/leaflet.css">','<style>'+read('map-preview/vendor/leaflet.css')+'</style>').replace('<!--SCRIPTS-->',()=>scripts);
 fs.mkdirSync('dist',{recursive:true});fs.writeFileSync('dist/map-preview.html',html);console.log('dist/map-preview.html',Buffer.byteLength(html));
