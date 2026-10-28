@@ -63,8 +63,35 @@ const LandEstimator=(()=>{
  return density*c.areaM2/1e6*factor*traffic*housing;
  }
  function estimateDemographics(c,occupation,t){let d={min:occupation.min,max:occupation.max,female:occupation.female};if(occupation.resident){d.resident=true;d.censusCode=c.region.id;d.subtype=c.subtype;d.daytime=t.h>=9&&t.h<17&&!weekend(t)}if(c.type==='green'&&c.subtype==='playground'&&occupation.role==='green_walk')d.ageBands=[[0,11,.5],[25,49,.45],[60,79,.05]];if(c.subtype==='fashion'&&occupation.role==='area_shopping')d.female=.62;return d;}
- function estimate(profile,t){let out=[];for(let c of profile.parts){let n=estimatePopulation(c,t,profile),roles=estimateOccupations(c,t),mass=roles.reduce((s,z)=>s+z.w,0);if(!n||!mass)continue;for(let z of roles){if(z.w<=0)continue;out.push({...z,...estimateDemographics(c,z,t),n:n*z.w/mass,region:c.region,landType:c.type,subtype:c.subtype,evidence:c.source,precision:c.precision,landComponent:c})}}return out;}
+ function estimateRaw(profile,t){let out=[];for(let c of profile.parts){let n=estimatePopulation(c,t,profile),roles=estimateOccupations(c,t),mass=roles.reduce((s,z)=>s+z.w,0);if(!n||!mass)continue;for(let z of roles){if(z.w<=0)continue;out.push({...z,...estimateDemographics(c,z,t),n:n*z.w/mass,region:c.region,landType:c.type,subtype:c.subtype,evidence:c.source,precision:c.precision,landComponent:c})}}return out;}
+ // Reassign existing people rather than adding an independent headcount. All coefficients
+ // are simulation assumptions; dedicated populations such as patients, students and sleepers remain intact.
+ function redistribute(rows){
+  const out=rows.map(x=>({...x}));
+  function transfer(donorTest,targetTest,fraction,capMultiplier,perFacilityCap){
+   const donors=out.filter(x=>donorTest(x)&&x.n>0),targets=out.filter(x=>targetTest(x)&&x.n>0);
+   if(!donors.length||!targets.length)return;
+   let requested=donors.reduce((s,x)=>s+x.n,0)*fraction;
+   // A facility can be split into several spatial fragments; share one cap across them.
+   const groups=new Map();for(const x of targets){let c=x.landComponent||{},key=c.id||x.facility?.id||x.zone?.id||x;let g=groups.get(key);if(!g){g={members:[],base:0};groups.set(key,g)}g.members.push({row:x,base:x.n});g.base+=x.n}
+   let active=[...groups.values()].map(g=>({...g,capacity:Math.min(perFacilityCap,Math.max(3,g.base*capMultiplier)),weight:Math.sqrt(g.base)}));
+   let amount=Math.min(requested,active.reduce((s,g)=>s+g.capacity,0));if(amount<=0)return;
+   const demand=amount;
+   while(amount>1e-8&&active.length){const weights=active.reduce((s,g)=>s+g.weight,0);let paid=0;for(const g of active){let add=Math.min(g.capacity,amount*g.weight/weights);for(const x of g.members)x.row.n+=add*x.base/g.base;g.capacity-=add;paid+=add}amount-=paid;active=active.filter(g=>g.capacity>1e-8);if(paid<1e-8)break}
+
+   const moved=demand-amount,donorTotal=donors.reduce((s,x)=>s+x.n,0);for(const x of donors)x.n-=moved*x.n/donorTotal;
+  }
+  const role=(...names)=>x=>names.includes(x.role);
+  transfer(role('area_shopping'),role('place_shop_guest'),.20,5,100);
+  transfer(role('area_tourist','area_inbound'),role('place_tourist_guest','place_observation_guest','place_museum_guest','place_theatre_guest','place_shrine_guest','place_temple_guest'),.15,5,80);
+  transfer(role('area_inbound','area_tourist'),role('place_hotel_guest'),.06,3,50);
+  transfer(x=>x.role==='urban_visit'&&['commercial','mall','public'].includes(x.landType),role('place_bank_guest','place_library_guest','place_bath_guest'),.12,4,40);
+  transfer(x=>x.role==='area_office'&&['commercial','mall','mixed','office'].includes(x.landType),role('place_shop_staff','place_food_staff'),.03,3,50);
+  transfer(x=>x.role==='area_office'&&['commercial','mall','mixed','office'].includes(x.landType),role('place_museum_staff','place_tourist_staff','place_library_staff','place_bank_staff'),.01,3,30);
+  return out.filter(x=>x.n>1e-12);
+ }
+ function estimate(profile,t){return redistribute(estimateRaw(profile,t));}
  function sampleResident(c,t,pick,random=Math.random){let sa;for(let i=0;i<24;i++){sa=pick();let w=1;if(c.daytime)w=sa.age>=65?1:sa.age<6?.75:sa.age<23?.15:.4;if(c.subtype==='student')w*=sa.age>=18&&sa.age<=29?1:.4;if(c.subtype==='family')w*=sa.age<15||sa.age>=30&&sa.age<50?1:.65;if(c.subtype==='senior')w*=sa.age>=65?1:.35;if(random()<w)return sa}return sa;}
- return {estimatePopulation,estimateDemographics,estimateOccupations,estimate,timeFactor,sampleResident};
+ return {estimatePopulation,estimateDemographics,estimateOccupations,estimateRaw,redistribute,estimate,timeFactor,sampleResident};
 })();
 if(typeof module!=='undefined')module.exports=LandEstimator;

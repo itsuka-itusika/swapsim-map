@@ -64,3 +64,23 @@ test('older cached OSM entries are reclassified and small stores stay excluded',
  const out=run(`(()=>{const p=[139.7006,35.6595],mk=(id,name,tags)=>({id,name,xy:p,bbox:MapSpatial.box(p,25),radius:25,area:0,type:'commercial',subtype:'poi',source:'OpenStreetMap',precision:'point',tags}),features=[mk('old-cafe','小さな喫茶店',{name:'小さな喫茶店',amenity:'cafe'}),mk('old-bank','銀行',{name:'銀行',amenity:'bank'})],profile=LandProfile.create(LandProfile.configure(MAP_DATA),p,100,features);return [profile.features.map(x=>x.name),profile.features.find(x=>x.id==='old-bank')?.subtype]})()`);
  assert.ok(!out[0].includes('小さな喫茶店'));assert.ok(out[0].includes('銀行'));assert.equal(out[1],'bank');
 });
+
+test('redistribution conserves people, protects residents and caps fragmented facility allocations',()=>{
+ const result=run(`(()=>{let base=[{role:'area_shopping',n:1000},{role:'area_office',n:1000,landType:'office'},{role:'general',n:300,resident:true},{role:'patient',n:60},{role:'place_shop_guest',n:2,landComponent:{id:'one'}},{role:'place_shop_guest',n:2,landComponent:{id:'one'}},{role:'place_shop_staff',n:2,landComponent:{id:'one'}}],next=LandEstimator.redistribute(base),sum=x=>x.reduce((a,v)=>a+v.n,0);return {before:sum(base),after:sum(next),shopping:next[0].n,office:next[1].n,resident:next[2].n,patient:next[3].n,guests:next[4].n+next[5].n,staff:next[6].n}})()`);
+ assert.ok(Math.abs(result.before-result.after)<1e-8);assert.ok(result.guests>4&&result.guests<=24+1e-8);assert.ok(result.staff>2);assert.equal(result.resident,300);assert.equal(result.patient,60);assert.ok(result.shopping>=0&&result.office>=0);
+});
+
+test('no eligible facility means no change, and closed retail receives no visitors',()=>{
+ const result=run(`(()=>{const rows=[{role:'area_shopping',n:100},{role:'place_shop_guest',n:0,landComponent:{id:'closed'}},{role:'general',n:200}],r=LandEstimator.redistribute(rows);return [r.find(x=>x.role==='area_shopping').n,r.some(x=>x.role==='place_shop_guest'),r.find(x=>x.role==='general').n]})()`);
+ assert.equal(result[0],100);assert.equal(result[1],false);assert.equal(result[2],200);
+});
+
+test('real Shibuya map increases store visitors while preserving total population',()=>{
+ const result=run(`(()=>{for(const f of MAP_DATA.regions){f.density=censusMass(f.id)/f.area;f.residentialDensity=censusMass(f.id)/(MAP_DATA.zoning.residentialAreaKm2[f.id]||f.area)}let p=LandProfile.create(LandProfile.configure(MAP_DATA),[139.7006,35.6595],300,[]),t={y:2026,mo:10,d:28,dow:3,h:14,hf:14,mi:0},before=LandEstimator.estimateRaw(p,t),after=LandEstimator.estimate(p,t),sum=(a,fn)=>a.filter(fn).reduce((v,x)=>v+x.n,0);return {totalBefore:sum(before,()=>true),totalAfter:sum(after,()=>true),storeBefore:sum(before,x=>x.role==='place_shop_guest'),storeAfter:sum(after,x=>x.role==='place_shop_guest'),streetBefore:sum(before,x=>x.role==='area_shopping'),streetAfter:sum(after,x=>x.role==='area_shopping')}})()`);
+ assert.ok(Math.abs(result.totalBefore-result.totalAfter)<1e-7);assert.ok(result.storeAfter>result.storeBefore);assert.ok(result.streetAfter<result.streetBefore);console.log('Shibuya retail visitors',result.storeBefore.toFixed(1),'→',result.storeAfter.toFixed(1));
+});
+
+test('redistribution stays finite and conserves population across locations and times',()=>{
+ const n=run(`(()=>{for(const f of MAP_DATA.regions){f.density=censusMass(f.id)/f.area;f.residentialDensity=censusMass(f.id)/(MAP_DATA.zoning.residentialAreaKm2[f.id]||f.area)}const ctx=LandProfile.configure(MAP_DATA);let checked=0;for(const p of [[139.7006,35.6595],[139.7706,35.7148],[139.7454,35.6586]])for(const [h,dow] of [[2,3],[14,3],[14,0],[21,6]]){let t={y:2026,mo:10,d:28,dow,h,hf:h,mi:0},profile=LandProfile.create(ctx,p,300,[]),a=LandEstimator.estimateRaw(profile,t),b=LandEstimator.estimate(profile,t),sum=arr=>arr.reduce((s,x)=>s+x.n,0);if(b.some(x=>!Number.isFinite(x.n)||x.n<0)||Math.abs(sum(a)-sum(b))>1e-7)throw Error('invalid population '+p+' '+h);checked++}return checked})()`);
+ assert.equal(n,12);
+});
