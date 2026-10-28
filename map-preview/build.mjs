@@ -26,7 +26,7 @@ data.policeStations=JSON.parse(read('map-preview/data/police-stations.json')).fe
 data.specialPlaces=[...JSON.parse(read('map-preview/data/special-places.json')).features,...JSON.parse(read('map-preview/data/named-venues.json')).features];
 data.landmarks=JSON.parse(read('map-preview/data/landmarks.json')).features;
 data.publicAreas=JSON.parse(read('map-preview/data/public-areas.json')).features;
-data.namedStores=[...JSON.parse(read('map-preview/data/named-stores.json')).features,...JSON.parse(read('map-preview/data/sushi-stores.json')).features];
+data.namedStores=[...JSON.parse(read('map-preview/data/named-stores.json')).features,...JSON.parse(read('map-preview/data/sushi-stores.json')).features,...JSON.parse(read('map-preview/data/shopping-stores.json')).features,...JSON.parse(read('map-preview/data/retail-stores.json')).features,...JSON.parse(read('map-preview/data/food-stores.json')).features];
 data.osmSeeds=fs.existsSync('map-preview/data/osm-seeds.json')?JSON.parse(read('map-preview/data/osm-seeds.json')).entries:[];
 const meshIndex=new Map(data.mesh.cells.map(c=>[c[0]+','+c[1],c]));
 for(let f of data.facilities){let x=Math.floor((f.xy[0]-139)*111195*Math.cos(35.7*Math.PI/180)/100),y=Math.floor((f.xy[1]-35)*111195/100),c=meshIndex.get(x+','+y);if(!c)continue;let flag=['tv','radio'].includes(f.kind)?8:f.kind==='station'?16:f.kind==='theme'?32:f.kind==='hospital'?2:f.kind==='care'?4:1;c[8]=(c[8]||0)|flag;if(c[4]===0&&flag===1&&['university','college','high'].includes(f.kind))c[4]=1;}
