@@ -51,7 +51,7 @@ const HotelModel=(()=>{
    housekeeping:['チェックアウト後の客室で、ベッドのシーツを手早く張り替えているところでした','清掃の終わった客室で、アメニティの数を確かめているところでした','リネンを積んだワゴンを押して、次の客室へ向かっているところでした'],
    restaurant:{morning:['朝食ビュッフェで、空になった皿を新しい料理と入れ替えているところでした','朝食会場で、宿泊客の部屋番号を確かめて席へ案内しているところでした'],other:['ホテルのレストランで、ワインの注文を受けているところでした','ルームサービスの料理を、ワゴンに載せて客室へ運んでいるところでした']},
    banquet:['宴会場で、円卓にカトラリーを並べているところでした','披露宴の料理を、タイミングを合わせて一斉に運んでいるところでした'],
-   security:['深夜のロビーを巡回し、異常がないか確かめているところでした','防災センターで、館内のモニターを見守っているところでした']},
+   security:['ロビーを巡回し、異常がないか確かめているところでした','防災センターで、館内のモニターを見守っているところでした','搬入口で、出入りする業者の名前を確かめているところでした'],securityNight:['深夜のロビーを巡回し、異常がないか確かめているところでした','防災センターで、館内のモニターを見守っているところでした']},
   ryokan:{front:['到着した宿泊客に、お茶とお菓子を出して館内を案内しているところでした','客室に布団を敷きながら、明日の朝食の時間を伝えているところでした'],restaurant:['夕食の懐石料理を、一品ずつ盛り付けているところでした']}};
  function phase(h){return h>=6.5&&h<10?'morning':h>=10&&h<17?'day':h>=17&&h<22?'evening':'night'}
  function assign(c,P){if(!c.hotelStyle||!c.role.startsWith('place_hotel_'))return false;if(c.placeWorker){P.occ={label:c.label,group:'adult',cat:'special',kind:'employed',p:1};return true}
@@ -59,7 +59,7 @@ const HotelModel=(()=>{
   if(c.guestType==='business'){let jobs=JOB_OBJS.filter(j=>['office','sales','it','exec'].includes(j.tag)&&!j.o.pub&&P.age>=(j.o.amin||22)),job=jobs[Math.floor(rnd()*jobs.length)];if(job)P.occ={label:job.n+(job.n==='会社役員'?'':'（正社員）'),group:'adult',cat:job.cat,tag:job.tag,job,kind:'employed',p:1}}
   else if(['prison','facility'].includes(P.occ.group))P.occ={label:'無職',group:P.age>=65?'senior':'adult',cat:'none',p:1};return true}
  function apply(c,P,t){if(!c.hotelStyle||!c.role.startsWith('place_hotel_'))return false;let h=t.hf??t.h,ph=phase(h),text,state='off',label=c.stayLabel||c.label;
-  if(c.placeWorker){state='work';label=c.label;let k=c.staffKey;if(c.hotelStyle==='ryokan'&&T.ryokan[k])text=pick(T.ryokan[k]);else if(k==='front')text=pick(h>=22||h<6?T.staff.front.night:T.staff.front.day);else if(k==='restaurant')text=pick(ph==='morning'?T.staff.restaurant.morning:T.staff.restaurant.other);else text=pick(T.staff[k])}
+  if(c.placeWorker){state='work';label=c.label;let k=c.staffKey;if(c.hotelStyle==='ryokan'&&T.ryokan[k])text=pick(T.ryokan[k]);else if(k==='front')text=pick(h>=22||h<6?T.staff.front.night:T.staff.front.day);else if(k==='security')text=pick(h>=22||h<5?T.staff.securityNight:T.staff.security);else if(k==='restaurant')text=pick(ph==='morning'?T.staff.restaurant.morning:T.staff.restaurant.other);else text=pick(T.staff[k])}
   else if(c.guestType==='banquet'){let we=t.dow===0||t.dow===6||t.holiday;text=pick(we?T.banquetWe:T.banquetWd);label=c.label}
   else{let g=T[c.guestType];if((h>=0&&h<6||h>=23.5)&&rnd()<.85){text=pick(g.sleep);state='sleep'}else{let pool=g[ph];if(c.hotelStyle==='luxury'&&c.guestType!=='business'&&h>=13&&h<23&&rnd()<.35)pool=T.luxury.filter(x=>h>=17||!/バー|カナッペ/.test(x));if(['business','hostel','ryokan'].includes(c.hotelStyle))pool=pool.filter(x=>!/ラウンジ|ロビーのソファ/.test(x))||pool;text=pick(pool.length?pool:g[ph])}}
   // A 旅館 has futons, not beds, for guests and staff alike.
