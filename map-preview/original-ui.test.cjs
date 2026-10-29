@@ -90,3 +90,11 @@ test('crowd pairs are independently generated in both modes and display both peo
  assert.equal(result[0],'同じ瞬間に入れ替わった人たち');assert.equal(result[1],4);assert.equal(result[2],4);
  const source=fs.readFileSync('map-preview/app.js','utf8');const draw=source.slice(source.indexOf("el('draw').onclick="),source.indexOf('renderOptions();',source.indexOf("el('draw').onclick=")));assert.match(draw,/Array\.from\(\{length:4\}/);assert.match(draw,/estimateMinute!==minuteKey\(t\)/);
 });
+test('two-range pair mode always swaps someone from range A with someone from range B',()=>{
+ const source=fs.readFileSync('map-preview/app.js','utf8');
+ run(`globalThis.el=id=>({innerHTML:'',textContent:'',setAttribute(){}});globalThis.storage=null;globalThis.parts=[];globalThis.partsB=[];`);
+ if(run('typeof samplePair')!=='function')run(source.slice(source.indexOf('let issuedCount='),source.indexOf("el('test').onclick")));
+ const result=JSON.parse(run(`(()=>{const st=MAP_DATA.facilities.filter(f=>f.kind==='station'),fa=st.find(f=>f.name==='新宿駅'),fb=st.find(f=>f.name==='上野駅'),t={y:2026,mo:10,d:28,dow:3,h:12,hf:12,mi:0,rand:false},rows=f=>MapModel.roles(f,t).map(c=>({...c,region:MAP_DATA.regions.find(r=>r.id===f.code),facility:f,n:100}));parts=rows(fa);partsB=rows(fb);options.sex=null;options.dec=null;options.pair=true;options.pairMode='between';let out=[];for(let i=0;i<10;i++){const R=sampleResult(t,true),O=samplePair(t,false,between());out.push([R.A.place,R.B.place,O.A.place,O.B.place])}options.pairMode='within';const W=sampleResult(t,true);out.push(['within',W.B.place]);return JSON.stringify(out)})()`));
+ for(const [a,b,oa,ob] of result.slice(0,10)){assert.equal(a,'新宿駅');assert.equal(b,'上野駅');assert.equal(oa,'新宿駅');assert.equal(ob,'上野駅')}
+ assert.equal(result[10][1],'新宿駅');
+});

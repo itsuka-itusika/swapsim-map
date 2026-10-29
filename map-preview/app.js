@@ -47,32 +47,56 @@ function renderEstimate(p,r,t,evidence){
  el('status').textContent=`${p[1].toFixed(5)}, ${p[0].toFixed(5)} ｜ 半径${r}m ｜ ${state} ｜ 計算 ${Math.round(performance.now()-begin)}ms`;
  if(landProfile.coverage<.99)el('status').textContent+=' ｜ 対象区域内の部分のみ集計';
  el('details').innerHTML=parts.slice().sort((a,b)=>Number(['large_shop','tourist','library','bank','bath','hotel','hostel'].includes(b.landComponent?.placeKind||b.landComponent?.subtype))-Number(['large_shop','tourist','library','bank','bath','hotel','hostel'].includes(a.landComponent?.placeKind||a.landComponent?.subtype))||b.n-a.n).map(x=>`<p>${esc((x.facility?.schoolPolicy?.displayName||PlaceLabel.name(x))+(x.facility&&x.landType==='education'?'（'+SchoolPolicy.label(x.facility)+'）':''))}・${esc(x.label)} <b>${(x.n/n*100).toFixed(1)}%</b><progress max="100" value="${x.n/n*100}"></progress></p>`).join('');
- el('draw').disabled=!n&&!drawing;if(!n)el('status').textContent+=' ｜ 範囲内に抽選対象者がいません';
+ if(!drawing)el('draw').disabled=!n||between()&&!partsB.length;if(!n)el('status').textContent+=' ｜ 範囲内に抽選対象者がいません';
  document.querySelectorAll('[data-radius]').forEach(b=>{let active=+b.dataset.radius===r;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
  if(typeof meshLayer!=='undefined')drawMesh();
 }
-map.on('click',e=>choose([e.latlng.lng,e.latlng.lat]));map.on('moveend',()=>{facilitiesOnMap();drawMesh()});
-document.querySelectorAll('[data-radius]').forEach(b=>b.onclick=()=>{radius=+b.dataset.radius;choose(selected)});
-el('search').onclick=()=>{let q=el('query').value.trim();if(!q){el('results').textContent='';return}let list=[...(currentEvidence?.features||[]).filter(f=>f.tags?.name||f.tags?.['name:ja']),...(MAP_DATA.policeStations||[]),...(MAP_DATA.specialPlaces||[]),...(MAP_DATA.publicAreas||[]),...(MAP_DATA.landmarks||[]),...MAP_DATA.landZones,...MAP_DATA.greenZones,...MAP_DATA.areas,...facilities].filter(f=>f.name.includes(q)||(f.aliases||[]).some(n=>n.includes(q))).filter((f,i,a)=>a.findIndex(x=>x.name===f.name)===i).slice(0,15).map(f=>({name:f.name,xy:f.xy}));if(!list.length)list=regions.filter(f=>f.name.includes(q)).slice(0,10).map(f=>({name:f.name,xy:[(f.bbox[0]+f.bbox[2])/2,(f.bbox[1]+f.bbox[3])/2]}));el('results').innerHTML=list.length?list.map((f,i)=>`<button class="facility" data-result="${i}">${esc(f.name)}</button>`).join(''):'該当する収録施設・地域がありません。';document.querySelectorAll('[data-result]').forEach(b=>b.onclick=()=>{let f=list[+b.dataset.result];map.setView([f.xy[1],f.xy[0]],17);choose(f.xy);el('results').innerHTML='';const r=el('map').getBoundingClientRect();if(r.top<0||r.bottom>innerHeight)el('map').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'})})};el('query').onkeydown=e=>{if(e.key==='Enter')el('search').click()};
+map.on('click',e=>place([e.latlng.lng,e.latlng.lat]));map.on('moveend',()=>{facilitiesOnMap();drawMesh()});
+document.querySelectorAll('[data-radius]').forEach(b=>b.onclick=()=>{radius=+b.dataset.radius;choose(selected);refreshB()});
+el('search').onclick=()=>{let q=el('query').value.trim();if(!q){el('results').textContent='';return}let list=[...(currentEvidence?.features||[]).filter(f=>f.tags?.name||f.tags?.['name:ja']),...(MAP_DATA.policeStations||[]),...(MAP_DATA.specialPlaces||[]),...(MAP_DATA.publicAreas||[]),...(MAP_DATA.landmarks||[]),...MAP_DATA.landZones,...MAP_DATA.greenZones,...MAP_DATA.areas,...facilities].filter(f=>f.name.includes(q)||(f.aliases||[]).some(n=>n.includes(q))).filter((f,i,a)=>a.findIndex(x=>x.name===f.name)===i).slice(0,15).map(f=>({name:f.name,xy:f.xy}));if(!list.length)list=regions.filter(f=>f.name.includes(q)).slice(0,10).map(f=>({name:f.name,xy:[(f.bbox[0]+f.bbox[2])/2,(f.bbox[1]+f.bbox[3])/2]}));el('results').innerHTML=list.length?list.map((f,i)=>`<button class="facility" data-result="${i}">${esc(f.name)}</button>`).join(''):'該当する収録施設・地域がありません。';document.querySelectorAll('[data-result]').forEach(b=>b.onclick=()=>{let f=list[+b.dataset.result];map.setView([f.xy[1],f.xy[0]],17);place(f.xy);el('results').innerHTML='';const r=el('map').getBoundingClientRect();if(r.top<0||r.bottom>innerHeight)el('map').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'})})};el('query').onkeydown=e=>{if(e.key==='Enter')el('search').click()};
+// Two ranges (A ⇄ B): range B shares the radius; map taps and search results move whichever range is active.
+let selectedB=null,partsB=[],estimateMinuteB=null,refreshSequenceB=0,profileTimerB=null,target='A',circleB=null,pinB=null;
+const B_KEY='swapsim-map-range-b';
+try{const b=JSON.parse(storage?.getItem(B_KEY)||'null');if(Array.isArray(b)&&b.length===2&&b.every(Number.isFinite))selectedB=b}catch{}
+function estimateAt(p,r,t,evidence){let key=p.join(',')+'/'+r,features=evidence?.features||emptyFeatures,entry=geometryProfiles.get(key);if(!entry||entry.features!==features){entry={features,profile:LandProfile.create(landContext,p,r,features)};geometryProfiles.set(key,entry);if(geometryProfiles.size>8)geometryProfiles.delete(geometryProfiles.keys().next().value)}return LandEstimator.estimate(entry.profile,t)}
+function refreshB(){clearTimeout(profileTimerB);if(!selectedB||!between()){partsB=[];abState();return}const seq=++refreshSequenceB,t=time(),p=selectedB.slice(),r=radius,cached=profileCache.peek(p,r);partsB=estimateAt(p,r,t,cached);estimateMinuteB=minuteKey(t);abState();if(cached&&!cached.stale)return;
+ profileTimerB=setTimeout(async()=>{const evidence=await profileCache.get(p,r);if(seq!==refreshSequenceB)return;partsB=estimateAt(p,r,time(),evidence);abState()},400)}
+function place(p){if(between()&&target==='B')chooseB(p);else choose(p)}
+function chooseB(p){selectedB=p;try{storage?.setItem(B_KEY,JSON.stringify(p))}catch{}refreshB()}
+function abState(){const on=between();el('ab-bar').hidden=!on;
+ if(on&&!circleB){circleB=L.circle([0,0],{radius,color:'#1F9D6A',weight:2,opacity:.85,fillColor:'url(#range-aura-b)',fillOpacity:1,className:'range-aura range-b'});pinB=L.circleMarker([0,0],{radius:6,color:'#fff',fillColor:'#1F9D6A',fillOpacity:1}).bindTooltip('B',{permanent:true,direction:'right',offset:[6,0],className:'ab-tag'})}
+ if(on&&selectedB){circleB.setLatLng([selectedB[1],selectedB[0]]).setRadius(radius);pinB.setLatLng([selectedB[1],selectedB[0]]);if(!circleB._map){circleB.addTo(map);pinB.addTo(map)}
+  // Range B's aura: a green copy of range A's gradient.
+  const a=document.getElementById('range-aura');if(a&&!document.getElementById('range-aura-b')){const g=a.cloneNode(true);g.id='range-aura-b';g.querySelectorAll('stop').forEach(x=>x.setAttribute('stop-color','#22A06B'));a.parentNode.appendChild(g)}}
+ else{circleB?.remove();pinB?.remove()}
+ if(on&&!pin.getTooltip())pin.bindTooltip('A',{permanent:true,direction:'right',offset:[6,0],className:'ab-tag'});if(!on&&pin.getTooltip())pin.unbindTooltip();
+ document.querySelectorAll('#ab-bar [data-target]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.target===target)));
+ el('ab-hint').textContent=!on?'':!selectedB?'地図をタップして範囲Bを選んでください':!partsB.length?'範囲Bには抽選対象者がいません（東京23区内で選んでください）':MapModel.distance(selected,selectedB)<radius*.5?'AとBがほぼ同じ場所です':'';
+ if(!drawing)el('draw').disabled=!parts.length||on&&!partsB.length}
+el('ab-bar').onclick=e=>{const b=e.target.closest('[data-target]');if(!b)return;target=b.dataset.target;abState()};
 let issuedCount=0,currentPerson=null,crowd=[];
-const options={sex:null,dec:null,pair:false,real:false},optionsKey='swapsim-map-options-v1';
-try{const saved=JSON.parse(storage?.getItem(optionsKey)||'null');if(saved){options.sex=['m','f'].includes(saved.sex)?saved.sex:null;options.dec=Array.isArray(saved.dec)?saved.dec.filter(n=>Number.isInteger(n)&&n>=0&&n<=9):null;options.pair=saved.pair===true;options.real=saved.real===true}}catch{}
+const options={sex:null,dec:null,pair:false,pairMode:'within',real:false},optionsKey='swapsim-map-options-v1';
+try{const saved=JSON.parse(storage?.getItem(optionsKey)||'null');if(saved){options.sex=['m','f'].includes(saved.sex)?saved.sex:null;options.dec=Array.isArray(saved.dec)?saved.dec.filter(n=>Number.isInteger(n)&&n>=0&&n<=9):null;options.pair=saved.pair===true;options.pairMode=saved.pairMode==='between'?'between':'within';options.real=saved.real===true}}catch{}
 function renderOptions(){
  el('opt-sex').innerHTML=[['','指定なし'],['m','男性'],['f','女性']].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${(options.sex||'')===v}">${l}</button>`).join('');
  el('opt-age').innerHTML=[['','指定なし'],...Array.from({length:10},(_,n)=>[String(n),n===9?'90代以上':n*10+'代'])].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${v===''?!options.dec?.length:!!options.dec?.includes(+v)}">${l}</button>`).join('');
  for(const key of ['pair','real'])el('opt-'+key).setAttribute('aria-checked',String(options[key]));
+ el('opt-pairmode-row').hidden=!options.pair;el('pair-note').textContent=options.pair&&options.pairMode==='between'?'範囲Aの人と範囲Bの人を入れ替えます。性別・年齢は1人目（範囲A）に使います':'地図の半径内の2人を入れ替えます。性別・年齢は1人目に使います';el('opt-pairmode').innerHTML=[['within','範囲の中で'],['between','2つの範囲で']].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${options.pairMode===v}">${l}</button>`).join('');
  el('real-name').textContent=options.pair?'本当に入れ替える':'本当に入れ替わる';
  setDrawLabel();
- el('opts-cur').textContent=[options.sex?options.sex==='f'?'女性':'男性':'',options.dec?.length?options.dec.map(n=>n===9?'90代以上':n*10+'代').join('・'):'',options.pair&&options.real?'本当に入れ替える':options.pair?'2人を入れ替え':'',options.real&&!options.pair?'本当に入れ替わる':''].filter(Boolean).join('・');
+ el('opts-cur').textContent=[options.sex?options.sex==='f'?'女性':'男性':'',options.dec?.length?options.dec.map(n=>n===9?'90代以上':n*10+'代').join('・'):'',options.pair?(options.pairMode==='between'?'2つの範囲で':'範囲の中で')+(options.real?'本当に入れ替える':'入れ替え'):'',options.real&&!options.pair?'本当に入れ替わる':''].filter(Boolean).join('・');
  el('opt-save-status').textContent='「保存」を押すと、次回もこの設定で開きます。';
+ if(typeof abState==='function'){if(between()&&!selectedB)target='B';refreshB()}
 }
+function between(){return !!options.pair&&options.pairMode==='between'}
 el('opt-sex').onclick=e=>{const b=e.target.closest('button');if(b){options.sex=b.dataset.v||null;renderOptions()}};
+el('opt-pairmode').onclick=e=>{const b=e.target.closest('button');if(b){options.pairMode=b.dataset.v;renderOptions()}};
 el('opt-age').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.v==='')options.dec=null;else{const set=new Set(options.dec||[]),v=+b.dataset.v;set.has(v)?set.delete(v):set.add(v);options.dec=set.size?[...set].sort((a,b)=>a-b):null}renderOptions()};
 for(const key of ['pair','real'])el('opt-'+key).onclick=()=>{options[key]=!options[key];renderOptions()};
 el('opt-save').onclick=()=>{try{if(!storage)throw Error();storage.setItem(optionsKey,JSON.stringify(options));el('opt-save-status').textContent='条件を保存しました。次回もこの設定で開きます。'}catch{el('opt-save-status').textContent='このブラウザでは設定を保存できません。今回の設定はそのまま使えます。'}};
-el('opt-reset').onclick=()=>{Object.assign(options,{sex:null,dec:null,pair:false,real:false});try{storage?.removeItem(optionsKey)}catch{}renderOptions()};
-function samplePerson(t,filtered=false){
- const eligible=parts.filter(c=>(!filtered||!options.sex||(options.sex==='f'?c.female!==0:c.female!==1))&&(!filtered||!options.dec?.length||options.dec.some(d=>(c.max??110)>=d*10&&(c.min??0)<=(d===9?110:d*10+9))));
+el('opt-reset').onclick=()=>{Object.assign(options,{sex:null,dec:null,pair:false,pairMode:'within',real:false});try{storage?.removeItem(optionsKey)}catch{}renderOptions()};
+function samplePerson(t,filtered=false,src=parts){
+ const eligible=src.filter(c=>(!filtered||!options.sex||(options.sex==='f'?c.female!==0:c.female!==1))&&(!filtered||!options.dec?.length||options.dec.some(d=>(c.max??110)>=d*10&&(c.min??0)<=(d===9?110:d*10+9))));
  const total=eligible.reduce((sum,c)=>sum+c.n,0);if(!total)throw Error('この範囲には指定条件の人物が見つかりません。条件や半径を変更してください。');
  for(let i=0;i<2000;i++){const c=MapModel.pick(eligible);if(!c)break;const P=mapPerson({...c,roleP:c.n/total},t);if(!filtered||((!options.sex||P.sex===options.sex)&&(!options.dec?.length||options.dec.includes(Math.min(9,Math.floor(P.age/10))))))return P}
  throw Error('この範囲には指定条件の人物が見つかりません。条件や半径を変更してください。');
@@ -81,8 +105,8 @@ function samplePerson(t,filtered=false){
 // thresholds at the quintiles of map-drawn pairs (the original thresholds assume nationwide distances).
 const MAP_GAP_TH=[1.12,1.76,2.32,3.0];
 function mapGap(A,B){const g=pairGap(A,B),score=g.age/25+(g.sexDiff?1:0)+(g.stateDiff?.8:0)+(g.groupDiff?.6:0);return {...g,km:0,score,stars:MAP_GAP_TH.findIndex(x=>score<x)+1||5}}
-function samplePair(t,filtered=false){const A=samplePerson(t,filtered),B=samplePerson(t);return {kind:'pair',A,B,t,gap:mapGap(A,B)}}
-function sampleResult(t,filtered=false){return options.pair?samplePair(t,filtered):samplePerson(t,filtered)}
+function samplePair(t,filtered=false,two=false){const A=samplePerson(t,filtered),B=samplePerson(t,false,two?partsB:parts);return {kind:'pair',A,B,t,gap:mapGap(A,B)}}
+function sampleResult(t,filtered=false){return options.pair?samplePair(t,filtered,between()):samplePerson(t,filtered)}
 function showResult(P){currentPerson=P;el('person').innerHTML=MapNotice.html(P);el('copy').onclick=async()=>{const text=MapNotice.text(P);try{await navigator.clipboard.writeText(text);el('toast').textContent='コピーしました'}catch{const box=document.createElement('textarea');box.value=text;box.readOnly=true;box.className='copybox';el('person').appendChild(box);box.select();el('toast').textContent='表示された文章をコピーしてください'}};stampIt(!reduceMotion);scrollToNotice(true);if(!reduceMotion)el('notice').classList.add('flash')}
 function resultLabel(P){const name=X=>X.displayName||X.surname.k+' '+X.given.k;return P.kind==='pair'?`${name(P.A)}（${P.A.age}歳） ⇄ ${name(P.B)}（${P.B.age}歳）`:`${name(P)} ／ ${P.age}歳 ／ ${P.occ.label}`}
 function renderCrowd(){
@@ -100,13 +124,13 @@ function renderPairCards(animate){const name=P=>P.displayName||P.surname.k+' '+P
  if(animate)[...el('pcards').children].forEach((li,i)=>setTimeout(()=>li.classList.remove('enter'),reduceMotion?0:120*i+30))}
 el('pcards').onclick=e=>{const b=e.target.closest('[data-card]');if(!b||drawing)return;el('person').hidden=false;showResult(pairCards[+b.dataset.card]);renderPairCards(false)};
 // Reveal like the original: roam the circle, then fill the notice field by field. Pressing again skips.
-let drawing=null,drawToken=0,plays=0,pool={parts:[],center:null,radius:0},roamLayer=null;
+let drawing=null,drawToken=0,plays=0,pool={parts:[],center:null,radius:0},poolB=null,roamLayer=null;
 function setDrawLabel(){const b=el('draw');b.setAttribute('data-busy',drawing?'1':'0');el('go-label').innerHTML=drawing?'とばす':options.pair?'入れ<br>替える':'入れ<br>替わる';b.setAttribute('aria-label',drawing?'演出をとばす':options.pair?'2人を入れ替える':'入れ替わる')}
 function later(ms,tk){return new Promise((res,rej)=>setTimeout(()=>tk===drawToken?res():rej(new Error('skip')),ms))}
 const pickOne=a=>a[Math.floor(Math.random()*a.length)],placeName=c=>PlaceLabel.name(c);
-function roamPoint(c){if(c.facility?.xy&&MapModel.distance(c.facility.xy,pool.center)<=pool.radius)return c.facility.xy;const [x,y]=pool.center,d=pool.radius*Math.sqrt(Math.random()),a=Math.random()*2*Math.PI;return [x+d*Math.sin(a)/(111320*Math.cos(y*Math.PI/180)),y+d*Math.cos(a)/111320]}
-async function roam(count,ms,tk){roamLayer??=L.layerGroup().addTo(map);const marks=Array.from({length:count},(_,i)=>L.circleMarker([pool.center[1],pool.center[0]],{radius:7,color:'#fff',weight:2,fillColor:i?'#2E6A5D':'#C8371E',fillOpacity:1}).bindTooltip('',{permanent:true,direction:'top',offset:[0,-6]}).addTo(roamLayer)),end=performance.now()+ms;let step=50;
- while(performance.now()<end){for(const m of marks){const c=MapModel.pick(pool.parts),q=roamPoint(c);m.setLatLng([q[1],q[0]]).setTooltipContent(esc(placeName(c)))}await later(step,tk);step=Math.min(160,step*1.12)}roamLayer.clearLayers()}
+function roamPoint(c,pl=pool){if(c.facility?.xy&&MapModel.distance(c.facility.xy,pl.center)<=pl.radius)return c.facility.xy;const [x,y]=pl.center,d=pl.radius*Math.sqrt(Math.random()),a=Math.random()*2*Math.PI;return [x+d*Math.sin(a)/(111320*Math.cos(y*Math.PI/180)),y+d*Math.cos(a)/111320]}
+async function roam(count,ms,tk,pools=[]){roamLayer??=L.layerGroup().addTo(map);const marks=Array.from({length:count},(_,i)=>L.circleMarker([(pools[i]||pool).center[1],(pools[i]||pool).center[0]],{radius:7,color:'#fff',weight:2,fillColor:i?'#2E6A5D':'#C8371E',fillOpacity:1}).bindTooltip('',{permanent:true,direction:'top',offset:[0,-6]}).addTo(roamLayer)),end=performance.now()+ms;let step=50;
+ while(performance.now()<end){for(const [i,m] of marks.entries()){const pl=pools[i]||pool,c=MapModel.pick(pl.parts),q=roamPoint(c,pl);m.setLatLng([q[1],q[0]]).setTooltipContent(esc(placeName(c)))}await later(step,tk);step=Math.min(160,step*1.12)}roamLayer.clearLayers()}
 async function roll(id,gen,ms,tk){const node=el(id),end=performance.now()+ms;while(performance.now()<end){node.innerHTML=gen();await later(55,tk)}}
 async function typeOut(id,html,tk){const node=el(id),box=document.createElement('div');box.innerHTML=html;const plain=box.textContent;for(let i=1;i<=plain.length;i+=2){node.textContent=plain.slice(0,i);await later(28,tk)}node.innerHTML=html}
 const SN_KEYS=Object.keys(SN),fakePlace=()=>esc(placeName(MapModel.pick(pool.parts))),fakeName=sex=>esc(pickOne(SN_KEYS)+' '+pickOne(pickOne(ERAS)[sex]).k);
@@ -136,12 +160,14 @@ el('hist-clear').onclick=()=>{history=[];try{storage?.removeItem(HIST_KEY)}catch
 el('history').onclick=e=>{const b=e.target.closest('button[data-h]');if(!b||drawing)return;const h=history[+b.dataset.h];if(!h)return;crowd=h.others;
  if(h.P.kind==='pair'){pairCards=[h.P,...h.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(false);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}
  else{pairMode(false);el('person').hidden=false;showResult(h.P);renderCrowd();el('person').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}renderHistory()};
-function finishDraw(){const d=drawing;if(!d)return;drawing=null;drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length}
-el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();P=sampleResult(t,true);others=Array.from({length:4},()=>samplePair(t));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
- drawing={P,others};pool={parts:parts.slice(),center:selected.slice(),radius};plays++;const tk=++drawToken;el('draw').disabled=false;setDrawLabel();if(reduceMotion){finishDraw();return}
+function finishDraw(){const d=drawing;if(!d)return;drawing=null;drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length||between()&&!partsB.length}
+el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length||between()&&!partsB.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();if(between()&&estimateMinuteB!==minuteKey(t))refreshB();P=sampleResult(t,true);others=Array.from({length:4},()=>samplePair(t,false,between()));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
+ drawing={P,others};pool={parts:parts.slice(),center:selected.slice(),radius};poolB=between()?{parts:partsB.slice(),center:selectedB.slice(),radius}:null;plays++;const tk=++drawToken;el('draw').disabled=false;setDrawLabel();if(reduceMotion){finishDraw();return}
  // Pair mode first brings the map into view (on phones the button sits below it) and roams the circle with the
  // markers, then jumps to the five compact notices.
- try{if(P.kind==='pair'){pairMode(true);el('pcards').innerHTML='';const r=el('map').getBoundingClientRect();if(r.top<0||r.bottom>innerHeight){el('map').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'});await later(450,tk)}await roam(2,1600*(plays>1?.7:1),tk)}else await reveal(P,tk)}catch(e){if(e.message!=='skip')console.error(e)}if(tk===drawToken)finishDraw()};
+ try{if(P.kind==='pair'){pairMode(true);el('pcards').innerHTML='';const r=el('map').getBoundingClientRect();if(r.top<0||r.bottom>innerHeight){el('map').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'});await later(450,tk)}
+  // Two ranges: show both circles, one marker roaming in each.
+  if(poolB){map.fitBounds(circle.getBounds().extend(circleB.getBounds()),{padding:[24,24],maxZoom:16});await later(500,tk)}await roam(2,1600*(plays>1?.7:1),tk,poolB?[pool,poolB]:[])}else await reveal(P,tk)}catch(e){if(e.message!=='skip')console.error(e)}if(tk===drawToken)finishDraw()};
 renderOptions();
 el('test').onclick=()=>{if(!parts.length)return;let n=parts.reduce((s,p)=>s+p.n,0),theory=parts.filter(p=>p.role==='resident').reduce((s,p)=>s+p.n,0)/n,count=0;for(let i=0;i<10000;i++)count+=MapModel.pick(parts).role==='resident';el('test-result').textContent=`施設入居者：理論 ${(theory*100).toFixed(2)}% ／ 1万回の実測 ${(count/100).toFixed(2)}%`};
 const meshLayer=L.layerGroup().addTo(map);
@@ -163,5 +189,5 @@ async function drawMesh(){
 el('mesh-toggle').checked=false;el('mesh-toggle').onchange=drawMesh;
 el('mesh-mode').innerHTML='<option value="land">土地用途・敷地（標準）</option><option value="legacy">旧100mメッシュ（比較用）</option>';
 el('mesh-mode').onchange=drawMesh;
-dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh()}},1000);let lastMinute=time().mi;updateWeather();facilitiesOnMap();refresh();drawMesh();MapBoot.done();loadHistory();renderHistory();
+dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh();refreshB()}},1000);let lastMinute=time().mi;updateWeather();facilitiesOnMap();refresh();drawMesh();MapBoot.done();loadHistory();renderHistory();
 
