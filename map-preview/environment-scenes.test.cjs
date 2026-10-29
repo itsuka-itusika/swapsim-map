@@ -250,3 +250,8 @@ test('国会議事堂・議員会館・都庁 follow the session calendar, with 
  assert.ok(r.open.every(([,x])=>/所信表明/.test(x)),JSON.stringify(r.open));assert.ok(r.session>r.recess*5);assert.equal(r.kaikanSat,0);
  assert.ok(!r.labels.some(l=>/首相|総理|大臣|知事/.test(l)),r.labels.join());assert.ok(r.guard.every(([job])=>job==='衛視'));
 });
+test('🎲 guide places resolve inside the 23 wards and each has a short introduction',()=>{
+ const r=JSON.parse(run(`JSON.stringify(MAP_DATA.guideSpots.map(s=>[s.name,!!MapModel.locate(s.xy,MAP_DATA.regions),s.desc.length,s.time]))`));
+ assert.ok(r.length>=60);for(const [name,inside,len,time] of r){assert.ok(inside,name);assert.ok(len>=10&&len<=60,name);assert.ok(time,name)}
+ assert.equal(new Set(r.map(x=>x[0])).size,r.length);
+});

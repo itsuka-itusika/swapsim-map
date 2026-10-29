@@ -65,7 +65,7 @@ try{const b=JSON.parse(storage?.getItem(B_KEY)||'null');if(Array.isArray(b)&&b.l
 function estimateAt(p,r,t,evidence){let key=p.join(',')+'/'+r,features=evidence?.features||emptyFeatures,entry=geometryProfiles.get(key);if(!entry||entry.features!==features){entry={features,profile:LandProfile.create(landContext,p,r,features)};geometryProfiles.set(key,entry);if(geometryProfiles.size>8)geometryProfiles.delete(geometryProfiles.keys().next().value)}profileB=entry.profile;return LandEstimator.estimate(entry.profile,t)}
 function refreshB(){clearTimeout(profileTimerB);if(!selectedB||!between()){partsB=[];abState();return}const seq=++refreshSequenceB,t=time(),p=selectedB.slice(),r=radius,cached=profileCache.peek(p,r);partsB=estimateAt(p,r,t,cached);estimateMinuteB=minuteKey(t);abState();if(cached&&!cached.stale)return;
  profileTimerB=setTimeout(async()=>{const evidence=await profileCache.get(p,r);if(seq!==refreshSequenceB)return;partsB=estimateAt(p,r,time(),evidence);abState()},400)}
-function place(p){if(between()&&target==='B')chooseB(p);else choose(p)}
+function place(p){el('guide').hidden=true;if(between()&&target==='B')chooseB(p);else choose(p)}
 function chooseB(p){selectedB=p;try{storage?.setItem(B_KEY,JSON.stringify(p))}catch{}refreshB()}
 function abState(){const on=between();el('ab-bar').hidden=!on;
  if(on&&!circleB){circleB=L.circle([0,0],{radius,color:'#E5533D',weight:2,opacity:.85,fillColor:'url(#range-aura-b)',fillOpacity:1,className:'range-aura range-b'});pinB=L.circleMarker([0,0],{radius:6,color:'#fff',fillColor:'#D9402B',fillOpacity:1}).bindTooltip('B',{permanent:true,direction:'right',offset:[6,0],className:'ab-tag'})}
@@ -89,12 +89,51 @@ function beaconCheck(){const show=!!drawing&&between()&&selectedB&&map.latLngToC
  if(!beacons){const icon=k=>L.divIcon({className:'',html:`<span class="beacon beacon-${k}"></span>`,iconSize:[16,16],iconAnchor:[8,8]});beacons=L.layerGroup([L.marker([0,0],{icon:icon('a'),interactive:false,keyboard:false}),L.marker([0,0],{icon:icon('b'),interactive:false,keyboard:false})]).addTo(map)}
  const [a,b]=beacons.getLayers();a.setLatLng([selected[1],selected[0]]);b.setLatLng([selectedB[1],selectedB[0]])}
 map.on('zoomend',()=>{if(typeof between==='function')beaconCheck()});
-// 🎲 moves the pointer (both ranges in the two-range mode) to a random spot on land in the 23 wards (area-weighted, water and airports skipped).
-function randomSpot(){const rs=regions,area=rs.reduce((x,r)=>x+r.area,0);for(let i=0;i<400;i++){let v=Math.random()*area,r=rs.find(x=>(v-=x.area)<0)||rs[0],b=r.bbox,p=[b[0]+Math.random()*(b[2]-b[0]),b[1]+Math.random()*(b[3]-b[1])];if(MapModel.inside(p,r.geometry)&&!LandModel.at(p))return p}return selected}
-el('dice').onclick=()=>{const b=el('dice');b.classList.remove('roll');void b.offsetWidth;b.classList.add('roll');
- // Two ranges: both A and B jump to their own random spots, and the map frames the pair.
- if(between()){const pa=randomSpot(),pb=randomSpot(),box=L.latLngBounds([[pa[1],pa[0]],[pb[1],pb[0]]]).pad(.15);map[reduceMotion?'fitBounds':'flyToBounds'](box,{maxZoom:15,duration:.9,padding:[24,24]});choose(pa);chooseB(pb);return}
- const p=randomSpot();map[reduceMotion?'setView':'flyTo']([p[1],p[0]],Math.max(map.getZoom(),15),{duration:.9});place(p)};
+// 🎲 for people new to Tokyo: a well-known place (or an ordinary neighborhood) that suits the hour, introduced in a line
+// under the map. Places where something is happening right now are favored and say why. In the two-range mode, B
+// is usually a contrasting kind of place.
+const GUIDE_CALM=new Set(['tourist','shrine','museum','park','garden','residential','campus','hospital','theme']);
+function guideWeight(s,t){const h=t.hf??t.h,we=t.dow===0||t.dow===6||!!t.holiday,wd=!we,rush=wd&&(h>=7&&h<9.5||h>=17.5&&h<20),lunch=wd&&h>=11.5&&h<13.5;
+ switch(s.time){
+  case 'tourist':return h>=9&&h<18?1:h>=18&&h<21?.4:.02;
+  case 'shrine':return h>=6&&h<17?1:.02;
+  case 'museum':return h>=9.5&&h<17&&t.dow!==1?1:.02;
+  case 'park':return h>=8&&h<18?(we?1.3:1):h>=18&&h<21?.2:.02;
+  case 'garden':return h>=9&&h<16.5&&t.dow!==1?1:.01;
+  case 'market':return h>=6&&h<11?1.3:h>=11&&h<14?.6:.03;
+  case 'shop':return h>=10&&h<20?(we?1.3:1):h>=20&&h<22?.3:.02;
+  case 'crossing':return h>=8?1:.3;
+  case 'dining':return h>=11.5&&h<22?1:.05;
+  case 'venue':return .12;
+  case 'theme':{const f=MAP_DATA.facilities.find(x=>x.kind==='theme'&&x.name===s.theme);return f&&h>=f.open&&h<f.close?(we?1.3:1):.01}
+  case 'night':return h>=18||h<2?1:h>=12?.15:.03;
+  case 'late':return h>=21||h<4?1:.03;
+  case 'office':return wd&&h>=8&&h<20?(lunch?1.3:1):wd&&h>=20&&h<23?.3:.05;
+  case 'office_night':return h>=17||h<1?1.2:wd&&h>=8?.8:.1;
+  case 'diet':return wd&&h>=9&&h<17?.5:.05;
+  case 'tocho':return h>=9&&h<22?.7:.05;
+  case 'station':return h>=5||h<.6?(rush?2:.8):.03;
+  case 'airport':return h>=6&&h<22?.9:.1;
+  case 'campus':return wd&&h>=9&&h<18?1:.1;
+  case 'hospital':return wd&&h>=8.5&&h<17?.8:.2;
+  default:return h>=19||h<8?1:.6}}
+// Something happening now: [reason, weight factor].
+function guideEvent(s,t){const h=t.hf??t.h,day=`${t.y}-${String(t.mo).padStart(2,'0')}-${String(t.d).padStart(2,'0')}`,wd=t.dow>0&&t.dow<6&&!t.holiday;
+ if(s.venue){const e=(MAP_DATA.venueSchedules?.events||[]).find(e=>e.venue===s.venue&&e.date===day&&e.mode!=='none'&&h>=(e.opens??e.starts-1)&&h<(e.endsAssumed??e.starts+3));if(e)return [`いま「${e.title}」が開かれています`,8]}
+ if(s.time==='diet'&&typeof DietModel!=='undefined'){const D=DietModel.diet(t),e=D.now[0];if(e)return [`いま${e.house==='both'?'衆参両院':e.house+'議院'}で${e.label}が行われています`,8];if(D.plenaryLower||D.plenaryUpper)return ['いま本会議が開かれている時間です',5];if(D.session&&wd&&h>=9&&h<17)return [`${D.session.kind==='臨時会'?'臨時国会':D.session.kind==='常会'?'通常国会':'特別国会'}の会期中です`,1.5]}
+ if(s.time==='tocho'&&h>=19&&h<21.5)return ['夜は都庁の壁面でプロジェクションマッピングが上映されています',4];
+ if(s.time==='station'&&wd&&h>=7&&h<9.5)return ['いまは通勤・通学ラッシュの時間です',1];
+ if(s.time==='station'&&wd&&h>=17.5&&h<20)return ['いまは帰宅ラッシュの時間です',1];
+ if(s.time==='market'&&h>=6&&h<10)return ['朝がいちばん活気のある時間です',1];
+ if(s.time==='office'&&wd&&h>=12&&h<13)return ['昼休みの会社員が街にあふれる時間です',1];
+ if(s.name==='歌舞伎町'&&(h>=22||h<3))return ['「眠らない街」がいちばんにぎわう時間です',1.3];
+ return null}
+let guideLast=[];
+function guidePick(t,group){const list=MAP_DATA.guideSpots.map(s=>{const ev=guideEvent(s,t);return {s,ev,w:guideWeight(s,t)*(ev?ev[1]:1)*(guideLast.includes(s.name)?.05:1)*(group==null?1:GUIDE_CALM.has(s.time)===group?1:.43)}});let v=Math.random()*list.reduce((x,y)=>x+y.w,0);return list.find(x=>(v-=x.w)<0)||list[0]}
+function guideLine(g,tag=''){const ward=MapModel.locate(g.s.xy,regions)?.name;return `${tag}🎲 ${g.s.name}${ward?'（'+ward+'）':''}　${g.s.desc}。${g.ev?g.ev[0]+'。':''}`}
+el('dice').onclick=()=>{const b=el('dice'),t=time();b.classList.remove('roll');void b.offsetWidth;b.classList.add('roll');
+ if(between()){const a=guidePick(t),bb=guidePick(t,!GUIDE_CALM.has(a.s.time));if(bb.s===a.s)return el('dice').onclick();guideLast=[a.s.name,bb.s.name];const pa=a.s.xy,pb=bb.s.xy,box=L.latLngBounds([[pa[1],pa[0]],[pb[1],pb[0]]]).pad(.15);map[reduceMotion?'fitBounds':'flyToBounds'](box,{maxZoom:15,duration:.9,padding:[24,24]});choose(pa);chooseB(pb);el('guide').textContent=guideLine(a,'A ')+'\n'+guideLine(bb,'B ');el('guide').hidden=false;return}
+ const g=guidePick(t);guideLast=[g.s.name];map[reduceMotion?'setView':'flyTo']([g.s.xy[1],g.s.xy[0]],Math.max(map.getZoom(),15),{duration:.9});choose(g.s.xy);el('guide').textContent=guideLine(g);el('guide').hidden=false};
 el('ab-bar').onclick=e=>{const b=e.target.closest('[data-target]');if(!b)return;target=b.dataset.target;abState()};
 let issuedCount=0,currentPerson=null,crowd=[];
 const options={sex:null,dec:null,pair:false,pairMode:'within',real:false},optionsKey='swapsim-map-options-v1';
