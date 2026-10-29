@@ -89,6 +89,9 @@ function beaconCheck(){const show=between()&&selectedB&&!beaconPaused&&map.latLn
  if(!beacons){const icon=k=>L.divIcon({className:'',html:`<span class="beacon beacon-${k}"></span>`,iconSize:[16,16],iconAnchor:[8,8]});beacons=L.layerGroup([L.marker([0,0],{icon:icon('a'),interactive:false,keyboard:false}),L.marker([0,0],{icon:icon('b'),interactive:false,keyboard:false})]).addTo(map)}
  const [a,b]=beacons.getLayers();a.setLatLng([selected[1],selected[0]]);b.setLatLng([selectedB[1],selectedB[0]])}
 map.on('zoomend',()=>{if(typeof between==='function')beaconCheck()});
+// 🎲 moves the active range's pointer to a random spot on land in the 23 wards (area-weighted, water and airports skipped).
+function randomSpot(){const rs=regions,area=rs.reduce((x,r)=>x+r.area,0);for(let i=0;i<400;i++){let v=Math.random()*area,r=rs.find(x=>(v-=x.area)<0)||rs[0],b=r.bbox,p=[b[0]+Math.random()*(b[2]-b[0]),b[1]+Math.random()*(b[3]-b[1])];if(MapModel.inside(p,r.geometry)&&!LandModel.at(p))return p}return selected}
+el('dice').onclick=()=>{const p=randomSpot(),b=el('dice');b.classList.remove('roll');void b.offsetWidth;b.classList.add('roll');map[reduceMotion?'setView':'flyTo']([p[1],p[0]],Math.max(map.getZoom(),15),{duration:.9});place(p)};
 el('ab-bar').onclick=e=>{const b=e.target.closest('[data-target]');if(!b)return;target=b.dataset.target;abState()};
 let issuedCount=0,currentPerson=null,crowd=[];
 const options={sex:null,dec:null,pair:false,pairMode:'within',real:false},optionsKey='swapsim-map-options-v1';
