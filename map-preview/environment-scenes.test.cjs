@@ -271,3 +271,12 @@ test('コンテナふ頭: port workers by hour at all four terminals, the gate q
  assert.ok(r.chubo.people.every(p=>/中央防波堤/.test(p[1])));
  assert.ok([...r.oi.people,...r.aomi.people].filter(p=>p[0]==='port_crew').every(p=>p[3]));
 });
+test('中央卸売市場・上野動物園・音楽大学: own people and scenes, with market closing days and the zoo closed on Mondays',()=>{
+ const r=JSON.parse(run(`(()=>{const T=(dow,d,h)=>({y:2026,mo:10,d,dow,h:Math.floor(h),hf:h,mi:0,rand:false}),go=(xy,t,re)=>LandEstimator.estimate(LandProfile.create(envContext,xy,80),t).filter(c=>re.test(c.role));
+ const toyosu=go([139.78272,35.643],T(4,29,6),/^market_/),sunday=go([139.78272,35.643],T(0,1,10),/^market_/),zoo=go([139.7705,35.7153],T(4,29,13),/^zoo_/),zooMon=go([139.7705,35.7153],T(1,2,13),/^zoo_/);
+ const f=MAP_DATA.facilities.find(x=>x.name==='武蔵野音楽大学'&&x.code.startsWith('131')),region=MAP_DATA.regions.find(x=>x.id===f.code),t=T(3,28,10.5),music=[];for(let i=0;i<10;i++){let c=MapModel.roles(f,t).find(c=>c.role==='student');music.push(mapPerson({...c,facility:f,region,roleP:.01},t).sit.text)}
+ return JSON.stringify({toyosu:[...new Set(toyosu.map(c=>c.label))],sunday:[...new Set(sunday.map(c=>c.label))],zoo:zoo.reduce((s,c)=>s+(c.role==='zoo_guest'?c.n:0),0),zooMon:zooMon.reduce((s,c)=>s+(c.role==='zoo_guest'?c.n:0),0),music})})()`));
+ assert.ok(r.toyosu.includes('仲卸業者')&&r.toyosu.includes('市場の買出人'),r.toyosu.join());assert.ok(!r.sunday.includes('仲卸業者'));
+ assert.ok(r.zoo>0);assert.equal(r.zooMon,0);
+ assert.ok(r.music.filter(x=>/レッスン|ソルフェージュ|合奏|声楽|音楽史|楽譜|練習室/.test(x)).length>=4,r.music.join('\n'));
+});

@@ -85,8 +85,36 @@ const TimeSituations=(()=>{
   class:['前日の撮影が長引き、眠気をこらえながら数学の授業を受けているところでした','仕事で休んだ分の課題プリントを、先生から受け取ったところでした','国語の授業で、教科書の音読を指名されたところでした','体育の授業で、ダンスの振りを班で合わせているところでした'],
   break:['休み時間に、仕事で抜けた授業のノートを友達に見せてもらっているところでした','次の授業の前に、マネージャーからの連絡をこっそり確かめたところでした'],
   lunch:['昼休みに、教室で友達とお弁当を広げたところでした','午後から仕事が入っているため、昼休みのうちに早退の届けを出しているところでした','同級生が出ているドラマの話で、教室が盛り上がっているところでした'],
-  after:['放課後、校門の近くで待っているマネージャーの車に乗り込むところでした','部活の練習で、グラウンドを走り込んでいるところでした','レッスンに向かう前に、駅までの道で台本を読み返しているところでした','撮影で休んだ日の補習を、教室で受けているところでした']}]];
- function schoolPool(c,k,t){if(c.role!=='student')return null;let s=schools.find(([re])=>re.test(c.facility?.name||''))?.[1],phase=/_class$/.test(k)?'class':/_lunch$/.test(k)?'lunch':/_after$/.test(k)?'after':k==='school_break'?'break':/arrival$/.test(k)?'arrival':null;if(!s||!phase)return null;return [...s[phase],...(s.season&&['class','after'].includes(phase)?s.season(t):[])]}
+  after:['放課後、校門の近くで待っているマネージャーの車に乗り込むところでした','部活の練習で、グラウンドを走り込んでいるところでした','レッスンに向かう前に、駅までの道で台本を読み返しているところでした','撮影で休んだ日の補習を、教室で受けているところでした']}],
+ // Music universities: lessons, ensembles and practice rooms.
+ [/^(東京音楽大学|武蔵野音楽大学|東邦音楽大学|東邦音楽短期大学)$/,{
+  arrival:['楽器ケースを背負い、朝いちばんの練習室の予約を取りに急いでいるところでした','譜面の入ったトートバッグを抱えて、キャンパスの門をくぐったところでした'],
+  class:['個人レッスンで、先生の前で練習してきた曲を通して弾いているところでした','ソルフェージュの授業で、聴こえた和音を五線譜に書き取っているところでした','オーケストラの合奏の授業で、指揮者に同じ小節を何度もやり直させられているところでした','声楽のレッスンで、イタリア語の歌詞の発音を直されているところでした','音楽史の講義で、バロック時代の楽譜の写真を見ているところでした'],
+  break:['チェロのケースを背負って、次のレッスン室へ急いでいるところでした','練習室の空きを確かめに、予約表の前に並んだところでした'],
+  lunch:['学食で、楽器ケースを足元に置いて定食を食べているところでした','中庭のベンチで、パンをかじりながら次の曲の楽譜を眺めているところでした'],
+  after:['練習室にこもり、メトロノームに合わせて同じフレーズを繰り返しているところでした','学内演奏会のリハーサルで、舞台袖で出番を待っているところでした','室内楽の仲間と、練習室で入りのタイミングを合わせているところでした','コンクールに向けて、先生に録音を聴いてもらっているところでした'],
+  teacher:['個人レッスンで、学生の弓の持ち方をそっと直しているところでした','合奏の授業で、指揮棒を止めて金管の音量を下げるよう伝えたところでした','声楽のレッスンで、ピアノの伴奏を弾きながら学生の息継ぎを聞いているところでした','入試の実技試験の課題曲を、教員の会議で選んでいるところでした']}],
+ // Music colleges for popular music: bands, vocals, sound engineering, dance.
+ [/^(尚美ミュージックカレッジ専門学校|東京スクールオブミュージック専門学校渋谷|東京スクールオブミュージック＆ダンス専門学校|ミューズモード音楽院|ミューズ音楽院)$/,{
+  arrival:['ギターケースを背負い、エレベーターで授業のフロアへ上がったところでした','スタジオの予約表で、今日の空き時間を確かめているところでした'],
+  class:['ボーカルの授業で、腹式呼吸の練習を繰り返しているところでした','レコーディング実習で、ミキサーのつまみを少しずつ動かしているところでした','バンドアンサンブルの授業で、ドラムのフィルインに合わせてギターを入れたところでした','作曲の授業で、パソコンの画面にコード進行を打ち込んでいるところでした','ダンスの授業で、鏡の前で振り付けの8カウントを合わせているところでした'],
+  break:['休み時間に、廊下でギターのチューニングをしているところでした'],
+  lunch:['昼休みに、バンド仲間と次のライブのセットリストを話し合っているところでした'],
+  after:['学校のスタジオで、バンドのメンバーとオリジナル曲を合わせているところでした','校内オーディションに向けて、空き教室で歌の練習をしているところでした','デビューを目指して、事務所に送る音源の最終チェックをしているところでした'],
+  teacher:['ボーカルの講師として、生徒の高音の出し方を一緒に確かめているところでした','レコーディング実習で、生徒の録った音のバランスを講評しているところでした']}],
+ // Music high schools: instrumental and vocal lessons on top of ordinary classes.
+ [/^(東京芸術大学音楽学部附属音楽高等学校|東京音楽大学付属高等学校|東邦音楽大学附属東邦高等学校|日本音楽高等学校)$/,{
+  arrival:['楽器ケースを抱えて、朝練のために早めに登校したところでした','電車の中で、イヤホンで課題曲の録音を聴きながら登校しているところでした'],
+  class:['実技のレッスンで、先生の前で今週の課題曲を弾いているところでした','ソルフェージュの授業で、新曲視唱の楽譜を初見で歌っているところでした','数学の授業で、指の爪が伸びていないか気にしながらノートを取っているところでした','合唱の授業で、自分のパートの音を取り直しているところでした'],
+  break:['休み時間に、練習室で少しでも指を動かしておこうとピアノに向かったところでした'],
+  lunch:['昼休みに、友達と次の実技試験の曲の話をしているところでした'],
+  after:['放課後の練習室で、メトロノームの速さを少しずつ上げているところでした','コンクールに向けて、先生の自宅のレッスンに向かう電車に乗ったところでした'],
+  teacher:['実技のレッスンで、生徒の手首の力の抜き方を見せているところでした']}],
+ [/^東京[芸藝]術大学$/,{teacher:['実技のレッスンで、学生の演奏を最後まで黙って聴いているところでした','アトリエを回り、学生の制作中の作品に一言ずつ声をかけているところでした','学内演奏会のリハーサルで、客席から響きを確かめているところでした']}]];
+ function schoolPool(c,k,t){const name=c.facility?.name||'',own=schools.filter(([re])=>re.test(name)).map(x=>x[1]);
+  // Teachers at a school with its own daily life get its lesson scenes in working hours.
+  if(c.role==='teacher'){const s=own.find(x=>x.teacher);return s&&/_work$/.test(k)?s.teacher:null}
+  if(c.role!=='student')return null;let s=own.find(x=>x.arrival),phase=/_class$/.test(k)?'class':/_lunch$/.test(k)?'lunch':/_after$/.test(k)?'after':k==='school_break'?'break':/arrival$/.test(k)?'arrival':null;if(!s||!phase)return null;return [...s[phase],...(s.season&&['class','after'].includes(phase)?s.season(t):[])]}
  function apply(c,P,t){let k=key(c,P,t);if(!k)return false;if(c.role==='general'&&P.sit?.text&&!/会社で|職場で|通勤|出勤|退勤|学校で|授業中/.test(P.sit.text))return false;let pool=pools[k];if(!pool?.length)throw Error('Missing time situation '+k);let own=schoolPool(c,k,t);if(own&&rnd()<.75)pool=own;let candidates=pool.filter(x=>x!==last.get(k));let text=pool!==own&&rnd()<.5?reuse(k,c,P,t):null,source=text?'swapsim':pool===own?'school-special':'supplement';if(!text)text=candidates[Math.floor(rnd()*candidates.length)]||pool[0];last.set(k,text);P.mapSituation=text;P.sit={text,state:k==='home_sleep'||k==='facility_sleep'?'sleep':k.includes('lunch')||k==='facility_meal'?'off':c.role==='student'||c.role==='area_student'?'school':c.role==='general'?P.sit.state:c.role==='resident'||c.role==='patient'?'off':'work',stateLabel:c.label,p:1,source};P.timeSituationKey=k;return true}
  return {configure,studentPhase,homeStudent,key,apply,homeCompatible,schoolPool,reuse};
 })();

@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "notes": "東京都中央卸売市場 in the 23 wards. Positions: OpenStreetMap Nominatim (ODbL); 葛西 and 板橋 approximated from their addresses. Footprint radii, scale and hours are game assumptions.",
+  "features": [
+    {
+      "id": "market-toyosu",
+      "name": "豊洲市場",
+      "xy": [
+        139.78272,
+        35.643
+      ],
+      "radius": 330,
+      "goods": [
+        "fish",
+        "produce"
+      ],
+      "scale": 1,
+      "visitors": 1
+    },
+    {
+      "id": "market-ota",
+      "name": "大田市場",
+      "xy": [
+        139.76072,
+        35.58043
+      ],
+      "radius": 300,
+      "goods": [
+        "produce",
+        "flower"
+      ],
+      "scale": 0.9,
+      "visitors": 0.15
+    },
+    {
+      "id": "market-shokuniku",
+      "name": "東京都中央卸売市場食肉市場",
+      "xy": [
+        139.74361,
+        35.62679
+      ],
+      "radius": 130,
+      "goods": [
+        "meat"
+      ],
+      "scale": 0.12,
+      "visitors": 0
+    },
+    {
+      "id": "market-adachi",
+      "name": "足立市場",
+      "xy": [
+        139.79988,
+        35.74048
+      ],
+      "radius": 110,
+      "goods": [
+        "fish"
+      ],
+      "scale": 0.2,
+      "visitors": 0.1
+    },
+    {
+      "id": "market-yodobashi",
+      "name": "淀橋市場",
+      "xy": [
+        139.69355,
+        35.70565
+      ],
+      "radius": 110,
+      "goods": [
+        "produce"
+      ],
+      "scale": 0.25,
+      "visitors": 0
+    },
+    {
+      "id": "market-itabashi",
+      "name": "板橋市場",
+      "xy": [
+        139.6504,
+        35.7918
+      ],
+      "radius": 140,
+      "goods": [
+        "produce",
+        "flower"
+      ],
+      "scale": 0.2,
+      "visitors": 0,
+      "approximate": true
+    },
+    {
+      "id": "market-setagaya",
+      "name": "世田谷市場",
+      "xy": [
+        139.62091,
+        35.63338
+      ],
+      "radius": 140,
+      "goods": [
+        "produce",
+        "flower"
+      ],
+      "scale": 0.2,
+      "visitors": 0
+    },
+    {
+      "id": "market-kitaadachi",
+      "name": "北足立市場",
+      "xy": [
+        139.76438,
+        35.79812
+      ],
+      "radius": 140,
+      "goods": [
+        "produce",
+        "flower"
+      ],
+      "scale": 0.2,
+      "visitors": 0
+    },
+    {
+      "id": "market-kasai",
+      "name": "葛西市場",
+      "xy": [
+        139.8605,
+        35.6465
+      ],
+      "radius": 150,
+      "goods": [
+        "produce",
+        "flower"
+      ],
+      "scale": 0.2,
+      "visitors": 0,
+      "approximate": true
+    }
+  ]
+}
