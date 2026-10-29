@@ -21,7 +21,10 @@ function time(){let t=jstNow();t.rand=false;t.holiday=!!holName(t);t.venueEvent=
 function minuteKey(t){return [t.y,t.mo,t.d,t.h,t.mi].join('/')}
 async function updateWeather(){await MapWeather.load(storage)}
 function facilitiesOnMap(){layer.clearLayers()}
-function choose(p){selected=p;circle.setLatLng([p[1],p[0]]).setRadius(radius);pin.setLatLng([p[1],p[0]]);refresh()}
+function choose(p){selected=p;circle.setLatLng([p[1],p[0]]).setRadius(radius);pin.setLatLng([p[1],p[0]]);refresh();auraCheck()}
+// When the whole view lies inside the range, the circle's rim is off screen; the map's edge glows instead.
+function auraCheck(){const b=map.getBounds(),c=circle.getLatLng(),r=circle.getRadius(),inside=[b.getNorthWest(),b.getNorthEast(),b.getSouthWest(),b.getSouthEast()].every(q=>map.distance(q,c)<=r);el('map').classList.toggle('in-range',inside)}
+map.on('moveend zoomend resize',auraCheck);
 function refresh(){
  const seq=++refreshSequence,t=time();clearTimeout(profileTimer);el('draw').disabled=!drawing;parts=[];
  el('test-result').textContent='';

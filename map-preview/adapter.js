@@ -105,8 +105,9 @@ function mapPerson(c,t){
  // Residential occupants are present at home/in the neighborhood, not at an off-site workplace.
  if(c.resident&&['work','commute','school'].includes(P.sit.state)){
   // A resident drawn at home cannot simultaneously be at a workplace or school.
-  let h=t.hf??t.h,pool=MAP_DATA.timeSituations[h<6||h>=23?'home_sleep':h<10?'worker_off_morning':h<16?'worker_off_day':h<19?'worker_off_evening':'worker_off_night'];
-  let text=pool[Math.floor(rnd()*pool.length)];P.sit={text,state:h<6||h>=23?'sleep':'off',stateLabel:'自宅で過ごしている',p:1};P.mapSituation=text;
+  // Draw from the original at-home scenes (filtered to the home and its neighborhood) before the short supplement pool.
+  let h=t.hf??t.h,student=P.age<18||['student','college','kid'].includes(P.occ.group),key=student?TimeSituations.homeStudent(P,t):h<6||h>=23?'home_sleep':h<10?'worker_off_morning':h<16?'worker_off_day':h<19?'worker_off_evening':'worker_off_night',pool=MAP_DATA.timeSituations[key];
+  P.sit={...P.sit,state:'off'};let text=(rnd()<.8?TimeSituations.reuse(key,c,P,t):null)||pool[Math.floor(rnd()*pool.length)];P.sit={text,state:key==='home_sleep'?'sleep':'off',stateLabel:'自宅で過ごしている',p:1};P.mapSituation=text;
  }
  TimeSituations.apply(c,P,t);
  SpecialFacilities.apply(c,P,t);

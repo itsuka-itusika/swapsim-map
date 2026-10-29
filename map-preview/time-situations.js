@@ -42,7 +42,7 @@ const TimeSituations=(()=>{
  // A nearby river alone does not establish an accessible fishing spot.
  // Neighborhood shops, cafes, parks and baths fit 住宅内・近隣; venues the map models as their own places
  // (stadiums, malls, offices, schools, stations, hospitals, nightlife) do not.
- function homeCompatible(text){if(/夢の中/.test(text))return true;return !/川辺|河原|釣り糸|釣り竿|キャンプ場|テントの|映画館|劇場|コンサート|ライブ会場|美術館|博物館|水族館|動物園|遊園地|ゴルフ場|スキー場|登山|山頂|海水浴|旅行先|空港|新幹線|ホテルに|旅館に|球場|スタジアム|スタンドで|ショッピングモール|デパート|百貨店|物産展|電車に乗|電車の中|電車で|車内で|会社で|職場で|オフィスで|出張|教室で|放課後の教室|キャンパス|学食|学園祭|模擬店|アルバイト先|バイト先|のアルバイトで|居酒屋|キャバクラ|パチンコ|カラオケ|ゲームセンター|ボウリング|病院の|歯医者の待合室|待合室で|ジムで|ジムの|ダンス教室|ヨガの教室|駐車場で|テーマパーク|遊園地|絶叫マシン/.test(text)}
+ function homeCompatible(text){if(/夢の中/.test(text))return true;return !/免許の更新|高齢者講習|運転テスト|運転免許|試験場|教習所|川辺|河原|釣り糸|釣り竿|キャンプ場|テントの|映画館|劇場|コンサート|ライブ会場|美術館|博物館|水族館|動物園|遊園地|ゴルフ場|スキー場|登山|山頂|海水浴|旅行先|空港|新幹線|ホテルに|旅館に|球場|スタジアム|スタンドで|ショッピングモール|デパート|百貨店|物産展|電車に乗|電車の中|電車で|車内で|会社で|職場で|オフィスで|出張|教室で|放課後の教室|キャンパス|学食|学園祭|模擬店|アルバイト先|バイト先|のアルバイトで|居酒屋|キャバクラ|パチンコ|カラオケ|ゲームセンター|ボウリング|病院の|歯医者の待合室|待合室で|ジムで|ジムの|ダンス教室|ヨガの教室|駐車場で|テーマパーク|遊園地|絶叫マシン/.test(text)}
  function reuse(k,c,P,t){
   if(typeof fromPool!=='function')return null;
   // The original school pools have no kindergarten or university-staff scenes.
@@ -86,7 +86,7 @@ const TimeSituations=(()=>{
   after:['放課後、校門の近くで待っているマネージャーの車に乗り込むところでした','部活の練習で、グラウンドを走り込んでいるところでした','レッスンに向かう前に、駅までの道で台本を読み返しているところでした','撮影で休んだ日の補習を、教室で受けているところでした']}]];
  function schoolPool(c,k,t){if(c.role!=='student')return null;let s=schools.find(([re])=>re.test(c.facility?.name||''))?.[1],phase=/_class$/.test(k)?'class':/_lunch$/.test(k)?'lunch':/_after$/.test(k)?'after':k==='school_break'?'break':/arrival$/.test(k)?'arrival':null;if(!s||!phase)return null;return [...s[phase],...(s.season&&['class','after'].includes(phase)?s.season(t):[])]}
  function apply(c,P,t){let k=key(c,P,t);if(!k)return false;if(c.role==='general'&&P.sit?.text&&!/会社で|職場で|通勤|出勤|退勤|学校で|授業中/.test(P.sit.text))return false;let pool=pools[k];if(!pool?.length)throw Error('Missing time situation '+k);let own=schoolPool(c,k,t);if(own&&rnd()<.75)pool=own;let candidates=pool.filter(x=>x!==last.get(k));let text=pool!==own&&rnd()<.5?reuse(k,c,P,t):null,source=text?'swapsim':pool===own?'school-special':'supplement';if(!text)text=candidates[Math.floor(rnd()*candidates.length)]||pool[0];last.set(k,text);P.mapSituation=text;P.sit={text,state:k==='home_sleep'||k==='facility_sleep'?'sleep':k.includes('lunch')||k==='facility_meal'?'off':c.role==='student'||c.role==='area_student'?'school':c.role==='general'?P.sit.state:c.role==='resident'||c.role==='patient'?'off':'work',stateLabel:c.label,p:1,source};P.timeSituationKey=k;return true}
- return {configure,studentPhase,homeStudent,key,apply,homeCompatible,schoolPool};
+ return {configure,studentPhase,homeStudent,key,apply,homeCompatible,schoolPool,reuse};
 })();
 if(typeof module!=='undefined')module.exports=TimeSituations;
 
