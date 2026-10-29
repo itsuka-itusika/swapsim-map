@@ -68,7 +68,9 @@ const TimeSituations=(()=>{
    if(stage==='college')list=OFF_TX.college||[];else if(stage&&SCHOOL_TX[stage])list=SCHOOL_TX[stage];else if(stage)list=[];
   }
   const forbidden=/学食|給食|昼食|弁当/.test(k)?null:k.endsWith('_class')?/部活|放課後|昼休み|学食|給食/:k==='school_break'?/授業を受|講義を受/:null;
-  let pk=fromPool(list,ctx,e=>{let text=textOf(e);if(c.resident&&!homeCompatible(text))return false;if(typeof PersonContext!=='undefined'&&PersonContext.away(text,c))return false;if(text===last.get(k)||re&&!re.test(text)||forbidden&&forbidden.test(text))return false;if(k.startsWith('college')&&/自宅|一人暮らし|布団|部屋で|アルバイト|バイト先|教習所|居酒屋|古着屋|面接/.test(text))return false;if(k.endsWith('_work')&&/自宅|在宅|帰宅|昼食|昼休み|退勤|出勤|通勤/.test(text))return false;if(k.includes('_lunch')&&/授業中|講義中|授業を受|講義を受|早弁|部活/.test(text))return false;if(k.endsWith('_after')&&(t.hf??t.h)<15&&/部活|サークル/.test(text))return false;return true});return pk?fillText(textOf(pk.e),P):null;
+  let pk=fromPool(list,ctx,e=>{let text=textOf(e);if(c.resident&&!homeCompatible(text))return false;if(typeof PersonContext!=='undefined'&&PersonContext.away(text,c))return false;if(text===last.get(k)||re&&!re.test(text)||forbidden&&forbidden.test(text))return false;if(k.startsWith('college')&&/自宅|一人暮らし|布団|部屋で|アルバイト|バイト先|教習所|居酒屋|古着屋|面接/.test(text))return false;if(k.endsWith('_work')&&/自宅|在宅|帰宅|昼食|昼休み|退勤|出勤|通勤/.test(text))return false;if(k.includes('_lunch')&&/授業中|講義中|授業を受|講義を受|早弁|部活/.test(text))return false;if(k.endsWith('_after')&&(t.hf??t.h)<15&&/部活|サークル/.test(text))return false;return true});// A filtered original pool with little total weight (one rare seasonal line, say) gives way to the map's own pool in
+  // proportion, so a rare line keeps its rarity.
+  if(pk&&pk.tot<3&&rnd()>pk.tot/3)return null;return pk?fillText(textOf(pk.e),P):null;
  }
  // Schools with their own daily life. Matched by the facility name in the school dataset (東京芸術大学 is spelled with 芸 there).
  const schools=[[/^東京[芸藝]術大学$/,{
