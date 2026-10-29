@@ -88,7 +88,7 @@ test('redistribution stays finite and conserves population across locations and 
 test('crowd pairs are independently generated in both modes and display both people',()=>{
  const result=run(`(()=>{let dom={};globalThis.el=id=>dom[id]||(dom[id]={innerHTML:'',textContent:'',setAttribute(){}});globalThis.esc=s=>String(s).replace(/[&<>"']/g,'');const f=MAP_DATA.facilities.find(f=>f.kind==='station'),region=MAP_DATA.regions.find(r=>r.id===f.code),t={y:2026,mo:10,d:28,dow:3,h:12,hf:12,mi:0,rand:false};parts=MapModel.roles(f,t).map(c=>({...c,region,facility:f,n:100}));options.sex=null;options.dec=null;options.pair=false;const main=sampleResult(t,true);crowd=Array.from({length:4},()=>samplePair(t));currentPerson=crowd[0];renderCrowd();const html=dom.crowd.innerHTML,first=crowd[0];if(main.kind==='pair')throw Error('single main result changed');if(crowd.some(x=>x.kind!=='pair'||x.A===x.B||x.A.t!==t||x.B.t!==t))throw Error('bad single-mode crowd pair');if(!html.includes(first.A.sit.text)||!html.includes(first.B.sit.text)||!html.includes(first.A.place)||!html.includes(first.B.place)||!html.includes('通知書に表示中'))throw Error('pair details absent');MapNotice.html(first);options.pair=true;const mainPair=sampleResult(t,true);crowd=Array.from({length:4},()=>samplePair(t));renderCrowd();if(mainPair.kind!=='pair'||crowd.some(x=>x.kind!=='pair'))throw Error('bad pair mode');return [dom['crowd-title'].textContent,html.match(/data-crowd=/g).length,dom.crowd.innerHTML.match(/data-crowd=/g).length]})()`);
  assert.equal(result[0],'同じ瞬間に入れ替わった人たち');assert.equal(result[1],4);assert.equal(result[2],4);
- const source=fs.readFileSync('map-preview/app.js','utf8');const draw=source.slice(source.indexOf("el('draw').onclick="),source.indexOf('renderOptions();',source.indexOf("el('draw').onclick=")));assert.match(draw,/Array\.from\(\{length:4\}/);assert.match(draw,/estimateMinute!==minuteKey\(t\)/);
+ const source=fs.readFileSync('map-preview/app.js','utf8');const draw=source.slice(source.indexOf("el('draw').onclick="),source.indexOf('renderOptions();',source.indexOf("el('draw').onclick=")));assert.match(draw,/Array\.from\(\{length:Math\.max\(0,fewPairs\(\)-1\)\}/);assert.match(draw,/estimateMinute!==minuteKey\(t\)/);
 });
 test('two-range pair mode always swaps someone from range A with someone from range B',()=>{
  const source=fs.readFileSync('map-preview/app.js','utf8');
@@ -97,4 +97,11 @@ test('two-range pair mode always swaps someone from range A with someone from ra
  const result=JSON.parse(run(`(()=>{const st=MAP_DATA.facilities.filter(f=>f.kind==='station'),fa=st.find(f=>f.name==='新宿駅'),fb=st.find(f=>f.name==='上野駅'),t={y:2026,mo:10,d:28,dow:3,h:12,hf:12,mi:0,rand:false},rows=f=>MapModel.roles(f,t).map(c=>({...c,region:MAP_DATA.regions.find(r=>r.id===f.code),facility:f,n:100}));parts=rows(fa);partsB=rows(fb);options.sex=null;options.dec=null;options.pair=true;options.pairMode='between';let out=[];for(let i=0;i<10;i++){const R=sampleResult(t,true),O=samplePair(t,false,between());out.push([R.A.place,R.B.place,O.A.place,O.B.place])}options.pairMode='within';const W=sampleResult(t,true);out.push(['within',W.B.place]);return JSON.stringify(out)})()`));
  for(const [a,b,oa,ob] of result.slice(0,10)){assert.equal(a,'新宿駅');assert.equal(b,'上野駅');assert.equal(oa,'新宿駅');assert.equal(ob,'上野駅')}
  assert.equal(result[10][1],'新宿駅');
+});
+test('a nearly empty range swaps only one or two pairs',()=>{
+ const source=fs.readFileSync('map-preview/app.js','utf8');
+ run(`globalThis.el=id=>({innerHTML:'',textContent:'',setAttribute(){}});globalThis.storage=null;globalThis.parts=[];globalThis.partsB=[];`);
+ if(run('typeof samplePair')!=='function')run(source.slice(source.indexOf('let issuedCount='),source.indexOf("el('test').onclick")));
+ const r=JSON.parse(run(`(()=>{options.pair=true;options.pairMode='within';const at=n=>{parts=[{n}];return fewPairs()};return JSON.stringify([at(.1),at(2.9),at(5),at(11.9),at(12),at(5000)])})()`));
+ assert.deepEqual(r,[1,1,2,2,5,5]);
 });
