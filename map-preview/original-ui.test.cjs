@@ -6,7 +6,7 @@ test('campus pupils retain original school-year labels and eligible birth cohort
 
 test('map layout follows the requested order and removes editable time controls',()=>{
  const source=fs.readFileSync('map-preview/index.html','utf8');
- const ids=['map','query','radii','clock','draw','opts','person','crowd'];
+ const ids=['query','map','radii','clock','draw','opts','person','crowd'];
  const positions=ids.map(id=>source.indexOf(`id="${id}"`));
  assert.ok(positions.every((p,i)=>p>=0&&(!i||p>positions[i-1])));
  assert.ok(source.includes('Mass Body-Swap Simulator'));

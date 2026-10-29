@@ -159,7 +159,7 @@ test('roads carry drivers and passengers by road type and hour, and major cinema
  assert.ok(road(r.xNight).length>50&&road(r.xNight).every(p=>p[3]==='road'));
  const share=(x,re)=>road(x).filter(p=>re.test(p[0])).length/Math.max(1,road(x).length);
  assert.ok(r.sx3.freight>r.sx14.freight&&r.sx14.car>r.sx3.car,JSON.stringify([r.sx3,r.sx14]));assert.ok(r.sn.taxi>.2,JSON.stringify(r.sn));
- assert.ok(road(r.xNight).some(p=>p[4]==='首都高速道路'||p[4]==='高速道路'));
+ assert.ok(road(r.xNight).some(p=>/区 高速道路$/.test(p[4])));assert.ok(road(r.nNight).some(p=>/区 道路$/.test(p[4])));
  assert.ok(road(r.xNight).filter(p=>/driver/.test(p[0])).every(p=>p[5]>=18));
  assert.ok(r.cinemas>=30);assert.ok(r.cinema.filter(p=>p[0]==='place_cinema_guest').length>40&&r.cinemaStaff);
  assert.equal(r.cinemaClosed.filter(p=>p[0]==='place_cinema_guest').length,0);
@@ -192,4 +192,12 @@ test('自宅 and 職場 follow the final scene text',()=>{
  assert.equal(k('area_office','work','会議の資料を印刷しているところでした'),'職場');
  assert.equal(k('area_office','work','昼休みに、近くのカフェでサンドイッチを食べているところでした'),'');
  assert.equal(k('area_shopping','off','店先のメニューを見比べているところでした'),'');
+});
+test('major prep schools are their own facilities with 浪人生 by day and high-school students in the evening',()=>{
+ const r=JSON.parse(run(`(()=>{const go=(name,h,dow,d)=>{let f=MAP_DATA.facilities.find(x=>x.name===name),t={y:2026,mo:10,d,dow,h,hf:h+.1,mi:6,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,f.xy,20),t).filter(c=>c.n>0),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<80;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,P.occ.label,P.place])}return out};
+ return JSON.stringify({kinds:Object.fromEntries(['代々木ゼミナール本部校','河合塾新宿校','駿台予備学校','駿台電子情報アンドビジネス専門学校','駿台学園高等学校'].map(n=>[n,MAP_DATA.facilities.find(f=>f.name===n)?.kind])),day:go('代々木ゼミナール本部校',11,3,28),evening:go('代々木ゼミナール本部校',19,3,28)})})()`));
+ assert.deepEqual(r.kinds,{'代々木ゼミナール本部校':'prep','河合塾新宿校':'prep','駿台予備学校':'prep','駿台電子情報アンドビジネス専門学校':'college','駿台学園高等学校':'high'});
+ assert.ok(r.day.filter(p=>p[0]==='prep_ronin').length>40&&r.day.filter(p=>p[0]==='prep_ronin').every(p=>/^浪人生/.test(p[1])));
+ assert.ok(r.evening.filter(p=>p[0]==='prep_hs').length>20&&r.evening.filter(p=>p[0]==='prep_hs').every(p=>/^高校[1-3]年生$/.test(p[1])));
+ assert.ok(r.day.every(p=>!/専門学校の/.test(p[1])));
 });

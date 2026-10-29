@@ -8,6 +8,7 @@ const MapModel = (() => {
  // Disk intersection; point sources are spread over a small modeled facility footprint, never a census mesh.
  function overlap(d,r,s){if(d>=r+s)return 0;if(d<=Math.abs(r-s))return r>=s?1:r*r/(s*s);let a=Math.acos(Math.max(-1,Math.min(1,(d*d+s*s-r*r)/(2*d*s)))),b=Math.acos(Math.max(-1,Math.min(1,(d*d+r*r-s*s)/(2*d*r))));return (s*s*a+r*r*b-.5*Math.sqrt(Math.max(0,(-d+s+r)*(d+s-r)*(d-s+r)*(d+s+r))))/(Math.PI*s*s)}
  function roles(f,t){if(['station','theme'].includes(f.kind))return SpecialFacilities.roles(f,t);if(['tv','radio'].includes(f.kind))return BroadcastModel.roles(f,t);let day=t.h>=8&&t.h<18,school=day&&t.dow>0&&t.dow<6&&!t.holiday&&!(typeof schoolVac==='function'&&schoolVac(t));let female=typeof SchoolPolicy!=='undefined'?SchoolPolicy.femaleRate(f,t):f.sex==='female'?1:f.sex==='male'?0:.5;
+ if(f.kind==='prep'&&typeof PrepModel!=='undefined')return PrepModel.roles(f,t);
  if(f.kind==='care')return [{role:'resident',label:'入居者',n:60,min:75,max:99,female:.7},{role:'care',label:'介護職員',n:day?20:5,min:22,max:65,female:.7}];
  if(f.kind==='hospital')return [{role:'patient',label:'患者',n:day?120:60,min:0,max:95,female:.55},{role:'nurse',label:'看護師',n:day?45:15,min:22,max:65,female:.85},{role:'doctor',label:'医師',n:day?15:4,min:26,max:70,female:.3}];
  let bands={primary:[6,11,300],middle:[12,14,300],high:[15,17,600],university:[18,24,1500],college:[18,24,300],kindergarten:[3,5,80]};let b=bands[f.kind];if(!b)return [];

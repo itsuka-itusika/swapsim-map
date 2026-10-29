@@ -6,7 +6,8 @@ const RoadModel=(()=>{
  const BASE={x:90,n:70,p:45},CENTRAL=new Set(['13101','13102','13103','13104','13113']);
  function configure(data){roads=(data?.roads||[]).map((r,i)=>{let pts=[];for(let j=0;j<r.c.length;j+=2)pts.push([r.c[j],r.c[j+1]]);return {...r,id:'road-'+i,pts,bbox:[Math.min(...pts.map(p=>p[0])),Math.min(...pts.map(p=>p[1])),Math.max(...pts.map(p=>p[0])),Math.max(...pts.map(p=>p[1]))]}});index=new S.Index(roads)}
  const hourly=h=>h<4?.2:h<6?.45:h<7?.8:h<10?1.15:h<17?1:h<20?1.1:h<22?.7:.45;
- function name(r,region){return r.name||(r.k==='x'?(r.toll?'首都高速道路':'高速道路'):(r.k==='n'?'国道':'都道')+(region?'（'+region.name+'）':''))}
+ // Shown like other places: ward plus 道路 or 高速道路 (渋谷区 道路, 港区 高速道路).
+ function name(r,region){return r.name||(region?region.name+' ':'')+(r.k==='x'?'高速道路':'道路')}
  // Vehicle mix: [key, share, occupants]. Night shifts toward trucks and taxis; route buses stop around midnight.
  function mix(k,h,we,central){let night=h>=22||h<5,day=h>=7&&h<19,rush=!we&&(h>=7&&h<9.5||h>=17&&h<19.5);
   let car=k==='x'?.45:.45,truck=k==='x'?.22:.15,trailer=k==='x'?.08:k==='n'?.02:.01,taxi=k==='x'?.06:central?.22:.12,bus=k==='x'?.03:.05,delivery=k==='x'?.05:.12,dump=k==='x'?0:!we&&day?.03:0;
