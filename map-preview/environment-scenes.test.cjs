@@ -159,7 +159,7 @@ test('roads carry drivers and passengers by road type and hour, and major cinema
  assert.ok(road(r.xNight).length>50&&road(r.xNight).every(p=>p[3]==='road'));
  const share=(x,re)=>road(x).filter(p=>re.test(p[0])).length/Math.max(1,road(x).length);
  assert.ok(r.sx3.freight>r.sx14.freight&&r.sx14.car>r.sx3.car,JSON.stringify([r.sx3,r.sx14]));assert.ok(r.sn.taxi>.2,JSON.stringify(r.sn));
- assert.ok(road(r.xNight).some(p=>/区 高速道路$/.test(p[4])));assert.ok(road(r.nNight).some(p=>/区 道路$/.test(p[4])));
+ assert.ok(road(r.xNight).some(p=>p[4]==='首都高速道路'||p[4]==='高速道路'));assert.ok(road(r.nNight).some(p=>/区 道路$/.test(p[4])));
  assert.ok(road(r.xNight).filter(p=>/driver/.test(p[0])).every(p=>p[5]>=18));
  assert.ok(r.cinemas>=30);assert.ok(r.cinema.filter(p=>p[0]==='place_cinema_guest').length>40&&r.cinemaStaff);
  assert.equal(r.cinemaClosed.filter(p=>p[0]==='place_cinema_guest').length,0);
