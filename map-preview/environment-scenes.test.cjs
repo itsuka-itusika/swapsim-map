@@ -237,3 +237,9 @@ test('trains on the tracks inside the circle: rare riders, more at rush, labelle
  assert.ok(r.rush.share>.05&&r.rush.share<=.1501,String(r.rush.share));assert.ok(r.day.share>0&&r.day.share<=.0501,String(r.day.share));assert.equal(r.night.share,0);
  for(const [role,place,job] of [...r.rush.people,...r.day.people]){assert.match(place,/^\S+(線|駅|ライナー|ゆりかもめ|モノレール) 列車内$/,place);if(role==='rail_driver')assert.match(job,/運転士/);if(role==='rail_conductor')assert.match(job,/車掌/)}
 });
+test('ホテル街: guests aged 20+ and hotel staff only in the hotel districts, with fitting scenes',()=>{
+ const r=JSON.parse(run(`(()=>{const go=(xy,h,dow,d)=>{let t={y:2026,mo:10,d,dow,h,hf:h+.2,mi:12,rand:false},p=LandProfile.create(envContext,xy,150),parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),lh=parts.filter(c=>c.loveHotel),out=[];for(let c of lh)for(let i=0;i<8;i++){let P=mapPerson({...c,roleP:.01},t);out.push([c.role,P.age,P.occ.label,P.sit.text,P.place])}return {share:lh.reduce((s,c)=>s+c.n,0)/tot,out}};
+ return JSON.stringify({day:go([139.6945,35.6585],14,3,28),night:go([139.6945,35.6585],3,6,31),ginza:go([139.765,35.672],21,5,30)})})()`));
+ assert.ok(r.day.share>.05&&r.night.share>r.day.share,JSON.stringify([r.day.share,r.night.share]));assert.equal(r.ginza.share,0);
+ for(const [role,age,job,text,place] of [...r.day.out,...r.night.out]){assert.equal(place,'道玄坂・円山町');if(role==='area_lovehotel_guest')assert.ok(age>=20&&!/高校|中学|小学/.test(job),job);else{assert.match(job,/フロント|清掃/);if(/清掃/.test(job))assert.doesNotMatch(text,/フロント/)}}
+});

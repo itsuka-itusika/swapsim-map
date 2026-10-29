@@ -48,6 +48,8 @@ const LandEstimator=(()=>{
  if(tag.student>0)add('student',tag.student*.25);
  if(c.type==='tourism'){add('tourist',3);add('inbound',tag.inbound||1)}else{add('shopping',c.subtype==='night'?.2:2);add('night',c.subtype==='night'?4:(tag.night||0)*.25);add('night_worker',c.subtype==='night'?1:.12);add('subculture',(tag.subculture||0)*.6);add('tourist',(tag.tourist||0)*.3);add('inbound',(tag.inbound||0)*.3);if(area.adultArea&&area.adultWeight>0){let a=area.adultArea,weight=area.adultWeight;for(let [k,factor] of [['adult_customer',.32],['adult_worker',.16],['cabaret_worker',.05]]){if(k==='cabaret_worker'&&a.adultStyle==='sexservice')continue;let d=AreaModel.types[k];out.push(row('area_'+k,d[0],weight*factor*AreaModel.activity(k,t),d[1],d[2],d[3],{area:a}))}if(a.hostClubs){let d=AreaModel.types.host_worker;out.push(row('area_host_worker',d[0],weight*.04*a.hostClubs*AreaModel.activity('host_worker',t),d[1],d[2],d[3],{area:a}))}}}
  out.push(...styleRows(area,t));
+ // ホテル街: couples staying at the short-stay hotels and the staff.
+ if(typeof LoveHotelModel!=='undefined')out.push(...LoveHotelModel.rows(tag,t,row,area.sources?.lovehotel||area));
  if(tag.publishing>=2)out.push(row('urban_editor','編集者',.12,22,69,.5,{jobTag:'office',urbanTag:'publishing'}));
  if(c.subtype==='books'||tag.books>=2)out.push(row('urban_books','書店員',.2,20,69,.5,{jobTag:'retail',urbanTag:'books'}));
  if(c.subtype==='hotel')out.push(row('urban_hotel','ホテルの従業員',.5,20,65,.5,{jobTag:'hotel',urbanTag:'hotel'}));
@@ -63,6 +65,8 @@ const LandEstimator=(()=>{
  const density={residential:c.region.residentialDensity||c.region.density||6000,mixed:c.region.density||6000,commercial:14000,office:18000,industrial:2600,medical:7000,tourism:3000,transport:12000,public:3000,mall:16000,sports:1800,religious:900,agriculture:35,waterfront:250}[c.type]||1000;
  let factor=timeFactor(c.type,c.subtype,t),opening=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null;
  if(opening===false)factor*=.02;
+ // ホテル街 stays occupied overnight: its hotels hold the night's guests even when the street is quiet.
+ {let lv=c.areaTag?.tags?.lovehotel||0,h=t.hf??t.h;if(lv>=1.5&&['commercial','mixed'].includes(c.type)&&(h>=22||h<9))factor=Math.max(factor,.35*Math.min(1,lv/4))}
  // Nearby stations change accessibility modestly; station occupants remain a separate component.
  let traffic=1;if(['office','commercial','mall'].includes(c.type)){let near=profile.context.facilities.query(S.box(c.xy||profile.point,300)).filter(f=>f.kind==='station');if(near.length)traffic+=.12*(!weekend(t)&&(t.h>=7&&t.h<9||t.h>=17&&t.h<20)?1.5:1)}
  const housing=c.type==='residential'?(c.subtype==='family'&&c.precision==='polygon'?.55:c.subtype==='apartments'?1.25:c.housingWeight||1):1;
