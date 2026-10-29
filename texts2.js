@@ -2215,7 +2215,7 @@ const teenMens = arr => arr.map(e => [e[0], e[1], e[2], Object.assign({ hl: 'men
   COMMUTE_TX.am.push([7, 9.5, 'マタニティマークを付けたバッグを抱えて、満員電車の吊り革につかまっているところでした', { hl: 'preg', sex: 'f', pw: [12, 33], mode: 'rail', w: 3 }]);
   ['office', 'it', 'sales'].forEach(k => WORK_TX[k] && WORK_TX[k].push([9, 17.5, '産休前の引き継ぎ資料を、後任の人のためにまとめているところでした', { hl: 'preg', sex: 'f', pw: [28, 33], w: 3 }]));
   // もともとあった妊娠・授乳の文も、その状態の人だけに出す
-  const PREG_RE = /妊婦健診|産婦人科|つわり|マタニティ/, NURSE_RE = /授乳/;
+  const PREG_RE = /妊婦健診|産婦人科|つわり|マタニティ|お腹の子|母子手帳/, NURSE_RE = /授乳/;
   // 妊娠中には出さない場面（お酒・たばこ・激しい運動など）
   const NOPREG_RE = /晩酌|ビール|お酒|酒を|日本酒|焼酎|ハイボール|チューハイ|ワイン|熱燗|ウイスキー|地酒|居酒屋|飲み会|はしご酒|スナック|二日酔い|たばこ|タバコ|喫煙|サウナ|ジェットコースター|絶叫|スキー|スノーボード|ボクシング|ラグビー|筋トレ|ベンチプレス|フルマラソン|献血/;
   // 生理中には出さない場面（プール・海水浴・銭湯・温泉など）
@@ -2226,7 +2226,7 @@ const teenMens = arr => arr.map(e => [e[0], e[1], e[2], Object.assign({ hl: 'men
     const o = typeof e === 'string' ? null : (e[3] || null);
     const add = {};
     if (hlOK && !(o && o.hl)) {
-      if (PREG_RE.test(x)) Object.assign(add, { hl: 'preg', sex: 'f', w: 3 }, /つわり/.test(x) ? { pw: [5, 16] } : { pw: [8, 40] });
+      if (PREG_RE.test(x)) Object.assign(add, { hl: 'preg', sex: 'f', w: 3 }, /つわり/.test(x) ? { pw: [5, 16] } : /お腹の子が動/.test(x) ? { pw: [18, 40] } : { pw: [8, 40] });
       else if (NURSE_RE.test(x) && o && o.sex === 'f') Object.assign(add, { hl: 'pp', w: 4 });
     }
     if (NOPREG_RE.test(x)) add.np = 1;

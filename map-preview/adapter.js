@@ -1,7 +1,11 @@
 // The notice shows the hobby right above the scene, so a scene of a distinctive pastime (将棋, 編み物, 楽器 ...) needs that
 // hobby; the original only lowers such scenes to 0.65. Everyday activities (reading, cooking, films) are left as they are.
 const MAP_STRICT_HOBBY=[[/囲碁/,28],[/将棋/,29],[/編み物|手芸|刺しゅう/,18],[/ギター|ピアノ|楽器|バイオリン|ウクレレ/,8],[/キャンプ/,33],[/盆栽/,20],[/書道|筆を/,14],[/茶道|お点前/,16],[/華道|生け花/,15],[/陶芸|ろくろ/,23],[/日本舞踊/,12],[/俳句/,25]];
-if(typeof profileEntryWeight==='function'){const original=profileEntryWeight;profileEntryWeight=function(e,P){const text=typeof e==='string'?e:e[2],hit=MAP_STRICT_HOBBY.find(([re])=>re.test(text));if(hit&&P&&!(P.hobbies||[]).some(x=>x.i===hit[1]))return 0;return original(e,P)}}
+// It filters entries (not weights): the original picks an activity class first, so a zero weight could not stop a class
+// whose only line is that pastime.
+if(typeof entryOK==='function'){const original=entryOK;entryOK=function(e,ctx){if(!original(e,ctx))return false;const P=ctx?.P,text=typeof e==='string'?e:e?.[2];if(!P||typeof text!=='string')return true;const hit=MAP_STRICT_HOBBY.find(([re])=>re.test(text));if(hit&&!(P.hobbies||[]).some(x=>x.i===hit[1]))return false;
+ // Scenes that show an injury (crutches, a cast) give the person that injury; most draws skip them to keep it rare.
+ return !(/松葉杖|ギプス|ぎっくり腰/.test(text)&&rnd()<.75)}}
 // Visitors from abroad: a foreign name and origin, and no domestic occupation or school grade.
 function makeInbound(P){
  let markets=MAP_DATA.inbound.markets,total=markets.reduce((s,x)=>s+x.weight,0),v=rnd()*total,market=markets.find(x=>(v-=x.weight)<0)||markets.at(-1);
@@ -105,7 +109,7 @@ function mapPerson(c,t){
    // Retain swapsim text while excluding sleeping/home scenes for people drawn as visitors.
    const ok=()=>c.role==='area_office'?['work','commute'].includes(P.sit.state):['off','commute','school'].includes(P.sit.state)&&/店|街|駅|カフェ|買い物|買い|歩|待ち合わせ|友人|友達|飲食|居酒屋/.test(P.sit.text)&&! /自宅|家で|部屋|眠|寝|授業/.test(P.sit.text);
    for(let i=0;i<12&&!ok();i++)P.sit=situation(P,t);
-   P.mapSituation=ok()?P.sit.text:VisitorSituations.text({...c,role:'area_shopping'},P,t,rnd);
+   P.mapSituation=ok()&&!(/松葉杖|ギプス|ぎっくり腰/.test(P.sit.text)&&rnd()<.65)?P.sit.text:VisitorSituations.text({...c,role:'area_shopping'},P,t,rnd);
   }
   if(c.role==='area_inbound')makeInbound(P);
   if(!Nightlife.handles(c)&&P.mapSituation!==P.sit.text)P.sit={...P.sit,text:P.mapSituation,state:c.role==='area_office'?'work':'off',stateLabel:c.label};
