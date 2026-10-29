@@ -1,3 +1,7 @@
+// The notice shows the hobby right above the scene, so a scene of a distinctive pastime (将棋, 編み物, 楽器 ...) needs that
+// hobby; the original only lowers such scenes to 0.65. Everyday activities (reading, cooking, films) are left as they are.
+const MAP_STRICT_HOBBY=[[/囲碁/,28],[/将棋/,29],[/編み物|手芸|刺しゅう/,18],[/ギター|ピアノ|楽器|バイオリン|ウクレレ/,8],[/キャンプ/,33],[/盆栽/,20],[/書道|筆を/,14],[/茶道|お点前/,16],[/華道|生け花/,15],[/陶芸|ろくろ/,23],[/日本舞踊/,12],[/俳句/,25]];
+if(typeof profileEntryWeight==='function'){const original=profileEntryWeight;profileEntryWeight=function(e,P){const text=typeof e==='string'?e:e[2],hit=MAP_STRICT_HOBBY.find(([re])=>re.test(text));if(hit&&P&&!(P.hobbies||[]).some(x=>x.i===hit[1]))return 0;return original(e,P)}}
 // Visitors from abroad: a foreign name and origin, and no domestic occupation or school grade.
 function makeInbound(P){
  let markets=MAP_DATA.inbound.markets,total=markets.reduce((s,x)=>s+x.weight,0),v=rnd()*total,market=markets.find(x=>(v-=x.weight)<0)||markets.at(-1);
