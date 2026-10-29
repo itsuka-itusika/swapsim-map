@@ -21,7 +21,7 @@ function time(){let t=jstNow();t.rand=false;t.holiday=!!holName(t);t.venueEvent=
 function minuteKey(t){return [t.y,t.mo,t.d,t.h,t.mi].join('/')}
 async function updateWeather(){await MapWeather.load(storage)}
 function facilitiesOnMap(){layer.clearLayers()}
-function choose(p){selected=p;circle.setLatLng([p[1],p[0]]).setRadius(radius);pin.setLatLng([p[1],p[0]]);refresh();auraCheck();if(typeof abState==='function'&&between())abState()}
+function choose(p){selected=p;circle.setLatLng([p[1],p[0]]).setRadius(radius);pin.setLatLng([p[1],p[0]]);refresh();auraCheck();if(typeof abState==='function'){beaconPaused=false;abState()}}
 // When the whole view lies inside the range, the circle's rim is off screen; the map's edge glows instead.
 function auraCheck(){const b=map.getBounds(),c=circle.getLatLng(),r=circle.getRadius(),inside=[b.getNorthWest(),b.getNorthEast(),b.getSouthWest(),b.getSouthEast()].every(q=>map.distance(q,c)<=r);el('map').classList.toggle('in-range',inside)}
 map.on('moveend zoomend resize',auraCheck);
@@ -33,20 +33,24 @@ function refresh(){
  if(cached&&!cached.stale)return;
  profileTimer=setTimeout(async()=>{let evidence=await profileCache.get(p,r);if(seq!==refreshSequence)return;renderEstimate(p,r,t,evidence)},400);
 }
+// The breakdown shows range A, or range B when it is the active range of the two-range mode.
+function renderBreakdown(prof,ps,r){const total=ps.reduce((s,x)=>s+x.n,0)||1;
+ const sorted=Object.entries(prof.weights).sort((a,b)=>b[1]-a[1]);
+ const cultureLabels={subculture:'サブカル・オタク文化',electronics:'電気街',korean_commerce:'韓国系商業',books:'古書・書店',publishing:'出版',inbound:'外国人観光客',night:'夜型',youth:'若者',fashion:'ファッション'};
+ const cultures=Object.entries(prof.tags).filter(([k,v])=>cultureLabels[k]&&v/(Math.PI*r*r)>.3).map(([k])=>cultureLabels[k]);
+ const subtypes=[...new Set(prof.parts.filter(x=>x.areaM2>Math.PI*r*r*.03).map(x=>({night:'歓楽街',shopping:'買い物',fashion:'若者・ファッション',subculture:'サブカル',student:'学生居住型',family:'ファミリー型',senior:'高齢者型',suburban:'低層住宅地',forest:'森林',university:'大学',primary:'小学校',middle:'中学校',high:'高校',playground:'児童公園',warehouse:'倉庫・物流',racecourse:'競馬場',dome:'ドーム',stadium:'スタジアム',arena:'アリーナ・体育館',cemetery:'霊園・墓地',books:'書店・古書'}[x.subtype])).filter(Boolean))];
+ el('mesh-attributes').innerHTML=sorted.map(([k,v])=>'<span class="district-label" style="border-color:'+LandProfile.colors[k]+'">'+esc(LandProfile.labels[k])+' '+(v*100).toFixed(1)+'%</span>').join('')+'<div class="attribute-chips">'+[...subtypes,...cultures].map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>';
+ el('population-scope').textContent='土地の割合は面積から、人物の割合は滞在人数から推定しています。';
+ el('details').innerHTML=ps.slice().sort((a,b)=>Number(['large_shop','tourist','library','bank','bath','hotel','hostel'].includes(b.landComponent?.placeKind||b.landComponent?.subtype))-Number(['large_shop','tourist','library','bank','bath','hotel','hostel'].includes(a.landComponent?.placeKind||a.landComponent?.subtype))||b.n-a.n).map(x=>`<p>${esc((x.facility?.schoolPolicy?.displayName||PlaceLabel.name(x))+(x.facility&&x.landType==='education'?'（'+SchoolPolicy.label(x.facility)+'）':''))}・${esc(x.label)} <b>${(x.n/total*100).toFixed(1)}%</b><progress max="100" value="${x.n/total*100}"></progress></p>`).join('');
+}
 function renderEstimate(p,r,t,evidence){
  const begin=performance.now();currentEvidence=evidence;let key=p.join(',')+'/'+r,features=evidence?.features||emptyFeatures,entry=geometryProfiles.get(key);if(!entry||entry.features!==features){entry={features,profile:LandProfile.create(landContext,p,r,features)};geometryProfiles.set(key,entry);if(geometryProfiles.size>8)geometryProfiles.delete(geometryProfiles.keys().next().value)}landProfile=entry.profile;parts=LandEstimator.estimate(landProfile,t);estimateMinute=minuteKey(t);
  const region=MapModel.locate(p,regions),center=landProfile.classify(p),n=parts.reduce((s,x)=>s+x.n,0);
- const sorted=Object.entries(landProfile.weights).sort((a,b)=>b[1]-a[1]);
- const cultureLabels={subculture:'サブカル・オタク文化',electronics:'電気街',korean_commerce:'韓国系商業',books:'古書・書店',publishing:'出版',inbound:'外国人観光客',night:'夜型',youth:'若者',fashion:'ファッション'};
- const cultures=Object.entries(landProfile.tags).filter(([k,v])=>cultureLabels[k]&&v/(Math.PI*r*r)>.3).map(([k])=>cultureLabels[k]);
- const subtypes=[...new Set(landProfile.parts.filter(x=>x.areaM2>Math.PI*r*r*.03).map(x=>({night:'歓楽街',shopping:'買い物',fashion:'若者・ファッション',subculture:'サブカル',student:'学生居住型',family:'ファミリー型',senior:'高齢者型',suburban:'低層住宅地',forest:'森林',university:'大学',primary:'小学校',middle:'中学校',high:'高校',playground:'児童公園',warehouse:'倉庫・物流',racecourse:'競馬場',dome:'ドーム',stadium:'スタジアム',arena:'アリーナ・体育館',cemetery:'霊園・墓地',books:'書店・古書'}[x.subtype])).filter(Boolean))];
- el('mesh-attributes').innerHTML=sorted.map(([k,v])=>'<span class="district-label" style="border-color:'+LandProfile.colors[k]+'">'+esc(LandProfile.labels[k])+' '+(v*100).toFixed(1)+'%</span>').join('')+'<div class="attribute-chips">'+[...subtypes,...cultures].map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>';
- el('population-scope').textContent='土地の割合は面積から、人物の割合は滞在人数から推定しています。';
+ if(!(between()&&target==='B'))renderBreakdown(landProfile,parts,r);
  const venues=landProfile.parts.filter(c=>VenueModel.kind(c)&&VenueModel.kind(c)!=='cemetery');el('venue-status').innerHTML=venues.map(c=>{let v=VenueSchedule.resolve(c,t),info=v.event?`${v.event.title}／${v.phase}（終了・退場時刻は推定）`:v.phase||v.basis,link=v.event?.url||v.url;return '<span>'+esc(c.name)+'：'+esc(v.basis)+(v.event?'（2026年10月28日確認）':'')+'・'+esc(info)+(link?' <a href="'+esc(link)+'" target="_blank" rel="noopener">日程出典</a>':'')+'</span>'}).join('<br>');
  const state={live:'施設情報を更新済み',cache:'保存済みの施設情報を使用',stale:'保存済みの旧施設情報を使用',unavailable:'施設情報を取得できないため収録データで推定',busy:'施設情報の取得待ち'}[evidence?.status]||'収録データで推定中・施設情報を確認します';
  el('status').textContent=`${p[1].toFixed(5)}, ${p[0].toFixed(5)} ｜ 半径${r}m ｜ ${state} ｜ 計算 ${Math.round(performance.now()-begin)}ms`;
  if(landProfile.coverage<.99)el('status').textContent+=' ｜ 対象区域内の部分のみ集計';
- el('details').innerHTML=parts.slice().sort((a,b)=>Number(['large_shop','tourist','library','bank','bath','hotel','hostel'].includes(b.landComponent?.placeKind||b.landComponent?.subtype))-Number(['large_shop','tourist','library','bank','bath','hotel','hostel'].includes(a.landComponent?.placeKind||a.landComponent?.subtype))||b.n-a.n).map(x=>`<p>${esc((x.facility?.schoolPolicy?.displayName||PlaceLabel.name(x))+(x.facility&&x.landType==='education'?'（'+SchoolPolicy.label(x.facility)+'）':''))}・${esc(x.label)} <b>${(x.n/n*100).toFixed(1)}%</b><progress max="100" value="${x.n/n*100}"></progress></p>`).join('');
  if(!drawing)el('draw').disabled=!n||between()&&!partsB.length;if(!n)el('status').textContent+=' ｜ 範囲内に抽選対象者がいません';
  document.querySelectorAll('[data-radius]').forEach(b=>{let active=+b.dataset.radius===r;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
  if(typeof meshLayer!=='undefined')drawMesh();
@@ -55,14 +59,14 @@ map.on('click',e=>place([e.latlng.lng,e.latlng.lat]));map.on('moveend',()=>{faci
 document.querySelectorAll('[data-radius]').forEach(b=>b.onclick=()=>{radius=+b.dataset.radius;choose(selected);refreshB()});
 el('search').onclick=()=>{let q=el('query').value.trim();if(!q){el('results').textContent='';return}let list=[...(currentEvidence?.features||[]).filter(f=>f.tags?.name||f.tags?.['name:ja']),...(MAP_DATA.policeStations||[]),...(MAP_DATA.specialPlaces||[]),...(MAP_DATA.publicAreas||[]),...(MAP_DATA.landmarks||[]),...MAP_DATA.landZones,...MAP_DATA.greenZones,...MAP_DATA.areas,...facilities].filter(f=>f.name.includes(q)||(f.aliases||[]).some(n=>n.includes(q))).filter((f,i,a)=>a.findIndex(x=>x.name===f.name)===i).slice(0,15).map(f=>({name:f.name,xy:f.xy}));if(!list.length)list=regions.filter(f=>f.name.includes(q)).slice(0,10).map(f=>({name:f.name,xy:[(f.bbox[0]+f.bbox[2])/2,(f.bbox[1]+f.bbox[3])/2]}));el('results').innerHTML=list.length?list.map((f,i)=>`<button class="facility" data-result="${i}">${esc(f.name)}</button>`).join(''):'該当する収録施設・地域がありません。';document.querySelectorAll('[data-result]').forEach(b=>b.onclick=()=>{let f=list[+b.dataset.result];map.setView([f.xy[1],f.xy[0]],17);place(f.xy);el('results').innerHTML='';const r=el('map').getBoundingClientRect();if(r.top<0||r.bottom>innerHeight)el('map').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'})})};el('query').onkeydown=e=>{if(e.key==='Enter')el('search').click()};
 // Two ranges (A ⇄ B): range B shares the radius; map taps and search results move whichever range is active.
-let selectedB=null,partsB=[],estimateMinuteB=null,refreshSequenceB=0,profileTimerB=null,target='A',circleB=null,pinB=null;
+let selectedB=null,partsB=[],profileB=null,beaconPaused=false,estimateMinuteB=null,refreshSequenceB=0,profileTimerB=null,target='A',circleB=null,pinB=null;
 const B_KEY='swapsim-map-range-b';
 try{const b=JSON.parse(storage?.getItem(B_KEY)||'null');if(Array.isArray(b)&&b.length===2&&b.every(Number.isFinite))selectedB=b}catch{}
-function estimateAt(p,r,t,evidence){let key=p.join(',')+'/'+r,features=evidence?.features||emptyFeatures,entry=geometryProfiles.get(key);if(!entry||entry.features!==features){entry={features,profile:LandProfile.create(landContext,p,r,features)};geometryProfiles.set(key,entry);if(geometryProfiles.size>8)geometryProfiles.delete(geometryProfiles.keys().next().value)}return LandEstimator.estimate(entry.profile,t)}
+function estimateAt(p,r,t,evidence){let key=p.join(',')+'/'+r,features=evidence?.features||emptyFeatures,entry=geometryProfiles.get(key);if(!entry||entry.features!==features){entry={features,profile:LandProfile.create(landContext,p,r,features)};geometryProfiles.set(key,entry);if(geometryProfiles.size>8)geometryProfiles.delete(geometryProfiles.keys().next().value)}profileB=entry.profile;return LandEstimator.estimate(entry.profile,t)}
 function refreshB(){clearTimeout(profileTimerB);if(!selectedB||!between()){partsB=[];abState();return}const seq=++refreshSequenceB,t=time(),p=selectedB.slice(),r=radius,cached=profileCache.peek(p,r);partsB=estimateAt(p,r,t,cached);estimateMinuteB=minuteKey(t);abState();if(cached&&!cached.stale)return;
  profileTimerB=setTimeout(async()=>{const evidence=await profileCache.get(p,r);if(seq!==refreshSequenceB)return;partsB=estimateAt(p,r,time(),evidence);abState()},400)}
 function place(p){if(between()&&target==='B')chooseB(p);else choose(p)}
-function chooseB(p){selectedB=p;try{storage?.setItem(B_KEY,JSON.stringify(p))}catch{}refreshB()}
+function chooseB(p){selectedB=p;beaconPaused=false;try{storage?.setItem(B_KEY,JSON.stringify(p))}catch{}refreshB()}
 function abState(){const on=between();el('ab-bar').hidden=!on;
  if(on&&!circleB){circleB=L.circle([0,0],{radius,color:'#E5533D',weight:2,opacity:.85,fillColor:'url(#range-aura-b)',fillOpacity:1,className:'range-aura range-b'});pinB=L.circleMarker([0,0],{radius:6,color:'#fff',fillColor:'#D9402B',fillOpacity:1}).bindTooltip('B',{permanent:true,direction:'right',offset:[6,0],className:'ab-tag'})}
  if(on&&selectedB){circleB.setLatLng([selectedB[1],selectedB[0]]).setRadius(radius);pinB.setLatLng([selectedB[1],selectedB[0]]);if(!circleB._map){circleB.addTo(map);pinB.addTo(map)}
@@ -73,10 +77,14 @@ function abState(){const on=between();el('ab-bar').hidden=!on;
  if(on&&!pin.getTooltip())pin.bindTooltip('A',{permanent:true,direction:'right',offset:[6,0],className:'ab-tag'});if(!on&&pin.getTooltip())pin.unbindTooltip();
  document.querySelectorAll('#ab-bar [data-target]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.target===target)));
  el('ab-hint').textContent=!on?'':!selectedB?'地図をタップして範囲Bを選んでください':!partsB.length?'範囲Bには抽選対象者がいません（東京23区内で選んでください）':MapModel.distance(selected,selectedB)<radius*.5?'AとBがほぼ同じ場所です':'';
- beaconCheck();if(!drawing)el('draw').disabled=!parts.length||on&&!partsB.length}
+ beaconCheck();
+ // The breakdown follows the switch: range B's when B is active, otherwise range A's.
+ el('breakdown-which').textContent=on?(target==='B'?'（範囲B）':'（範囲A）'):'';
+ if(on&&target==='B'){if(profileB&&selectedB)renderBreakdown(profileB,partsB,radius);else{el('mesh-attributes').innerHTML='';el('details').innerHTML='<p class="note">範囲Bを選ぶと表示します。</p>'}}else if(landProfile)renderBreakdown(landProfile,parts,radius);
+ if(!drawing)el('draw').disabled=!parts.length||on&&!partsB.length}
 // Zoomed out so far that the two ranges are specks: each glows and sends out rings, as if something were happening.
 let beacons=null;
-function beaconCheck(){const show=between()&&selectedB&&map.latLngToContainerPoint(map.getCenter()).distanceTo(map.latLngToContainerPoint(L.latLng(map.getCenter().lat,map.getCenter().lng+radius/(111320*Math.cos(map.getCenter().lat*Math.PI/180)))))<14;
+function beaconCheck(){const show=between()&&selectedB&&!beaconPaused&&map.latLngToContainerPoint(map.getCenter()).distanceTo(map.latLngToContainerPoint(L.latLng(map.getCenter().lat,map.getCenter().lng+radius/(111320*Math.cos(map.getCenter().lat*Math.PI/180)))))<14;
  if(!show){beacons?.remove();beacons=null;return}
  if(!beacons){const icon=k=>L.divIcon({className:'',html:`<span class="beacon beacon-${k}"></span>`,iconSize:[16,16],iconAnchor:[8,8]});beacons=L.layerGroup([L.marker([0,0],{icon:icon('a'),interactive:false,keyboard:false}),L.marker([0,0],{icon:icon('b'),interactive:false,keyboard:false})]).addTo(map)}
  const [a,b]=beacons.getLayers();a.setLatLng([selected[1],selected[0]]);b.setLatLng([selectedB[1],selectedB[0]])}
@@ -168,14 +176,14 @@ el('hist-clear').onclick=()=>{history=[];try{storage?.removeItem(HIST_KEY)}catch
 el('history').onclick=e=>{const b=e.target.closest('button[data-h]');if(!b||drawing)return;const h=history[+b.dataset.h];if(!h)return;crowd=h.others;
  if(h.P.kind==='pair'){pairCards=[h.P,...h.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(false);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}
  else{pairMode(false);el('person').hidden=false;showResult(h.P);renderCrowd();el('person').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}renderHistory()};
-function finishDraw(){const d=drawing;if(!d)return;drawing=null;drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length||between()&&!partsB.length}
+function finishDraw(){const d=drawing;if(!d)return;drawing=null;beaconPaused=true;if(typeof beaconCheck==='function')beaconCheck();drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length||between()&&!partsB.length}
 el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length||between()&&!partsB.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();if(between()&&estimateMinuteB!==minuteKey(t))refreshB();P=sampleResult(t,true);others=Array.from({length:4},()=>samplePair(t,false,between()));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
  drawing={P,others};pool={parts:parts.slice(),center:selected.slice(),radius};poolB=between()?{parts:partsB.slice(),center:selectedB.slice(),radius}:null;plays++;const tk=++drawToken;el('draw').disabled=false;setDrawLabel();if(reduceMotion){finishDraw();return}
  // Pair mode first brings the map into view (on phones the button sits below it) and roams the circle with the
  // markers, then jumps to the five compact notices.
  try{if(P.kind==='pair'){pairMode(true);el('pcards').innerHTML='';const r=el('map').getBoundingClientRect();if(r.top<0||r.bottom>innerHeight){el('map').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'});await later(450,tk)}
   // Two ranges: show both circles, one marker roaming in each.
-  if(poolB){map.fitBounds(circle.getBounds().extend(circleB.getBounds()),{padding:[24,24],maxZoom:16});await later(500,tk)}await roam(2,1600*(plays>1?.7:1),tk,poolB?[pool,poolB]:[])}else await reveal(P,tk)}catch(e){if(e.message!=='skip')console.error(e)}if(tk===drawToken)finishDraw()};
+  if(poolB){beaconPaused=false;map.fitBounds(circle.getBounds().extend(circleB.getBounds()),{padding:[24,24],maxZoom:16});await later(500,tk)}await roam(2,1600*(plays>1?.7:1),tk,poolB?[pool,poolB]:[])}else await reveal(P,tk)}catch(e){if(e.message!=='skip')console.error(e)}if(tk===drawToken)finishDraw()};
 renderOptions();
 el('test').onclick=()=>{if(!parts.length)return;let n=parts.reduce((s,p)=>s+p.n,0),theory=parts.filter(p=>p.role==='resident').reduce((s,p)=>s+p.n,0)/n,count=0;for(let i=0;i<10000;i++)count+=MapModel.pick(parts).role==='resident';el('test-result').textContent=`施設入居者：理論 ${(theory*100).toFixed(2)}% ／ 1万回の実測 ${(count/100).toFixed(2)}%`};
 const meshLayer=L.layerGroup().addTo(map);
