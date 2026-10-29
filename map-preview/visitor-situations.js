@@ -34,7 +34,7 @@ const VisitorSituations=(()=>{
   // Workplace lines (同僚, 取引先 ...) only for people with a job; an area with few lines of its own uses them less often.
   const employed=P.occ?.group==='adult'&&P.occ.cat!=='none'&&!/無職|主婦|主夫|年金|学生/.test(P.occ.label||'');
   let pool=scenes.filter(([s,e,text,kind])=>(kind==='night')===night&&(kind!=='weekend'||we)&&(s<=e?h>=s&&h<e:h>=s||h<e)&&(employed||!/同僚|上司|部下|取引先|会社|接待|仕事帰り/.test(text)));
-  if(!pool.length||!c.area.visitOnly&&random()>=Math.min(1,pool.length/5))return null;return pool[Math.floor(random()*pool.length)][2]}
+  if(!pool.length||!c.area.visitOnly&&random()>=Math.min(1,(pool.length+2)/5))return null;return pool[Math.floor(random()*pool.length)][2]}
  return {text,local,daytime,evening,late,inbound};
 })();
 if(typeof module!=='undefined')module.exports=VisitorSituations;
