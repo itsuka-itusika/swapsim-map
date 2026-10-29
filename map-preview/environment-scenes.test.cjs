@@ -177,10 +177,10 @@ test('role age profiles, amusement parks, SHIBUYA109 and station rush hours',()=
  assert.ok(r.arakawa.filter(p=>p[1]<13).every(p=>!/子どもに|子どもを乗せ|わが子/.test(p[3])));
  assert.ok(r.s109.filter(p=>p[2]==='f').length/r.s109.length>.7&&r.s109.filter(p=>p[1]<30).length/r.s109.length>.7);
 });
-test('places without a specific name read as district or ward plus the kind of spot',()=>{
+test('places without a specific name read as district or ward, with 自宅 or 職場',()=>{
  const r=JSON.parse(run(`(()=>{let out=[];for(let xy of [[139.6922,35.6896],[139.7155,35.6339],[139.7035,35.6938]])for(let h of [3,13,22]){let t={y:2026,mo:10,d:28,dow:3,h,hf:h,mi:0,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,xy,150),t).filter(c=>c.n>0),tot=parts.reduce((s,c)=>s+c.n,0);for(let i=0;i<60;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,!!c.resident,P.place,PlaceLabel.generic(c)])}}return JSON.stringify(out)})()`));
  const generic=r.filter(x=>x[3]);assert.ok(generic.length>100);
- assert.ok(generic.every(x=>/ (自宅|職場|市街地|繁華街|住宅街|オフィス街|工業地帯|緑地|学生街|工場|倉庫)$/.test(x[2])),generic.filter(x=>!/ (自宅|職場|市街地|繁華街|住宅街|オフィス街|工業地帯|緑地|学生街|工場|倉庫)$/.test(x[2])).slice(0,3).join(' / '));
+ assert.ok(generic.every(x=>!/ (市街地|繁華街|住宅街|オフィス街|工業地帯|緑地|学生街|工場|倉庫)$/.test(x[2])&&(/ (自宅|職場)$/.test(x[2])||!/ /.test(x[2]))),generic.slice(0,3).join(' / '));assert.ok(generic.some(x=>!/ /.test(x[2])));
  assert.ok(generic.filter(x=>x[0]==='general').every(x=>/ 自宅$/.test(x[2])));
- assert.ok(r.filter(x=>!x[3]).every(x=>!/ (自宅|市街地|繁華街)$/.test(x[2])));
+ assert.ok(r.filter(x=>!x[3]).every(x=>!/ (自宅|職場)$/.test(x[2])));
 });
