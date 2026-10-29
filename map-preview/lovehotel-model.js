@@ -30,7 +30,7 @@ const LoveHotelModel=(()=>{
   // About half the time they are simply in the room, talking and laughing together.
   else if(h>=11&&rnd()<.5||(h>=21||h<5)&&rnd()<.5)text=pick(h>=22||h<5?[...T.room,...T.roomNight]:T.room);
   else text=pick(h>=18||h<1?T.evening:h<5?T.night:h<11?T.morning:T.day);
-  P.mapSituation=text;P.visitLabel=c.label;P.sit={...P.sit,text,state,stateLabel:c.role==='area_lovehotel_staff'?P.occ.label:'ホテル街で過ごしている',p:1,source:'lovehotel'};return true}
+  P.placeOverride=(c.area?.name||'')+' ホテル街';P.mapSituation=text;P.visitLabel=c.label;P.sit={...P.sit,text,state,stateLabel:c.role==='area_lovehotel_staff'?P.occ.label:'ホテル街で過ごしている',p:1,source:'lovehotel'};return true}
  return {rows,assign,apply,activity};
 })();
 if(typeof module!=='undefined')module.exports=LoveHotelModel;

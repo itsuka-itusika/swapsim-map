@@ -147,7 +147,7 @@ function mapPerson(c,t){
  P.health=settleHealth(P,t);if(typeof HospitalModel!=='undefined')HospitalModel.health(P,t);if(c.role==='venue_ghost'){P.hb.preg=false;P.health={text:'幽霊のため健康状態は不明',items:[],p:1,note:'お遊び要素'};}P.body=bodyOf(P,t);
  P.place=(c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name||f.name);
  // Without a specific facility or named place, show the town and the kind of spot (西新宿 自宅, 銀座 市街地).
- if(typeof PlaceLabel!=='undefined')P.place=PlaceLabel.label(c,P,P.place);if(P.railPlace)P.place=P.railPlace;P.placeShort=P.place;
+ if(typeof PlaceLabel!=='undefined')P.place=PlaceLabel.label(c,P,P.place);if(P.placeOverride||P.railPlace)P.place=P.placeOverride||P.railPlace;P.placeShort=P.place;
  P.wxText=wxLabel(P.pref,t)+(t.rand||typeof MapWeather==='undefined'||MapWeather.status()!=='東京の実況'?'（推定）':'');
  P.logp=Math.log10(Math.max(1e-12,P.surname.c/12300))+Math.log10(Math.max(1e-12,P.given.p*P.given.era.cov))+Math.log10(Math.max(1e-12,c.roleP||P.occ.p||1))+Math.log10(Math.max(1e-12,P.sit.p||1))-SIT_MED[t.h%24];
  P.stars=RARITY.findIndex(th=>P.logp>th)+1||5;

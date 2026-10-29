@@ -180,7 +180,7 @@ test('role age profiles, amusement parks, SHIBUYA109 and station rush hours',()=
 test('places without a specific name read as district or ward, with 自宅 or 職場',()=>{
  const r=JSON.parse(run(`(()=>{let out=[];for(let xy of [[139.6922,35.6896],[139.7155,35.6339],[139.7035,35.6938]])for(let h of [3,13,22]){let t={y:2026,mo:10,d:28,dow:3,h,hf:h,mi:0,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,xy,150),t).filter(c=>c.n>0),tot=parts.reduce((s,c)=>s+c.n,0);for(let i=0;i<60;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,!!c.resident,P.place,PlaceLabel.generic(c)])}}return JSON.stringify(out)})()`));
  const generic=r.filter(x=>x[3]);assert.ok(generic.length>100);
- assert.ok(generic.every(x=>!/ (市街地|繁華街|住宅街|オフィス街|工業地帯|緑地|学生街|工場|倉庫)$/.test(x[2])&&(/ (自宅|職場)$/.test(x[2])||!/ /.test(x[2]))),generic.slice(0,3).join(' / '));assert.ok(generic.some(x=>!/ /.test(x[2])));
+ assert.ok(generic.every(x=>!/ (市街地|繁華街|住宅街|オフィス街|工業地帯|緑地|学生街|工場|倉庫)$/.test(x[2])&&(/ (自宅|職場|ホテル街|列車内)$/.test(x[2])||!/ /.test(x[2]))),generic.slice(0,3).join(' / '));assert.ok(generic.some(x=>!/ /.test(x[2])));
  const res=generic.filter(x=>x[0]==='general');assert.ok(res.filter(x=>/ 自宅$/.test(x[2])).length/res.length>.6);
  assert.ok(r.filter(x=>!x[3]).every(x=>!/ (自宅|職場)$/.test(x[2])));
 });
@@ -241,5 +241,5 @@ test('ホテル街: guests aged 20+ and hotel staff only in the hotel districts,
  const r=JSON.parse(run(`(()=>{const go=(xy,h,dow,d)=>{let t={y:2026,mo:10,d,dow,h,hf:h+.2,mi:12,rand:false},p=LandProfile.create(envContext,xy,150),parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),lh=parts.filter(c=>c.loveHotel),out=[];for(let c of lh)for(let i=0;i<8;i++){let P=mapPerson({...c,roleP:.01},t);out.push([c.role,P.age,P.occ.label,P.sit.text,P.place])}return {share:lh.reduce((s,c)=>s+c.n,0)/tot,out}};
  return JSON.stringify({day:go([139.6945,35.6585],14,3,28),night:go([139.6945,35.6585],3,6,31),ginza:go([139.765,35.672],21,5,30)})})()`));
  assert.ok(r.day.share>.05&&r.night.share>r.day.share,JSON.stringify([r.day.share,r.night.share]));assert.equal(r.ginza.share,0);
- for(const [role,age,job,text,place] of [...r.day.out,...r.night.out]){assert.equal(place,'道玄坂・円山町');if(role==='area_lovehotel_guest')assert.ok(age>=20&&!/高校|中学|小学/.test(job),job);else{assert.match(job,/フロント|清掃/);if(/清掃/.test(job))assert.doesNotMatch(text,/フロント/)}}
+ for(const [role,age,job,text,place] of [...r.day.out,...r.night.out]){assert.equal(place,'道玄坂・円山町 ホテル街');if(role==='area_lovehotel_guest')assert.ok(age>=20&&!/高校|中学|小学/.test(job),job);else{assert.match(job,/フロント|清掃/);if(/清掃/.test(job))assert.doesNotMatch(text,/フロント/)}}
 });
