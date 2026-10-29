@@ -42,7 +42,7 @@ const TimeSituations=(()=>{
  // A nearby river alone does not establish an accessible fishing spot.
  // Neighborhood shops, cafes, parks and baths fit 住宅内・近隣; venues the map models as their own places
  // (stadiums, malls, offices, schools, stations, hospitals, nightlife) do not.
- function homeCompatible(text){if(/夢の中/.test(text))return true;return !/免許の更新|高齢者講習|運転テスト|運転免許|試験場|教習所|川辺|河原|釣り糸|釣り竿|キャンプ場|テントの|映画館|劇場|コンサート|ライブ会場|美術館|博物館|水族館|動物園|遊園地|ゴルフ場|スキー場|登山|山頂|海水浴|旅行先|空港|新幹線|ホテルに|旅館に|球場|スタジアム|スタンドで|ショッピングモール|デパート|百貨店|物産展|電車に乗|電車の中|電車で|車内で|会社で|職場で|オフィスで|出張|教室で|放課後の教室|キャンパス|学食|学園祭|模擬店|アルバイト先|バイト先|のアルバイトで|居酒屋|キャバクラ|パチンコ|カラオケ|ゲームセンター|ボウリング|病院の|歯医者の待合室|待合室で|ジムで|ジムの|ダンス教室|ヨガの教室|駐車場で|テーマパーク|遊園地|絶叫マシン/.test(text)}
+ function homeCompatible(text){if(/夢の中/.test(text))return true;return !/待合|免許の更新|高齢者講習|運転テスト|運転免許|試験場|教習所|川辺|河原|釣り糸|釣り竿|キャンプ場|テントの|映画館|劇場|コンサート|ライブ会場|美術館|博物館|水族館|動物園|遊園地|ゴルフ場|スキー場|登山|山頂|海水浴|旅行先|空港|新幹線|ホテルに|旅館に|球場|スタジアム|スタンドで|ショッピングモール|デパート|百貨店|物産展|電車に乗|電車の中|電車で|車内で|会社で|職場で|オフィスで|出張|教室で|放課後の教室|キャンパス|学食|学園祭|模擬店|アルバイト先|バイト先|のアルバイトで|居酒屋|キャバクラ|パチンコ|カラオケ|ゲームセンター|ボウリング|病院の|歯医者の待合室|待合室で|ジムで|ジムの|ダンス教室|ヨガの教室|駐車場で|テーマパーク|遊園地|絶叫マシン/.test(text)}
  function reuse(k,c,P,t){
   if(typeof fromPool!=='function')return null;
   // The original school pools have no kindergarten or university-staff scenes.

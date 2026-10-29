@@ -21,7 +21,7 @@ function time(){let t=jstNow();t.rand=false;t.holiday=!!holName(t);t.venueEvent=
 function minuteKey(t){return [t.y,t.mo,t.d,t.h,t.mi].join('/')}
 async function updateWeather(){await MapWeather.load(storage)}
 function facilitiesOnMap(){layer.clearLayers()}
-function choose(p){selected=p;circle.setLatLng([p[1],p[0]]).setRadius(radius);pin.setLatLng([p[1],p[0]]);refresh();auraCheck()}
+function choose(p){selected=p;circle.setLatLng([p[1],p[0]]).setRadius(radius);pin.setLatLng([p[1],p[0]]);refresh();auraCheck();if(typeof abState==='function'&&between())abState()}
 // When the whole view lies inside the range, the circle's rim is off screen; the map's edge glows instead.
 function auraCheck(){const b=map.getBounds(),c=circle.getLatLng(),r=circle.getRadius(),inside=[b.getNorthWest(),b.getNorthEast(),b.getSouthWest(),b.getSouthEast()].every(q=>map.distance(q,c)<=r);el('map').classList.toggle('in-range',inside)}
 map.on('moveend zoomend resize',auraCheck);
@@ -64,15 +64,23 @@ function refreshB(){clearTimeout(profileTimerB);if(!selectedB||!between()){parts
 function place(p){if(between()&&target==='B')chooseB(p);else choose(p)}
 function chooseB(p){selectedB=p;try{storage?.setItem(B_KEY,JSON.stringify(p))}catch{}refreshB()}
 function abState(){const on=between();el('ab-bar').hidden=!on;
- if(on&&!circleB){circleB=L.circle([0,0],{radius,color:'#1F9D6A',weight:2,opacity:.85,fillColor:'url(#range-aura-b)',fillOpacity:1,className:'range-aura range-b'});pinB=L.circleMarker([0,0],{radius:6,color:'#fff',fillColor:'#1F9D6A',fillOpacity:1}).bindTooltip('B',{permanent:true,direction:'right',offset:[6,0],className:'ab-tag'})}
+ if(on&&!circleB){circleB=L.circle([0,0],{radius,color:'#E5533D',weight:2,opacity:.85,fillColor:'url(#range-aura-b)',fillOpacity:1,className:'range-aura range-b'});pinB=L.circleMarker([0,0],{radius:6,color:'#fff',fillColor:'#D9402B',fillOpacity:1}).bindTooltip('B',{permanent:true,direction:'right',offset:[6,0],className:'ab-tag'})}
  if(on&&selectedB){circleB.setLatLng([selectedB[1],selectedB[0]]).setRadius(radius);pinB.setLatLng([selectedB[1],selectedB[0]]);if(!circleB._map){circleB.addTo(map);pinB.addTo(map)}
-  // Range B's aura: a green copy of range A's gradient.
-  const a=document.getElementById('range-aura');if(a&&!document.getElementById('range-aura-b')){const g=a.cloneNode(true);g.id='range-aura-b';g.querySelectorAll('stop').forEach(x=>x.setAttribute('stop-color','#22A06B'));a.parentNode.appendChild(g)}}
+  // Range B's aura: a red copy of range A's blue gradient.
+  const a=document.getElementById('range-aura');if(a&&!document.getElementById('range-aura-b')){const g=a.cloneNode(true);g.id='range-aura-b';g.querySelectorAll('stop').forEach(x=>x.setAttribute('stop-color','#FF5438'));a.parentNode.appendChild(g)}}
  else{circleB?.remove();pinB?.remove()}
+ pin.setStyle({fillColor:on?'#2F6BFF':'#C8371E'});
  if(on&&!pin.getTooltip())pin.bindTooltip('A',{permanent:true,direction:'right',offset:[6,0],className:'ab-tag'});if(!on&&pin.getTooltip())pin.unbindTooltip();
  document.querySelectorAll('#ab-bar [data-target]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.target===target)));
  el('ab-hint').textContent=!on?'':!selectedB?'地図をタップして範囲Bを選んでください':!partsB.length?'範囲Bには抽選対象者がいません（東京23区内で選んでください）':MapModel.distance(selected,selectedB)<radius*.5?'AとBがほぼ同じ場所です':'';
- if(!drawing)el('draw').disabled=!parts.length||on&&!partsB.length}
+ beaconCheck();if(!drawing)el('draw').disabled=!parts.length||on&&!partsB.length}
+// Zoomed out so far that the two ranges are specks: each glows and sends out rings, as if something were happening.
+let beacons=null;
+function beaconCheck(){const show=between()&&selectedB&&map.latLngToContainerPoint(map.getCenter()).distanceTo(map.latLngToContainerPoint(L.latLng(map.getCenter().lat,map.getCenter().lng+radius/(111320*Math.cos(map.getCenter().lat*Math.PI/180)))))<14;
+ if(!show){beacons?.remove();beacons=null;return}
+ if(!beacons){const icon=k=>L.divIcon({className:'',html:`<span class="beacon beacon-${k}"></span>`,iconSize:[16,16],iconAnchor:[8,8]});beacons=L.layerGroup([L.marker([0,0],{icon:icon('a'),interactive:false,keyboard:false}),L.marker([0,0],{icon:icon('b'),interactive:false,keyboard:false})]).addTo(map)}
+ const [a,b]=beacons.getLayers();a.setLatLng([selected[1],selected[0]]);b.setLatLng([selectedB[1],selectedB[0]])}
+map.on('zoomend',()=>{if(typeof between==='function')beaconCheck()});
 el('ab-bar').onclick=e=>{const b=e.target.closest('[data-target]');if(!b)return;target=b.dataset.target;abState()};
 let issuedCount=0,currentPerson=null,crowd=[];
 const options={sex:null,dec:null,pair:false,pairMode:'within',real:false},optionsKey='swapsim-map-options-v1';
@@ -84,7 +92,7 @@ function renderOptions(){
  el('opt-pairmode-row').hidden=!options.pair;el('pair-note').textContent=options.pair&&options.pairMode==='between'?'範囲Aの人と範囲Bの人を入れ替えます。性別・年齢は1人目（範囲A）に使います':'地図の半径内の2人を入れ替えます。性別・年齢は1人目に使います';el('opt-pairmode').innerHTML=[['within','範囲の中で'],['between','2つの範囲で']].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${options.pairMode===v}">${l}</button>`).join('');
  el('real-name').textContent=options.pair?'本当に入れ替える':'本当に入れ替わる';
  setDrawLabel();
- el('opts-cur').textContent=[options.sex?options.sex==='f'?'女性':'男性':'',options.dec?.length?options.dec.map(n=>n===9?'90代以上':n*10+'代').join('・'):'',options.pair?(options.pairMode==='between'?'2つの範囲で':'範囲の中で')+(options.real?'本当に入れ替える':'入れ替え'):'',options.real&&!options.pair?'本当に入れ替わる':''].filter(Boolean).join('・');
+ el('opts-cur').textContent=[options.sex?options.sex==='f'?'女性':'男性':'',options.dec?.length?options.dec.map(n=>n===9?'90代以上':n*10+'代').join('・'):'',options.pair&&options.real?'本当に入れ替える':'',options.pair?(options.pairMode==='between'?'2つの範囲で':'範囲の中で'):'',options.real&&!options.pair?'本当に入れ替わる':''].filter(Boolean).join('、');
  el('opt-save-status').textContent='「保存」を押すと、次回もこの設定で開きます。';
  if(typeof abState==='function'){if(between()&&!selectedB)target='B';refreshB()}
 }
@@ -129,7 +137,7 @@ function setDrawLabel(){const b=el('draw');b.setAttribute('data-busy',drawing?'1
 function later(ms,tk){return new Promise((res,rej)=>setTimeout(()=>tk===drawToken?res():rej(new Error('skip')),ms))}
 const pickOne=a=>a[Math.floor(Math.random()*a.length)],placeName=c=>PlaceLabel.name(c);
 function roamPoint(c,pl=pool){if(c.facility?.xy&&MapModel.distance(c.facility.xy,pl.center)<=pl.radius)return c.facility.xy;const [x,y]=pl.center,d=pl.radius*Math.sqrt(Math.random()),a=Math.random()*2*Math.PI;return [x+d*Math.sin(a)/(111320*Math.cos(y*Math.PI/180)),y+d*Math.cos(a)/111320]}
-async function roam(count,ms,tk,pools=[]){roamLayer??=L.layerGroup().addTo(map);const marks=Array.from({length:count},(_,i)=>L.circleMarker([(pools[i]||pool).center[1],(pools[i]||pool).center[0]],{radius:7,color:'#fff',weight:2,fillColor:i?'#2E6A5D':'#C8371E',fillOpacity:1}).bindTooltip('',{permanent:true,direction:'top',offset:[0,-6]}).addTo(roamLayer)),end=performance.now()+ms;let step=50;
+async function roam(count,ms,tk,pools=[]){roamLayer??=L.layerGroup().addTo(map);const marks=Array.from({length:count},(_,i)=>L.circleMarker([(pools[i]||pool).center[1],(pools[i]||pool).center[0]],{radius:7,color:'#fff',weight:2,fillColor:pools.length?(i?'#D9402B':'#2F6BFF'):i?'#2E6A5D':'#C8371E',fillOpacity:1}).bindTooltip('',{permanent:true,direction:'top',offset:[0,-6]}).addTo(roamLayer)),end=performance.now()+ms;let step=50;
  while(performance.now()<end){for(const [i,m] of marks.entries()){const pl=pools[i]||pool,c=MapModel.pick(pl.parts),q=roamPoint(c,pl);m.setLatLng([q[1],q[0]]).setTooltipContent(esc(placeName(c)))}await later(step,tk);step=Math.min(160,step*1.12)}roamLayer.clearLayers()}
 async function roll(id,gen,ms,tk){const node=el(id),end=performance.now()+ms;while(performance.now()<end){node.innerHTML=gen();await later(55,tk)}}
 async function typeOut(id,html,tk){const node=el(id),box=document.createElement('div');box.innerHTML=html;const plain=box.textContent;for(let i=1;i<=plain.length;i+=2){node.textContent=plain.slice(0,i);await later(28,tk)}node.innerHTML=html}
