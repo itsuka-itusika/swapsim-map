@@ -26,8 +26,6 @@ data.policeStations=JSON.parse(read('map-preview/data/police-stations.json')).fe
 data.specialPlaces=[...JSON.parse(read('map-preview/data/special-places.json')).features,...JSON.parse(read('map-preview/data/named-venues.json')).features,...JSON.parse(read('map-preview/data/hotels.json')).features,...JSON.parse(read('map-preview/data/cinemas.json')).features,...JSON.parse(read('map-preview/data/large-facilities.json')).features];
 data.landmarks=JSON.parse(read('map-preview/data/landmarks.json')).features;
 data.roads=JSON.parse(read('map-preview/data/roads.json')).roads;
-// Optional town-name grid (map-preview/import-towns.py); without it places fall back to district or ward names.
-data.towns=fs.existsSync('map-preview/data/towns.json')?JSON.parse(read('map-preview/data/towns.json')):null;
 data.publicAreas=JSON.parse(read('map-preview/data/public-areas.json')).features;
 data.osmSeeds=fs.existsSync('map-preview/data/osm-seeds.json')?JSON.parse(read('map-preview/data/osm-seeds.json')).entries:[];
 const meshIndex=new Map(data.mesh.cells.map(c=>[c[0]+','+c[1],c]));
