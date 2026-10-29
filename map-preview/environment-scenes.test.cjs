@@ -221,3 +221,13 @@ test('OpenStreetMap buildings never show a company, an apartment name or a bare 
  return JSON.stringify([lc('residential','family',{building:'house'}),lc('residential','Marine',{name:'Marine'}),lc('office','株式会社石野興産',{name:'株式会社石野興産'}),lc('office','(株)バイセル',{name:'(株)バイセル'}),lc('office','office',{}),lc('office','大崎ブライトタワー',{name:'大崎ブライトタワー'})].map(c=>PlaceLabel.name(c)))})()`));
  assert.deepEqual(r,['西五反田','西五反田','西五反田','西五反田','西五反田','大崎ブライトタワー']);
 });
+test('expressway drivers and passengers never wait at signals or turn at intersections',()=>{
+ const r=JSON.parse(run(`(()=>{let comp={id:'r',name:'首都高速道路',type:'road',subtype:'x',region:MAP_DATA.regions[0],toll:true},out=[];
+ for(let h of [3,8,13,22])for(let k of ['car_driver','car_passenger','truck_driver','trailer_driver','delivery_driver','dump_driver','taxi_driver','taxi_passenger','bus_driver','bus_passenger'])for(let i=0;i<12;i++){let driver=/driver/.test(k);let P=mapPerson({role:'road_'+k,label:k,min:25,max:65,female:.3,road:comp,region:comp.region,landType:'road',subtype:'x',driver,roadWorker:driver&&k!=='car_driver',landComponent:comp,roleP:.01},{y:2026,mo:10,d:28,dow:3,h,hf:h,mi:0});out.push(P.sit.text)}return JSON.stringify(out)})()`));
+ assert.ok(r.length>400);assert.ok(r.every(x=>!/交差点|信号|歩道|右折|停留所|路肩/.test(x)),r.filter(x=>/交差点|信号|歩道|右折|停留所|路肩/.test(x)).join('\n'));
+});
+test('visitors from abroad take the travel hobby table, not the domestic survey',()=>{
+ const r=JSON.parse(run(`(()=>{let a=MAP_DATA.areas.find(x=>x.name==='原宿・表参道'),p=LandProfile.create(envContext,a.xy,300),t={y:2026,mo:10,d:31,dow:6,h:14,hf:14.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t).filter(c=>c.role==='area_inbound'),out=[];for(let i=0;i<40;i++){let P=mapPerson({...parts[0],roleP:.01},t);if(P.age>=10)out.push(profileHobbyLabel(P))}return JSON.stringify(out)})()`));
+ const ok=new Set(['旅行','写真撮影','食べ歩き','ショッピング','街歩き','カフェ巡り','美術館巡り','音楽鑑賞','映画鑑賞','読書','料理','アニメ・マンガ','ゲーム','ハイキング','ランニング','ヨガ','サッカー観戦','ガーデニング','温泉巡り']);
+ assert.ok(r.length>20);assert.ok(r.every(x=>x.split('、').every(h=>ok.has(h))),r.join(' / '));
+});

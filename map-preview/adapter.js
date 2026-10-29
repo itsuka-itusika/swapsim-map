@@ -4,6 +4,11 @@ function makeInbound(P){
  P.isInbound=true;P.originMarket=market.name;let nm=PersonContext.foreignName(market.name,P.sex,rnd);P.surname={k:nm.surname,r:nm.surname,c:100};P.given={k:nm.given,r:nm.given,p:.01,era:{cov:1}};P.nameApproximate=nm.approximated;
  P.occ={label:'観光客',group:'visitor',cat:'visitor',kind:'visitor',p:1};
  P.visitLabel='外国人観光客／国・地域：'+market.name;
+ // Visitors from abroad get a mild, travel-friendly hobby table instead of the domestic survey (game assumption).
+ const H=[['旅行',(a)=>4],['写真撮影',(a)=>3],['食べ歩き',(a)=>3],['ショッピング',(a)=>a<60?2.5:1.5],['街歩き',(a)=>2],['カフェ巡り',(a)=>a<45?2:.8],['美術館巡り',(a)=>a>=30?1.5:.8],['音楽鑑賞',(a)=>1.5],['映画鑑賞',(a)=>1.5],['読書',(a)=>1.2],['料理',(a)=>a>=25?1.2:.5],['アニメ・マンガ',(a)=>a<40?2:.3],['ゲーム',(a)=>a<35?1.5:.3],['ハイキング',(a)=>a>=25?1:.5],['ランニング',(a)=>a>=20&&a<60?1:.3],['ヨガ',(a)=>a>=20&&a<60?.8:.3],['サッカー観戦',(a)=>a<60?.8:.4],['ガーデニング',(a)=>a>=50?1:.1],['温泉巡り',(a)=>a>=30?.8:.4]];
+ let pickH=list=>{let w=list.map(([n,f])=>f(P.age)),v=rnd()*w.reduce((x,y)=>x+y,0);return list[w.findIndex(x=>(v-=x)<0)]||list[0]};
+ let first=pickH(H),second=rnd()<.45?pickH(H.filter(x=>x!==first)):null;
+ P.hobbies=[];P.profileDisplay={...(P.profileDisplay||{}),hobby:first[0]+(second?'、'+second[0]:'')};P.hobbyP=.1;
 }
 // Reuse existing demographic, occupation, name, hobby and household generators.
 function mapPerson(c,t){
