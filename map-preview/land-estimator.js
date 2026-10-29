@@ -71,7 +71,10 @@ const LandEstimator=(()=>{
  function estimateDemographics(c,occupation,t){let d={min:occupation.min,max:occupation.max,female:occupation.female};if(occupation.resident){d.resident=true;d.censusCode=c.region.id;d.subtype=c.subtype;d.daytime=t.h>=9&&t.h<17&&!weekend(t)}if(c.type==='green'&&c.subtype==='playground'&&occupation.role==='green_walk')d.ageBands=[[0,11,.5],[25,49,.45],[60,79,.05]];if(c.subtype==='fashion'&&occupation.role==='area_shopping')d.female=.62;return d;}
  function estimateRaw(profile,t){let out=[];for(let c of profile.parts){let n=estimatePopulation(c,t,profile),roles=estimateOccupations(c,t),mass=roles.reduce((s,z)=>s+z.w,0);if(!n||!mass)continue;for(let z of roles){if(z.w<=0)continue;out.push({...z,...estimateDemographics(c,z,t),n:n*z.w/mass,region:c.region,landType:c.type,subtype:c.subtype,evidence:c.source,precision:c.precision,landComponent:c})}}
   // Drivers and passengers on expressways and major roads inside the circle, on top of the land use beneath.
-  if(typeof RoadModel!=='undefined')out.push(...RoadModel.rows(profile,t));return out;}
+  if(typeof RoadModel!=='undefined')out.push(...RoadModel.rows(profile,t));
+  // People aboard trains on the tracks inside the circle (rarely; a little more at rush hours).
+  // Several lines meet at hubs; the riders drawn stay a minority (about 15% at most at rush hours, 5% otherwise).
+  if(typeof RailModel!=='undefined'){let rail=RailModel.rows(profile,t),r=rail.reduce((x,c)=>x+c.n,0),rest=out.reduce((x,c)=>x+c.n,0),cap=RailModel.cap(t);if(r>0&&rest>0&&r>rest*cap/(1-cap)){let k=rest*cap/(1-cap)/r;rail=rail.map(c=>({...c,n:c.n*k,w:c.n*k}))}out.push(...rail)}return out;}
  // Reassign existing people rather than adding an independent headcount. All coefficients
  // are simulation assumptions; dedicated populations such as patients, students and sleepers remain intact.
  function redistribute(rows){

@@ -231,3 +231,9 @@ test('visitors from abroad take the travel hobby table, not the domestic survey'
  const ok=new Set(['旅行','写真撮影','食べ歩き','ショッピング','街歩き','カフェ巡り','美術館巡り','音楽鑑賞','映画鑑賞','読書','料理','アニメ・マンガ','ゲーム','ハイキング','ランニング','ヨガ','サッカー観戦','ガーデニング','温泉巡り']);
  assert.ok(r.length>20);assert.ok(r.every(x=>x.split('、').every(h=>ok.has(h))),r.join(' / '));
 });
+test('trains on the tracks inside the circle: rare riders, more at rush, labelled by line or station',()=>{
+ const r=JSON.parse(run(`(()=>{const go=(xy,h,dow,d)=>{let t={y:2026,mo:10,d,dow,h,hf:h+.2,mi:12,rand:false},p=LandProfile.create(envContext,xy,300),parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),rail=parts.filter(c=>c.role.startsWith('rail_')),people=rail.slice(0,6).map(c=>{let P=mapPerson({...c,roleP:.01},t);return [c.role,P.place,P.occ.label,P.sit.text]});return {share:rail.reduce((s,c)=>s+c.n,0)/tot,people}};
+ return JSON.stringify({rush:go([139.7005,35.6897],8,3,28),day:go([139.7600,35.7070],14,3,28),night:go([139.7005,35.6897],3,3,28),none:go([139.6466,35.6433],8,3,28)})})()`));
+ assert.ok(r.rush.share>.05&&r.rush.share<=.1501,String(r.rush.share));assert.ok(r.day.share>0&&r.day.share<=.0501,String(r.day.share));assert.equal(r.night.share,0);
+ for(const [role,place,job] of [...r.rush.people,...r.day.people]){assert.match(place,/^\S+(線|駅|ライナー|ゆりかもめ|モノレール) 列車内$/,place);if(role==='rail_driver')assert.match(job,/運転士/);if(role==='rail_conductor')assert.match(job,/車掌/)}
+});

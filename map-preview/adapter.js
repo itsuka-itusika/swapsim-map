@@ -68,13 +68,14 @@ function mapPerson(c,t){
  if(typeof VenueModel!=='undefined')VenueModel.assign(c,P);
  if(typeof PlacesModel!=='undefined')PlacesModel.assign(c,P);
  if(typeof RoadModel!=='undefined')RoadModel.assign(c,P);
+ if(typeof RailModel!=='undefined')RailModel.assign(c,P);
  if(typeof PrepModel!=='undefined')PrepModel.assign(c,P);
  if(typeof HospitalModel!=='undefined')HospitalModel.assign(c,P);
  if(typeof PoliceModel!=='undefined')PoliceModel.assign(c,P);
  if(typeof CivicModel!=='undefined')CivicModel.assign(c,P);
  if(c.custody){P.household={label:'施設等の世帯（一般世帯統計の対象外）',marital:'未抽選',code:null};P.hobbies=[];}else assignProfiles(P);makeFamilyContext(P);P.surname=pickSurname(pref.n);P.given=pickGiven(P.birth.y,P.sex);
  // Condition health on actually being at the sampled workplace or outside, without erasing leave status.
- const activeWork=c.roadWorker||c.hospStaff||['prep_teacher','prep_staff'].includes(c.role)||c.role.endsWith('_worker')||c.role.startsWith('media_')||c.venueWorker||c.civicWorker&&!c.custody||c.placeWorker||c.policeWorker||['area_office','teacher','doctor','nurse','care','mesh_factory','mesh_logistics','mesh_security'].includes(c.role)||c.role.startsWith('urban_')&&c.role!=='urban_visit'||c.role.startsWith('special_')&&!['special_passenger','special_theme_guest','special_theme_child'].includes(c.role)||c.role.startsWith('green_')&&!['green_walk','green_tourist','green_run'].includes(c.role)||c.role.startsWith('land_')&&!['land_passenger','land_grave','land_hike'].includes(c.role);
+ const activeWork=c.roadWorker||c.railWorker||c.hospStaff||['prep_teacher','prep_staff'].includes(c.role)||c.role.endsWith('_worker')||c.role.startsWith('media_')||c.venueWorker||c.civicWorker&&!c.custody||c.placeWorker||c.policeWorker||['area_office','teacher','doctor','nurse','care','mesh_factory','mesh_logistics','mesh_security'].includes(c.role)||c.role.startsWith('urban_')&&c.role!=='urban_visit'||c.role.startsWith('special_')&&!['special_passenger','special_theme_guest','special_theme_child'].includes(c.role)||c.role.startsWith('green_')&&!['green_walk','green_tourist','green_run'].includes(c.role)||c.role.startsWith('land_')&&!['land_passenger','land_grave','land_hike'].includes(c.role);
  const outside=c.role!=='general'&&!['resident','patient'].includes(c.role)&&!c.custody&&!(c.hospCase&&c.hospCase!=='check');
  for(let i=0;i<64;i++){P.hb=healthBase(P,t);if(!(activeWork&&P.hb.leave)&&!(outside&&P.hb.bed))break;if(i===63)throw Error('勤務・健康状態の抽選に失敗しました');}
  if(typeof linkFamilyHealth==='function')linkFamilyHealth(P);
@@ -130,6 +131,7 @@ function mapPerson(c,t){
  if(typeof CivicModel!=='undefined')CivicModel.apply(c,P,t);
  if(typeof PlacesModel!=='undefined')PlacesModel.apply(c,P,t);
  if(typeof RoadModel!=='undefined')RoadModel.apply(c,P,t);
+ if(typeof RailModel!=='undefined')RailModel.apply(c,P,t);
  if(typeof PrepModel!=='undefined')PrepModel.apply(c,P,t);
  if(typeof HospitalModel!=='undefined')HospitalModel.apply(c,P,t);
  if(typeof PoliceModel!=='undefined')PoliceModel.apply(c,P,t);
@@ -143,7 +145,7 @@ function mapPerson(c,t){
  P.health=settleHealth(P,t);if(typeof HospitalModel!=='undefined')HospitalModel.health(P,t);if(c.role==='venue_ghost'){P.hb.preg=false;P.health={text:'幽霊のため健康状態は不明',items:[],p:1,note:'お遊び要素'};}P.body=bodyOf(P,t);
  P.place=(c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name||f.name);
  // Without a specific facility or named place, show the town and the kind of spot (西新宿 自宅, 銀座 市街地).
- if(typeof PlaceLabel!=='undefined')P.place=PlaceLabel.label(c,P,P.place);P.placeShort=P.place;
+ if(typeof PlaceLabel!=='undefined')P.place=PlaceLabel.label(c,P,P.place);if(P.railPlace)P.place=P.railPlace;P.placeShort=P.place;
  P.wxText=wxLabel(P.pref,t)+(t.rand||typeof MapWeather==='undefined'||MapWeather.status()!=='東京の実況'?'（推定）':'');
  P.logp=Math.log10(Math.max(1e-12,P.surname.c/12300))+Math.log10(Math.max(1e-12,P.given.p*P.given.era.cov))+Math.log10(Math.max(1e-12,c.roleP||P.occ.p||1))+Math.log10(Math.max(1e-12,P.sit.p||1))-SIT_MED[t.h%24];
  P.stars=RARITY.findIndex(th=>P.logp>th)+1||5;
