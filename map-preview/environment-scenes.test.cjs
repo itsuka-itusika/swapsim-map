@@ -181,6 +181,15 @@ test('places without a specific name read as district or ward, with 自宅 or �
  const r=JSON.parse(run(`(()=>{let out=[];for(let xy of [[139.6922,35.6896],[139.7155,35.6339],[139.7035,35.6938]])for(let h of [3,13,22]){let t={y:2026,mo:10,d:28,dow:3,h,hf:h,mi:0,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,xy,150),t).filter(c=>c.n>0),tot=parts.reduce((s,c)=>s+c.n,0);for(let i=0;i<60;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push([c.role,!!c.resident,P.place,PlaceLabel.generic(c)])}}return JSON.stringify(out)})()`));
  const generic=r.filter(x=>x[3]);assert.ok(generic.length>100);
  assert.ok(generic.every(x=>!/ (市街地|繁華街|住宅街|オフィス街|工業地帯|緑地|学生街|工場|倉庫)$/.test(x[2])&&(/ (自宅|職場)$/.test(x[2])||!/ /.test(x[2]))),generic.slice(0,3).join(' / '));assert.ok(generic.some(x=>!/ /.test(x[2])));
- assert.ok(generic.filter(x=>x[0]==='general').every(x=>/ 自宅$/.test(x[2])));
+ const res=generic.filter(x=>x[0]==='general');assert.ok(res.filter(x=>/ 自宅$/.test(x[2])).length/res.length>.6);
  assert.ok(r.filter(x=>!x[3]).every(x=>!/ (自宅|職場)$/.test(x[2])));
+});
+test('自宅 and 職場 follow the final scene text',()=>{
+ const k=(role,state,text,extra={})=>run(`PlaceLabel.kind(${JSON.stringify({role,...extra})},${JSON.stringify({sit:{state,text}})})`);
+ for(const t of ['布団の中でスマホを眺めているところでした','昼のワイドショーを見ながら、洗濯物をたたんでいるところでした','自宅で、教わったリハビリの体操を一つずつこなしているところでした','学校に行く準備を終えたところでした','実家の親から電話がかかってきて、近況を話しているところでした'])assert.equal(k('general','off',t),'自宅',t);
+ for(const t of ['近所のスーパーの朝市で、特売の卵を手に入れたところでした','公園のベンチで、手作りのおにぎりを広げたところでした','近所の銭湯の湯船で、常連さんと世間話をしているところでした','恋人と大型の家具店に来て、ソファの色で意見が割れているところでした','定食屋で、ご飯の大盛り無料に心が揺れているところでした','整形外科のリハビリで、ひざの曲げ伸ばしを繰り返しているところでした'])assert.equal(k('general','off',t),'',t);
+ assert.equal(k('general','sleep','夢の中で、空を飛んでいるところでした'),'自宅');
+ assert.equal(k('area_office','work','会議の資料を印刷しているところでした'),'職場');
+ assert.equal(k('area_office','work','昼休みに、近くのカフェでサンドイッチを食べているところでした'),'');
+ assert.equal(k('area_shopping','off','店先のメニューを見比べているところでした'),'');
 });
