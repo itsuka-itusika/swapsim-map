@@ -27,7 +27,7 @@ const LandEstimator=(()=>{
  }
  function estimateOccupations(c,t){const police=typeof PoliceModel!=='undefined'?PoliceModel.roles(c,t):null;if(police)return police;const place=typeof PlacesModel!=='undefined'?PlacesModel.roles(c,t):null;if(place)return place;const civic=typeof CivicModel!=='undefined'?CivicModel.roles(c,t):null;if(civic)return civic;const venue=typeof VenueModel!=='undefined'?VenueModel.roles(c,t):null;if(venue)return venue;const facility=facilityRows(c,t);if(facility?.length)return facility;
  if(c.kind==='palace'||c.type==='green'){let z={...c,kind:c.subtype==='playground'?'park':c.subtype};let closed=typeof OSMProfile!=='undefined'&&OSMProfile.opening(c.openingHours,t)===false;return GreenModel.roles(z,t).map(z=>({...z,w:closed&&['green_walk','green_tourist','green_run'].includes(z.role)?0:z.density,zone:c}));}
- if(['airfield','terminal','cemetery'].includes(c.subtype))return LandModel.roles({...c,kind:c.subtype},t).map(z=>({...z,w:z.density,zone:c}));
+ if(['airfield','terminal','cemetery','port'].includes(c.subtype))return LandModel.roles({...c,kind:c.subtype},t).map(z=>({...z,w:z.density,zone:c}));
  if(c.type==='waterfront'&&c.subtype==='water')return [];
  // A mixed district can contain both residents and visitors. Distinct facilities above retain their own models.
  if(c.type==='residential'||c.type==='mixed'||c.type==='office'){
@@ -61,7 +61,7 @@ const LandEstimator=(()=>{
  if(typeof PoliceModel!=='undefined'&&PoliceModel.kind(c))return sum*Math.min(1,c.areaM2/Math.max(1,c.area||(c.geometry?S.area(c.geometry):Math.PI*(c.radius||20)**2)));
  if(typeof PlacesModel!=='undefined'&&PlacesModel.kind(c)||typeof CivicModel!=='undefined'&&CivicModel.kind(c)||typeof VenueModel!=='undefined'&&VenueModel.kind(c))return sum*Math.min(1,c.areaM2/Math.max(1,c.area||(c.geometry?S.area(c.geometry):c.areaM2)));
  if(c.facilities?.length||['education','medical','transport'].includes(c.type)&&!['airfield','terminal'].includes(c.subtype)){let footprint=c.geometry?S.area(c.geometry):Math.PI*(c.facilities?.[0]?.radius||c.radius||60)**2;return sum*Math.min(1,c.areaM2/Math.max(1,footprint));}
- if(c.type==='green'||c.kind==='palace'||['airfield','terminal','cemetery'].includes(c.subtype))return sum*c.areaM2/1e6;
+ if(c.type==='green'||c.kind==='palace'||['airfield','terminal','cemetery','port'].includes(c.subtype))return sum*c.areaM2/1e6;
  const density={residential:c.region.residentialDensity||c.region.density||6000,mixed:c.region.density||6000,commercial:14000,office:18000,industrial:2600,medical:7000,tourism:3000,transport:12000,public:3000,mall:16000,sports:1800,religious:900,agriculture:35,waterfront:250}[c.type]||1000;
  let factor=timeFactor(c.type,c.subtype,t),opening=typeof OSMProfile!=='undefined'?OSMProfile.opening(c.openingHours,t):null;
  if(opening===false)factor*=.02;

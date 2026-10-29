@@ -27,7 +27,7 @@ const PersonContext=(()=>{
  const AWAY=/バスツアー|紅葉の名所|紅葉狩りに出かけた|山道|山頂|登山|ゲレンデ|スキー場|海水浴|潮干狩り|海沿いの道|ビーチ|高速道路|サービスエリア|道の駅|日帰りの温泉|温泉に向かう|帰省ラッシュ|新幹線の中|新幹線の通路|田んぼ|稲刈り|刈り取った稲|みかん畑|茶畑|牧場|漁に出|漁船|漁港|港から|雪下ろし|宵山|山鉾|横浜スタジアム/,AIR=/機内|保安検査場|着陸|離陸/,SEA=/甲板|船の当直|船のブリッジ|網を引|海図/;
  function away(text,c){if(/夢の中で/.test(text))return false;
   // People drawn on a road are on that road; expressway and highway scenes are where they are.
-  if(c?.landComponent?.type==='road')return false;if(AWAY.test(text))return true;let land=c?.landComponent,place=c?.facility?.name||land?.name||'';
+  if(c?.landComponent?.type==='road')return false;if(c?.landComponent?.subtype==='port'||c?.zone?.kind==='port')return false;if(AWAY.test(text))return true;let land=c?.landComponent,place=c?.facility?.name||land?.name||'';
   if(AIR.test(text)&&!(['airfield','terminal'].includes(land?.subtype)||/空港/.test(place)))return true;
   if(SEA.test(text)&&land?.type!=='waterfront')return true;
   return /新幹線の運転席/.test(text)&&!/^(東京|品川|上野)駅$/.test(place)}

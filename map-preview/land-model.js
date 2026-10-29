@@ -8,6 +8,7 @@ const LandModel=(()=>{
  const R=(key,label,n,min=22,max=64,female=.4)=>({role:'land_'+key,label,density:n,min,max,female});
  function roles(z,t){let h=t.hf??t.h,day=h>=7&&h<20;if(z.kind==='water')return [];
  if(typeof AirportModel!=='undefined'){let air=AirportModel.roles(z,t);if(air)return air}
+ if(typeof PortModel!=='undefined'){let port=PortModel.roles(z,t);if(port)return port}
  if(z.kind==='terminal')return [R('passenger','空港利用客',day?2400:h>=5&&h<24?400:40,6,79,.5),R('airport','空港係員',day?500:50),R('security','施設警備員',day?70:25,22,64,.2)];
  if(z.kind==='airfield')return [R('maintenance','航空施設の整備・管理職員',day?35:6,22,64,.2),R('security','施設警備員',day?12:6,22,64,.2)];
  if(z.kind==='industrial')return [R('logistics','物流・工場勤務者',day?350:55,20,69,.25),R('security','施設警備員',day?12:5,22,69,.2)];

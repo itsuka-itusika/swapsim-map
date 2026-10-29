@@ -263,3 +263,11 @@ test('羽田空港: travellers and airline staff in the terminals, airside crews
  assert.ok(r.field.labels.includes('航空整備士')&&!r.field.labels.some(l=>/出発客|到着客/.test(l)),r.field.labels.join());
  for(const [role,job,text] of [...r.dom.people,...r.intl.people,...r.field.people])assert.ok(text&&!/自宅|布団/.test(text),role+' '+text);
 });
+test('コンテナふ頭: port workers by hour at all four terminals, the gate queue before opening, foreign ship crews',()=>{
+ const r=JSON.parse(run(`(()=>{const T=(dow,d,h)=>({y:2026,mo:10,d,dow,h:Math.floor(h),hf:h,mi:0,rand:false}),go=(xy,t)=>{let parts=LandEstimator.estimate(LandProfile.create(envContext,xy,120),t).filter(c=>c.role.startsWith('port_'));return {n:parts.reduce((s,c)=>s+c.n,0),people:parts.map(c=>{let P=mapPerson({...c,roleP:.01},t);return [c.role,P.place,P.sit.text,!!P.isInbound]})}};
+ return JSON.stringify({oi:go([139.7655,35.605],T(4,29,7)),aomi:go([139.7795,35.6145],T(4,29,11)),shina:go([139.756,35.6225],T(5,30,2)),chubo:go([139.8015,35.592],T(4,29,11))})})()`));
+ for(const k of ['oi','aomi','shina','chubo'])assert.ok(r[k].n>0,k);
+ assert.ok(r.oi.people.filter(p=>p[0]==='port_trailer').every(p=>/開門前|ゲートが開く/.test(p[2])));
+ assert.ok(r.chubo.people.every(p=>/中央防波堤/.test(p[1])));
+ assert.ok([...r.oi.people,...r.aomi.people].filter(p=>p[0]==='port_crew').every(p=>p[3]));
+});
