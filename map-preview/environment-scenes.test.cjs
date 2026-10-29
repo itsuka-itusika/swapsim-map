@@ -255,3 +255,11 @@ test('🎲 guide places resolve inside the 23 wards and each has a short introdu
  assert.ok(r.length>=60);for(const [name,inside,len,time] of r){assert.ok(inside,name);assert.ok(len>=10&&len<=60,name);assert.ok(time,name)}
  assert.equal(new Set(r.map(x=>x[0])).size,r.length);
 });
+test('羽田空港: travellers and airline staff in the terminals, airside crews on the field, international extras at T3',()=>{
+ const r=JSON.parse(run(`(()=>{const T=(h)=>({y:2026,mo:10,d:29,dow:4,h:Math.floor(h),hf:h,mi:0,rand:false}),go=(xy,h)=>{let t=T(h),parts=LandEstimator.estimate(LandProfile.create(envContext,xy,200),t).filter(c=>c.role.startsWith('air_'));return {labels:[...new Set(parts.map(c=>c.label))],people:parts.slice(0,8).map(c=>{let P=mapPerson({...c,roleP:.01},t);return [c.role,P.occ.label,P.sit.text]})}};
+ return JSON.stringify({dom:go([139.785,35.552],10),intl:go([139.7685,35.546],10),field:go([139.775,35.553],10)})})()`));
+ assert.ok(r.dom.labels.includes('国内線の出発客')&&r.dom.labels.includes('保安検査員')&&!r.dom.labels.includes('入国審査官'),r.dom.labels.join());
+ assert.ok(r.intl.labels.includes('入国審査官')&&r.intl.labels.includes('税関職員'),r.intl.labels.join());
+ assert.ok(r.field.labels.includes('航空整備士')&&!r.field.labels.some(l=>/出発客|到着客/.test(l)),r.field.labels.join());
+ for(const [role,job,text] of [...r.dom.people,...r.intl.people,...r.field.people])assert.ok(text&&!/自宅|布団/.test(text),role+' '+text);
+});
