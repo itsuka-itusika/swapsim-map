@@ -3,7 +3,7 @@ const CivicModel=(()=>{
  const kinds=['prison','detention','military','government','parliament','court','juvenile','immigration'];
  const kind=c=>['police','courthouse','fire_station'].includes(c.tags?.amenity)?null:kinds.includes(c.civicKind||c.subtype)?c.civicKind||c.subtype:null;
  const texts={custody_read:'居室で本を読んでいるところでした',custody_sleep:'居室で眠っているところでした',custody_meal:'居室で食事をしているところでした',prison_work:'刑務作業に取り組んでいるところでした',officer:'処遇記録を確認しているところでした',counsel:'接見に向けて書類を整理しているところでした',meeting:'面会の受付を待っているところでした',medical:'診療の記録を確認しているところでした',admin:'事務書類を整理しているところでした',guard:'庁舎内を巡回しているところでした',clean:'共用部分を清掃しているところでした',training:'体力づくりの運動をしているところでした',defense_office:'業務資料をまとめているところでした',maintenance:'整備記録を確認しているところでした',supply:'備品の在庫を確認しているところでした',barracks:'隊舎で休んでいるところでした',sleep:'隊舎で眠っているところでした',policy:'政策資料を読み込んでいるところでした',technical:'技術資料を照合しているところでした',counter:'申請書類を確認しているところでした',consult:'窓口で手続きの相談をしているところでした',member:'審議に向けて資料を読んでいるところでした',secretary:'議員の日程を調整しているところでした',diet_staff:'会議資料を準備しているところでした',reporter:'取材メモを整理しているところでした',tour:'見学の説明に耳を傾けているところでした'};
- function roles(c,t){let k=kind(c);if(!k)return null;let h=t.hf??t.h,we=t.dow===0||t.dow===6||t.holiday,day=h>=9&&h<17,night=h>=22||h<6,work=day&&!we,late=!we&&h>=17&&h<21;
+ function roles(c,t){let k=kind(c);if(!k)return null;if(typeof DietModel!=='undefined'){let diet=DietModel.roles(c,t);if(diet)return diet}let h=t.hf??t.h,we=t.dow===0||t.dow===6||t.holiday,day=h>=9&&h<17,night=h>=22||h<6,work=day&&!we,late=!we&&h>=17&&h<21;
  let area=c.area||c.areaM2||10000,scale=Math.max(.05,area/10000),out=[];
  const add=(key,label,n,min,max,female,scene,extra={})=>out.push({role:'civic_'+key,label,w:n,min,max,female,civicScene:scene,civicWorker:true,...extra});
  if(k==='prison'||k==='detention'){

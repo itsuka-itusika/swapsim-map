@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "checked": "2026-10-29",
+  "notes": "Known Diet and Tokyo Metropolitan Assembly dates as reported by 2026-10-29. On session weekdays without a listed event, plenary sittings follow the regular days (衆議院 火木金, 参議院 月水金) about half the time; committee hours and attendance are game assumptions.",
+  "sources": [
+    "https://ja.wikipedia.org/wiki/第222回国会",
+    "https://ja.wikipedia.org/wiki/第221回国会",
+    "https://ja.wikipedia.org/wiki/第220回国会",
+    "https://www.jiji.com/jc/article?k=2026102000124&g=pol",
+    "https://www.gikai.metro.tokyo.lg.jp/schedule/plenary-session.html"
+  ],
+  "diet": {
+    "sessions": [
+      {"n": 220, "kind": "常会", "start": "2026-01-23", "end": "2026-01-23"},
+      {"n": 221, "kind": "特別会", "start": "2026-02-18", "end": "2026-07-25"},
+      {"n": 222, "kind": "臨時会", "start": "2026-10-05", "end": "2026-12-12"}
+    ],
+    "events": [
+      {"d": "2026-01-23", "house": "衆", "kind": "dissolution", "label": "衆議院の解散", "h": [13, 14]},
+      {"d": "2026-10-05", "house": "both", "kind": "opening", "label": "開会式と所信表明演説", "h": [10.5, 16]},
+      {"d": "2026-10-07", "house": "衆", "kind": "plenary", "label": "代表質問", "h": [13, 17]},
+      {"d": "2026-10-08", "house": "both", "kind": "plenary", "label": "代表質問", "h": [10, 17]},
+      {"d": "2026-10-09", "house": "参", "kind": "plenary", "label": "代表質問", "h": [10, 15]},
+      {"d": "2026-10-13", "house": "衆", "kind": "budget", "label": "予算委員会の基本的質疑", "h": [9, 17]},
+      {"d": "2026-10-14", "house": "衆", "kind": "budget", "label": "予算委員会の基本的質疑", "h": [9, 17]},
+      {"d": "2026-10-16", "house": "参", "kind": "budget", "label": "予算委員会の基本的質疑", "h": [9, 17]},
+      {"d": "2026-10-19", "house": "参", "kind": "budget", "label": "予算委員会の基本的質疑", "h": [9, 17]},
+      {"d": "2026-10-20", "house": "衆", "kind": "plenary", "label": "消費税減税関連法案の趣旨説明と質疑", "h": [13, 15]},
+      {"d": "2026-10-23", "house": "衆", "kind": "committee", "label": "財務金融委員会の消費税減税関連法案の審議", "h": [9, 17]},
+      {"d": "2026-10-27", "house": "衆", "kind": "committee", "label": "財務金融委員会の参考人質疑", "h": [9, 12]},
+      {"d": "2026-10-27", "house": "衆", "kind": "plenary", "label": "国会同意人事案の採決", "h": [13, 14]},
+      {"d": "2026-11-04", "house": "参", "kind": "committee", "label": "憲法審査会", "h": [10, 12]}
+    ]
+  },
+  "tokyo": {
+    "sessions": [
+      {"name": "令和8年第3回定例会", "start": "2026-09-18", "end": "2026-10-08", "plenary": ["2026-09-18", "2026-09-29", "2026-09-30", "2026-10-08"]}
+    ]
+  }
+}

@@ -243,3 +243,10 @@ test('ホテル街: guests aged 20+ and hotel staff only in the hotel districts,
  assert.ok(r.day.share>.05&&r.night.share>r.day.share,JSON.stringify([r.day.share,r.night.share]));assert.equal(r.ginza.share,0);
  for(const [role,age,job,text,place] of [...r.day.out,...r.night.out]){assert.equal(place,'道玄坂・円山町 ホテル街');if(role==='area_lovehotel_guest')assert.ok(age>=20&&!/^(高校|中学|小学)[1-6]年生/.test(job),job);else{assert.match(job,/フロント|清掃/);if(/清掃/.test(job))assert.doesNotMatch(text,/フロント/)}}
 });
+test('国会議事堂・議員会館・都庁 follow the session calendar, with no single-holder offices',()=>{
+ const r=JSON.parse(run(`(()=>{const T=(mo,d,dow,h)=>({y:2026,mo,d,dow,h:Math.floor(h),hf:h,mi:0,rand:false}),c={name:'国会議事堂',civicKind:'parliament',type:'public',subtype:'parliament',area:100000,areaM2:100000},k={...c,name:'衆議院第一議員会館'},to={name:'東京都庁舎 第一本庁舎',civicKind:'government',type:'public',subtype:'government',area:20000,areaM2:20000},region=MAP_DATA.regions.find(r=>r.id==='13101');
+ const sum=(cc,t,re)=>CivicModel.roles(cc,t).filter(x=>re.test(x.label)).reduce((s,x)=>s+x.w,0),texts=(cc,t,re)=>CivicModel.roles(cc,t).filter(x=>re.test(x.label)).map(x=>mapPerson({...x,region,landComponent:cc,roleP:.01},t)).map(P=>[P.occ.label,P.sit.text]);
+ return JSON.stringify({open:texts(c,T(10,5,1,14),/議員$/),recess:sum(c,T(8,5,3,11),/議員$/),session:sum(c,T(10,29,4,10),/議員$/),kaikanSat:sum(k,T(10,31,6,11),/議員$/),labels:[...new Set([c,k,to].flatMap(x=>CivicModel.roles(x,T(10,29,4,11)).map(r=>r.label)))],guard:texts(c,T(10,29,4,11),/衛視/)})})()`));
+ assert.ok(r.open.every(([,x])=>/所信表明/.test(x)),JSON.stringify(r.open));assert.ok(r.session>r.recess*5);assert.equal(r.kaikanSat,0);
+ assert.ok(!r.labels.some(l=>/首相|総理|大臣|知事/.test(l)),r.labels.join());assert.ok(r.guard.every(([job])=>job==='衛視'));
+});
