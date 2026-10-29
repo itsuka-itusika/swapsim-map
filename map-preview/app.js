@@ -136,7 +136,6 @@ el('hist-clear').onclick=()=>{history=[];try{storage?.removeItem(HIST_KEY)}catch
 el('history').onclick=e=>{const b=e.target.closest('button[data-h]');if(!b||drawing)return;const h=history[+b.dataset.h];if(!h)return;crowd=h.others;
  if(h.P.kind==='pair'){pairCards=[h.P,...h.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(false);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}
  else{pairMode(false);el('person').hidden=false;showResult(h.P);renderCrowd();el('person').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}renderHistory()};
-loadHistory();renderHistory();
 function finishDraw(){const d=drawing;if(!d)return;drawing=null;drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length}
 el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();P=sampleResult(t,true);others=Array.from({length:4},()=>samplePair(t));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
  drawing={P,others};pool={parts:parts.slice(),center:selected.slice(),radius};plays++;const tk=++drawToken;el('draw').disabled=false;setDrawLabel();if(reduceMotion){finishDraw();return}
@@ -164,5 +163,5 @@ async function drawMesh(){
 el('mesh-toggle').checked=false;el('mesh-toggle').onchange=drawMesh;
 el('mesh-mode').innerHTML='<option value="land">土地用途・敷地（標準）</option><option value="legacy">旧100mメッシュ（比較用）</option>';
 el('mesh-mode').onchange=drawMesh;
-dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh()}},1000);let lastMinute=time().mi;updateWeather();facilitiesOnMap();refresh();drawMesh();MapBoot.done();
+dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh()}},1000);let lastMinute=time().mi;updateWeather();facilitiesOnMap();refresh();drawMesh();MapBoot.done();loadHistory();renderHistory();
 
