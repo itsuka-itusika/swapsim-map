@@ -216,3 +216,8 @@ test('hospitals scale with beds and type, and a patient\'s case becomes part of 
  assert.ok(r.outp.filter(p=>p.health!=='特になし').length>=r.outp.length*.85);
  assert.ok(r.outp.filter(p=>/透析中/.test(p.label)).every(p=>/人工透析/.test(p.health)));
 });
+test('OpenStreetMap buildings never show a company, an apartment name or a bare type as the place',()=>{
+ const r=JSON.parse(run(`(()=>{let lc=(type,name,tags)=>({landComponent:{type,subtype:type==='residential'?'family':'office',name,tags,source:'OpenStreetMap',precision:'polygon',areaTag:{name:'西五反田'}},region:{name:'品川区'},role:'general'});
+ return JSON.stringify([lc('residential','family',{building:'house'}),lc('residential','Marine',{name:'Marine'}),lc('office','株式会社石野興産',{name:'株式会社石野興産'}),lc('office','(株)バイセル',{name:'(株)バイセル'}),lc('office','office',{}),lc('office','大崎ブライトタワー',{name:'大崎ブライトタワー'})].map(c=>PlaceLabel.name(c)))})()`));
+ assert.deepEqual(r,['西五反田','西五反田','西五反田','西五反田','西五反田','大崎ブライトタワー']);
+});

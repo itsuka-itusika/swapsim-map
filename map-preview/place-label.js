@@ -1,7 +1,12 @@
 /* Place shown for a person: a specific facility or named place as is; otherwise the district (or ward), with 自宅 for
    people at home and 職場 for people at work (西新宿 自宅, 目黒区 職場, 銀座). No extra data is loaded for this. */
 const PlaceLabel=(()=>{
- function generic(c){let lc=c.landComponent;if(c.facility||c.road||c.zone)return false;if(c.area)return true;if(!lc)return true;return ['zoning','fallback'].includes(lc.precision)||!lc.name||lc.name===c.region?.name||lc.name===lc.areaTag?.name}
+ // OpenStreetMap buildings are not places to show by name: unnamed ones carry only their type (family, apartments,
+ // office), apartment names are private, and office or factory names are often just the tenant company (株式会社…).
+ // A named building or complex (〇〇ビル, 〇〇タワー) is kept; a company name never is.
+ const COMPANY=/株式会社|有限会社|合同会社|合資会社|\(株\)|（株）|\(有\)|（有）|㈱|㈲|Inc\.?|Co\.,?|Ltd|LLC|Corporation|事務所|営業所|支店|本社|支社|出張所/i,BUILDING=/ビル|タワー|ヒルズ|センター|プラザ|スクエア|テラス|ゲート|フォレスト|シティ|会館|工場|倉庫|物流/;
+ function privateName(lc){let named=lc.tags?lc.tags.name||lc.tags['name:ja']:lc.name;if(!named||lc.name===lc.subtype)return true;if(lc.type==='residential')return true;return ['office','industrial'].includes(lc.type)&&(COMPANY.test(lc.name)||!BUILDING.test(lc.name))}
+ function generic(c){let lc=c.landComponent;if(c.facility||c.road||c.zone)return false;if(c.area)return true;if(!lc)return true;return ['zoning','fallback'].includes(lc.precision)||!lc.name||lc.name===c.region?.name||lc.name===lc.areaTag?.name||lc.source==='OpenStreetMap'&&privateName(lc)}
  // 自宅 and 職場 follow the final scene, not only the drawn role: a resident shopping at the supermarket or a worker
  // on a lunch break at a cafe gets just the district.
  // Clear at-home markers win over outside words; sleeping people are always at home.
@@ -14,7 +19,9 @@ const PlaceLabel=(()=>{
   if(c.resident||r==='general'){if(state==='sleep'||/自宅|家で|家の中/.test(text))return '自宅';if(ELSEWHERE.test(text))return '';return HOME.test(text)||!OUT.test(text.replace(/買い物リスト/g,''))?'自宅':''}
   if(state==='work'&&(r==='area_office'||/_worker$|^mesh_|^urban_(?!visit)/.test(r)))return AWAY_FROM_WORK.test(text)?'':'職場';
   return ''}
+ // Place name without the 自宅/職場 suffix, for lists and map tooltips.
+ function name(c){let own=c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name;if(own&&!generic(c))return own;return c.area?.name||c.landComponent?.areaTag?.name||c.region?.name||own||''}
  function label(c,P,fallback){if(!generic(c))return fallback;let lc=c.landComponent,where=c.area&&/^area_/.test(c.role)&&c.area.name?c.area.name:lc?.areaTag?.name||c.region?.name||fallback;let k=kind(c,P);return k?where+' '+k:where}
- return {label,generic,kind};
+ return {label,generic,kind,privateName,name};
 })();
 if(typeof module!=='undefined')module.exports=PlaceLabel;
