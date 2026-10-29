@@ -23,7 +23,7 @@ function mapPerson(c,t){
  // Jobs and visitor groups whose age profile differs clearly from the resident population (approximate national statistics).
  else if(!c.ageBands&&c.role!=='general'){let bands=PersonContext.roleBands(c);if(bands){bands=bands.map(([a,b,w])=>[Math.max(a,c.min??0),Math.min(b,c.max??99),w]).filter(b=>b[0]<=b[1]);if(bands.length){let v=rnd()*bands.reduce((s,b)=>s+b[2],0),b=bands.find(b=>(v-=b[2])<0)||bands[0];sa.age=b[0]+Math.floor(rnd()*(b[1]-b[0]+1))}}}
  // During class hours most domestic pupils are at school; keep about one in ten of those drawn elsewhere.
- if(!c.resident&&!c.custody&&!['general','student','area_student','resident','patient','area_inbound','exam_taker'].includes(c.role)&&PersonContext.schoolTime(t))for(let i=0;i<32;i++){let g=gradeIndex(birthOf(sa.age,t),t);if(g<1||g>12||rnd()<.1)break;sa.age=c.ageBands?bandAge():PersonContext.age(c,rnd)}
+ if(!c.resident&&!c.custody&&!c.hospCase&&!['general','student','area_student','resident','patient','area_inbound','exam_taker'].includes(c.role)&&PersonContext.schoolTime(t))for(let i=0;i<32;i++){let g=gradeIndex(birthOf(sa.age,t),t);if(g<1||g>12||rnd()<.1)break;sa.age=c.ageBands?bandAge():PersonContext.age(c,rnd)}
  const P={pref,muni,censusCode:f.id,ward:null,urb:urbOf(pref,muni),age:sa.age,sex:sa.sex,t};P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);
  const stage=c.facility?.kind;
  // Exam takers are drawn in the grade that sits the exam (高3・浪人, 中3, 小6).
@@ -64,12 +64,13 @@ function mapPerson(c,t){
  if(typeof PlacesModel!=='undefined')PlacesModel.assign(c,P);
  if(typeof RoadModel!=='undefined')RoadModel.assign(c,P);
  if(typeof PrepModel!=='undefined')PrepModel.assign(c,P);
+ if(typeof HospitalModel!=='undefined')HospitalModel.assign(c,P);
  if(typeof PoliceModel!=='undefined')PoliceModel.assign(c,P);
  if(typeof CivicModel!=='undefined')CivicModel.assign(c,P);
  if(c.custody){P.household={label:'施設等の世帯（一般世帯統計の対象外）',marital:'未抽選',code:null};P.hobbies=[];}else assignProfiles(P);makeFamilyContext(P);P.surname=pickSurname(pref.n);P.given=pickGiven(P.birth.y,P.sex);
  // Condition health on actually being at the sampled workplace or outside, without erasing leave status.
- const activeWork=c.roadWorker||['prep_teacher','prep_staff'].includes(c.role)||c.role.endsWith('_worker')||c.role.startsWith('media_')||c.venueWorker||c.civicWorker&&!c.custody||c.placeWorker||c.policeWorker||['area_office','teacher','doctor','nurse','care','mesh_factory','mesh_logistics','mesh_security'].includes(c.role)||c.role.startsWith('urban_')&&c.role!=='urban_visit'||c.role.startsWith('special_')&&!['special_passenger','special_theme_guest','special_theme_child'].includes(c.role)||c.role.startsWith('green_')&&!['green_walk','green_tourist','green_run'].includes(c.role)||c.role.startsWith('land_')&&!['land_passenger','land_grave','land_hike'].includes(c.role);
- const outside=c.role!=='general'&&!['resident','patient'].includes(c.role)&&!c.custody;
+ const activeWork=c.roadWorker||c.hospStaff||['prep_teacher','prep_staff'].includes(c.role)||c.role.endsWith('_worker')||c.role.startsWith('media_')||c.venueWorker||c.civicWorker&&!c.custody||c.placeWorker||c.policeWorker||['area_office','teacher','doctor','nurse','care','mesh_factory','mesh_logistics','mesh_security'].includes(c.role)||c.role.startsWith('urban_')&&c.role!=='urban_visit'||c.role.startsWith('special_')&&!['special_passenger','special_theme_guest','special_theme_child'].includes(c.role)||c.role.startsWith('green_')&&!['green_walk','green_tourist','green_run'].includes(c.role)||c.role.startsWith('land_')&&!['land_passenger','land_grave','land_hike'].includes(c.role);
+ const outside=c.role!=='general'&&!['resident','patient'].includes(c.role)&&!c.custody&&!(c.hospCase&&c.hospCase!=='check');
  for(let i=0;i<64;i++){P.hb=healthBase(P,t);if(!(activeWork&&P.hb.leave)&&!(outside&&P.hb.bed))break;if(i===63)throw Error('勤務・健康状態の抽選に失敗しました');}
  if(typeof linkFamilyHealth==='function')linkFamilyHealth(P);
  const pickSituation=()=>Nightlife.handles(c)?Nightlife.choose(c,P,t):situation(P,t);P.sit=pickSituation();
@@ -124,6 +125,7 @@ function mapPerson(c,t){
  if(typeof PlacesModel!=='undefined')PlacesModel.apply(c,P,t);
  if(typeof RoadModel!=='undefined')RoadModel.apply(c,P,t);
  if(typeof PrepModel!=='undefined')PrepModel.apply(c,P,t);
+ if(typeof HospitalModel!=='undefined')HospitalModel.apply(c,P,t);
  if(typeof PoliceModel!=='undefined')PoliceModel.apply(c,P,t);
  if(typeof EnvironmentScenes!=='undefined')EnvironmentScenes.apply(c,P,t);
  if(typeof ExamSchedule!=='undefined')ExamSchedule.apply(c,P,t);
@@ -132,7 +134,7 @@ function mapPerson(c,t){
  const fits=s=>!PersonContext.away(s.text,c)&&(c.resident?TimeSituations.homeCompatible(s.text):c.role==='general'||!/自宅|家で|布団|寝室|ソファ|リビング|自分の部屋/.test(s.text));
  if(PersonContext.away(P.sit.text,c)){for(let i=0;i<32&&!fits(P.sit);i++)P.sit=situation(P,t);if(!fits(P.sit))P.sit={text:c.resident?'自宅で、ひと息ついているところでした':'近くを歩きながら、次に行く場所を考えているところでした',state:'off',stateLabel:c.label,p:1};P.mapSituation=P.sit.text}
  P.occ={...P.occ,label:JobLabels.short(P.occ.label)};
- P.health=settleHealth(P,t);if(c.role==='venue_ghost'){P.hb.preg=false;P.health={text:'幽霊のため健康状態は不明',items:[],p:1,note:'お遊び要素'};}P.body=bodyOf(P,t);
+ P.health=settleHealth(P,t);if(typeof HospitalModel!=='undefined')HospitalModel.health(P,t);if(c.role==='venue_ghost'){P.hb.preg=false;P.health={text:'幽霊のため健康状態は不明',items:[],p:1,note:'お遊び要素'};}P.body=bodyOf(P,t);
  P.place=(c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name||f.name);
  // Without a specific facility or named place, show the town and the kind of spot (西新宿 自宅, 銀座 市街地).
  if(typeof PlaceLabel!=='undefined')P.place=PlaceLabel.label(c,P,P.place);P.placeShort=P.place;

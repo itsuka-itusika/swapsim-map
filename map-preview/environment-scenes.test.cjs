@@ -201,3 +201,18 @@ test('major prep schools are their own facilities with 浪人生 by day and high
  assert.ok(r.evening.filter(p=>p[0]==='prep_hs').length>20&&r.evening.filter(p=>p[0]==='prep_hs').every(p=>/^高校[1-3]年生$/.test(p[1])));
  assert.ok(r.day.every(p=>!/専門学校の/.test(p[1])));
 });
+test('hospitals scale with beds and type, and a patient\'s case becomes part of the health status',()=>{
+ const r=JSON.parse(run(`(()=>{const T=(h,dow=3)=>({y:2026,mo:10,d:dow===0?25:28,dow,h,hf:h,mi:0}),fs=MAP_DATA.facilities.filter(f=>f.kind==='hospital'),big=fs.find(f=>/東京大学医学部附属病院/.test(f.name)),small=fs.filter(f=>f.htype==='general'&&f.beds<100)[0],mat=fs.filter(f=>f.htype==='maternity').sort((a,b)=>b.beds-a.beds)[0],psych=fs.find(f=>f.htype==='psych'&&f.beds>=100),reg=f=>MAP_DATA.regions.find(r=>r.id===f.code);
+ const sum=(f,t,role)=>MapModel.roles(f,t).filter(c=>c.role===role).reduce((s,c)=>s+c.n,0),out={big:sum(big,T(10),'hosp_inpatient'),small:sum(small,T(10),'hosp_inpatient'),outWd:sum(big,T(10),'hosp_outpatient'),outSun:sum(big,T(10,0),'hosp_outpatient'),docDay:sum(big,T(10),'hosp_doctor'),docNight:sum(big,T(2),'hosp_doctor'),inp:[],mat:[],psych:[],outp:[]};
+ const draw=(f,role,h,n)=>{let c=MapModel.roles(f,T(h)).find(c=>c.role===role);let a=[];for(let i=0;i<n;i++){let P=mapPerson({...c,facility:f,region:reg(f),roleP:.01},T(h));a.push({sex:P.sex,age:P.age,label:P.sit.stateLabel,state:P.sit.state,text:P.sit.text,health:P.health.text,first:P.health.items[0]?.n||''})}return a};
+ out.inp=[...draw(big,'hosp_inpatient',10,40),...draw(big,'hosp_inpatient',2,20)];out.mat=draw(mat,'hosp_inpatient',15,30);out.psych=draw(psych,'hosp_inpatient',11,20);out.outp=draw(big,'hosp_outpatient',10,60);return JSON.stringify(out)})()`));
+ assert.ok(r.big>r.small*8,r.big+' '+r.small);assert.ok(r.outWd>100);assert.equal(r.outSun,0);assert.ok(r.docDay>r.docNight*4);
+ for(const p of r.inp){assert.match(p.first,/入院/,p.health);assert.match(p.label,/^入院中/)}
+ assert.ok(r.inp.slice(40).every(p=>p.state==='sleep'));
+ assert.ok(r.mat.every(p=>p.sex==='f'));assert.ok(r.mat.filter(p=>/出産のため入院中|切迫早産/.test(p.health)).length>=r.mat.length*.6,r.mat.map(p=>p.health).join('\n'));
+ assert.ok(r.mat.filter(p=>/赤ちゃん/.test(p.text)).every(p=>/出産|切迫早産/.test(p.health)));
+ assert.ok(r.psych.filter(p=>/精神科/.test(p.label)).length>=14);
+ // Outpatients carry the condition of their department, and the condition leads unless a pregnancy or fever drew the visit.
+ assert.ok(r.outp.filter(p=>p.health!=='特になし').length>=r.outp.length*.85);
+ assert.ok(r.outp.filter(p=>/透析中/.test(p.label)).every(p=>/人工透析/.test(p.health)));
+});

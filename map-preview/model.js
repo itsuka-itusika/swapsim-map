@@ -10,6 +10,7 @@ const MapModel = (() => {
  function roles(f,t){if(['station','theme'].includes(f.kind))return SpecialFacilities.roles(f,t);if(['tv','radio'].includes(f.kind))return BroadcastModel.roles(f,t);let day=t.h>=8&&t.h<18,school=day&&t.dow>0&&t.dow<6&&!t.holiday&&!(typeof schoolVac==='function'&&schoolVac(t));let female=typeof SchoolPolicy!=='undefined'?SchoolPolicy.femaleRate(f,t):f.sex==='female'?1:f.sex==='male'?0:.5;
  if(f.kind==='prep'&&typeof PrepModel!=='undefined')return PrepModel.roles(f,t);
  if(f.kind==='care')return [{role:'resident',label:'入居者',n:60,min:75,max:99,female:.7},{role:'care',label:'介護職員',n:day?20:5,min:22,max:65,female:.7}];
+ if(f.kind==='hospital'&&typeof HospitalModel!=='undefined')return HospitalModel.roles(f,t);
  if(f.kind==='hospital')return [{role:'patient',label:'患者',n:day?120:60,min:0,max:95,female:.55},{role:'nurse',label:'看護師',n:day?45:15,min:22,max:65,female:.85},{role:'doctor',label:'医師',n:day?15:4,min:26,max:70,female:.3}];
  let bands={primary:[6,11,300],middle:[12,14,300],high:[15,17,600],university:[18,24,1500],college:[18,24,300],kindergarten:[3,5,80]};let b=bands[f.kind];if(!b)return [];
  return [{role:'student',label:{primary:'小学生',middle:'中学生',high:'高校生',university:'大学生',college:'専門学校等の学生',kindergarten:'園児'}[f.kind],n:b[2]*(school?1:day&&['high','middle','university'].includes(f.kind)?.08:0),min:b[0],max:b[1],female},{role:'teacher',label:f.kind==='kindergarten'?'保育教諭':'教員',n:school?Math.max(10,b[2]/15):day?4:0,min:23,max:65,female:.5}];
