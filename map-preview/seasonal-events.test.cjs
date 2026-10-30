@@ -22,7 +22,7 @@ test('Medical and engineering students at their universities and campuses only',
  assert.ok(st([139.706,35.706]).filter(x=>eng.test(x)).length>40,'早稲田 西早稲田');assert.ok(!st([139.7228,35.7092]).some(x=>eng.test(x)),'早稲田 本部')});
 const draw3=(xy,t,r=50,n=300)=>JSON.parse(run(`(()=>{let t=${t},p=LandProfile.create(envContext,${JSON.stringify(xy)},${r}),parts=LandEstimator.estimate(p,t),out=[];for(let i=0;i<${n};i++){let c=MapModel.pick(parts);let P=mapPerson(c,t);out.push({role:c.role,place:P.place,text:P.sit.text,label:P.visitLabel||'',health:P.health?.text||'',case:P.hospCase?.kind||''})}return JSON.stringify(out)})()`));
 test('渋谷駅周辺 is named near the station only; the scramble crossing has its own name and scenes',()=>{
- assert.ok(draw3([139.6981,35.6578],T(10,30,5,15)).some(x=>/^渋谷駅周辺/.test(x.place)),'250m');assert.ok(!draw3([139.7065,35.6607],T(10,30,5,15)).some(x=>/渋谷駅周辺/.test(x.place)),'550m');
+ assert.ok(draw3([139.6981,35.6578],T(10,30,5,15),50,1000).some(x=>/^渋谷駅周辺/.test(x.place)),'250m');assert.ok(!draw3([139.7065,35.6607],T(10,30,5,15),50,1000).some(x=>/渋谷駅周辺/.test(x.place)),'550m');
  let x=draw3([139.7006,35.6595],T(10,30,5,15),50,400);assert.ok(x.filter(p=>/スクランブル交差点/.test(p.place)).length>100);assert.ok(x.filter(p=>/ハチ公|スクランブル交差点の|大型ビジョン/.test(p.text)).length>40)});
 test('秋葉原 passers-by get flyers from maids',()=>{assert.ok(draw3([139.7713,35.6984],T(10,31,6,14),120,600).filter(x=>/メイドさん.*ビラ|ビラ.*メイドさん/.test(x.text)).length>20)});
 test('Flu jabs at hospitals in October and November only, with no illness of their own',()=>{const xy=JSON.parse(run(`JSON.stringify(MAP_DATA.facilities.find(f=>f.kind==='hospital'&&f.htype==='general'&&(f.beds||0)>=300).xy)`));
