@@ -187,9 +187,8 @@ function samplePair(t,filtered=false,two=false){const A=samplePerson(t,filtered)
 function fewPairs(){const total=src=>src.reduce((s,c)=>s+c.n,0),n=between()?Math.min(total(parts),total(partsB)):total(parts);return n<3?1:n<12?2:6}
 function sampleResult(t,filtered=false){return options.pair?samplePair(t,filtered,between()):samplePerson(t,filtered)}
 // Two ways to share: a URL that shows this notice again, and a picture of it.
-function noticeHTML(P){el('person').innerHTML=MapNotice.html(P);const url=el('copy'),img=el('shareimg');url.textContent='URLをコピー';url.onclick=()=>shareURL(P);url.after(img);img.hidden=false;const kind=P.kind==='pair'?'pair':'single';img.textContent=imageShareLabel();img.onclick=()=>shareImage(kind,P,'toast');
- img.insertAdjacentHTML('afterend',' <button class="btn" type="button" id="dlimg">画像をダウンロード</button>');el('dlimg').onclick=()=>shareImage(kind,P,'toast','download')}
-function showResult(P){currentPerson=P;noticeHTML(P);el('copy').disabled=false;el('shareimg').disabled=false;el('dlimg').disabled=false;
+function noticeHTML(P){el('person').innerHTML=MapNotice.html(P);const url=el('copy'),img=el('shareimg');url.textContent='URLをコピー';url.onclick=()=>shareURL(P);url.after(img);img.hidden=false;img.onclick=()=>shareImage(P.kind==='pair'?'pair':'single',P,'toast')}
+function showResult(P){currentPerson=P;noticeHTML(P);el('copy').disabled=false;el('shareimg').disabled=false;
  stampIt(!reduceMotion);scrollToNotice(true);if(!reduceMotion)el('notice').classList.add('flash')}
 function resultLabel(P){const name=X=>X.displayName||X.surname.k+' '+X.given.k;return P.kind==='pair'?`${name(P.A)}（${P.A.age}歳） ⇄ ${name(P.B)}（${P.B.age}歳）`:`${name(P)} ／ ${P.age}歳 ／ ${P.occ.label}`}
 function renderCrowd(){
@@ -202,7 +201,7 @@ el('crowd').onclick=e=>{const b=e.target.closest('[data-crowd]');if(b&&!drawing)
 // Pair mode: six compact notices first; tapping one opens that pair's full notice.
 let pairCards=[];
 function pairMode(on){el('pcards-sec').hidden=!on;el('crowd-sec').hidden=on;if(on)el('person').hidden=!currentPerson||!pairCards.includes(currentPerson)}
-function renderPairCards(animate){el('pcards-url').textContent=pairCards.length>1?'まとめてURLをコピー':'URLをコピー';el('pcards-img').textContent=(pairCards.length>1?'まとめて':'')+imageShareLabel();el('pcards-toast').textContent='';const name=P=>P.displayName||P.surname.k+' '+P.given.k,job=P=>P.occ.label.replace(/（[^（）]*）$/,''),sx=P=>P.sex==='f'?'f':'m',stars=n=>'★'.repeat(n)+'☆'.repeat(5-n),side=P=>`<span class="pc-p"><span class="pc-name sex-${sx(P)}">${esc(name(P))}</span><span class="pc-meta">${P.age}歳・${esc(job(P))}</span><span class="pc-meta">${esc(P.place)}</span></span>`;
+function renderPairCards(animate){el('pcards-url').textContent=pairCards.length>1?'まとめてURLをコピー':'URLをコピー';el('pcards-img').textContent=pairCards.length>1?'まとめて画像で共有':'画像で共有';el('pcards-toast').textContent='';const name=P=>P.displayName||P.surname.k+' '+P.given.k,job=P=>P.occ.label.replace(/（[^（）]*）$/,''),sx=P=>P.sex==='f'?'f':'m',stars=n=>'★'.repeat(n)+'☆'.repeat(5-n),side=P=>`<span class="pc-p"><span class="pc-name sex-${sx(P)}">${esc(name(P))}</span><span class="pc-meta">${P.age}歳・${esc(job(P))}</span><span class="pc-meta">${esc(P.place)}</span></span>`;
  el('pcards').innerHTML=pairCards.map((R,i)=>`<li${animate?' class="enter"':''}><button type="button" class="pcard" data-card="${i}"${currentPerson===R?' aria-current="true"':''} aria-label="第${String(R.serial).padStart(6,'0')}号 ${esc(name(R.A))}さんと${esc(name(R.B))}さんの入れ替わり。押すと詳しい通知書を表示"><span class="pc-head"><b>入れ替わりのお知らせ</b><span>第${String(R.serial).padStart(6,'0')}号</span></span><span class="pc-pair">${side(R.A)}<span class="pc-x" aria-hidden="true">⇄</span>${side(R.B)}</span><p class="pc-sit"><span class="mk sex-${sx(R.A)}" aria-hidden="true"></span>${esc(R.A.surname.k)}さんは、${esc(R.A.sit.text)}。</p><p class="pc-sit"><span class="mk sex-${sx(R.B)}" aria-hidden="true"></span>${esc(R.B.surname.k)}さんは、${esc(R.B.sit.text)}。</p><span class="pc-foot"><span>ギャップ <span class="stars">${R.gap?.stars?stars(R.gap.stars):''}</span></span><span class="pc-open">${currentPerson===R?'表示中':'詳しく見る'}</span></span></button></li>`).join('');
  if(animate)[...el('pcards').children].forEach((li,i)=>setTimeout(()=>li.classList.remove('enter'),reduceMotion?0:120*i+30))}
 el('pcards').onclick=e=>{const b=e.target.closest('[data-card]');if(!b||drawing)return;el('person').hidden=false;showResult(pairCards[+b.dataset.card]);renderPairCards(false)};
@@ -217,7 +216,7 @@ async function roam(count,ms,tk,pools=[]){roamLayer??=L.layerGroup().addTo(map);
 async function roll(id,gen,ms,tk){const node=el(id),end=performance.now()+ms;while(performance.now()<end){node.innerHTML=gen();await later(55,tk)}}
 async function typeOut(id,html,tk){const node=el(id),box=document.createElement('div');box.innerHTML=html;const plain=box.textContent;for(let i=1;i<=plain.length;i+=2){node.textContent=plain.slice(0,i);await later(28,tk)}node.innerHTML=html}
 const SN_KEYS=Object.keys(SN),fakePlace=()=>esc(placeName(MapModel.pick(pool.parts))),fakeName=sex=>esc(pickOne(SN_KEYS)+' '+pickOne(pickOne(ERAS)[sex]).k);
-async function reveal(P,tk){const k=plays>1?.6:1;noticeHTML(P);el('copy').disabled=true;el('shareimg').disabled=true;el('dlimg').disabled=true;currentPerson=P;
+async function reveal(P,tk){const k=plays>1?.6:1;noticeHTML(P);el('copy').disabled=true;el('shareimg').disabled=true;currentPerson=P;
  const ids=[...el('person').querySelectorAll('[id]')].map(n=>n.id),final=Object.fromEntries(ids.map(id=>[id,el(id).innerHTML])),put=id=>{el(id).innerHTML=final[id]};
  const fields=P.kind==='pair'?['place','name','age','job','body','hobby','family','health','sit'].flatMap(f=>['pa-'+f,'pb-'+f]):['f-place','f-name','f-job','f-hobby','f-family','f-health','f-sit','f-sex','f-age','f-height','f-weight'];
  for(const id of fields)if(final[id]!==undefined)el(id).innerHTML=/sex|age|height|weight/.test(id)&&P.kind!=='pair'?'<span class="blank">—</span>':'<span class="blank">記入中…</span>';
@@ -298,16 +297,14 @@ async function copyURL(make,toast,box){let url;try{url=await make()}catch(e){con
 const shareURL=R=>copyURL(()=>packURL('r',packR(R)),'toast','person');
 el('pcards-url').onclick=()=>copyURL(()=>packURL('g',pairCards.map(packR)),'pcards-toast','pcards-sec');
 el('pcards-img').onclick=()=>pairCards.length>1?shareImage('group',pairCards,'pcards-toast'):shareImage('pair',pairCards[0],'pcards-toast');
-// The picture goes to the share sheet on phones and tablets ("画像で共有") and on to the clipboard on a PC ("画像をコピー");
-// "画像をダウンロード" always saves the PNG. Where the clipboard cannot take an image, the copy button saves the PNG instead.
-const canShareImage=()=>matchMedia('(pointer: coarse)').matches&&typeof navigator.canShare==='function'&&navigator.canShare({files:[new File([''],'a.png',{type:'image/png'})]});
-const imageShareLabel=()=>canShareImage()?'画像で共有':'画像をコピー';
-async function shareImage(kind,value,toast,mode){el(toast).textContent='画像を作成しています…';let blob;try{blob=await ShareImage.render(kind,value)}catch(e){console.error(e);el(toast).textContent='画像を作成できませんでした';return}
+// The picture goes to the share sheet on phones and tablets; on a PC it is saved as a PNG and, where the browser
+// allows, also put on the clipboard.
+async function shareImage(kind,value,toast){el(toast).textContent='画像を作成しています…';let blob;try{blob=await ShareImage.render(kind,value)}catch(e){console.error(e);el(toast).textContent='画像を作成できませんでした';return}
  const list=kind==='group'?value:[value],no=n=>String(n||0).padStart(6,'0'),file=new File([blob],`swap-${no(list[0].serial)}${list.length>1?'-'+no(list.at(-1).serial):''}.png`,{type:'image/png'});
- const save=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),10000)};
- if(mode==='download'){save();el(toast).textContent='画像を保存しました';return}
- if(canShareImage()){try{await navigator.share({files:[file]});el(toast).textContent='';return}catch(e){if(e.name==='AbortError'){el(toast).textContent='';return}}}
- try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);el(toast).textContent='画像をコピーしました'}catch{save();el(toast).textContent='このブラウザでは画像をコピーできないため、保存しました'}}
+ if(matchMedia('(pointer: coarse)').matches&&navigator.canShare?.({files:[file]})){try{await navigator.share({files:[file]});el(toast).textContent='';return}catch(e){if(e.name==='AbortError'){el(toast).textContent='';return}}}
+ const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),10000);
+ let copied=false;try{if(typeof ClipboardItem!=='undefined'){await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);copied=true}}catch{}
+ el(toast).textContent=copied?'画像を保存しました（クリップボードにもコピーしました）':'画像を保存しました'}
 async function openSharedResult(){let got;try{got=await unpackURL(location.hash)}catch(e){console.error(e)}if(!got)return;
  if(got.group?.length){pairCards=got.group;currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(false);el('pcards-sec').scrollIntoView({block:'start'});return}
  currentPerson=null;pairMode(false);el('person').hidden=false;showResult(got.one)}
