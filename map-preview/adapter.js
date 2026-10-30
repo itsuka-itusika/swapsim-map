@@ -158,6 +158,7 @@ function mapPerson(c,t){
  if(typeof EnvironmentScenes!=='undefined')EnvironmentScenes.apply(c,P,t);
  if(typeof ExamSchedule!=='undefined')ExamSchedule.apply(c,P,t);
  if(typeof TowerHomes!=='undefined')TowerHomes.apply(c,P,t);
+ if(typeof SeasonalEvents!=='undefined')SeasonalEvents.apply(c,P,t);
  if(typeof NightDuty!=='undefined')NightDuty.apply(c,P,t);
  // Later map modules reuse original pools too; never leave the person somewhere other than the drawn spot.
  // A reroll must also stay plausible for the spot: at home for residents, away from home for everyone else.

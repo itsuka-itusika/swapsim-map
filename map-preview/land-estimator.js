@@ -39,7 +39,7 @@ const LandEstimator=(()=>{
  }
  if(c.type==='industrial')return [row(c.subtype==='warehouse'?'mesh_logistics':'mesh_factory',c.subtype==='warehouse'?'倉庫・物流施設で勤務中':'工場で勤務中',.7,20,69,.25),row('area_office','管理・事務職',.15,22,64,.45),row('urban_technical','機械保全の技術者',.1,22,64,.2,{jobTag:'factory',jobName:'機械保全の技術者'}),row('mesh_security','施設警備員',.05,22,69,.2)];
  if(c.type==='public')return [row('urban_official','公共施設の職員',.85,22,65,.5,{jobTag:'office',urbanTag:'government'}),row('urban_visit','公共施設への来訪者',.15,18,84,.5,{urbanTag:'government'})];
- if(c.type==='religious')return [row('urban_visit','参拝・境内の来訪者',.9,6,89,.52,{urbanTag:c.subtype}),row('urban_'+c.subtype,c.subtype==='shrine'?'神社の職員':'寺院の職員',.1,22,74,.5,{urbanTag:c.subtype,jobTag:'office'})];
+ if(c.type==='religious')return [row('urban_visit','参拝・境内の来訪者',.9,6,89,.52,{urbanTag:c.subtype}),row('urban_'+c.subtype,c.subtype==='shrine'?'神社の職員':'寺院の職員',.1,22,74,.5,{urbanTag:c.subtype,jobTag:'office'}),...(c.subtype==='shrine'&&typeof SeasonalEvents!=='undefined'?SeasonalEvents.shichigosanRows(t,.9):[])];
  if(c.type==='agriculture')return [row('land_grounds','農地の管理作業員',.9,25,79,.35,{zone:c}),row('land_hike','近隣の散策者',.1,12,79,.5,{zone:c})];
  if(c.type==='sports')return [row('urban_visit','スポーツ施設の利用者',.9,12,79,.5,{urbanTag:'sports'}),row('urban_sports','スポーツ施設の運営スタッフ',.1,20,65,.5,{jobTag:'gym',urbanTag:'sports'})];
  if(c.type==='waterfront')return [row('urban_visit','水辺の散策者',1,6,89,.5,{urbanTag:'waterfront'})];
