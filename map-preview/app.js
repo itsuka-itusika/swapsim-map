@@ -298,7 +298,7 @@ async function realSequence(P,others){if(reduceMotion)return;const v=document.cr
   {line(text,cls);await wait(ms)}
  const bar=document.createElement('span');log.appendChild(bar);for(const p of [12,37,58,81,96,100]){bar.textContent=`[${'#'.repeat(p/5|0).padEnd(20,'.')}] ${p}%\n`;await wait(150)}
  line('不可逆処理を実行しています…','warn');await wait(520);line('完了。','ok');await wait(650);
- try{navigator.vibrate?.([40,60,40])}catch{}const f=document.createElement('div');f.className='exec-flash';document.body.appendChild(f);setTimeout(()=>f.remove(),800);await wait(900);v.classList.add('done');await wait(400);v.remove()}
+ try{navigator.vibrate?.([40,60,40])}catch{}await wait(900);v.classList.add('done');await wait(400);v.remove()}
 // A result as a URL: the packed result (as in the history), deflated where the browser can, in the fragment, so it
 // never reaches the server. #r= holds one notice, #g= all the pairs of one swap in pair mode. Opening it shows them again.
 const b64url={enc:bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},dec:s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0))};
