@@ -1,0 +1,12 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const html=fs.readFileSync('dist/map-preview.html','utf8'),ctx=vm.createContext({console});vm.runInContext(html.slice(html.indexOf('// ===== 統計データ'),html.indexOf("'use strict';\nconst el=id")),ctx);let run=s=>vm.runInContext(s,ctx);
+run(`for(let f of MAP_DATA.regions){f.density=censusMass(f.id)/f.area;f.residentialDensity=censusMass(f.id)/(MAP_DATA.zoning.residentialAreaKm2[f.id]||f.area)}const envContext=LandProfile.configure(MAP_DATA);`);
+const T=(y,mo,d,dow,h)=>`{y:${y},mo:${mo},d:${d},dow:${dow},h:${h},hf:${h},mi:0,rand:true}`;
+// Campus-life scenes of people drawn around a point: [occupation, age, text].
+const draw=(xy,t,r=60,n=600)=>JSON.parse(run(`(()=>{let t=${t},p=LandProfile.create(envContext,${JSON.stringify(xy)},${r}),parts=LandEstimator.estimate(p,t),out=[];for(let i=0;i<${n};i++){let c=MapModel.pick(parts);if(!c)break;let P=mapPerson(c,t);if(P.sit.source==='campus-life')out.push([P.occ.label,P.age,P.sit.text])}return JSON.stringify(out)})()`));
+const waseda=[139.7228,35.7092],hongo=[139.7631,35.7125],otemachi=[139.766,35.687];
+test('新歓 on campus in April: freshers are recruited, older students recruit',()=>{let x=draw(waseda,T(2026,4,8,3,11));assert.ok(x.length>40);for(let [occ,,text] of x)if(/ビラを抱えて|話を聞いている|新歓イベントの日程|履修登録/.test(text))assert.match(occ,/^大学1年生/);assert.equal(draw(waseda,T(2026,11,4,3,11)).length,0)});
+test('新歓コンパ in student towns on April evenings',()=>{let x=draw([139.7036,35.7126],T(2026,4,10,5,20),300,800).filter(x=>/新歓コンパ/.test(x[2]));assert.ok(x.length>3);for(let [occ,age,text] of x){assert.match(occ,/^大学[123]年生/);if(/ソフトドリンク/.test(text))assert.ok(age<20)}});
+test('卒論 and 修論 by year in the crunch season only',()=>{let x=draw(hongo,T(2027,1,12,2,14));assert.ok(x.length>20);for(let [occ,,text] of x){if(/卒論/.test(text))assert.match(occ,/^大学4年生/);if(/修論/.test(text))assert.match(occ,/修士2年/)}});
+test('就活 students in office districts: interviews in June, the 内定式 on 1 October, nothing in November',()=>{let jun=draw(otemachi,T(2026,6,10,3,11),150,1500);assert.ok(jun.length>3);assert.ok(jun.every(([occ])=>/^大学4年生$/.test(occ)));
+ assert.ok(draw(otemachi,T(2026,10,1,4,13),150,1500).some(x=>/内定式/.test(x[2])));assert.equal(draw(otemachi,T(2026,11,4,3,11),150,800).length,0)});

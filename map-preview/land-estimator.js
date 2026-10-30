@@ -35,6 +35,8 @@ const LandEstimator=(()=>{
   const coeff=c.type==='office'?.08:c.type==='mixed'?.3:.08;
   for(let k of ['student','tourist','inbound',...(c.type==='mixed'?['shopping','subculture']:[])]){let strength=tag[k]||0,d=AreaModel.types[k],source=area?.sources?.[k];if(strength>0&&source&&d)out.push(row('area_'+k,d[0],strength*coeff*AreaModel.activity(k,t),d[1],d[2],k==='subculture'?(source.subcultureFemale??d[3]):k==='shopping'?(source.shoppingFemale??d[3]):d[3],{area:source}));}
   out.push(...styleRows(area,t,c.type==='mixed'?.6:c.type==='office'?.2:.25));
+  // Students job hunting in office districts.
+  if(c.type==='office'&&typeof CampusLife!=='undefined')out.push(...CampusLife.officeRows(t));
   return out;
  }
  if(c.type==='industrial')return [row(c.subtype==='warehouse'?'mesh_logistics':'mesh_factory',c.subtype==='warehouse'?'倉庫・物流施設で勤務中':'工場で勤務中',.7,20,69,.25),row('area_office','管理・事務職',.15,22,64,.45),row('urban_technical','機械保全の技術者',.1,22,64,.2,{jobTag:'factory',jobName:'機械保全の技術者'}),row('mesh_security','施設警備員',.05,22,69,.2)];
