@@ -243,12 +243,12 @@ el('history').onclick=e=>{const b=e.target.closest('button[data-h]');if(!b||draw
  if(h.P.kind==='pair'){pairCards=[h.P,...h.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(false);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}
  else{pairMode(false);el('person').hidden=false;showResult(h.P);renderCrowd();el('person').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}renderHistory()};
 function fewNote(others){const few=others.length<4,msg=few?(others.length?'この範囲では、ほかに入れ替わる人は見つかりませんでした。':'この範囲では、ほかに入れ替わる人はいませんでした。'):'';for(const id of ['pcards-note','crowd-note']){el(id).hidden=!few;el(id).textContent=msg}}
-function finishDraw(){const d=drawing;if(!d)return;fewNote(d.others);drawing=null;if(typeof beaconCheck==='function')beaconCheck();drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length||between()&&!partsB.length}
+function finishDraw(){const d=drawing;if(!d)return;realConsole?.end();realConsole=null;fewNote(d.others);drawing=null;if(typeof beaconCheck==='function')beaconCheck();drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length||between()&&!partsB.length}
 el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length||between()&&!partsB.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();if(between()&&estimateMinuteB!==minuteKey(t))refreshB();P=sampleResult(t,true);others=Array.from({length:Math.max(0,fewPairs()-1)},()=>samplePair(t,false,between()));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
- if(debug.real&&!realRan){realRan=true;realSequence(P,others).catch(e=>console.error(e))}
  drawing={P,others};pool={parts:parts.slice(),center:selected.slice(),radius};poolB=between()?{parts:partsB.slice(),center:selectedB.slice(),radius}:null;plays++;const tk=++drawToken;el('draw').disabled=false;setDrawLabel();if(reduceMotion){finishDraw();return}
  // Pair mode first brings the map into view (on phones the button sits below it) and roams the circle with the
  // markers, then jumps to the six compact notices.
+ if(debug.real&&!realRan){realRan=true;realConsole=startConsole(P,others,animationMs(P))}
  try{if(P.kind==='pair'){pairMode(true);el('pcards').innerHTML='';const r=el('map').getBoundingClientRect();if(r.top<0||r.bottom>innerHeight){el('map').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'});await later(450,tk)}
   // Two ranges: show both circles, one marker roaming in each.
   if(poolB){map.fitBounds(circle.getBounds().extend(circleB.getBounds()),{padding:[24,24],maxZoom:16});await later(500,tk);beaconCheck()}await roam(2,1600*(plays>1?.7:1),tk,poolB?[pool,poolB]:[])}else await reveal(P,tk)}catch(e){if(e.message!=='skip')console.error(e)}if(tk===drawToken)finishDraw()};
@@ -288,22 +288,34 @@ el('dbg-save').onclick=()=>{try{if(!storage)throw Error();storage.setItem(debugK
 el('dbg-reset').onclick=()=>{Object.assign(debug,{time:null,mixed:false,real:false});try{storage?.removeItem(debugKey)}catch{}el('dbg-status').textContent='reset';setDebugTime(null)};
 renderDebug();
 // 本当に入れ替える（試験実装版） (debug): asked each time the switch is turned on, and the first swap runs a console sequence
-// (the module being loaded for the first run) in a full-screen console the usual animation shows through.
+// (the module being loaded for the first run) along the top of the map while the usual animation plays.
 // Reduced motion skips the sequence.
 let realRan=false;
 // A modal dialog asked when the switch is turned on (Esc, the cancel button or a click outside decline it).
 function realGate(){return new Promise(done=>{const d=document.createElement('dialog');d.className='dbg-dialog';
- d.innerHTML='<form method="dialog"><h2>本当に入れ替える（試験実装版）</h2><p>この設定を有効にすると、入れ替えボタンで選ばれた人物との入れ替えが実際に実行されます。</p><p>対象者の同意は確認されません。<br>実行した入れ替えは取り消せません。</p><p class="dbg-note">試験実装版のため、動作は保証されません。</p><div class="dbg-actions"><button type="submit" value="no" class="btn">キャンセル</button><button type="submit" value="go" class="btn">有効にする</button></div></form>';
+ d.innerHTML='<form method="dialog"><p class="dbg-kicker">警告</p><h2>本当に入れ替える（試験実装版）を有効にしますか</h2><p>この設定を有効にすると、入れ替えボタンで選ばれた人物との入れ替えが実際に実行されます。</p><p class="dbg-strong">対象者の同意は確認されません。<br>実行した入れ替えは取り消せません。</p><p class="dbg-note">試験実装版のため、動作は保証されません。</p><div class="dbg-actions"><button type="submit" value="no" class="btn">キャンセル</button><button type="submit" value="go" class="btn">有効にする</button></div></form>';
  d.addEventListener('close',()=>{const ok=d.returnValue==='go';d.remove();done(ok)});d.addEventListener('click',e=>{if(e.target===d)d.close('no')});
  document.body.appendChild(d);d.showModal();d.querySelector('button[value="no"]').focus()})}
-async function realSequence(P,others){if(reduceMotion)return;const v=document.createElement('div'),log=document.createElement('div');v.className='exec-console';v.setAttribute('aria-hidden','true');log.className='log';v.appendChild(log);document.body.appendChild(v);
- const pairs=[P,...others].filter(X=>X.kind==='pair').length,people=P.kind==='pair'?pairs*2:1+others.length*2,pad=n=>String(n).padStart(2,'0'),t=time(),stamp=`${t.y}-${pad(t.mo)}-${pad(t.d)} ${pad(t.h)}:${pad(t.mi)} JST`,wait=ms=>new Promise(r=>setTimeout(r,ms));
- const line=(text,cls)=>{const s=document.createElement('span');if(cls)s.className=cls;s.textContent=text+'\n';log.appendChild(s)};
- for(const [text,ms,cls] of [[`$ swap --commit --no-dry-run --radius ${radius}m`,320],[stamp,160],['初回実行: 入れ替えモジュールを読み込んでいます…',520],[`座標を固定しています… ${selected[1].toFixed(5)}, ${selected[0].toFixed(5)}`,380],[`対象者を確定しました: ${people}名`,360],['意識の位相を同期しています…',240]])
-  {line(text,cls);await wait(ms)}
- const bar=document.createElement('span');log.appendChild(bar);for(const p of [12,37,58,81,96,100]){bar.textContent=`[${'#'.repeat(p/5|0).padEnd(20,'.')}] ${p}%\n`;await wait(150)}
- line('不可逆処理を実行しています…','warn');await wait(520);line('完了。','ok');
- try{navigator.vibrate?.([40,60,40])}catch{}await wait(450);v.classList.add('done');await wait(300);v.remove()}
+// The first-run console: lines appear one by one along the top edge of the map (fixed to the screen top when the page has
+// scrolled past it), paced over the expected length of the usual animation, and it goes when that animation ends.
+let realConsole=null;
+// Expected length (ms) of the usual animation for this result, from the same numbers the animation uses.
+function animationMs(P){const k=plays>1?.6:1;
+ if(P.kind==='pair'){const r=el('map').getBoundingClientRect();return (r.top<0||r.bottom>innerHeight?450:0)+(poolB?500:0)+1600*(plays>1?.7:1)}
+ return (1000+520+220+300+620+480+220)*k+Math.ceil((P.sit.text.length+8)/2)*28}
+function startConsole(P,others,total){if(reduceMotion)return null;const v=document.createElement('div');v.className='exec-console';v.setAttribute('aria-hidden','true');document.body.appendChild(v);
+ const pairs=[P,...others].filter(X=>X.kind==='pair').length,people=P.kind==='pair'?pairs*2:1+others.length*2,pad=n=>String(n).padStart(2,'0'),t=time(),stamp=`${t.y}-${pad(t.mo)}-${pad(t.d)} ${pad(t.h)}:${pad(t.mi)} JST`;
+ // [weight, text, class]: weights share the expected length; the last line arrives just before the animation ends.
+ const script=[[.6,`$ swap --commit --no-dry-run --radius ${radius}m`],[.3,stamp],[1,'初回実行: 入れ替えモジュールを読み込んでいます…'],[.9,`座標を固定しています… ${selected[1].toFixed(5)}, ${selected[0].toFixed(5)}`],[.9,`対象者を確定しました: ${people}名`],[.6,'意識の位相を同期しています…'],[2,'','bar'],[1,'不可逆処理を実行しています…','warn'],[0,'完了。','ok']];
+ const sum=script.reduce((s,x)=>s+x[0],0),span=Math.max(1200,total)*.94,timers=[];let shown=0,done=false,raf=0,bar=null;
+ // The panel sits on the map's top edge; once the map has scrolled up, on the screen's top edge.
+ const place=()=>{const r=el('map').getBoundingClientRect();v.style.left=r.left+'px';v.style.width=r.width+'px';v.style.top=Math.min(Math.max(r.top,0),Math.max(0,innerHeight-v.offsetHeight))+'px';raf=requestAnimationFrame(place)};place();
+ const add=i=>{const [,text,cls]=script[i];const s=document.createElement('span');s.className='line'+(cls?' '+cls:'');if(cls==='bar'){bar=s;s.textContent='[....................] 0%'}else s.textContent=text;v.appendChild(s);shown=i+1;
+  if(cls==='bar'){const steps=[12,37,58,81,96,100],each=span*script[i][0]/sum/steps.length;steps.forEach((p,n)=>timers.push(setTimeout(()=>{if(bar)bar.textContent=`[${'#'.repeat(p/5|0).padEnd(20,'.')}] ${p}%`},each*(n+1)*.9)))}
+  if(i===script.length-1)try{navigator.vibrate?.([40,60,40])}catch{}};
+ let at=0;script.forEach((x,i)=>{timers.push(setTimeout(()=>add(i),at));at+=span*x[0]/sum});
+ const close=()=>{cancelAnimationFrame(raf);v.classList.add('done');setTimeout(()=>v.remove(),300)};
+ return {end(){if(done)return;done=true;timers.forEach(clearTimeout);for(let i=shown;i<script.length;i++)add(i);if(bar)bar.textContent='[####################] 100%';close()}}}
 // A result as a URL: the packed result (as in the history), deflated where the browser can, in the fragment, so it
 // never reaches the server. #r= holds one notice, #g= all the pairs of one swap in pair mode. Opening it shows them again.
 const b64url={enc:bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},dec:s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0))};
