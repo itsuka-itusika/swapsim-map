@@ -284,12 +284,12 @@ for(const key of ['mixed','real'])el('dbg-'+key).onclick=()=>{debug[key]=!debug[
 el('dbg-save').onclick=()=>{try{if(!storage)throw Error();storage.setItem(debugKey,JSON.stringify(debug));el('dbg-status').textContent='saved'}catch{el('dbg-status').textContent='failed'}};
 el('dbg-reset').onclick=()=>{Object.assign(debug,{time:null,mixed:false,real:false});try{storage?.removeItem(debugKey)}catch{}el('dbg-status').textContent='reset';setDebugTime(null)};
 renderDebug();
-// 本当に入れ替える（実装準備版） (debug): asked once per page, and the first swap after that runs a console sequence
+// 本当に入れ替える（試験実装版） (debug): asked once per page, and the first swap after that runs a console sequence
 // (the module being loaded for the first run) in a full-screen console the usual animation shows through.
 // Reduced motion skips the sequence.
 let realConfirmed=false,realRan=false;
 function realGate(){if(realConfirmed)return Promise.resolve(true);return new Promise(done=>{const v=document.createElement('div');v.className='exec-veil';v.setAttribute('role','alertdialog');v.setAttribute('aria-modal','true');
- v.innerHTML='<div class="log"><span class="warn">警告: 本当に入れ替える（実装準備版）が有効です。</span>\n対象者の同意は確認されません。\nこの操作は取り消せません。</div><div class="ask"><button type="button" class="go">実行する</button><button type="button" class="no">キャンセル</button></div>';
+ v.innerHTML='<div class="log"><span class="warn">警告: 本当に入れ替える（試験実装版）が有効です。</span>\n対象者の同意は確認されません。\nこの操作は取り消せません。</div><div class="ask"><button type="button" class="go">実行する</button><button type="button" class="no">キャンセル</button></div>';
  const close=ok=>{v.remove();if(ok)realConfirmed=true;done(ok)};v.querySelector('.go').onclick=()=>close(true);v.querySelector('.no').onclick=()=>close(false);v.onkeydown=e=>{if(e.key==='Escape')close(false)};document.body.appendChild(v);v.querySelector('.no').focus()})}
 async function realSequence(P,others){if(reduceMotion)return;const v=document.createElement('div'),log=document.createElement('div');v.className='exec-console';v.setAttribute('aria-hidden','true');log.className='log';v.appendChild(log);document.body.appendChild(v);
  const pairs=[P,...others].filter(X=>X.kind==='pair').length,people=P.kind==='pair'?pairs*2:1+others.length*2,pad=n=>String(n).padStart(2,'0'),t=time(),stamp=`${t.y}-${pad(t.mo)}-${pad(t.d)} ${pad(t.h)}:${pad(t.mi)} JST`,wait=ms=>new Promise(r=>setTimeout(r,ms));
