@@ -27,4 +27,8 @@ test('渋谷駅周辺 is named near the station only; the scramble crossing has 
 test('秋葉原 passers-by get flyers from maids',()=>{assert.ok(draw3([139.7713,35.6984],T(10,31,6,14),120,600).filter(x=>/メイドさん.*ビラ|ビラ.*メイドさん/.test(x.text)).length>20)});
 test('Flu jabs at hospitals in October and November only, with no illness of their own',()=>{const xy=JSON.parse(run(`JSON.stringify(MAP_DATA.facilities.find(f=>f.kind==='hospital'&&f.htype==='general'&&(f.beds||0)>=300).xy)`));
  let oct=draw3(xy,T(10,28,3,10),80,800).filter(x=>x.label==='インフルエンザの予防接種');assert.ok(oct.length>15);assert.ok(oct.every(x=>x.case==='check'));
- assert.equal(draw3(xy,T(12,9,3,10),80,800).filter(x=>/予防接種/.test(x.text)).length,0)});
+ // The original hospital scenes mention 予防接種 now and then; the season's own lines name the influenza jab.
+ assert.equal(draw3(xy,T(12,9,3,10),80,800).filter(x=>x.label==='インフルエンザの予防接種'||/インフルエンザ(の)?(予防接種|ワクチン)/.test(x.text)).length,0)});
+test('スクランブル交差点: most people shown there get crossing scenes, some are in a taxi, bus or car',()=>{let a=draw3([139.7006,35.6595],T(11,4,3,15),70,1000).filter(x=>/^渋谷スクランブル交差点$/.test(x.place));assert.ok(a.length>100);
+ let own=a.filter(x=>/交差点|ハチ公|信号|大型ビジョン/.test(x.text));assert.ok(own.length>=a.length*.65,own.length+'/'+a.length);assert.ok(a.filter(x=>/タクシー|バス|車の|後部座席|助手席/.test(x.text)).length>=a.length*.07);
+ assert.ok(!a.some(x=>/映画館|食堂|ゲームの棚|カラオケ|居酒屋/.test(x.text)))});
