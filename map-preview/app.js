@@ -198,7 +198,7 @@ el('crowd').onclick=e=>{const b=e.target.closest('[data-crowd]');if(b&&!drawing)
 // Pair mode: six compact notices first; tapping one opens that pair's full notice.
 let pairCards=[];
 function pairMode(on){el('pcards-sec').hidden=!on;el('crowd-sec').hidden=on;if(on)el('person').hidden=!currentPerson||!pairCards.includes(currentPerson)}
-function renderPairCards(animate){const name=P=>P.displayName||P.surname.k+' '+P.given.k,job=P=>P.occ.label.replace(/（[^（）]*）$/,''),sx=P=>P.sex==='f'?'f':'m',stars=n=>'★'.repeat(n)+'☆'.repeat(5-n),side=P=>`<span class="pc-p"><span class="pc-name sex-${sx(P)}">${esc(name(P))}</span><span class="pc-meta">${P.age}歳・${esc(job(P))}</span><span class="pc-meta">${esc(P.place)}</span></span>`;
+function renderPairCards(animate){el('pcards-url').textContent=pairCards.length>1?`${pairCards.length}組をまとめてURLを作成`:'URLを作成';el('pcards-toast').textContent='';const name=P=>P.displayName||P.surname.k+' '+P.given.k,job=P=>P.occ.label.replace(/（[^（）]*）$/,''),sx=P=>P.sex==='f'?'f':'m',stars=n=>'★'.repeat(n)+'☆'.repeat(5-n),side=P=>`<span class="pc-p"><span class="pc-name sex-${sx(P)}">${esc(name(P))}</span><span class="pc-meta">${P.age}歳・${esc(job(P))}</span><span class="pc-meta">${esc(P.place)}</span></span>`;
  el('pcards').innerHTML=pairCards.map((R,i)=>`<li${animate?' class="enter"':''}><button type="button" class="pcard" data-card="${i}"${currentPerson===R?' aria-current="true"':''} aria-label="第${String(R.serial).padStart(6,'0')}号 ${esc(name(R.A))}さんと${esc(name(R.B))}さんの入れ替わり。押すと詳しい通知書を表示"><span class="pc-head"><b>入れ替わりのお知らせ</b><span>第${String(R.serial).padStart(6,'0')}号</span></span><span class="pc-pair">${side(R.A)}<span class="pc-x" aria-hidden="true">⇄</span>${side(R.B)}</span><p class="pc-sit"><span class="mk sex-${sx(R.A)}" aria-hidden="true"></span>${esc(R.A.surname.k)}さんは、${esc(R.A.sit.text)}。</p><p class="pc-sit"><span class="mk sex-${sx(R.B)}" aria-hidden="true"></span>${esc(R.B.surname.k)}さんは、${esc(R.B.sit.text)}。</p><span class="pc-foot"><span>ギャップ <span class="stars">${R.gap?.stars?stars(R.gap.stars):''}</span></span><span class="pc-open">${currentPerson===R?'表示中':'詳しく見る'}</span></span></button></li>`).join('');
  if(animate)[...el('pcards').children].forEach((li,i)=>setTimeout(()=>li.classList.remove('enter'),reduceMotion?0:120*i+30))}
 el('pcards').onclick=e=>{const b=e.target.closest('[data-card]');if(!b||drawing)return;el('person').hidden=false;showResult(pairCards[+b.dataset.card]);renderPairCards(false)};
@@ -297,14 +297,19 @@ async function realSequence(P,others){if(reduceMotion)return;const v=document.cr
  line('不可逆処理を実行しています…','warn');await wait(520);line('完了。','ok');await wait(650);
  try{navigator.vibrate?.([40,60,40])}catch{}const f=document.createElement('div');f.className='exec-flash';document.body.appendChild(f);setTimeout(()=>f.remove(),800);await wait(900);v.classList.add('done');await wait(400);v.remove()}
 // A result as a URL: the packed result (as in the history), deflated where the browser can, in the fragment, so it
-// never reaches the server. Opening it shows the same notice again.
+// never reaches the server. #r= holds one notice, #g= all the pairs of one swap in pair mode. Opening it shows them again.
 const b64url={enc:bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},dec:s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0))};
 const streamBytes=async(bytes,stream)=>new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
-async function resultURL(R){const bytes=new TextEncoder().encode(JSON.stringify(packR(R)));let code;
+async function packURL(key,value){const bytes=new TextEncoder().encode(JSON.stringify(value));let code;
  try{code='z'+b64url.enc(await streamBytes(bytes,new CompressionStream('deflate-raw')))}catch{code='j'+b64url.enc(bytes)}
- return location.origin+location.pathname+'#r='+code}
-async function resultFromURL(hash){const m=/^#r=([zj])([A-Za-z0-9_-]+)$/.exec(hash||'');if(!m)return null;let bytes=b64url.dec(m[2]);if(m[1]==='z')bytes=await streamBytes(bytes,new DecompressionStream('deflate-raw'));return unpackR(JSON.parse(new TextDecoder().decode(bytes)))}
-async function shareURL(R){let url;try{url=await resultURL(R)}catch(e){console.error(e);el('toast').textContent='URLを作成できませんでした';return}
- try{await navigator.clipboard.writeText(url);el('toast').textContent='URLをコピーしました'}catch{const box=document.createElement('textarea');box.value=url;box.readOnly=true;box.className='copybox';el('person').appendChild(box);box.select();el('toast').textContent='表示されたURLをコピーしてください'}}
-async function openSharedResult(){let R;try{R=await resultFromURL(location.hash)}catch(e){console.error(e)}if(!R)return;currentPerson=null;pairMode(false);el('person').hidden=false;showResult(R)}
+ return location.origin+location.pathname+'#'+key+'='+code}
+async function unpackURL(hash){const m=/^#([rg])=([zj])([A-Za-z0-9_-]+)$/.exec(hash||'');if(!m)return null;let bytes=b64url.dec(m[3]);if(m[2]==='z')bytes=await streamBytes(bytes,new DecompressionStream('deflate-raw'));
+ const value=JSON.parse(new TextDecoder().decode(bytes));return m[1]==='g'?{group:value.map(unpackR)}:{one:unpackR(value)}}
+async function copyURL(make,toast,box){let url;try{url=await make()}catch(e){console.error(e);el(toast).textContent='URLを作成できませんでした';return}
+ try{await navigator.clipboard.writeText(url);el(toast).textContent='URLをコピーしました'}catch{const t=document.createElement('textarea');t.value=url;t.readOnly=true;t.className='copybox';el(box).appendChild(t);t.select();el(toast).textContent='表示されたURLをコピーしてください'}}
+const shareURL=R=>copyURL(()=>packURL('r',packR(R)),'toast','person');
+el('pcards-url').onclick=()=>copyURL(()=>packURL('g',pairCards.map(packR)),'pcards-toast','pcards-sec');
+async function openSharedResult(){let got;try{got=await unpackURL(location.hash)}catch(e){console.error(e)}if(!got)return;
+ if(got.group?.length){pairCards=got.group;currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(false);el('pcards-sec').scrollIntoView({block:'start'});return}
+ currentPerson=null;pairMode(false);el('person').hidden=false;showResult(got.one)}
 openSharedResult();addEventListener('hashchange',openSharedResult);
