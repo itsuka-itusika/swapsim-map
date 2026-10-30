@@ -10,7 +10,8 @@ test('map layout follows the requested order and removes editable time controls'
  const positions=ids.map(id=>source.indexOf(`id="${id}"`));
  assert.ok(positions.every((p,i)=>p>=0&&(!i||p>positions[i-1])));
  assert.ok(source.includes('Mass Body-Swap Simulator'));
- assert.ok(!source.includes('datetime-local'));
+ // The only time control is the one in the debug panel at the bottom.
+ assert.ok(!source.slice(0,source.indexOf('id="debug"')).includes('datetime-local'));
 });
 
 test('single and pair notification renderers and share text work for map-generated people',()=>{
@@ -22,7 +23,7 @@ test('single and pair notification renderers and share text work for map-generat
 
 test('map filters preserve requested sex and age and both pair participants use local components',()=>{
  const source=fs.readFileSync('map-preview/app.js','utf8');
- run(`globalThis.el=id=>({innerHTML:'',textContent:'',setAttribute(){}});globalThis.storage=null;globalThis.parts=[];`);
+ run(`globalThis.el=id=>({innerHTML:'',textContent:'',setAttribute(){}});globalThis.storage=null;globalThis.debug={time:null,mixed:false,real:false};globalThis.parts=[];`);
  run(source.slice(source.indexOf('let issuedCount='),source.indexOf("el('test').onclick")));
  const result=run(`(()=>{const f=MAP_DATA.facilities.find(f=>f.kind==='station'),region=MAP_DATA.regions.find(r=>r.id===f.code),t={y:2026,mo:10,d:28,dow:3,h:12,hf:12,mi:0,rand:false};parts=MapModel.roles(f,t).map(c=>({...c,region,facility:f,n:100}));options.sex='f';options.dec=[2,3];options.pair=true;for(let i=0;i<20;i++){const R=sampleResult(t,true);if(R.A.sex!=='f'||R.A.age<20||R.A.age>=40)throw Error('filter mismatch');if(R.A.pref!==region.pref&&R.A.pref.n!=='東京都')throw Error('outside Tokyo');if(R.A.t!==R.B.t)throw Error('different instant')}return true})()`);
  assert.equal(result,true);
@@ -92,7 +93,7 @@ test('crowd pairs are independently generated in both modes and display both peo
 });
 test('two-range pair mode always swaps someone from range A with someone from range B',()=>{
  const source=fs.readFileSync('map-preview/app.js','utf8');
- run(`globalThis.el=id=>({innerHTML:'',textContent:'',setAttribute(){}});globalThis.storage=null;globalThis.parts=[];globalThis.partsB=[];`);
+ run(`globalThis.el=id=>({innerHTML:'',textContent:'',setAttribute(){}});globalThis.storage=null;globalThis.debug={time:null,mixed:false,real:false};globalThis.parts=[];globalThis.partsB=[];`);
  if(run('typeof samplePair')!=='function')run(source.slice(source.indexOf('let issuedCount='),source.indexOf("el('test').onclick")));
  const result=JSON.parse(run(`(()=>{const st=MAP_DATA.facilities.filter(f=>f.kind==='station'),fa=st.find(f=>f.name==='新宿駅'),fb=st.find(f=>f.name==='上野駅'),t={y:2026,mo:10,d:28,dow:3,h:12,hf:12,mi:0,rand:false},rows=f=>MapModel.roles(f,t).map(c=>({...c,region:MAP_DATA.regions.find(r=>r.id===f.code),facility:f,n:100}));parts=rows(fa);partsB=rows(fb);options.sex=null;options.dec=null;options.pair=true;options.pairMode='between';let out=[];for(let i=0;i<10;i++){const R=sampleResult(t,true),O=samplePair(t,false,between());out.push([R.A.place,R.B.place,O.A.place,O.B.place])}options.pairMode='within';const W=sampleResult(t,true);out.push(['within',W.B.place]);return JSON.stringify(out)})()`));
  for(const [a,b,oa,ob] of result.slice(0,10)){assert.equal(a,'新宿駅');assert.equal(b,'上野駅');assert.equal(oa,'新宿駅');assert.equal(ob,'上野駅')}
@@ -100,7 +101,7 @@ test('two-range pair mode always swaps someone from range A with someone from ra
 });
 test('a nearly empty range swaps only one or two pairs',()=>{
  const source=fs.readFileSync('map-preview/app.js','utf8');
- run(`globalThis.el=id=>({innerHTML:'',textContent:'',setAttribute(){}});globalThis.storage=null;globalThis.parts=[];globalThis.partsB=[];`);
+ run(`globalThis.el=id=>({innerHTML:'',textContent:'',setAttribute(){}});globalThis.storage=null;globalThis.debug={time:null,mixed:false,real:false};globalThis.parts=[];globalThis.partsB=[];`);
  if(run('typeof samplePair')!=='function')run(source.slice(source.indexOf('let issuedCount='),source.indexOf("el('test').onclick")));
  const r=JSON.parse(run(`(()=>{options.pair=true;options.pairMode='within';const at=n=>{parts=[{n}];return fewPairs()};return JSON.stringify([at(.1),at(2.9),at(5),at(11.9),at(12),at(5000)])})()`));
  assert.deepEqual(r,[1,1,2,2,6,6]);

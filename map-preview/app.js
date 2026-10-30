@@ -1,6 +1,10 @@
 'use strict';
 const el=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let storage=null;try{storage=localStorage}catch{}
+// Debug mode (a staged developer panel): a fixed time, men-and-women-only pairs, and a 本当に入れ替える that is not tied
+// to the one in 詳細設定. Saved separately from 詳細設定.
+const debug={time:null,mixed:false,real:false},debugKey='swapsim-map-debug-v1',DEBUG_TIME=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+try{const saved=JSON.parse(storage?.getItem(debugKey)||'null');if(saved){debug.time=DEBUG_TIME.test(saved.time)?saved.time:null;debug.mixed=saved.mixed===true;debug.real=saved.real===true}}catch{}
 const initialSelection=SelectionCache.load(storage);
 let selected=initialSelection.point,radius=initialSelection.radius,parts=[],regions=MAP_DATA.regions,facilities=MAP_DATA.facilities,history=[];
 // Census is used only by residential components or explicit missing-data fallback.
@@ -16,8 +20,11 @@ const excluded=p=>LandModel.at(p)||GreenModel.at(p);
 const boot=MapBoot.create(selected,radius),map=boot.map;
 let tiles=boot.tiles,circle=boot.circle,pin=boot.pin,layer=L.layerGroup().addTo(map);
 const clockFormatter=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-function dateNow(){el('clock').textContent=clockFormatter.format(new Date())}
-function time(){let t=jstNow();t.rand=false;t.holiday=!!holName(t);t.venueEvent='auto';return t}
+function dateNow(){el('clock-label').textContent=debug.time?'指定時刻':'現在時間';el('clock').textContent=debug.time?debugClock(debugTime(debug.time)):clockFormatter.format(new Date())}
+// A debug time is read as Tokyo time and stays fixed; its weather comes from the season, not today's observation.
+function debugTime(v){const [y,mo,d]=v.slice(0,10).split('-').map(Number),h=+v.slice(11,13),mi=+v.slice(14,16);return {y,mo,d,h,mi,hf:h+mi/60,dow:new Date(Date.UTC(y,mo-1,d)).getUTCDay()}}
+function debugClock(t){return `${t.y}年${t.mo}月${t.d}日(${'日月火水木金土'[t.dow]}) ${String(t.h).padStart(2,'0')}:${String(t.mi).padStart(2,'0')}`}
+function time(){let t=debug.time?debugTime(debug.time):jstNow();t.rand=!!debug.time;t.holiday=!!holName(t);t.venueEvent='auto';return t}
 function minuteKey(t){return [t.y,t.mo,t.d,t.h,t.mi].join('/')}
 async function updateWeather(){await MapWeather.load(storage)}
 function facilitiesOnMap(){layer.clearLayers()}
@@ -160,7 +167,11 @@ el('opt-reset').onclick=()=>{Object.assign(options,{sex:null,dec:null,pair:false
 // Names the filter in the error, e.g. 「女性・0代」.
 function conditionLabel(){return [options.sex?options.sex==='f'?'女性':'男性':'',...(options.dec||[]).map(n=>n===9?'90代以上':n*10+'代')].filter(Boolean).join('・')}
 function notFound(){let c=conditionLabel();return Error('今の時刻、この範囲には'+(c?'「'+c+'」の':'抽選できる')+'人物が見つかりません。条件や半径を変更してください。')}
-function samplePerson(t,filtered=false,src=parts){
+// sex: a sex the person must have (the second person of a debug men-and-women pair).
+function samplePerson(t,filtered=false,src=parts,sex=null){
+ if(sex){const eligible=src.filter(c=>sex==='f'?c.female!==0:c.female!==1),total=eligible.reduce((s,c)=>s+c.n,0);
+  for(let i=0;total&&i<2000;i++){const c=MapModel.pick(eligible);const P=mapPerson({...c,roleP:c.n/total},t);if(P.sex===sex)return P}
+  throw Error('この範囲には、男女の組み合わせになる相手が見つかりません。半径や場所を変更してください。')}
  const eligible=src.filter(c=>(!filtered||!options.sex||(options.sex==='f'?c.female!==0:c.female!==1))&&(!filtered||!options.dec?.length||options.dec.some(d=>(c.max??110)>=d*10&&(c.min??0)<=(d===9?110:d*10+9))));
  const total=eligible.reduce((sum,c)=>sum+c.n,0);if(!total)throw notFound();
  for(let i=0;i<2000;i++){const c=MapModel.pick(eligible);if(!c)break;const P=mapPerson({...c,roleP:c.n/total},t);if(!filtered||((!options.sex||P.sex===options.sex)&&(!options.dec?.length||options.dec.includes(Math.min(9,Math.floor(P.age/10))))))return P}
@@ -170,7 +181,7 @@ function samplePerson(t,filtered=false,src=parts){
 // thresholds at the quintiles of map-drawn pairs (the original thresholds assume nationwide distances).
 const MAP_GAP_TH=[1.12,1.76,2.32,3.0];
 function mapGap(A,B){const g=pairGap(A,B),score=g.age/25+(g.sexDiff?1:0)+(g.stateDiff?.8:0)+(g.groupDiff?.6:0);return {...g,km:0,score,stars:MAP_GAP_TH.findIndex(x=>score<x)+1||5}}
-function samplePair(t,filtered=false,two=false){const A=samplePerson(t,filtered),B=samplePerson(t,false,two?partsB:parts);return {kind:'pair',A,B,t,gap:mapGap(A,B)}}
+function samplePair(t,filtered=false,two=false){const A=samplePerson(t,filtered),B=samplePerson(t,false,two?partsB:parts,debug.mixed?(A.sex==='m'?'f':'m'):null);return {kind:'pair',A,B,t,gap:mapGap(A,B)}}
 // Six pairs fill the PC card grid (two or three columns) evenly. A nearly empty range (a park at night, a closed
 // precinct) has too few people for that: one or two pairs only.
 function fewPairs(){const total=src=>src.reduce((s,c)=>s+c.n,0),n=between()?Math.min(total(parts),total(partsB)):total(parts);return n<3?1:n<12?2:6}
@@ -230,7 +241,8 @@ el('history').onclick=e=>{const b=e.target.closest('button[data-h]');if(!b||draw
  else{pairMode(false);el('person').hidden=false;showResult(h.P);renderCrowd();el('person').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}renderHistory()};
 function fewNote(others){const few=others.length<4,msg=few?(others.length?'この範囲では、ほかに入れ替わる人は見つかりませんでした。':'この範囲では、ほかに入れ替わる人はいませんでした。'):'';for(const id of ['pcards-note','crowd-note']){el(id).hidden=!few;el(id).textContent=msg}}
 function finishDraw(){const d=drawing;if(!d)return;fewNote(d.others);drawing=null;if(typeof beaconCheck==='function')beaconCheck();drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length||between()&&!partsB.length}
-el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length||between()&&!partsB.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();if(between()&&estimateMinuteB!==minuteKey(t))refreshB();P=sampleResult(t,true);others=Array.from({length:Math.max(0,fewPairs()-1)},()=>samplePair(t,false,between()));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
+el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length||between()&&!partsB.length)return;if(debug.real&&!await realGate())return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();if(between()&&estimateMinuteB!==minuteKey(t))refreshB();P=sampleResult(t,true);others=Array.from({length:Math.max(0,fewPairs()-1)},()=>samplePair(t,false,between()));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
+ if(debug.real)await realSequence(P,others);
  drawing={P,others};pool={parts:parts.slice(),center:selected.slice(),radius};poolB=between()?{parts:partsB.slice(),center:selectedB.slice(),radius}:null;plays++;const tk=++drawToken;el('draw').disabled=false;setDrawLabel();if(reduceMotion){finishDraw();return}
  // Pair mode first brings the map into view (on phones the button sits below it) and roams the circle with the
  // markers, then jumps to the six compact notices.
@@ -260,3 +272,25 @@ el('mesh-mode').innerHTML='<option value="land">土地用途・敷地（標準�
 el('mesh-mode').onchange=drawMesh;
 dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh();refreshB()}},1000);let lastMinute=time().mi;updateWeather();facilitiesOnMap();refresh();drawMesh();MapBoot.done();loadHistory();renderHistory();
 
+// Debug panel.
+function renderDebug(){el('dbg-time').value=debug.time||'';for(const key of ['mixed','real'])el('dbg-'+key).setAttribute('aria-checked',String(debug[key]));dateNow()}
+function setDebugTime(v){debug.time=v&&DEBUG_TIME.test(v)?v:null;renderDebug();refresh();refreshB()}
+el('dbg-time').onchange=e=>setDebugTime(e.target.value.slice(0,16));
+el('dbg-now').onclick=()=>setDebugTime(null);
+for(const key of ['mixed','real'])el('dbg-'+key).onclick=()=>{debug[key]=!debug[key];renderDebug()};
+el('dbg-save').onclick=()=>{try{if(!storage)throw Error();storage.setItem(debugKey,JSON.stringify(debug));el('dbg-status').textContent='saved'}catch{el('dbg-status').textContent='failed'}};
+el('dbg-reset').onclick=()=>{Object.assign(debug,{time:null,mixed:false,real:false});try{storage?.removeItem(debugKey)}catch{}el('dbg-status').textContent='reset';setDebugTime(null)};
+renderDebug();
+// 本当に入れ替える (debug): asked once per page, then a console run before every swap. Reduced motion skips the run.
+let realConfirmed=false;
+function realGate(){if(realConfirmed)return Promise.resolve(true);return new Promise(done=>{const v=document.createElement('div');v.className='exec-veil';v.setAttribute('role','alertdialog');v.setAttribute('aria-modal','true');
+ v.innerHTML='<div class="log"><span class="warn">警告: 本当に入れ替える が有効です。</span>\n対象者の同意は確認されません。\nこの操作は取り消せません。</div><div class="ask"><button type="button" class="go">実行する</button><button type="button" class="no">キャンセル</button></div>';
+ const close=ok=>{v.remove();if(ok)realConfirmed=true;done(ok)};v.querySelector('.go').onclick=()=>close(true);v.querySelector('.no').onclick=()=>close(false);v.onkeydown=e=>{if(e.key==='Escape')close(false)};document.body.appendChild(v);v.querySelector('.no').focus()})}
+async function realSequence(P,others){if(reduceMotion)return;const v=document.createElement('div'),log=document.createElement('div');v.className='exec-veil';v.setAttribute('aria-hidden','true');log.className='log';v.appendChild(log);document.body.appendChild(v);
+ const pairs=[P,...others].filter(X=>X.kind==='pair').length,people=P.kind==='pair'?pairs*2:1+others.length*2,pad=n=>String(n).padStart(2,'0'),t=time(),stamp=`${t.y}-${pad(t.mo)}-${pad(t.d)} ${pad(t.h)}:${pad(t.mi)} JST`,wait=ms=>new Promise(r=>setTimeout(r,ms));
+ const line=(text,cls)=>{const s=document.createElement('span');if(cls)s.className=cls;s.textContent=text+'\n';log.appendChild(s)};
+ for(const [text,ms,cls] of [[`$ swap --commit --no-dry-run --radius ${radius}m`,320],[stamp,160],[`座標を固定しています… ${selected[1].toFixed(5)}, ${selected[0].toFixed(5)}`,380],[`対象者を確定しました: ${people}名`,360],['意識の位相を同期しています…',240]])
+  {line(text,cls);await wait(ms)}
+ const bar=document.createElement('span');log.appendChild(bar);for(const p of [12,37,58,81,96,100]){bar.textContent=`[${'#'.repeat(p/5|0).padEnd(20,'.')}] ${p}%\n`;await wait(150)}
+ line('不可逆処理を実行しています…','warn');await wait(520);line('完了。元に戻すことはできません。','ok');await wait(650);
+ try{navigator.vibrate?.([40,60,40])}catch{}const f=document.createElement('div');f.className='exec-flash';document.body.appendChild(f);v.remove();setTimeout(()=>f.remove(),800)}
