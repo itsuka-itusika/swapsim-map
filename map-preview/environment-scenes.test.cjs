@@ -81,7 +81,9 @@ test('ward central libraries and more large baths are bundled with their own sta
 test('market and shopping streets give their visitors only shopping or sightseeing scenes',()=>{
  const r=JSON.parse(run(`(()=>{let out=[];for(let xy of [[139.7698,35.6655],[139.7745,35.7095]])for(let h of [7,10,15,19]){let p=LandProfile.create(envContext,xy,60),t={y:2026,mo:10,d:28,dow:3,h,hf:h+.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t).filter(c=>['area_shopping','area_tourist','area_inbound'].includes(c.role)&&c.area?.visitOnly),tot=parts.reduce((s,c)=>s+c.n,0);for(let i=0;i<60&&parts.length;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);out.push(P.sit.text)}}return JSON.stringify(out)})()`));
  const pools=run(`JSON.stringify([...Object.values(MAP_DATA.storyScenes.visitor).flat(),...MAP_DATA.areas.flatMap(a=>(a.scenes||[]).map(s=>s[2]))])`);
- assert.ok(r.length>200);for(let text of r)assert.ok(pools.includes(JSON.stringify(text))||/買い物|店|土産|観光|商店街|市場/.test(text),text);
+ // A child visiting with family has its own scenes (with a parent), which need not name a shop.
+ const family=run(`JSON.stringify(FamilyVisits.scenes.map(s=>s[0]))`);
+ assert.ok(r.length>200);for(let text of r)assert.ok(pools.includes(JSON.stringify(text))||family.includes(JSON.stringify(text))||/買い物|店|土産|観光|商店街|市場/.test(text),text);
 });
 test('pupils drawn at an ordinary school are regular students of that school',()=>{
  const r=JSON.parse(run(`(()=>{let out=[];for(let kind of ['high','middle']){let fs=MAP_DATA.facilities.filter(f=>f.kind===kind&&f.code.startsWith('131')).slice(0,30);for(let f of fs)for(let i=0;i<20;i++){let P=mapPerson({role:'student',label:'学生',min:kind==='high'?15:12,max:kind==='high'?18:15,female:.5,facility:f,region:MapModel.locate(f.xy,MAP_DATA.regions),roleP:.01},{y:2026,mo:10,d:28,dow:3,h:10,hf:10.2,mi:12});out.push([kind,P.occ.label,!!P.occ.tsushin])}}return JSON.stringify(out)})()`));

@@ -291,9 +291,11 @@ renderDebug();
 // (the module being loaded for the first run) in a full-screen console the usual animation shows through.
 // Reduced motion skips the sequence.
 let realRan=false;
-function realGate(){return new Promise(done=>{const v=document.createElement('div');v.className='exec-veil';v.setAttribute('role','alertdialog');v.setAttribute('aria-modal','true');
- v.innerHTML='<div class="log"><span class="warn">警告: 本当に入れ替える（試験実装版）が有効です。</span>\n対象者の同意は確認されません。\nこの操作は取り消せません。</div><div class="ask"><button type="button" class="go">実行する</button><button type="button" class="no">キャンセル</button></div>';
- const close=ok=>{v.remove();done(ok)};v.querySelector('.go').onclick=()=>close(true);v.querySelector('.no').onclick=()=>close(false);v.onkeydown=e=>{if(e.key==='Escape')close(false)};document.body.appendChild(v);v.querySelector('.no').focus()})}
+// A modal dialog asked when the switch is turned on (Esc, the cancel button or a click outside decline it).
+function realGate(){return new Promise(done=>{const d=document.createElement('dialog');d.className='dbg-dialog';
+ d.innerHTML='<form method="dialog"><h2>本当に入れ替える（試験実装版）</h2><p>この設定を有効にすると、入れ替えボタンで選ばれた人物との入れ替えが実際に実行されます。</p><p>対象者の同意は確認されません。<br>実行した入れ替えは取り消せません。</p><p class="dbg-note">試験実装版のため、動作は保証されません。</p><div class="dbg-actions"><button type="submit" value="no" class="btn">キャンセル</button><button type="submit" value="go" class="btn">有効にする</button></div></form>';
+ d.addEventListener('close',()=>{const ok=d.returnValue==='go';d.remove();done(ok)});d.addEventListener('click',e=>{if(e.target===d)d.close('no')});
+ document.body.appendChild(d);d.showModal();d.querySelector('button[value="no"]').focus()})}
 async function realSequence(P,others){if(reduceMotion)return;const v=document.createElement('div'),log=document.createElement('div');v.className='exec-console';v.setAttribute('aria-hidden','true');log.className='log';v.appendChild(log);document.body.appendChild(v);
  const pairs=[P,...others].filter(X=>X.kind==='pair').length,people=P.kind==='pair'?pairs*2:1+others.length*2,pad=n=>String(n).padStart(2,'0'),t=time(),stamp=`${t.y}-${pad(t.mo)}-${pad(t.d)} ${pad(t.h)}:${pad(t.mi)} JST`,wait=ms=>new Promise(r=>setTimeout(r,ms));
  const line=(text,cls)=>{const s=document.createElement('span');if(cls)s.className=cls;s.textContent=text+'\n';log.appendChild(s)};
