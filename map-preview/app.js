@@ -297,8 +297,8 @@ async function realSequence(P,others){if(reduceMotion)return;const v=document.cr
  for(const [text,ms,cls] of [[`$ swap --commit --no-dry-run --radius ${radius}m`,320],[stamp,160],['初回実行: 入れ替えモジュールを読み込んでいます…',520],[`座標を固定しています… ${selected[1].toFixed(5)}, ${selected[0].toFixed(5)}`,380],[`対象者を確定しました: ${people}名`,360],['意識の位相を同期しています…',240]])
   {line(text,cls);await wait(ms)}
  const bar=document.createElement('span');log.appendChild(bar);for(const p of [12,37,58,81,96,100]){bar.textContent=`[${'#'.repeat(p/5|0).padEnd(20,'.')}] ${p}%\n`;await wait(150)}
- line('不可逆処理を実行しています…','warn');await wait(520);line('完了。','ok');await wait(650);
- try{navigator.vibrate?.([40,60,40])}catch{}await wait(900);v.classList.add('done');await wait(400);v.remove()}
+ line('不可逆処理を実行しています…','warn');await wait(520);line('完了。','ok');
+ try{navigator.vibrate?.([40,60,40])}catch{}await wait(450);v.classList.add('done');await wait(300);v.remove()}
 // A result as a URL: the packed result (as in the history), deflated where the browser can, in the fragment, so it
 // never reaches the server. #r= holds one notice, #g= all the pairs of one swap in pair mode. Opening it shows them again.
 const b64url={enc:bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},dec:s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0))};
