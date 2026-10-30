@@ -32,3 +32,5 @@ test('Flu jabs at hospitals in October and November only, with no illness of the
 test('スクランブル交差点: most people shown there get crossing scenes, some are in a taxi, bus or car',()=>{let a=draw3([139.7006,35.6595],T(11,4,3,15),70,1000).filter(x=>/^渋谷スクランブル交差点$/.test(x.place));assert.ok(a.length>100);
  let own=a.filter(x=>/交差点|ハチ公|信号|大型ビジョン/.test(x.text));assert.ok(own.length>=a.length*.65,own.length+'/'+a.length);assert.ok(a.filter(x=>/タクシー|バス|車の|後部座席|助手席/.test(x.text)).length>=a.length*.07);
  assert.ok(!a.some(x=>/映画館|食堂|ゲームの棚|カラオケ|居酒屋/.test(x.text)))});
+test('スクランブル交差点 from midnight to dawn: drawn scenes stay, only indoor ones are replaced',()=>{let a=draw3([139.7006,35.6595],T(11,4,3,3),70,1000).filter(x=>/^渋谷スクランブル交差点$/.test(x.place));assert.ok(a.length>100);
+ assert.ok(a.filter(x=>/交差点|ハチ公|信号|大型ビジョン/.test(x.text)).length<a.length*.35);assert.ok(!a.some(x=>/映画館|食堂|ゲームの棚|カラオケ|居酒屋/.test(x.text)))});

@@ -1,6 +1,7 @@
 /* 渋谷スクランブル交差点: most people shown at the crossing (not those at work) get a scene of the crossing itself.
    About 65% are on foot (crossing, passing each other, waiting for the signal, meeting at ハチ公前) and about 15% are in
-   a taxi, bus or car waiting at the light; the rest keep the scene they were drawn with. Shares are game assumptions. */
+   a taxi, bus or car waiting at the light; the rest keep the scene they were drawn with. From midnight to dawn (few people
+   on foot) only scenes that cannot happen on the street are replaced. Shares are game assumptions. */
 const CrossingScenes=(()=>{
  const NAME='渋谷スクランブル交差点',pick=a=>a[Math.floor(rnd()*a.length)];
  // [text, from hour, to hour (a wrapping range such as 22-5 is allowed), options]: min/max age, job: working adults only.
@@ -58,7 +59,10 @@ const CrossingScenes=(()=>{
   ['車で交差点の信号待ちをしながら、渡る人の波が切れるのを待って、右折の機会をうかがっているところでした',7,24,{drive:1}],
   ['車の運転席で、青信号になっても人が渡り切るのを待って、ゆっくりアクセルを踏んだところでした',7,24,{drive:1}],
   ['交差点の赤信号で先頭に止まり、目の前を横切る人の波に、ブレーキを踏み直したところでした',7,24,{drive:1}],
-  ['渋滞する交差点の手前で、カーナビの到着予想時刻が延びていくのを見ているところでした',7,24,{drive:1}]
+  ['渋滞する交差点の手前で、カーナビの到着予想時刻が延びていくのを見ているところでした',7,24,{drive:1}],
+  ['深夜のタクシーの後部座席で、人通りの減った交差点の赤信号を、眠気をこらえて見つめているところでした',0,5,{min:18}],
+  ['深夜の交差点の赤信号で止まったタクシーの中から、まだ光り続ける大型ビジョンを眺めているところでした',0,5,{min:18}],
+  ['深夜の交差点で、赤信号に止まり、誰もいない横断歩道の前で青に変わるのを待っているところでした',0,5,{drive:1}]
  ];
  // Hours run from s to e; e may pass 24 (22 to 25 means until 1 a.m.).
  const inHour=(s,e,h)=>h>=s&&h<e||h+24>=s&&h+24<e;
@@ -69,9 +73,10 @@ const CrossingScenes=(()=>{
  const INDOORS=/ゲームの棚|採点|立ち飲み|映画館|食堂|店内|店で|ファミレス|カフェ|居酒屋|カラオケ|電車に乗|車内|自宅|部屋|布団|寝|病院|学校|教室|会社|職場|オフィス|ホテル|レジ|厨房|試着|座席|席で|ジム|銭湯|風呂|図書館|美容院|美術館|ライブハウス|ゲームセンター|クレーンゲーム|ネットカフェ|サウナ/;
  // Only people whose place will read スクランブル交差点 (not those at a facility or at work).
  function here(c){return typeof PlaceLabel!=='undefined'&&!c.resident&&PlaceLabel.generic(c)&&PlaceLabel.name(c)===NAME}
- function apply(c,P,t){if(!here(c)||P.sit?.state==='work'||P.sit?.state==='sleep'||P.hb?.bed||P.hb?.leave)return false;let h=t.hf??t.h,r=rnd();
-  // Scenes that cannot happen on the street are always replaced; the others are replaced four times in five.
-  if(r>=.8&&!INDOORS.test(P.sit?.text||''))return false;let list=r<.66||r>=.8?walk:ride,p=pool(list,P,h);if(!p.length)return false;
+ function apply(c,P,t){if(!here(c)||P.sit?.state==='work'||P.sit?.state==='sleep'||P.hb?.bed)return false;let h=t.hf??t.h,r=rnd();
+  // Scenes that cannot happen on the street are always replaced. The others are replaced four times in five, except from
+  // midnight to dawn, when few people are on foot and the drawn scenes stay as they are.
+  let indoors=INDOORS.test(P.sit?.text||'');if(!indoors&&(h<5||r>=.8))return false;let list=r<.66||r>=.8?walk:ride,p=pool(list,P,h);if(!p.length)p=pool(list===walk?ride:walk,P,h);if(!p.length)return false;
   let text=pick(p)[0];P.mapSituation=text;P.sit={...P.sit,text,source:'crossing',p:1};return true}
  return {NAME,walk,ride,pool,here,apply};
 })();
