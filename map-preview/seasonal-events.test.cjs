@@ -15,3 +15,8 @@ test('一般参賀 crowds the palace on 2 January and 23 February only',()=>{let
  for(let x of ny.filter(x=>x.role==='green_sanga_guard'))assert.equal(x.occ,'皇宮護衛官');assert.ok(!draw2(palace,T(10,30,5,11),300).some(x=>/一般参賀/.test(x.text)))});
 test('Taxi drivers wait at the 青山公園 taxi pool, most late at night',()=>{let night=draw2([139.7239,35.663],'{y:2026,mo:10,d:31,dow:6,h:1,hf:1,mi:0,rand:true}').filter(x=>x.role==='taxi_driver');assert.ok(night.length>40);assert.ok(night.every(x=>x.occ==='タクシー運転手'&&x.age>=25));
  assert.equal(run('TaxiModel.count({dow:5,h:1})')>run('TaxiModel.count({dow:5,h:9})'),true)});
+test('東京駅 has holiday-rush scenes in お盆, 年末年始 and GW only',()=>{let tokyo=[139.7661,35.6814],rush=t=>draw2(tokyo,t,80,300).filter(x=>/帰省ラッシュ|ゴールデンウィーク|正月の東京駅/.test(x.label));
+ assert.ok(rush(T(8,12,3,11)).length>50);assert.ok(rush('{y:2027,mo:1,d:3,dow:0,h:15,hf:15,mi:0,rand:true}').every(x=>x.age>=20||!/職場|仕事/.test(x.text)));assert.ok(rush('{y:2027,mo:5,d:2,dow:0,h:10,hf:10,mi:0,rand:true}').length>50);assert.equal(rush(T(10,30,5,11)).length,0)});
+test('Medical and engineering students at their universities and campuses only',()=>{let st=(xy,h=11)=>draw2(xy,T(11,4,3,h),60,200).filter(x=>x.role==='student').map(x=>x.text),med=/解剖|心電図|病院実習|OSCE|薬理|病理|国家試験|CBT|白衣/,eng=/偏微分|プログラミング|オシロスコープ|CAD|材料力学|ドラフト|シミュレーション|ロボット/;
+ assert.ok(st([139.759,35.7215]).filter(x=>med.test(x)).length>40,'日本医科大学');assert.ok(st([139.7176,35.6825]).filter(x=>med.test(x)).length>40,'慶應 信濃町');assert.ok(!st([139.742,35.6492]).some(x=>med.test(x)||eng.test(x)),'慶應 三田');
+ assert.ok(st([139.706,35.706]).filter(x=>eng.test(x)).length>40,'早稲田 西早稲田');assert.ok(!st([139.7228,35.7092]).some(x=>eng.test(x)),'早稲田 本部')});

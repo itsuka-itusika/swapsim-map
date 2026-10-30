@@ -73,7 +73,34 @@ const TimeSituations=(()=>{
   if(pk&&pk.tot<3&&rnd()>pk.tot/3)return null;return pk?fillText(textOf(pk.e),P):null;
  }
  // Schools with their own daily life. Matched by the facility name in the school dataset (東京芸術大学 is spelled with 芸 there).
- const schools=[[/^東京[芸藝]術大学$/,{
+ // Medical and science/engineering students. Medical and technical universities get these scenes for all their
+ // students; at a university with other faculties only its medical or engineering campus does (at: [lon, lat],
+ // radius in metres), or a share of the students on a mixed campus.
+ const MEDICAL={
+  arrival:['白衣を詰めたかばんを抱えて、朝の実習に間に合うよう急いでいるところでした','病院実習の集合時間に合わせて、大学病院の通用口へ向かっているところでした'],
+  class:['解剖学実習で、ご遺体に一礼してからメスを手に取ったところでした','生理学の講義で、心電図の波形を一つずつノートに写しているところでした','病院実習で、指導医の回診の後ろについて患者さんの話を聞いているところでした','OSCEの練習で、同級生を患者役に問診の手順を確かめているところでした','薬理学の講義で、覚える薬の名前の多さにため息をついたところでした','病理の実習で、顕微鏡をのぞきながら標本の細胞をスケッチしているところでした'],
+  break:['休み時間に、解剖の図譜を広げて筋肉の名前を口の中で唱えているところでした'],
+  lunch:['昼休みに、病院の食堂で白衣のまま定食をかき込んでいるところでした','昼休みに、同級生と次の試験範囲を確かめ合っているところでした'],
+  after:['放課後の図書館で、国家試験の過去問を解いているところでした','部活の練習を終え、CBTの勉強のために自習室へ向かっているところでした','実習のレポートをまとめながら、明日の担当患者の資料を読み返しているところでした'],
+  teacher:['医学部の講義で、スライドの症例について学生に問いかけているところでした','病院実習で、学生に聴診器の当て方を見せているところでした']},ENGINEERING={
+  arrival:['徹夜明けの研究室から、そのまま一限の講義に向かっているところでした','ノートパソコンの入った重いリュックを背負って、キャンパスに着いたところでした'],
+  class:['数学の講義で、黒板いっぱいの偏微分方程式を書き写しているところでした','プログラミングの演習で、エラーの出る行を探しているところでした','物理実験で、オシロスコープの波形を記録しているところでした','製図の授業で、CADの寸法を一つずつ入れ直しているところでした','材料力学の講義で、はりのたわみの式に首をかしげているところでした','化学実験で、ドラフトの中で試薬を慎重に量っているところでした'],
+  break:['休み時間に、実験レポートの締め切りを指折り数えているところでした'],
+  lunch:['昼休みに、学食で研究室の先輩と実験の段取りを話しているところでした'],
+  after:['研究室で、夜通し回すシミュレーションの設定を確かめているところでした','ロボットコンテストに向けて、サークルの部室でモーターの配線をやり直しているところでした','実験レポートのグラフの軸を、何度も直しているところでした','研究室のゼミで、先週の実験結果を発表しているところでした'],
+  teacher:['研究室で、学生の実験データのグラフを一緒にのぞき込んでいるところでした','工学部の講義で、スクリーンに回路図を映しながら説明しているところでした']};
+ const schools=[
+ [/^(東京医科歯科大学|順天堂大学|日本医科大学|東京慈恵会医科大学|東京医科大学|東京女子医科大学|昭和大学|東邦大学)$/,MEDICAL],
+ [/^帝京大学$/,{...MEDICAL,at:[[139.7149,35.759],400]}],
+ [/^慶應義塾大学$/,{...MEDICAL,at:[[139.7176,35.6825],400]}],
+ [/^日本大学$/,{...MEDICAL,at:[[139.6912,35.7488],400]}],
+ [/^東京大学$/,{...MEDICAL,at:[[139.7631,35.7125],400],share:.12}],
+ [/^(東京工業大学|芝浦工業大学|工学院大学|東京電機大学|東京都市大学|東京理科大学)$/,ENGINEERING],
+ [/^早稲田大学$/,{...ENGINEERING,at:[[139.706,35.706],300]}],
+ [/^中央大学$/,{...ENGINEERING,at:[[139.7484,35.7085],300]}],
+ [/^東京大学$/,{...ENGINEERING,at:[[139.7631,35.7125],400],share:.25}],
+ [/^上智大学$/,{...ENGINEERING,at:[[139.7319,35.6836],300],share:.15}],
+ [/^東京[芸藝]術大学$/,{
   arrival:['楽器ケースを背負い、上野公園側の門からキャンパスに入ったところでした','イーゼルを抱えて、朝いちばんのアトリエに入ったところでした','美術学部と音楽学部の間の道で、同じ学科の友達に声をかけられたところでした'],
   class:['石膏像を前に、木炭でデッサンの陰影を重ねているところでした','油絵の課題で、キャンバスに下地の色を塗り広げているところでした','彫刻の実習室で、粘土の塊から人の肩の線を削り出しているところでした','和声の授業で、五線譜に4声の進行を書き込んでいるところでした','レッスン室で、先生の伴奏に合わせて同じフレーズを何度も歌い直しているところでした','合奏の授業で、チューニングの音に耳を澄ませているところでした','講評会の順番を待ちながら、壁に掛けた自分の作品を見直しているところでした'],
   break:['チェロのケースを背負って、次のレッスン室へ急いでいるところでした','絵の具のついた手を洗い、次の講義に向かうところでした'],
@@ -111,7 +138,9 @@ const TimeSituations=(()=>{
   after:['放課後の練習室で、メトロノームの速さを少しずつ上げているところでした','コンクールに向けて、先生の自宅のレッスンに向かう電車に乗ったところでした'],
   teacher:['実技のレッスンで、生徒の手首の力の抜き方を見せているところでした']}],
  [/^東京[芸藝]術大学$/,{teacher:['実技のレッスンで、学生の演奏を最後まで黙って聴いているところでした','アトリエを回り、学生の制作中の作品に一言ずつ声をかけているところでした','学内演奏会のリハーサルで、客席から響きを確かめているところでした']}]];
- function schoolPool(c,k,t){const name=c.facility?.name||'',own=schools.filter(([re])=>re.test(name)).map(x=>x[1]);
+ function schoolPool(c,k,t){let name=c.facility?.name||'',xy=c.facility?.xy,own=schools.filter(([re,s])=>re.test(name)&&(!s.at||xy&&MapModel.distance(xy,s.at[0])<=s.at[1])).map(x=>x[1]);
+  // On a mixed campus only a share of the people are medical or engineering ones.
+  own=own.filter(s=>!s.share||rnd()<s.share);
   // Teachers at a school with its own daily life get its lesson scenes in working hours.
   if(c.role==='teacher'){const s=own.find(x=>x.teacher);return s&&/_work$/.test(k)?s.teacher:null}
   if(c.role!=='student')return null;let s=own.find(x=>x.arrival),phase=/_class$/.test(k)?'class':/_lunch$/.test(k)?'lunch':/_after$/.test(k)?'after':k==='school_break'?'break':/arrival$/.test(k)?'arrival':null;if(!s||!phase)return null;return [...s[phase],...(s.season&&['class','after'].includes(phase)?s.season(t):[])]}
