@@ -12,7 +12,7 @@ const LandModel=(()=>{
  if(z.kind==='terminal')return [R('passenger','空港利用客',day?2400:h>=5&&h<24?400:40,6,79,.5),R('airport','空港係員',day?500:50),R('security','施設警備員',day?70:25,22,64,.2)];
  if(z.kind==='airfield')return [R('maintenance','航空施設の整備・管理職員',day?35:6,22,64,.2),R('security','施設警備員',day?12:6,22,64,.2)];
  if(z.kind==='industrial')return [R('logistics','物流・工場勤務者',day?350:55,20,69,.25),R('security','施設警備員',day?12:5,22,69,.2)];
- if(z.kind==='cemetery')return [R('grave','墓参りの来訪者',h>=8&&h<17?150*(typeof SeasonalEvents!=='undefined'&&SeasonalEvents.higan(t)?3:1):0,6,89,.5),R('grounds','霊園管理作業員',h>=8&&h<17?15:0)];
+ if(z.kind==='cemetery')return [R('grave','墓参りの来訪者',h>=8&&h<17?150*(typeof SeasonalEvents==='undefined'?1:SeasonalEvents.higan(t)?3:SeasonalEvents.obon(t)?2.5:1):0,6,89,.5),R('grounds','霊園管理作業員',h>=8&&h<17?15:0)];
  return [R('hike','緑地の散策者',h>=7&&h<17?35:0,12,79,.45),R('grounds','緑地管理作業員',h>=8&&h<17?3:0)];
  }
  function components(p,r,t,regions){let N=256,b=new Map();for(let i=0;i<N;i++){let a=i*2.399963229728653,rr=r*Math.sqrt((i+.5)/N),q=[p[0]+Math.cos(a)*rr/(111195*Math.cos(p[1]*Math.PI/180)),p[1]+Math.sin(a)*rr/111195],z=at(q);if(!z||z.kind==='water')continue;let region=M.locate(q,regions);if(!region)continue;for(let role of roles(z,t)){if(role.density<=0)continue;let k=z.id+'/'+role.role+'/'+region.id;if(!b.has(k))b.set(k,{...role,zone:z,region,n:0});b.get(k).n+=role.density*Math.PI*(r/1000)**2/N}}return [...b.values()]}

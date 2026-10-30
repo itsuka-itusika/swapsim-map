@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "notes": "Taxi waiting areas. 青山公園調整待機所: the street between 青山霊園 and 都立青山公園 南地区 where taxis may wait and drivers rest (driver blogs and taxi-trade write-ups; no official map). The footprint follows the gap between the two OSM polygons and is approximate.",
+  "features": [
+    {
+      "id": "taxipool-aoyama",
+      "name": "青山公園タクシー調整待機所",
+      "xy": [139.7241, 35.6636],
+      "geometry": {"type": "Polygon", "coordinates": [[[139.72366, 35.66255], [139.72372, 35.663], [139.72396, 35.6638], [139.72438, 35.6647], [139.72462, 35.6647], [139.7242, 35.6638], [139.72394, 35.663], [139.7239, 35.66255], [139.72366, 35.66255]]]}
+    }
+  ]
+}
