@@ -244,7 +244,7 @@ el('history').onclick=e=>{const b=e.target.closest('button[data-h]');if(!b||draw
  else{pairMode(false);el('person').hidden=false;showResult(h.P);renderCrowd();el('person').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}renderHistory()};
 function fewNote(others){const few=others.length<4,msg=few?(others.length?'この範囲では、ほかに入れ替わる人は見つかりませんでした。':'この範囲では、ほかに入れ替わる人はいませんでした。'):'';for(const id of ['pcards-note','crowd-note']){el(id).hidden=!few;el(id).textContent=msg}}
 function finishDraw(){const d=drawing;if(!d)return;fewNote(d.others);drawing=null;if(typeof beaconCheck==='function')beaconCheck();drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length||between()&&!partsB.length}
-el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length||between()&&!partsB.length)return;if(debug.real&&!await realGate())return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();if(between()&&estimateMinuteB!==minuteKey(t))refreshB();P=sampleResult(t,true);others=Array.from({length:Math.max(0,fewPairs()-1)},()=>samplePair(t,false,between()));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
+el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length||between()&&!partsB.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();if(between()&&estimateMinuteB!==minuteKey(t))refreshB();P=sampleResult(t,true);others=Array.from({length:Math.max(0,fewPairs()-1)},()=>samplePair(t,false,between()));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
  if(debug.real&&!realRan){realRan=true;realSequence(P,others).catch(e=>console.error(e))}
  drawing={P,others};pool={parts:parts.slice(),center:selected.slice(),radius};poolB=between()?{parts:partsB.slice(),center:selectedB.slice(),radius}:null;plays++;const tk=++drawToken;el('draw').disabled=false;setDrawLabel();if(reduceMotion){finishDraw();return}
  // Pair mode first brings the map into view (on phones the button sits below it) and roams the circle with the
@@ -280,17 +280,20 @@ function renderDebug(){el('dbg-time').value=debug.time||'';for(const key of ['mi
 function setDebugTime(v){debug.time=v&&DEBUG_TIME.test(v)?v:null;renderDebug();refresh();refreshB()}
 el('dbg-time').onchange=e=>setDebugTime(e.target.value.slice(0,16));
 el('dbg-now').onclick=()=>setDebugTime(null);
-for(const key of ['mixed','real'])el('dbg-'+key).onclick=()=>{debug[key]=!debug[key];renderDebug()};
+el('dbg-mixed').onclick=()=>{debug.mixed=!debug.mixed;renderDebug()};
+// The warning comes when the switch is turned on (and the switch stays off if it is declined); a switch already on, as
+// restored from a saved setting, asks nothing when swapping.
+el('dbg-real').onclick=async()=>{if(!debug.real&&!await realGate())return;debug.real=!debug.real;renderDebug()};
 el('dbg-save').onclick=()=>{try{if(!storage)throw Error();storage.setItem(debugKey,JSON.stringify(debug));el('dbg-status').textContent='saved'}catch{el('dbg-status').textContent='failed'}};
 el('dbg-reset').onclick=()=>{Object.assign(debug,{time:null,mixed:false,real:false});try{storage?.removeItem(debugKey)}catch{}el('dbg-status').textContent='reset';setDebugTime(null)};
 renderDebug();
-// 本当に入れ替える（試験実装版） (debug): asked once per page, and the first swap after that runs a console sequence
+// 本当に入れ替える（試験実装版） (debug): asked each time the switch is turned on, and the first swap runs a console sequence
 // (the module being loaded for the first run) in a full-screen console the usual animation shows through.
 // Reduced motion skips the sequence.
-let realConfirmed=false,realRan=false;
-function realGate(){if(realConfirmed)return Promise.resolve(true);return new Promise(done=>{const v=document.createElement('div');v.className='exec-veil';v.setAttribute('role','alertdialog');v.setAttribute('aria-modal','true');
+let realRan=false;
+function realGate(){return new Promise(done=>{const v=document.createElement('div');v.className='exec-veil';v.setAttribute('role','alertdialog');v.setAttribute('aria-modal','true');
  v.innerHTML='<div class="log"><span class="warn">警告: 本当に入れ替える（試験実装版）が有効です。</span>\n対象者の同意は確認されません。\nこの操作は取り消せません。</div><div class="ask"><button type="button" class="go">実行する</button><button type="button" class="no">キャンセル</button></div>';
- const close=ok=>{v.remove();if(ok)realConfirmed=true;done(ok)};v.querySelector('.go').onclick=()=>close(true);v.querySelector('.no').onclick=()=>close(false);v.onkeydown=e=>{if(e.key==='Escape')close(false)};document.body.appendChild(v);v.querySelector('.no').focus()})}
+ const close=ok=>{v.remove();done(ok)};v.querySelector('.go').onclick=()=>close(true);v.querySelector('.no').onclick=()=>close(false);v.onkeydown=e=>{if(e.key==='Escape')close(false)};document.body.appendChild(v);v.querySelector('.no').focus()})}
 async function realSequence(P,others){if(reduceMotion)return;const v=document.createElement('div'),log=document.createElement('div');v.className='exec-console';v.setAttribute('aria-hidden','true');log.className='log';v.appendChild(log);document.body.appendChild(v);
  const pairs=[P,...others].filter(X=>X.kind==='pair').length,people=P.kind==='pair'?pairs*2:1+others.length*2,pad=n=>String(n).padStart(2,'0'),t=time(),stamp=`${t.y}-${pad(t.mo)}-${pad(t.d)} ${pad(t.h)}:${pad(t.mi)} JST`,wait=ms=>new Promise(r=>setTimeout(r,ms));
  const line=(text,cls)=>{const s=document.createElement('span');if(cls)s.className=cls;s.textContent=text+'\n';log.appendChild(s)};
