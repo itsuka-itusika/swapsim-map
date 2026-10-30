@@ -14,3 +14,6 @@ test('High-end districts have more doctors, executives and professors, and their
  for(const p of sp.filter(p=>/役員会/.test(p.text)))assert.match(p.occ,/役員|経営/)});
 test('Children in high-end districts get tutors and private music lessons',()=>{let a=draw([139.6935,35.6602],T(11,4,3,17),3000).filter(p=>p.age>=5&&p.age<18&&p.src==='upscale-home');
  assert.ok(a.some(p=>/家庭教師/.test(p.text)));assert.ok(a.some(p=>/ピアノ|バイオリン/.test(p.text)));for(const p of a.filter(p=>/中学受験/.test(p.text)))assert.ok(p.age>=10&&p.age<=12)});
+test('松濤 is named across the district, while 奥渋谷 keeps its own centre',()=>{const places=xy=>{let a=draw(xy,T(11,4,3,21),400),m={};for(const p of a)m[p.place]=(m[p.place]||0)+1;return m};
+ for(const [name,xy] of [['中ほど',[139.693,35.6618]],['北端',[139.6915,35.6635]],['西',[139.691,35.6611]]]){let m=places(xy);assert.ok((m['松濤 自宅']||0)>200,name+' '+JSON.stringify(m))}
+ let o=places([139.693,35.663]);assert.ok((o['奥渋谷 自宅']||0)>300,JSON.stringify(o))});

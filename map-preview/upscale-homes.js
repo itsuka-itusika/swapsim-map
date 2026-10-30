@@ -5,7 +5,7 @@
 const UpscaleHomes=(()=>{
  const M=typeof MapModel!=='undefined'?MapModel:require('./model.js');
  const districts=[
-  {name:'松濤',xy:[139.6935,35.6602],radius:350},
+  {name:'松濤',xy:[139.6918,35.6615],radius:420,yield:[{name:'奥渋谷',xy:[139.693,35.663],radius:70}]},
   {name:'田園調布',xy:[139.6655,35.5985],radius:380},
   {name:'成城',xy:[139.5985,35.6425],radius:650},
   {name:'白金台',xy:[139.7255,35.6372],radius:450},
@@ -14,7 +14,10 @@ const UpscaleHomes=(()=>{
  ];
  const pick=a=>a[Math.floor(rnd()*a.length)];
  const xyOf=c=>c.landComponent?.sampleXY||c.landComponent?.xy;
+ // A neighbouring named street keeps its own name close to its centre (奥渋谷 next to 松濤): the district still counts
+ // for the people and scenes, but not for the place name.
  function district(c){let p=xyOf(c);if(!p)return null;return districts.find(d=>M.distance(p,d.xy)<=d.radius)||null}
+ function yields(d,c){let p=xyOf(c);return !!p&&(d.yield||[]).some(y=>M.distance(p,y.xy)<=y.radius)}
  // Occupations made more common here: [label, job name in the original list (or null), tag, cat, kind, weight].
  const JOBS=[['医師（開業医）','医師','doctor','専門','self',.22],['医師（勤務医）','医師','doctor','専門','reg',.12],['会社役員','会社役員','exec','管理','reg',.24],['会社経営者','会社役員','exec','管理','self',.2],['大学教授',null,'office','専門','reg',.12],['弁護士（自営業）','弁護士','office','専門','self',.1]];
  function assign(c,P){if(!c.resident||!district(c))return false;
@@ -42,7 +45,7 @@ const UpscaleHomes=(()=>{
    pool=key?scenes[key].filter(e=>fits(e,P,role)):[];
    if(pool.length){let text=pick(pool).t;P.mapSituation=text;P.sit={...P.sit,text,stateLabel:'自宅で過ごしている',source:'upscale-home',p:1};kind=typeof PlaceLabel!=='undefined'?PlaceLabel.kind(c,P):kind}}
   // The district's name instead of the ward: 松濤 自宅, 成城.
-  P.placeOverride=d.name+(kind?' '+kind:'');return true}
- return {districts,district,assign,apply,scenes};
+  if(!yields(d,c))P.placeOverride=d.name+(kind?' '+kind:'');return true}
+ return {districts,district,yields,assign,apply,scenes};
 })();
 if(typeof module!=='undefined')module.exports=UpscaleHomes;
