@@ -9,7 +9,7 @@ const LoveHotelModel=(()=>{
  const AGES={guest:[[20,24,22],[25,29,25],[30,39,27],[40,40,2]],staff:[[20,29,14],[30,39,18],[40,49,22],[50,59,26],[60,74,20]]};
  function rows(tag,t,row,area){let lv=tag.lovehotel||0;if(lv<=0)return [];
   return [row('area_lovehotel_guest','ホテル街の利用客',lv*.9*activity('guest',t),20,40,.5,{area,ageBands:AGES.guest,loveHotel:true}),
-   ...((t.hf??t.h)>=11||(t.hf??t.h)<3?[row('area_lovehotel_service_worker','ホテル街で働く派遣型風俗店の女性スタッフ',lv*.06*activity('guest',t),20,40,1,{area,ageBands:AGES.guest,loveHotel:true})]:[]),
+   ...((t.hf??t.h)>=11||(t.hf??t.h)<3?[row('area_lovehotel_service_worker','ホテル街で働く派遣型風俗店の女性スタッフ',lv*.18*activity('guest',t),20,40,1,{area,ageBands:AGES.guest,loveHotel:true})]:[]),
    row('area_lovehotel_staff','ホテル街のホテルの従業員',lv*.14*activity('staff',t),20,74,.62,{area,ageBands:AGES.staff,loveHotel:true,placeWorker:true})]}
  const T={
   day:['部屋の写真が並んだパネルの前で、空いている部屋を選んでいるところでした','休憩料金の看板を見上げ、相手と小声で相談しているところでした','部屋の大きなテレビで、カラオケの曲を選んでいるところでした','備え付けのアメニティを眺めて、入浴剤を一つ選んだところでした','部屋の電話で、フロントに休憩の延長を伝えたところでした'],
@@ -33,7 +33,7 @@ const LoveHotelModel=(()=>{
  function apply(c,P,t){if(!c.loveHotel)return false;let h=t.hf??t.h,text,state='off';
   if(c.role==='area_lovehotel_staff'){text=pick(P.occ.front?(h>=22||h<6?[...T.frontNight,...T.front]:T.front):T.cleaner);state='work'}
   else if(c.role==='area_lovehotel_service_worker'){text=pick(rnd()<.4?T.workerPrep:T.workerService);state='work'}
-  else if(c.role==='area_lovehotel_guest'&&P.sex==='m'&&P.age>=20&&(h>=11||h<3)&&rnd()<.15)text=pick(rnd()<.5?T.waiting:T.customerService);
+  else if(c.role==='area_lovehotel_guest'&&P.sex==='m'&&P.age>=20&&(h>=11||h<3)&&rnd()<.4)text=pick(rnd()<.5?T.waiting:T.customerService);
   else if(h>=1&&h<6&&rnd()<.6){text=typeof DREAMS!=='undefined'&&rnd()<.15?'夢の中で、'+pick(DREAMS)+'ところでした':pick(T.sleep);state='sleep'}
   // About half the time they are simply in the room, talking and laughing together.
   else if(h>=11&&rnd()<.5||(h>=21||h<5)&&rnd()<.5)text=pick(h>=22||h<5?[...T.room,...T.roomNight]:T.room);
