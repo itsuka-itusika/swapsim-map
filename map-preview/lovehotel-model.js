@@ -6,9 +6,9 @@ const LoveHotelModel=(()=>{
  function activity(k,t){let h=t.hf??t.h,we=t.dow===0||t.dow===6||!!t.holiday||t.dow===5&&h>=18;
   if(k==='guest')return (we?1.3:1)*(h>=18?2.2:h<5?2:h<11?.45:h>=12?.6:.3);
   return h>=10&&h<16?1:.6}
- const AGES={guest:[[20,24,22],[25,29,25],[30,39,27],[40,49,16],[50,64,10]],staff:[[20,29,14],[30,39,18],[40,49,22],[50,59,26],[60,74,20]]};
+ const AGES={guest:[[20,24,22],[25,29,25],[30,39,27],[40,40,2]],staff:[[20,29,14],[30,39,18],[40,49,22],[50,59,26],[60,74,20]]};
  function rows(tag,t,row,area){let lv=tag.lovehotel||0;if(lv<=0)return [];
-  return [row('area_lovehotel_guest','ホテル街の利用客',lv*.9*activity('guest',t),20,64,.5,{area,ageBands:AGES.guest,loveHotel:true}),
+  return [row('area_lovehotel_guest','ホテル街の利用客',lv*.9*activity('guest',t),20,40,.5,{area,ageBands:AGES.guest,loveHotel:true}),
    row('area_lovehotel_staff','ホテル街のホテルの従業員',lv*.14*activity('staff',t),20,74,.62,{area,ageBands:AGES.staff,loveHotel:true,placeWorker:true})]}
  const T={
   day:['部屋の写真が並んだパネルの前で、空いている部屋を選んでいるところでした','休憩料金の看板を見上げ、相手と小声で相談しているところでした','部屋の大きなテレビで、カラオケの曲を選んでいるところでした','備え付けのアメニティを眺めて、入浴剤を一つ選んだところでした','部屋の電話で、フロントに休憩の延長を伝えたところでした'],
