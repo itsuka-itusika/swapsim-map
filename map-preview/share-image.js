@@ -19,7 +19,7 @@ const ShareImage=(()=>{
   if(lines.some(l=>g.measureText(l).width>width))lines=wrap(g,s,width,2);return {size,lines}}
  function drawName(g,P,x,y,width,start,floor){const f=fitName(g,name(P),width,start,floor),lh=f.size*1.08;f.lines.forEach((l,i)=>text(g,l,x,y+i*lh,`800 ${f.size}px ${MIN}`,C[P.sex]||C.ink));return y+(f.lines.length-1)*lh}
  const hobbyOf=P=>typeof profileHobbyLabel==='function'?profileHobbyLabel(P):(P.hobbies||[]).map(h=>h.n||h).join('、');
- const bodyOf=(P,bmi=true)=>P.body?`${P.body.h.toFixed(1)}cm・${P.body.w.toFixed(1)}kg`+(bmi&&typeof bmiText==='function'?`（${bmiText(P)}）`:''):'';
+ const bodyOf=(P,bmi=true)=>P.body?`${P.body.h.toFixed(1)}cm／${P.body.w.toFixed(1)}kg`+(bmi&&typeof bmiText==='function'?`（${bmiText(P)}）`:''):'';
  function text(g,s,x,y,font,color,align='left'){g.font=font;g.fillStyle=color;g.textAlign=align;g.fillText(s,x,y)}
  function para(g,s,x,y,width,font,color,lh,max){g.font=font;g.fillStyle=color;g.textAlign='left';const lines=wrap(g,s,width,max);lines.forEach((l,i)=>g.fillText(l,x,y+i*lh));return y+lines.length*lh}
  function sheet(g,x,y,w,h,bar=14){g.fillStyle=C.sheet;g.strokeStyle=C.soft;g.lineWidth=2;g.beginPath();g.roundRect(x,y,w,h,8);g.fill();g.stroke();g.fillStyle=C.shu;g.beginPath();g.roundRect(x,y,w,bar,[8,8,0,0]);g.fill()}
