@@ -103,5 +103,5 @@ test('a nearly empty range swaps only one or two pairs',()=>{
  run(`globalThis.el=id=>({innerHTML:'',textContent:'',setAttribute(){}});globalThis.storage=null;globalThis.parts=[];globalThis.partsB=[];`);
  if(run('typeof samplePair')!=='function')run(source.slice(source.indexOf('let issuedCount='),source.indexOf("el('test').onclick")));
  const r=JSON.parse(run(`(()=>{options.pair=true;options.pairMode='within';const at=n=>{parts=[{n}];return fewPairs()};return JSON.stringify([at(.1),at(2.9),at(5),at(11.9),at(12),at(5000)])})()`));
- assert.deepEqual(r,[1,1,2,2,5,5]);
+ assert.deepEqual(r,[1,1,2,2,6,6]);
 });

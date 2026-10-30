@@ -171,8 +171,9 @@ function samplePerson(t,filtered=false,src=parts){
 const MAP_GAP_TH=[1.12,1.76,2.32,3.0];
 function mapGap(A,B){const g=pairGap(A,B),score=g.age/25+(g.sexDiff?1:0)+(g.stateDiff?.8:0)+(g.groupDiff?.6:0);return {...g,km:0,score,stars:MAP_GAP_TH.findIndex(x=>score<x)+1||5}}
 function samplePair(t,filtered=false,two=false){const A=samplePerson(t,filtered),B=samplePerson(t,false,two?partsB:parts);return {kind:'pair',A,B,t,gap:mapGap(A,B)}}
-// A nearly empty range (a park at night, a closed precinct) has too few people for five swaps: one or two pairs only.
-function fewPairs(){const total=src=>src.reduce((s,c)=>s+c.n,0),n=between()?Math.min(total(parts),total(partsB)):total(parts);return n<3?1:n<12?2:5}
+// Six pairs fill the PC card grid (two or three columns) evenly. A nearly empty range (a park at night, a closed
+// precinct) has too few people for that: one or two pairs only.
+function fewPairs(){const total=src=>src.reduce((s,c)=>s+c.n,0),n=between()?Math.min(total(parts),total(partsB)):total(parts);return n<3?1:n<12?2:6}
 function sampleResult(t,filtered=false){return options.pair?samplePair(t,filtered,between()):samplePerson(t,filtered)}
 function showResult(P){currentPerson=P;el('person').innerHTML=MapNotice.html(P);el('copy').onclick=async()=>{const text=MapNotice.text(P);try{await navigator.clipboard.writeText(text);el('toast').textContent='コピーしました'}catch{const box=document.createElement('textarea');box.value=text;box.readOnly=true;box.className='copybox';el('person').appendChild(box);box.select();el('toast').textContent='表示された文章をコピーしてください'}};stampIt(!reduceMotion);scrollToNotice(true);if(!reduceMotion)el('notice').classList.add('flash')}
 function resultLabel(P){const name=X=>X.displayName||X.surname.k+' '+X.given.k;return P.kind==='pair'?`${name(P.A)}（${P.A.age}歳） ⇄ ${name(P.B)}（${P.B.age}歳）`:`${name(P)} ／ ${P.age}歳 ／ ${P.occ.label}`}
@@ -183,7 +184,7 @@ function renderCrowd(){
  el('crowd').innerHTML=crowd.map((R,i)=>`<li><button type="button" data-crowd="${i}"${currentPerson===R?' aria-current="true"':''}>${currentPerson===R?'<span class="showing">通知書に表示中</span>':''}<span class="who">${who(R.A)}<span class="arw" aria-label="と"> ⇄ </span>${who(R.B)}</span><small>${esc(R.A.place)} ⇄ ${esc(R.B.place)}</small><span class="doing"><span class="mk sex-${R.A.sex==='f'?'f':'m'}" aria-hidden="true"></span>${esc(R.A.surname.k)}さんは、${esc(R.A.sit.text)}。</span><span class="doing"><span class="mk sex-${R.B.sex==='f'?'f':'m'}" aria-hidden="true"></span>${esc(R.B.surname.k)}さんは、${esc(R.B.sit.text)}。</span></button></li>`).join('');
 }
 el('crowd').onclick=e=>{const b=e.target.closest('[data-crowd]');if(b&&!drawing){showResult(crowd[+b.dataset.crowd]);renderCrowd()}};
-// Pair mode: five compact notices first; tapping one opens that pair's full notice.
+// Pair mode: six compact notices first; tapping one opens that pair's full notice.
 let pairCards=[];
 function pairMode(on){el('pcards-sec').hidden=!on;el('crowd-sec').hidden=on;if(on)el('person').hidden=!currentPerson||!pairCards.includes(currentPerson)}
 function renderPairCards(animate){const name=P=>P.displayName||P.surname.k+' '+P.given.k,job=P=>P.occ.label.replace(/（[^（）]*）$/,''),sx=P=>P.sex==='f'?'f':'m',stars=n=>'★'.repeat(n)+'☆'.repeat(5-n),side=P=>`<span class="pc-p"><span class="pc-name sex-${sx(P)}">${esc(name(P))}</span><span class="pc-meta">${P.age}歳・${esc(job(P))}</span><span class="pc-meta">${esc(P.place)}</span></span>`;
@@ -232,7 +233,7 @@ function finishDraw(){const d=drawing;if(!d)return;fewNote(d.others);drawing=nul
 el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length||between()&&!partsB.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();if(between()&&estimateMinuteB!==minuteKey(t))refreshB();P=sampleResult(t,true);others=Array.from({length:Math.max(0,fewPairs()-1)},()=>samplePair(t,false,between()));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
  drawing={P,others};pool={parts:parts.slice(),center:selected.slice(),radius};poolB=between()?{parts:partsB.slice(),center:selectedB.slice(),radius}:null;plays++;const tk=++drawToken;el('draw').disabled=false;setDrawLabel();if(reduceMotion){finishDraw();return}
  // Pair mode first brings the map into view (on phones the button sits below it) and roams the circle with the
- // markers, then jumps to the five compact notices.
+ // markers, then jumps to the six compact notices.
  try{if(P.kind==='pair'){pairMode(true);el('pcards').innerHTML='';const r=el('map').getBoundingClientRect();if(r.top<0||r.bottom>innerHeight){el('map').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'});await later(450,tk)}
   // Two ranges: show both circles, one marker roaming in each.
   if(poolB){map.fitBounds(circle.getBounds().extend(circleB.getBounds()),{padding:[24,24],maxZoom:16});await later(500,tk);beaconCheck()}await roam(2,1600*(plays>1?.7:1),tk,poolB?[pool,poolB]:[])}else await reveal(P,tk)}catch(e){if(e.message!=='skip')console.error(e)}if(tk===drawToken)finishDraw()};
