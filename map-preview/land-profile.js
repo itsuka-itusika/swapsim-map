@@ -16,12 +16,15 @@ const LandProfile=(()=>{
  const specific=f=>['hotel','hostel','museum','gallery','theatre','fire_station','large_shop','library','bank','bath','tourist'].includes(f.subtype)||!['residential','green','industrial','commercial','office','agriculture','waterfront'].includes(f.type);
  function tagAt(q,type){
   if(['green','education','medical','industrial','waterfront','agriculture'].includes(type))return null;
-  let best=null,w=0,adult=null,adultWeight=0,tags={},sources={};
+  let best=null,w=0,adult=null,adultWeight=0,tags={},sources={},pri=null;
   for(let a of ctx.areas.query(S.box(q,1))){let v=Math.max(0,1-(M.distance(q,a.xy)/a.radius)**2);if(!v)continue;
-   if(v>w){best=a;w=v}
+   if(v>w){best=a;w=v}if(a.priority&&(!pri||a.radius<pri.radius))pri=a
    for(let [k,level] of Object.entries(a.tags||{})){let score=v*level;if(score>(tags[k]||0)){tags[k]=score;sources[k]=a}}
    let av=v*(a.tags?.adult||0)*(a.adultBoost||1);if(av>adultWeight){adult=a;adultWeight=av}
   }
+  // A small landmark spot (スクランブル交差点) inside a wide district names the place and supplies its scenes wherever
+  // it reaches, instead of losing to the district's larger circle.
+  if(pri){best=pri;w=Math.max(w,1-(M.distance(q,pri.xy)/pri.radius)**2);for(const k of Object.keys(pri.tags||{}))if(sources[k])sources[k]=pri}
   return best?{...best,strength:w,tags,sources,adultArea:adult,adultWeight}:null;
  }
  function classify(q){let region=ctx.regions.at(q)[0];if(!region)return null;// Newer landfill (the 中央防波堤 container terminals) still lies under the older water layer: a port zone wins.
@@ -43,7 +46,9 @@ const LandProfile=(()=>{
  let namedPoint=index.query(S.box(q,20)).filter(x=>!x.geometry&&['hotel','hostel','museum','gallery','theatre','fire_station','large_shop','library','bank','bath','tourist'].includes(x.subtype)&&(x.tags?.name||x.tags?.['name:ja'])&&M.distance(q,x.xy)<=15).sort((a,b)=>M.distance(a.xy,q)-M.distance(b.xy,q))[0];if(namedPoint)return {...namedPoint,region,areaTag:tagAt(q,namedPoint.type)};
  if(f&&(f.tags?.building||['green','waterfront'].includes(f.type)))return {...f,region,areaTag:tagAt(q,f.type)};
  if(base)return {...base,region,areaTag:tagAt(q,base.type)};
- let fs=facilityIndex.at(q).sort((a,b)=>M.distance(a.xy,q)-M.distance(b.xy,q));if(fs.length)return {...fs[0],facilities:[fs[0]],region};
+ // A station's modeled circle stops at a landmark plaza (スクランブル交差点) standing outside the station building.
+ let plaza=ctx.areas.query(S.box(q,1)).find(a=>a.priority&&M.distance(q,a.xy)<=a.radius);
+ let fs=facilityIndex.at(q).filter(f=>!(plaza&&f.kind==='station'&&M.distance(q,f.xy)>60)).sort((a,b)=>M.distance(a.xy,q)-M.distance(b.xy,q));if(fs.length)return {...fs[0],facilities:[fs[0]],region};
  if(f)return {...f,region,areaTag:tagAt(q,f.type)};
  let points=index.query(S.box(q,40)).filter(f=>!f.geometry&&M.distance(q,f.xy)<=35).sort((a,b)=>M.distance(a.xy,q)-M.distance(b.xy,q));if(points.length){let f=points[0];return {...f,region,areaTag:tagAt(q,f.type)}}
  let z=ctx.zoning.at(q)[0],type=z?.type||'mixed',subtype=z?.subtype||'unknown',near=index.query(S.box(q,120)).filter(f=>M.distance(q,f.xy)<120),counts={};for(let f of near)counts[f.type]=(counts[f.type]||0)+1;

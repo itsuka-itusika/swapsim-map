@@ -5,6 +5,8 @@
    お盆: 13-16 July (Tokyo's own お盆) and 13-16 August (the month-later お盆 most families keep) do the same.
    一般参賀 at 皇居: 2 January (five appearances, 10:10 to 14:20) and 天皇誕生日 23 February (three in the morning);
    about 60,000 and 27,000 people in recent years. The crowd is spread over the palace grounds.
+   インフルエンザの予防接種: in October and November some outpatients at general hospitals and clinics come for the
+   flu jab (no illness of their own then), and nurses and doctors give it.
    東京駅 in the holiday rushes (お盆 8-17 August, 年末年始 26 December-4 January, GW 29 April-6 May): travellers
    leave in the first days and come back in the last ones; station staff and shop staff deal with the crowds.
    Shares and hours are game assumptions, not counts. */
@@ -21,6 +23,8 @@ const SeasonalEvents=(()=>{
   if(mo===8&&d>=8&&d<=17)return {name:'お盆の帰省ラッシュ',season:'obon',dir:d<=13?'out':'back'};
   if(mo===12&&d>=26||mo===1&&d<=4)return {name:'年末年始の帰省ラッシュ',season:'newyear',dir:mo===12?'out':d===1?'mid':'back'};
   if(mo===4&&d>=29||mo===5&&d<=6)return {name:'ゴールデンウィークの混雑',season:'gw',dir:mo===4||d<=3?'out':'back'};return null}
+ // Flu jab season: October and November, in clinic hours (weekdays to 18:00, Saturday mornings).
+ function flu(t){if(t.mo!==10&&t.mo!==11)return false;let h=t.hf??t.h;if(t.dow===0||t.holiday||(typeof holName==='function'&&holName(t)))return false;return h>=9&&h<(t.dow===6?12.5:18)}
  function obon(t){return (t.mo===7||t.mo===8)&&t.d>=13&&t.d<=16}
  // 一般参賀: appearance times (hours) and the hours the gates take people in.
  function sanga(t){if(t.mo===1&&t.d===2)return {kind:'new',name:'新年の一般参賀',shows:[10+10/60,11,11+50/60,13.5,14+20/60],open:9.5,close:14+10/60,people:60000};
@@ -62,6 +66,13 @@ const SeasonalEvents=(()=>{
   gwOut:['連休の旅行で、家族と新幹線の出発時刻を確かめ合っているところでした'],
   travelStaff:['帰省ラッシュの新幹線改札で、乗り換えに迷う家族連れを案内しているところでした','新幹線のホームで、自由席の乗車口に並ぶ列を整理しているところでした','「指定席は満席です」の案内を、拡声器で繰り返しているところでした'],
   travelShop:['駅弁売り場で、次々に売れていく人気の駅弁を補充しているところでした','東京土産の売り場で、会計待ちの長い列をさばいているところでした'],
+  // Flu jabs, October and November.
+  fluAdult:['インフルエンザの予防接種を受けに来て、問診票に今朝の体温を書き込んでいるところでした','腕まくりをして、インフルエンザの予防接種の注射を受けたところでした','インフルエンザの予防接種を終え、待合室で30分ほど様子を見ているところでした','予約していたインフルエンザの予防接種の順番を、待合室で待っているところでした'],
+  fluSenior:['公費のインフルエンザ予防接種で、市区町村から届いた予診票を受付に出したところでした'],
+  fluKid:['予防接種の注射が怖くて、親の腕にしがみついているところでした','インフルエンザの予防接種をがんばったごほうびに、シールをもらったところでした','注射の順番を待ちながら、待合室の絵本をめくっているところでした'],
+  fluTeen:['学校の帰りに、インフルエンザの予防接種を受けに寄ったところでした'],
+  fluNurse:['予防接種の問診票を確かめ、腕に消毒綿を当てているところでした','インフルエンザワクチンの在庫を確かめ、午後の予約の人数と照らし合わせているところでした','予防接種を終えた人に、今日は激しい運動を控えるよう伝えているところでした'],
+  fluDoctor:['予防接種の問診票に目を通し、接種してよいか一人ずつ確かめているところでした','インフルエンザの予防接種の前に、子どもの胸に聴診器を当てているところでした'],
   sangaGuard:['{e}の参入者を、手荷物検査の列へ誘導しているところでした','{e}で、東庭に向かう人の流れが詰まらないよう声をかけているところでした','{e}で、長和殿の前に集まった人の様子を見渡しているところでした']
  };
  const pick=a=>a[Math.floor(rnd()*a.length)];
@@ -80,7 +91,14 @@ const SeasonalEvents=(()=>{
     if(tr.season!=='newyear'&&tr.season!=='obon')text=text.replace('帰省ラッシュの東京駅で','連休の東京駅で');label=tr.dir==='mid'?'正月の東京駅':tr.name;P.mapSituation=text;P.visitLabel=label;P.sit={...P.sit,text,state:'off',stateLabel:label,source:'seasonal-event',p:1};return true}
    else if(r==='special_station'&&tr.dir!=='mid'&&rnd()<.5)text=pick(scenes.travelStaff).replace('帰省ラッシュの',tr.season==='gw'?'連休の':'帰省ラッシュの');else if(r==='special_station_shop'&&rnd()<.5)text=pick(scenes.travelShop);
    if(text){P.mapSituation=text;P.sit={...P.sit,text,source:'seasonal-event'};return true}return false}
+  else if(/^hosp_(outpatient|nurse|doctor)$/.test(r)&&flu(t)){let H=typeof HospitalModel!=='undefined'?HospitalModel.info(c.facility||{}):{type:'general'},k=r.slice(5);
+   if(!['general','univ','child'].includes(H.type)||P.hb?.bed)return false;
+   if(k==='outpatient'&&rnd()<(P.age<13?.4:.3)){text=pick(P.age<13?scenes.fluKid:P.age<18?[...scenes.fluTeen,...scenes.fluAdult]:[...scenes.fluAdult,...(P.age>=65?scenes.fluSenior:[])]);
+    // Here for the jab, not for an illness: no case of their own goes into the health status.
+    P.hospCase={kind:'check',dept:null};label='インフルエンザの予防接種';P.mapSituation=text;P.visitLabel=label;P.sit={...P.sit,text,state:'off',stateLabel:label,source:'seasonal-event',p:1};return true}
+   if(k!=='outpatient'&&rnd()<(k==='nurse'?.25:.2)){text=pick(k==='nurse'?scenes.fluNurse:scenes.fluDoctor.filter(x=>H.type==='child'||!/子ども/.test(x)||rnd()<.5));P.mapSituation=text;P.sit={...P.sit,text,source:'seasonal-event'};return true}
+   return false}
   if(!text)return false;P.mapSituation=text;P.visitLabel=label;P.sit={...P.sit,text,state:'off',stateLabel:label,source:'seasonal-event',p:1};return true}
- return {shichigosan,higan,obon,travel,sanga,sangaRows,equinox,shichigosanRows,scenes,apply};
+ return {shichigosan,higan,obon,flu,travel,sanga,sangaRows,equinox,shichigosanRows,scenes,apply};
 })();
 if(typeof module!=='undefined')module.exports=SeasonalEvents;

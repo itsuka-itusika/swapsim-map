@@ -214,7 +214,8 @@ test('hospitals scale with beds and type, and a patient\'s case becomes part of 
  assert.ok(r.mat.filter(p=>/赤ちゃん/.test(p.text)).every(p=>/出産|切迫早産/.test(p.health)));
  assert.ok(r.psych.filter(p=>/精神科/.test(p.label)).length>=14);
  // Outpatients carry the condition of their department, and the condition leads unless a pregnancy or fever drew the visit.
- assert.ok(r.outp.filter(p=>p.health!=='特になし').length>=r.outp.length*.85);
+ // Flu-jab visitors (October and November) come without an illness of their own.
+ const sick=r.outp.filter(p=>p.label!=='インフルエンザの予防接種');assert.ok(sick.length>=r.outp.length*.5);assert.ok(sick.filter(p=>p.health!=='特になし').length>=sick.length*.85);
  assert.ok(r.outp.filter(p=>/透析中/.test(p.label)).every(p=>/人工透析/.test(p.health)));
 });
 test('OpenStreetMap buildings never show a company, an apartment name or a bare type as the place',()=>{

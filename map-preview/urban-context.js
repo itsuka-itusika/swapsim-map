@@ -19,7 +19,7 @@ const UrbanContext=(()=>{
   if(c.urbanTag==='office'&&(P.occ.group!=='adult'||P.occ.cat==='none')){let jobs=JOB_OBJS.filter(j=>['office','it','sales'].includes(j.tag)&&P.age>=(j.o.amin||22)),job=jobs[Math.floor(rnd()*jobs.length)];if(job)P.occ={label:job.n,group:'adult',cat:job.cat,tag:job.tag,job,kind:'employed',p:1};}return;}let job=c.jobName&&JOB_OBJS.find(j=>j.n===c.jobName)||JOB_OBJS.find(j=>j.tag===c.jobTag);P.occ={label:c.label,group:'adult',cat:'special',tag:c.jobTag,job,kind:'employed',p:1}}
  const fallback={research:'研究資料に目を通しているところでした',market:'商品の数量と伝票を確認しているところでした',museum:'館内の展示案内を確認しているところでした',theater:'公演の準備状況を確認しているところでした',sports:'利用者に施設の使い方を案内しているところでした',temple:'境内の案内をしているところでした',shrine:'参拝者の案内をしているところでした',visit:'案内板を見ながら、次に向かう場所を確認しているところでした'};
  // Map-only workers whose scenes the original pools do not cover.
- const special={maidcafe:['「おかえりなさいませ」と、常連のお客さんを迎えたところでした','オムライスに、ケチャップでハートの絵を描いているところでした','ドリンクに「おいしくなる魔法」をかけているところでした','駅前の通りで、お店のチラシを配っているところでした','チェキの撮影で、お客さんと一緒にポーズを決めたところでした']};
+ const special={maidcafe:['「おかえりなさいませ」と、常連のお客さんを迎えたところでした','中央通りの歩道で、通りがかる人にお店のビラを配っているところでした','ビラを受け取ってくれた人に、「いってらっしゃいませ」と手を振ったところでした','オムライスに、ケチャップでハートの絵を描いているところでした','ドリンクに「おいしくなる魔法」をかけているところでした','駅前の通りで、お店のチラシを配っているところでした','チェキの撮影で、お客さんと一緒にポーズを決めたところでした']};
  // Visitors to hospitals, schools, offices and public buildings are there on that place's business, not shopping.
  const visitScenes={medical:['入院している家族の着替えを、病棟に届けたところでした','診察を待つ家族に付き添い、待合室で番号の表示を見ているところでした','会計の窓口で、名前を呼ばれるのを待っているところでした','お見舞いの花を手に、面会の受付で名前を書いているところでした','院内の売店で、入院中の家族に頼まれた飲み物を買っているところでした'],
   school:['子どもの忘れ物を届けに、学校の受付に寄ったところでした','保護者会の資料を受け取り、教室の後ろの席に座ったところでした','授業参観で、教室の後ろから子どもの様子を見ているところでした','事務室の窓口で、提出書類を渡したところでした'],

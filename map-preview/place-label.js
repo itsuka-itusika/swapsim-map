@@ -20,8 +20,10 @@ const PlaceLabel=(()=>{
   if(state==='work'&&(r==='area_office'||/_worker$|^mesh_|^urban_(?!visit)/.test(r)))return AWAY_FROM_WORK.test(text)?'':'職場';
   return ''}
  // Place name without the 自宅/職場 suffix, for lists and map tooltips.
- function name(c){let own=c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name;if(own&&!generic(c))return own;return c.area?.name||c.landComponent?.areaTag?.name||c.region?.name||own||''}
- function label(c,P,fallback){if(!generic(c))return fallback;let lc=c.landComponent,where=c.area&&/^area_/.test(c.role)&&c.area.name?c.area.name:lc?.areaTag?.name||c.region?.name||fallback;let k=kind(c,P);return k?where+' '+k:where}
+ function name(c){let own=c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name;if(own&&!generic(c))return own;return named(c.area,c)||named(c.landComponent?.areaTag,c)||c.region?.name||own||''}
+ // A wide district can be named only near its centre (labelRadius); farther out the ward is shown.
+ function named(a,c){if(!a?.name)return null;if(!a.labelRadius)return a.name;let p=c.landComponent?.sampleXY||c.landComponent?.xy;return p&&typeof MapModel!=='undefined'&&MapModel.distance(p,a.xy)>a.labelRadius?null:a.name}
+ function label(c,P,fallback){if(!generic(c))return fallback;let lc=c.landComponent,where=(c.area&&/^area_/.test(c.role)&&named(c.area,c))||named(lc?.areaTag,c)||c.region?.name||fallback;let k=kind(c,P);return k?where+' '+k:where}
  return {label,generic,kind,privateName,name};
 })();
 if(typeof module!=='undefined')module.exports=PlaceLabel;
