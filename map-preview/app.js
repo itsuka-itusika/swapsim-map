@@ -50,8 +50,9 @@ function renderEstimate(p,r,t,evidence){
  const venues=landProfile.parts.filter(c=>VenueModel.kind(c)&&VenueModel.kind(c)!=='cemetery');el('venue-status').innerHTML=venues.map(c=>{let v=VenueSchedule.resolve(c,t),info=v.event?`${v.event.title}／${v.phase}（終了・退場時刻は推定）`:v.phase||v.basis,link=v.event?.url||v.url;return '<span>'+esc(c.name)+'：'+esc(v.basis)+(v.event?'（2026年10月28日確認）':'')+'・'+esc(info)+(link?' <a href="'+esc(link)+'" target="_blank" rel="noopener">日程出典</a>':'')+'</span>'}).join('<br>');
  const state={live:'施設情報を更新済み',cache:'保存済みの施設情報を使用',stale:'保存済みの旧施設情報を使用',unavailable:'施設情報を取得できないため収録データで推定',busy:'施設情報の取得待ち'}[evidence?.status]||'収録データで推定中・施設情報を確認します';
  el('status').textContent=`${p[1].toFixed(5)}, ${p[0].toFixed(5)} ｜ 半径${r}m ｜ ${state} ｜ 計算 ${Math.round(performance.now()-begin)}ms`;
- if(landProfile.coverage<.99)el('status').textContent+=' ｜ 対象区域内の部分のみ集計';
- if(!drawing)el('draw').disabled=!n||between()&&!partsB.length;if(!n)el('status').textContent+=' ｜ 範囲内に抽選対象者がいません';
+ // The map covers the 23 wards only: say so when the circle is wholly or partly outside them.
+ if(!landProfile.coverage)el('status').textContent+=' ｜ 東京23区の外です。23区内を選んでください';else if(landProfile.coverage<.99)el('status').textContent+=' ｜ 23区外の部分は集計外';
+ if(!drawing)el('draw').disabled=!n||between()&&!partsB.length;if(!n&&landProfile.coverage)el('status').textContent+=' ｜ 今の時刻、範囲内に抽選対象者がいません';
  document.querySelectorAll('[data-radius]').forEach(b=>{let active=+b.dataset.radius===r;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
  if(typeof meshLayer!=='undefined')drawMesh();
 }
@@ -156,11 +157,14 @@ el('opt-age').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.d
 for(const key of ['pair','real'])el('opt-'+key).onclick=()=>{options[key]=!options[key];renderOptions()};
 el('opt-save').onclick=()=>{try{if(!storage)throw Error();storage.setItem(optionsKey,JSON.stringify(options));el('opt-save-status').textContent='条件を保存しました。次回もこの設定で開きます。'}catch{el('opt-save-status').textContent='このブラウザでは設定を保存できません。今回の設定はそのまま使えます。'}};
 el('opt-reset').onclick=()=>{Object.assign(options,{sex:null,dec:null,pair:false,pairMode:'within',real:false});try{storage?.removeItem(optionsKey)}catch{}renderOptions()};
+// Names the filter in the error, e.g. 「女性・0代」.
+function conditionLabel(){return [options.sex?options.sex==='f'?'女性':'男性':'',...(options.dec||[]).map(n=>n===9?'90代以上':n*10+'代')].filter(Boolean).join('・')}
+function notFound(){let c=conditionLabel();return Error('今の時刻、この範囲には'+(c?'「'+c+'」の':'抽選できる')+'人物が見つかりません。条件や半径を変更してください。')}
 function samplePerson(t,filtered=false,src=parts){
  const eligible=src.filter(c=>(!filtered||!options.sex||(options.sex==='f'?c.female!==0:c.female!==1))&&(!filtered||!options.dec?.length||options.dec.some(d=>(c.max??110)>=d*10&&(c.min??0)<=(d===9?110:d*10+9))));
- const total=eligible.reduce((sum,c)=>sum+c.n,0);if(!total)throw Error('この範囲には指定条件の人物が見つかりません。条件や半径を変更してください。');
+ const total=eligible.reduce((sum,c)=>sum+c.n,0);if(!total)throw notFound();
  for(let i=0;i<2000;i++){const c=MapModel.pick(eligible);if(!c)break;const P=mapPerson({...c,roleP:c.n/total},t);if(!filtered||((!options.sex||P.sex===options.sex)&&(!options.dec?.length||options.dec.includes(Math.min(9,Math.floor(P.age/10))))))return P}
- throw Error('この範囲には指定条件の人物が見つかりません。条件や半径を変更してください。');
+ throw notFound();
 }
 // Both people are in the same city, so the gap ignores place: age, sex, state and occupation group only, with
 // thresholds at the quintiles of map-drawn pairs (the original thresholds assume nationwide distances).
