@@ -88,6 +88,7 @@ function mapPerson(c,t){
  if(typeof MarketModel!=='undefined')MarketModel.assign(c,P);
  if(typeof TaxiModel!=='undefined')TaxiModel.assign(c,P);
  if(typeof CampusLife!=='undefined')CampusLife.assign(c,P);
+ if(typeof UpscaleHomes!=='undefined')UpscaleHomes.assign(c,P);
  if(typeof ZooModel!=='undefined')ZooModel.assign(c,P);
  if(c.custody){P.household={label:'施設等の世帯（一般世帯統計の対象外）',marital:'未抽選',code:null};P.hobbies=[];}else assignProfiles(P);makeFamilyContext(P);P.surname=pickSurname(pref.n);P.given=pickGiven(P.birth.y,P.sex);
  // Condition health on actually being at the sampled workplace or outside, without erasing leave status.
@@ -161,6 +162,7 @@ function mapPerson(c,t){
  if(typeof EnvironmentScenes!=='undefined')EnvironmentScenes.apply(c,P,t);
  if(typeof ExamSchedule!=='undefined')ExamSchedule.apply(c,P,t);
  if(typeof TowerHomes!=='undefined')TowerHomes.apply(c,P,t);
+ if(typeof UpscaleHomes!=='undefined')UpscaleHomes.apply(c,P,t);
  if(typeof SeasonalEvents!=='undefined')SeasonalEvents.apply(c,P,t);
  if(typeof CampusLife!=='undefined')CampusLife.apply(c,P,t);
  if(typeof NightDuty!=='undefined')NightDuty.apply(c,P,t);

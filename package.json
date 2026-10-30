@@ -5,7 +5,7 @@
   "description": "SwapSim 地図版の独立した静的サイト",
   "scripts": {
     "build": "node build-web.mjs",
-    "test": "node --test map-preview/selection-cache.test.cjs map-preview/person-consistency.test.cjs map-preview/environment-scenes.test.cjs map-preview/area-land-regression.test.cjs map-preview/original-ui.test.cjs map-preview/venue-schedule.test.cjs map-preview/web-payload.test.cjs map-preview/tower-homes.test.cjs map-preview/night-duty.test.cjs map-preview/seasonal-events.test.cjs map-preview/campus-life.test.cjs map-preview/share-image.test.cjs"
+    "test": "node --test map-preview/selection-cache.test.cjs map-preview/person-consistency.test.cjs map-preview/environment-scenes.test.cjs map-preview/area-land-regression.test.cjs map-preview/original-ui.test.cjs map-preview/venue-schedule.test.cjs map-preview/web-payload.test.cjs map-preview/tower-homes.test.cjs map-preview/night-duty.test.cjs map-preview/seasonal-events.test.cjs map-preview/campus-life.test.cjs map-preview/share-image.test.cjs map-preview/upscale-homes.test.cjs"
   },
   "engines": {
     "node": ">=20"
