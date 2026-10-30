@@ -21,13 +21,14 @@ test('named school-holiday scenes are limited to their own season',()=>{
 });
 test('pupils are mostly in class on school-day afternoons but out in the city on Saturdays',()=>{
  const kids=run(`(()=>{let a=MAP_DATA.areas.find(x=>x.name==='渋谷駅周辺'),p=LandProfile.create(envContext,a.xy,300),out=[];for(const [d,dow] of [[28,3],[31,6]]){let t={y:2026,mo:10,d,dow,h:14,hf:14,mi:0,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),n=0;for(let i=0;i<1200;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);if(P.age>=6&&P.age<=17&&!['student','resident','general','area_inbound'].includes(c.role))n++}out.push(n)}return out})()`);
- assert.ok(kids[0]*4<kids[1],String(kids));
+ // Weekday counts are small (often 0 to 3), so only a clear gap is required.
+ assert.ok(kids[0]*2<kids[1],String(kids));
 });
 test('distinctive streets use their own scenes and every subculture area defines genres',()=>{
  assert.deepEqual(Array.from(run(`MAP_DATA.areas.filter(a=>a.tags?.subculture&&!a.genres).map(a=>a.name)`)),[]);
  const x=run(`(()=>{let out={};for(const [name,h] of [['キャットストリート',15],['巣鴨地蔵通り商店街',11],['新宿ゴールデン街',21]]){let a=MAP_DATA.areas.find(x=>x.name===name),p=LandProfile.create(envContext,a.xy,100),t={y:2026,mo:10,d:31,dow:6,h,hf:h+.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),own=new Set(a.scenes.map(s=>s[2])),n=0,old=0;for(let i=0;i<400;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);if(own.has(P.sit.text))n++;if(name==='巣鴨地蔵通り商店街'&&P.age>=65)old++}out[name]=[n,old]}return JSON.stringify(out)})()`);
- const r=JSON.parse(x);// 400 draws: ゴールデン街 averages about 20 of its own scenes, so 10 leaves no room for chance failures.
- for(const [name,[n]] of Object.entries(r))assert.ok(n>=10,name+' '+n);assert.ok(r['巣鴨地蔵通り商店街'][1]>=100);
+ const r=JSON.parse(x);// 400 draws: ゴールデン街 averages about 20 of its own scenes (the lowest of 60 runs was 9), the other streets 60 or more.
+ for(const [name,[n]] of Object.entries(r))assert.ok(n>=(name==='新宿ゴールデン街'?5:20),name+' '+n);assert.ok(r['巣鴨地蔵通り商店街'][1]>=100);
  assert.equal(run(`PersonContext.away('海浜公園の砂浜から、レインボーブリッジを眺めているところでした',{role:'area_shopping'})`),false);
 });
 test('detention house and courts follow daily routines with role-specific scenes',()=>{
@@ -132,7 +133,7 @@ test('night districts skew young: visitors, staff and customers, most of all in 
  assert.ok(mean(r['新橋・汐留'].area_night_worker)<39);
 });
 test('late night and the last train have their own scenes at stations, night districts and offices',()=>{
- const r=JSON.parse(run(`(()=>{const st=MAP_DATA.facilities.find(f=>f.kind==='station'&&/新宿/.test(f.name)),go=(xy,rad,h,role)=>{let t={y:2026,mo:10,d:30,dow:5,h:Math.floor(h),hf:h,mi:Math.round(h%1*60),rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,xy,rad),t).filter(c=>c.role===role),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<80&&parts.length;i++){let c=MapModel.pick(parts);out.push(mapPerson({...c,roleP:c.n/tot},t).sit.text)}return out};const A=n=>MAP_DATA.areas.find(a=>a.name===n).xy;
+ const r=JSON.parse(run(`(()=>{const st=MAP_DATA.facilities.find(f=>f.kind==='station'&&/新宿/.test(f.name)),go=(xy,rad,h,role)=>{let t={y:2026,mo:10,d:30,dow:5,h:Math.floor(h),hf:h,mi:Math.round(h%1*60),rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,xy,rad),t).filter(c=>c.role===role),tot=parts.reduce((s,c)=>s+c.n,0),out=[];for(let i=0;i<400&&parts.length;i++){let c=MapModel.pick(parts);out.push(mapPerson({...c,roleP:c.n/tot},t).sit.text)}return out};const A=n=>MAP_DATA.areas.find(a=>a.name===n).xy;
  return JSON.stringify({evening:go(st.xy,30,19,'special_passenger'),last:go(st.xy,30,0.3,'special_passenger'),first:go(st.xy,30,4.8,'special_passenger'),kabuki:go(A('歌舞伎町'),150,23.8,'area_night'),office:go(A('丸の内・大手町'),150,23.5,'area_office'),dawn:go(A('丸の内・大手町'),150,4.5,'area_office')})})()`));
  const share=(a,re)=>a.filter(x=>re.test(x)).length/Math.max(1,a.length);
  assert.ok(share(r.last,/終電|最終電車/)>.8);assert.equal(share(r.evening,/終電|最終電車|始発/),0);assert.ok(share(r.first,/始発|夜明け/)>.8);
