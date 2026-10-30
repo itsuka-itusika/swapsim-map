@@ -293,11 +293,12 @@ renderDebug();
 let realRan=false;
 // A modal dialog asked when the switch is turned on (Esc, the cancel button or a click outside decline it).
 function realGate(){return new Promise(done=>{const d=document.createElement('dialog');d.className='dbg-dialog';
- d.innerHTML='<form method="dialog"><p class="dbg-kicker">警告</p><h2>本当に入れ替える（試験実装版）を有効にしますか</h2><p>この設定を有効にすると、入れ替えボタンで選ばれた人物との入れ替えが実際に実行されます。</p><p class="dbg-strong">対象者の同意は確認されません。<br>実行した入れ替えは取り消せません。</p><p class="dbg-note">試験実装版のため、動作は保証されません。</p><div class="dbg-actions"><button type="submit" value="no" class="btn">キャンセル</button><button type="submit" value="go" class="btn">有効にする</button></div></form>';
+ d.innerHTML='<form method="dialog"><p class="dbg-kicker">警告</p><h2>本当に入れ替える（試験実装版）を有効にしますか</h2><p class="dbg-strong">この設定を有効にすると、シミュレーションではなく現実に入れ替わりが発生します。<br>実行した入れ替えは取り消せません。</p><p class="dbg-note">試験実装版のため、動作は保証されません。</p><div class="dbg-actions"><button type="submit" value="no" class="btn">キャンセル</button><button type="submit" value="go" class="btn">有効にする</button></div></form>';
  d.addEventListener('close',()=>{const ok=d.returnValue==='go';d.remove();done(ok)});d.addEventListener('click',e=>{if(e.target===d)d.close('no')});
  document.body.appendChild(d);d.showModal();d.querySelector('button[value="no"]').focus()})}
-// The first-run console: lines appear one by one along the top edge of the map (fixed to the screen top when the page has
-// scrolled past it), paced over the expected length of the usual animation, and it goes when that animation ends.
+// The first-run console: a single line of text, on the map's top edge (right of the zoom buttons) (on the top of the screen once the page has scrolled
+// past the map), with no background so the map shows through. Each line fades in, stays, fades out, and the next takes its
+// place; the lines are paced over the expected length of the usual animation, and it ends when that animation ends.
 let realConsole=null;
 // Expected length (ms) of the usual animation for this result, from the same numbers the animation uses.
 function animationMs(P){const k=plays>1?.6:1;
@@ -305,17 +306,21 @@ function animationMs(P){const k=plays>1?.6:1;
  return (1000+520+220+300+620+480+220)*k+Math.ceil((P.sit.text.length+8)/2)*28}
 function startConsole(P,others,total){if(reduceMotion)return null;const v=document.createElement('div');v.className='exec-console';v.setAttribute('aria-hidden','true');document.body.appendChild(v);
  const pairs=[P,...others].filter(X=>X.kind==='pair').length,people=P.kind==='pair'?pairs*2:1+others.length*2,pad=n=>String(n).padStart(2,'0'),t=time(),stamp=`${t.y}-${pad(t.mo)}-${pad(t.d)} ${pad(t.h)}:${pad(t.mi)} JST`;
- // [weight, text, class]: weights share the expected length; the last line arrives just before the animation ends.
- const script=[[.6,`$ swap --commit --no-dry-run --radius ${radius}m`],[.3,stamp],[1,'初回実行: 入れ替えモジュールを読み込んでいます…'],[.9,`座標を固定しています… ${selected[1].toFixed(5)}, ${selected[0].toFixed(5)}`],[.9,`対象者を確定しました: ${people}名`],[.6,'意識の位相を同期しています…'],[2,'','bar'],[1,'不可逆処理を実行しています…','warn'],[0,'完了。','ok']];
- const sum=script.reduce((s,x)=>s+x[0],0),span=Math.max(1200,total)*.94,timers=[];let shown=0,done=false,raf=0,bar=null;
- // The panel sits on the map's top edge; once the map has scrolled up, on the screen's top edge.
- const place=()=>{const r=el('map').getBoundingClientRect();v.style.left=r.left+'px';v.style.width=r.width+'px';v.style.top=Math.min(Math.max(r.top,0),Math.max(0,innerHeight-v.offsetHeight))+'px';raf=requestAnimationFrame(place)};place();
- const add=i=>{const [,text,cls]=script[i];const s=document.createElement('span');s.className='line'+(cls?' '+cls:'');if(cls==='bar'){bar=s;s.textContent='[....................] 0%'}else s.textContent=text;v.appendChild(s);shown=i+1;
-  if(cls==='bar'){const steps=[12,37,58,81,96,100],each=span*script[i][0]/sum/steps.length;steps.forEach((p,n)=>timers.push(setTimeout(()=>{if(bar)bar.textContent=`[${'#'.repeat(p/5|0).padEnd(20,'.')}] ${p}%`},each*(n+1)*.9)))}
-  if(i===script.length-1)try{navigator.vibrate?.([40,60,40])}catch{}};
- let at=0;script.forEach((x,i)=>{timers.push(setTimeout(()=>add(i),at));at+=span*x[0]/sum});
- const close=()=>{cancelAnimationFrame(raf);v.classList.add('done');setTimeout(()=>v.remove(),300)};
- return {end(){if(done)return;done=true;timers.forEach(clearTimeout);for(let i=shown;i<script.length;i++)add(i);if(bar)bar.textContent='[####################] 100%';close()}}}
+ // Every line needs about 0.4 s to be read, so a short animation shows fewer lines: the five marked "must" always, then
+ // the progress bar, 意識の位相, the module line and the timestamp, in that order.
+ const all=[{w:1,text:`$ swap --commit --no-dry-run --radius ${radius}m`,must:1},{w:.6,text:stamp},{w:1,text:'初回実行: 入れ替えモジュールを読み込んでいます…'},{w:1,text:`座標を固定しています… ${selected[1].toFixed(5)}, ${selected[0].toFixed(5)}`,must:1},{w:1,text:`対象者を確定しました: ${people}名`,must:1},{w:.8,text:'意識の位相を同期しています…'},{w:1.6,bar:1},{w:1,text:'不可逆処理を実行しています…',cls:'warn',must:1},{w:0,text:'完了。',cls:'ok',must:1}];
+ const extra=[6,5,2,1].slice(0,Math.max(0,Math.min(9,Math.floor(total/430))-5)),script=all.filter((x,i)=>x.must||extra.includes(i)),last=script.length-1,
+  sum=script.reduce((s,x)=>s+x.w,0),span=Math.max(1200,total)*.88,timers=[];let shown=-1,done=false,raf=0;
+ const barText=p=>`[${'#'.repeat(p/5|0).padEnd(20,'.')}] ${p}%`;
+ // On the map's top edge; once the map has scrolled up, on the screen's top edge.
+ const place=()=>{const r=el('map').getBoundingClientRect();v.style.left=(r.left+44)+'px';v.style.width=Math.max(0,r.width-44)+'px';v.style.top=Math.min(Math.max(r.top,0),Math.max(0,innerHeight-v.offsetHeight))+'px';raf=requestAnimationFrame(place)};place();
+ const show=i=>{const x=script[i];shown=i;v.className='exec-console'+(x.cls?' '+x.cls:'');v.textContent=x.bar?barText(0):x.text;requestAnimationFrame(()=>requestAnimationFrame(()=>v.classList.add('in')));
+  if(x.bar){const steps=[12,37,58,81,96,100],slot=span*x.w/sum;steps.forEach((p,n)=>timers.push(setTimeout(()=>{if(shown===i)v.textContent=barText(p)},slot*(n+1)/(steps.length+1))))}
+  if(i===last)try{navigator.vibrate?.([40,60,40])}catch{}};
+ const hide=()=>v.classList.remove('in');
+ let at=0;script.forEach((x,i)=>{timers.push(setTimeout(()=>show(i),at));if(i<last){at+=span*x.w/sum;timers.push(setTimeout(hide,at-130))}});
+ const close=()=>{hide();cancelAnimationFrame(raf);setTimeout(()=>v.remove(),250)};
+ return {end(){if(done)return;done=true;timers.forEach(clearTimeout);if(shown===last)close();else{show(last);setTimeout(close,420)}}}}
 // A result as a URL: the packed result (as in the history), deflated where the browser can, in the fragment, so it
 // never reaches the server. #r= holds one notice, #g= all the pairs of one swap in pair mode. Opening it shows them again.
 const b64url={enc:bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},dec:s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0))};
