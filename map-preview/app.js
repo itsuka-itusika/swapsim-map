@@ -186,7 +186,7 @@ function samplePair(t,filtered=false,two=false){const A=samplePerson(t,filtered)
 // precinct) has too few people for that: one or two pairs only.
 function fewPairs(){const total=src=>src.reduce((s,c)=>s+c.n,0),n=between()?Math.min(total(parts),total(partsB)):total(parts);return n<3?1:n<12?2:6}
 function sampleResult(t,filtered=false){return options.pair?samplePair(t,filtered,between()):samplePerson(t,filtered)}
-function showResult(P){currentPerson=P;el('person').innerHTML=MapNotice.html(P);el('copy').onclick=async()=>{const text=MapNotice.text(P);try{await navigator.clipboard.writeText(text);el('toast').textContent='コピーしました'}catch{const box=document.createElement('textarea');box.value=text;box.readOnly=true;box.className='copybox';el('person').appendChild(box);box.select();el('toast').textContent='表示された文章をコピーしてください'}};stampIt(!reduceMotion);scrollToNotice(true);if(!reduceMotion)el('notice').classList.add('flash')}
+function showResult(P){currentPerson=P;el('person').innerHTML=MapNotice.html(P);el('copy').insertAdjacentHTML('afterend',' <button class="btn" type="button" id="shareurl">URLを作成</button>');el('shareurl').onclick=()=>shareURL(P);el('copy').onclick=async()=>{const text=MapNotice.text(P);try{await navigator.clipboard.writeText(text);el('toast').textContent='コピーしました'}catch{const box=document.createElement('textarea');box.value=text;box.readOnly=true;box.className='copybox';el('person').appendChild(box);box.select();el('toast').textContent='表示された文章をコピーしてください'}};stampIt(!reduceMotion);scrollToNotice(true);if(!reduceMotion)el('notice').classList.add('flash')}
 function resultLabel(P){const name=X=>X.displayName||X.surname.k+' '+X.given.k;return P.kind==='pair'?`${name(P.A)}（${P.A.age}歳） ⇄ ${name(P.B)}（${P.B.age}歳）`:`${name(P)} ／ ${P.age}歳 ／ ${P.occ.label}`}
 function renderCrowd(){
  el('crowd-title').textContent='同じ瞬間に入れ替わった人たち';
@@ -242,7 +242,7 @@ el('history').onclick=e=>{const b=e.target.closest('button[data-h]');if(!b||draw
 function fewNote(others){const few=others.length<4,msg=few?(others.length?'この範囲では、ほかに入れ替わる人は見つかりませんでした。':'この範囲では、ほかに入れ替わる人はいませんでした。'):'';for(const id of ['pcards-note','crowd-note']){el(id).hidden=!few;el(id).textContent=msg}}
 function finishDraw(){const d=drawing;if(!d)return;fewNote(d.others);drawing=null;if(typeof beaconCheck==='function')beaconCheck();drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length||between()&&!partsB.length}
 el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length||between()&&!partsB.length)return;if(debug.real&&!await realGate())return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();if(between()&&estimateMinuteB!==minuteKey(t))refreshB();P=sampleResult(t,true);others=Array.from({length:Math.max(0,fewPairs()-1)},()=>samplePair(t,false,between()));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
- if(debug.real&&!realRan){realRan=true;await realSequence(P,others)}
+ if(debug.real&&!realRan){realRan=true;realSequence(P,others).catch(e=>console.error(e))}
  drawing={P,others};pool={parts:parts.slice(),center:selected.slice(),radius};poolB=between()?{parts:partsB.slice(),center:selectedB.slice(),radius}:null;plays++;const tk=++drawToken;el('draw').disabled=false;setDrawLabel();if(reduceMotion){finishDraw();return}
  // Pair mode first brings the map into view (on phones the button sits below it) and roams the circle with the
  // markers, then jumps to the six compact notices.
@@ -282,16 +282,29 @@ el('dbg-save').onclick=()=>{try{if(!storage)throw Error();storage.setItem(debugK
 el('dbg-reset').onclick=()=>{Object.assign(debug,{time:null,mixed:false,real:false});try{storage?.removeItem(debugKey)}catch{}el('dbg-status').textContent='reset';setDebugTime(null)};
 renderDebug();
 // 本当に入れ替える（実装準備版） (debug): asked once per page, and the first swap after that runs a console sequence
-// (the module being loaded for the first run). Reduced motion skips the sequence.
+// (the module being loaded for the first run) in a console docked over the page while the usual animation plays.
+// Reduced motion skips the sequence.
 let realConfirmed=false,realRan=false;
 function realGate(){if(realConfirmed)return Promise.resolve(true);return new Promise(done=>{const v=document.createElement('div');v.className='exec-veil';v.setAttribute('role','alertdialog');v.setAttribute('aria-modal','true');
  v.innerHTML='<div class="log"><span class="warn">警告: 本当に入れ替える（実装準備版）が有効です。</span>\n対象者の同意は確認されません。\nこの操作は取り消せません。</div><div class="ask"><button type="button" class="go">実行する</button><button type="button" class="no">キャンセル</button></div>';
  const close=ok=>{v.remove();if(ok)realConfirmed=true;done(ok)};v.querySelector('.go').onclick=()=>close(true);v.querySelector('.no').onclick=()=>close(false);v.onkeydown=e=>{if(e.key==='Escape')close(false)};document.body.appendChild(v);v.querySelector('.no').focus()})}
-async function realSequence(P,others){if(reduceMotion)return;const v=document.createElement('div'),log=document.createElement('div');v.className='exec-veil';v.setAttribute('aria-hidden','true');log.className='log';v.appendChild(log);document.body.appendChild(v);
+async function realSequence(P,others){if(reduceMotion)return;const v=document.createElement('div'),log=document.createElement('div');v.className='exec-console';v.setAttribute('aria-hidden','true');log.className='log';v.appendChild(log);document.body.appendChild(v);
  const pairs=[P,...others].filter(X=>X.kind==='pair').length,people=P.kind==='pair'?pairs*2:1+others.length*2,pad=n=>String(n).padStart(2,'0'),t=time(),stamp=`${t.y}-${pad(t.mo)}-${pad(t.d)} ${pad(t.h)}:${pad(t.mi)} JST`,wait=ms=>new Promise(r=>setTimeout(r,ms));
  const line=(text,cls)=>{const s=document.createElement('span');if(cls)s.className=cls;s.textContent=text+'\n';log.appendChild(s)};
  for(const [text,ms,cls] of [[`$ swap --commit --no-dry-run --radius ${radius}m`,320],[stamp,160],['初回実行: 入れ替えモジュールを読み込んでいます…',520],[`座標を固定しています… ${selected[1].toFixed(5)}, ${selected[0].toFixed(5)}`,380],[`対象者を確定しました: ${people}名`,360],['意識の位相を同期しています…',240]])
   {line(text,cls);await wait(ms)}
  const bar=document.createElement('span');log.appendChild(bar);for(const p of [12,37,58,81,96,100]){bar.textContent=`[${'#'.repeat(p/5|0).padEnd(20,'.')}] ${p}%\n`;await wait(150)}
  line('不可逆処理を実行しています…','warn');await wait(520);line('完了。','ok');await wait(650);
- try{navigator.vibrate?.([40,60,40])}catch{}const f=document.createElement('div');f.className='exec-flash';document.body.appendChild(f);v.remove();setTimeout(()=>f.remove(),800)}
+ try{navigator.vibrate?.([40,60,40])}catch{}const f=document.createElement('div');f.className='exec-flash';document.body.appendChild(f);setTimeout(()=>f.remove(),800);await wait(900);v.classList.add('done');await wait(400);v.remove()}
+// A result as a URL: the packed result (as in the history), deflated where the browser can, in the fragment, so it
+// never reaches the server. Opening it shows the same notice again.
+const b64url={enc:bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},dec:s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0))};
+const streamBytes=async(bytes,stream)=>new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+async function resultURL(R){const bytes=new TextEncoder().encode(JSON.stringify(packR(R)));let code;
+ try{code='z'+b64url.enc(await streamBytes(bytes,new CompressionStream('deflate-raw')))}catch{code='j'+b64url.enc(bytes)}
+ return location.origin+location.pathname+'#r='+code}
+async function resultFromURL(hash){const m=/^#r=([zj])([A-Za-z0-9_-]+)$/.exec(hash||'');if(!m)return null;let bytes=b64url.dec(m[2]);if(m[1]==='z')bytes=await streamBytes(bytes,new DecompressionStream('deflate-raw'));return unpackR(JSON.parse(new TextDecoder().decode(bytes)))}
+async function shareURL(R){let url;try{url=await resultURL(R)}catch(e){console.error(e);el('toast').textContent='URLを作成できませんでした';return}
+ try{await navigator.clipboard.writeText(url);el('toast').textContent='URLをコピーしました'}catch{const box=document.createElement('textarea');box.value=url;box.readOnly=true;box.className='copybox';el('person').appendChild(box);box.select();el('toast').textContent='表示されたURLをコピーしてください'}}
+async function openSharedResult(){let R;try{R=await resultFromURL(location.hash)}catch(e){console.error(e)}if(!R)return;currentPerson=null;pairMode(false);el('person').hidden=false;showResult(R)}
+openSharedResult();addEventListener('hashchange',openSharedResult);
