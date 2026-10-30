@@ -25,8 +25,9 @@ test('pupils are mostly in class on school-day afternoons but out in the city on
 });
 test('distinctive streets use their own scenes and every subculture area defines genres',()=>{
  assert.deepEqual(Array.from(run(`MAP_DATA.areas.filter(a=>a.tags?.subculture&&!a.genres).map(a=>a.name)`)),[]);
- const x=run(`(()=>{let out={};for(const [name,h] of [['キャットストリート',15],['巣鴨地蔵通り商店街',11],['新宿ゴールデン街',21]]){let a=MAP_DATA.areas.find(x=>x.name===name),p=LandProfile.create(envContext,a.xy,100),t={y:2026,mo:10,d:31,dow:6,h,hf:h+.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),own=new Set(a.scenes.map(s=>s[2])),n=0,old=0;for(let i=0;i<200;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);if(own.has(P.sit.text))n++;if(name==='巣鴨地蔵通り商店街'&&P.age>=65)old++}out[name]=[n,old]}return JSON.stringify(out)})()`);
- const r=JSON.parse(x);for(const [name,[n]] of Object.entries(r))assert.ok(n>=5,name+' '+n);assert.ok(r['巣鴨地蔵通り商店街'][1]>=50);
+ const x=run(`(()=>{let out={};for(const [name,h] of [['キャットストリート',15],['巣鴨地蔵通り商店街',11],['新宿ゴールデン街',21]]){let a=MAP_DATA.areas.find(x=>x.name===name),p=LandProfile.create(envContext,a.xy,100),t={y:2026,mo:10,d:31,dow:6,h,hf:h+.2,mi:12,rand:false},parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),own=new Set(a.scenes.map(s=>s[2])),n=0,old=0;for(let i=0;i<400;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);if(own.has(P.sit.text))n++;if(name==='巣鴨地蔵通り商店街'&&P.age>=65)old++}out[name]=[n,old]}return JSON.stringify(out)})()`);
+ const r=JSON.parse(x);// 400 draws: ゴールデン街 averages about 20 of its own scenes, so 10 leaves no room for chance failures.
+ for(const [name,[n]] of Object.entries(r))assert.ok(n>=10,name+' '+n);assert.ok(r['巣鴨地蔵通り商店街'][1]>=100);
  assert.equal(run(`PersonContext.away('海浜公園の砂浜から、レインボーブリッジを眺めているところでした',{role:'area_shopping'})`),false);
 });
 test('detention house and courts follow daily routines with role-specific scenes',()=>{

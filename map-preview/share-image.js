@@ -40,8 +40,8 @@ const ShareImage=(()=>{
   y=para(g,`${clock(P.t)}。${P.sit.text}。`,90,y+52,W-180,`400 34px ${GO}`,C.ink,50,Math.max(2,Math.floor((1125-(y+52))/50)+1));
   text(g,'めずらしさ',90,H-170,`700 28px ${MIN}`,C.rule);text(g,stars(P.stars||1),260,H-168,`400 40px ${GO}`,C.shu)}
  function pair(g,R){frame(g,'入れ替わりのお知らせ',R,R.t);
-  // Each column: name, age and job, place, then 体格, 趣味 and 健康 (blank ones left out).
-  const col=(P,x)=>{let ny=drawName(g,P,x,320,400,62,40);let y=para(g,`${P.age}歳・${job(P)}`,x,ny+56,400,`400 28px ${GO}`,C.ink,38,2);y=para(g,P.place,x,y,400,`400 24px ${GO}`,C.ink2,32,2)+10;
+  // Each column: name, age and sex, job, place, then 体格, 趣味 and 健康 (blank ones left out).
+  const col=(P,x)=>{let ny=drawName(g,P,x,320,400,62,40);text(g,`${P.age}歳${SEX[P.sex]||''}`,x,ny+56,`400 28px ${GO}`,C.ink);let y=para(g,job(P),x,ny+94,400,`400 28px ${GO}`,C.ink,38,2);y=para(g,P.place,x,y,400,`400 24px ${GO}`,C.ink2,32,2)+10;
    for(const [label,value] of [['体格',bodyOf(P,false)],['趣味',hobbyOf(P)],['健康',P.health?.text]]){if(!value||value==='-')continue;text(g,label,x,y,`700 22px ${MIN}`,C.rule);y=para(g,value,x+64,y,336,`400 24px ${GO}`,C.ink,32,2)+6}return y};
   let end=Math.max(col(R.A,90),col(R.B,590));text(g,'⇄',W/2,320,`400 50px ${GO}`,C.rule,'center');const ry=end+8;rule(g,90,W-90,ry,true);
   let y=ry+58;text(g,'状況',90,y,`700 28px ${MIN}`,C.rule);text(g,clock(R.t),164,y,`400 24px ${GO}`,C.ink2);y+=52;
