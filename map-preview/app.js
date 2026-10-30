@@ -243,12 +243,11 @@ el('history').onclick=e=>{const b=e.target.closest('button[data-h]');if(!b||draw
  if(h.P.kind==='pair'){pairCards=[h.P,...h.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(false);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}
  else{pairMode(false);el('person').hidden=false;showResult(h.P);renderCrowd();el('person').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}renderHistory()};
 function fewNote(others){const few=others.length<4,msg=few?(others.length?'この範囲では、ほかに入れ替わる人は見つかりませんでした。':'この範囲では、ほかに入れ替わる人はいませんでした。'):'';for(const id of ['pcards-note','crowd-note']){el(id).hidden=!few;el(id).textContent=msg}}
-function finishDraw(){const d=drawing;if(!d)return;realConsole?.end();realConsole=null;fewNote(d.others);drawing=null;if(typeof beaconCheck==='function')beaconCheck();drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length||between()&&!partsB.length}
+function finishDraw(){const d=drawing;if(!d)return;fewNote(d.others);drawing=null;if(typeof beaconCheck==='function')beaconCheck();drawToken++;roamLayer?.clearLayers();crowd=d.others;if(d.P.kind==='pair'){pairCards=[d.P,...d.others];currentPerson=null;pairMode(true);el('person').hidden=true;renderPairCards(true);el('pcards-sec').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'})}else{pairMode(false);el('person').hidden=false;showResult(d.P);renderCrowd()}history.unshift({P:d.P,others:d.others});history=history.slice(0,20);saveHistory();renderHistory();setDrawLabel();el('draw').disabled=!parts.length||between()&&!partsB.length}
 el('draw').onclick=async()=>{if(drawing){finishDraw();return}if(!parts.length||between()&&!partsB.length)return;SelectionCache.save(storage,selected,radius);el('draw').disabled=true;let P,others;try{updateWeather();const t=time();if(estimateMinute!==minuteKey(t))refresh();if(between()&&estimateMinuteB!==minuteKey(t))refreshB();P=sampleResult(t,true);others=Array.from({length:Math.max(0,fewPairs()-1)},()=>samplePair(t,false,between()));P.serial=++issuedCount;others.forEach(X=>X.serial=++issuedCount)}catch(e){el('status').textContent=e.message;el('opt-save-status').textContent=e.message;el('opts').open=true;console.error(e);el('draw').disabled=!parts.length;return}
  drawing={P,others};pool={parts:parts.slice(),center:selected.slice(),radius};poolB=between()?{parts:partsB.slice(),center:selectedB.slice(),radius}:null;plays++;const tk=++drawToken;el('draw').disabled=false;setDrawLabel();if(reduceMotion){finishDraw();return}
  // Pair mode first brings the map into view (on phones the button sits below it) and roams the circle with the
  // markers, then jumps to the six compact notices.
- if(debug.real&&!realRan){realRan=true;realConsole=startConsole(P,others,animationMs(P))}
  try{if(P.kind==='pair'){pairMode(true);el('pcards').innerHTML='';const r=el('map').getBoundingClientRect();if(r.top<0||r.bottom>innerHeight){el('map').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'});await later(450,tk)}
   // Two ranges: show both circles, one marker roaming in each.
   if(poolB){map.fitBounds(circle.getBounds().extend(circleB.getBounds()),{padding:[24,24],maxZoom:16});await later(500,tk);beaconCheck()}await roam(2,1600*(plays>1?.7:1),tk,poolB?[pool,poolB]:[])}else await reveal(P,tk)}catch(e){if(e.message!=='skip')console.error(e)}if(tk===drawToken)finishDraw()};
@@ -280,47 +279,10 @@ function renderDebug(){el('dbg-time').value=debug.time||'';for(const key of ['mi
 function setDebugTime(v){debug.time=v&&DEBUG_TIME.test(v)?v:null;renderDebug();refresh();refreshB()}
 el('dbg-time').onchange=e=>setDebugTime(e.target.value.slice(0,16));
 el('dbg-now').onclick=()=>setDebugTime(null);
-el('dbg-mixed').onclick=()=>{debug.mixed=!debug.mixed;renderDebug()};
-// The warning comes when the switch is turned on (and the switch stays off if it is declined); a switch already on, as
-// restored from a saved setting, asks nothing when swapping.
-el('dbg-real').onclick=async()=>{if(!debug.real&&!await realGate())return;debug.real=!debug.real;renderDebug()};
+for(const key of ['mixed','real'])el('dbg-'+key).onclick=()=>{debug[key]=!debug[key];renderDebug()};
 el('dbg-save').onclick=()=>{try{if(!storage)throw Error();storage.setItem(debugKey,JSON.stringify(debug));el('dbg-status').textContent='saved'}catch{el('dbg-status').textContent='failed'}};
 el('dbg-reset').onclick=()=>{Object.assign(debug,{time:null,mixed:false,real:false});try{storage?.removeItem(debugKey)}catch{}el('dbg-status').textContent='reset';setDebugTime(null)};
 renderDebug();
-// 本当に入れ替える（試験実装版） (debug): asked each time the switch is turned on, and the first swap runs a console sequence
-// (the module being loaded for the first run) along the top of the map while the usual animation plays.
-// Reduced motion skips the sequence.
-let realRan=false;
-// A modal dialog asked when the switch is turned on (Esc, the cancel button or a click outside decline it).
-function realGate(){return new Promise(done=>{const d=document.createElement('dialog');d.className='dbg-dialog';
- d.innerHTML='<form method="dialog"><p class="dbg-kicker">警告</p><h2>本当に入れ替える（試験実装版）を有効にしますか</h2><p class="dbg-strong">この設定を有効にすると、シミュレーションではなく現実に入れ替わりが発生します。<br>実行した入れ替えは取り消せません。</p><p class="dbg-note">試験実装版のため、動作は保証されません。</p><div class="dbg-actions"><button type="submit" value="no" class="btn">キャンセル</button><button type="submit" value="go" class="btn">有効にする</button></div></form>';
- d.addEventListener('close',()=>{const ok=d.returnValue==='go';d.remove();done(ok)});d.addEventListener('click',e=>{if(e.target===d)d.close('no')});
- document.body.appendChild(d);d.showModal();d.querySelector('button[value="no"]').focus()})}
-// The first-run console: a single line of text, on the map's top edge (right of the zoom buttons) (on the top of the screen once the page has scrolled
-// past the map), with no background so the map shows through. Each line fades in, stays, fades out, and the next takes its
-// place; the lines are paced over the expected length of the usual animation, and it ends when that animation ends.
-let realConsole=null;
-// Expected length (ms) of the usual animation for this result, from the same numbers the animation uses.
-function animationMs(P){const k=plays>1?.6:1;
- if(P.kind==='pair'){const r=el('map').getBoundingClientRect();return (r.top<0||r.bottom>innerHeight?450:0)+(poolB?500:0)+1600*(plays>1?.7:1)}
- return (1000+520+220+300+620+480+220)*k+Math.ceil((P.sit.text.length+8)/2)*28}
-function startConsole(P,others,total){if(reduceMotion)return null;const v=document.createElement('div');v.className='exec-console';v.setAttribute('aria-hidden','true');document.body.appendChild(v);
- const pairs=[P,...others].filter(X=>X.kind==='pair').length,people=P.kind==='pair'?pairs*2:1+others.length*2,pad=n=>String(n).padStart(2,'0'),t=time(),stamp=`${t.y}-${pad(t.mo)}-${pad(t.d)} ${pad(t.h)}:${pad(t.mi)} JST`;
- // Every line needs about 0.4 s to be read, so a short animation shows fewer lines: the five marked "must" always, then
- // the progress bar, 意識の位相, the module line and the timestamp, in that order.
- const all=[{w:1,text:`$ swap --commit --no-dry-run --radius ${radius}m`,must:1},{w:.6,text:stamp},{w:1,text:'初回実行: 入れ替えモジュールを読み込んでいます…'},{w:1,text:`座標を固定しています… ${selected[1].toFixed(5)}, ${selected[0].toFixed(5)}`,must:1},{w:1,text:`対象者を確定しました: ${people}名`,must:1},{w:.8,text:'意識の位相を同期しています…'},{w:1.6,bar:1},{w:1,text:'不可逆処理を実行しています…',cls:'warn',must:1},{w:0,text:'完了。',cls:'ok',must:1}];
- const extra=[6,5,2,1].slice(0,Math.max(0,Math.min(9,Math.floor(total/430))-5)),script=all.filter((x,i)=>x.must||extra.includes(i)),last=script.length-1,
-  sum=script.reduce((s,x)=>s+x.w,0),span=Math.max(1200,total)*.88,timers=[];let shown=-1,done=false,raf=0;
- const barText=p=>`[${'#'.repeat(p/5|0).padEnd(20,'.')}] ${p}%`;
- // On the map's top edge; once the map has scrolled up, on the screen's top edge.
- const place=()=>{const r=el('map').getBoundingClientRect();v.style.left=(r.left+44)+'px';v.style.width=Math.max(0,r.width-44)+'px';v.style.top=Math.min(Math.max(r.top,0),Math.max(0,innerHeight-v.offsetHeight))+'px';raf=requestAnimationFrame(place)};place();
- const show=i=>{const x=script[i];shown=i;v.className='exec-console'+(x.cls?' '+x.cls:'');v.textContent=x.bar?barText(0):x.text;requestAnimationFrame(()=>requestAnimationFrame(()=>v.classList.add('in')));
-  if(x.bar){const steps=[12,37,58,81,96,100],slot=span*x.w/sum;steps.forEach((p,n)=>timers.push(setTimeout(()=>{if(shown===i)v.textContent=barText(p)},slot*(n+1)/(steps.length+1))))}
-  if(i===last)try{navigator.vibrate?.([40,60,40])}catch{}};
- const hide=()=>v.classList.remove('in');
- let at=0;script.forEach((x,i)=>{timers.push(setTimeout(()=>show(i),at));if(i<last){at+=span*x.w/sum;timers.push(setTimeout(hide,at-130))}});
- const close=()=>{hide();cancelAnimationFrame(raf);setTimeout(()=>v.remove(),250)};
- return {end(){if(done)return;done=true;timers.forEach(clearTimeout);if(shown===last)close();else{show(last);setTimeout(close,420)}}}}
 // A result as a URL: the packed result (as in the history), deflated where the browser can, in the fragment, so it
 // never reaches the server. #r= holds one notice, #g= all the pairs of one swap in pair mode. Opening it shows them again.
 const b64url={enc:bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},dec:s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0))};
