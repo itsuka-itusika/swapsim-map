@@ -359,7 +359,7 @@ function registerProfileWork(pool){
 [WORK_TX,NIGHT_TX,EV_TX.work,SCHOOL_TX,EN_TX].forEach(registerProfileWork);
 const PROFILE_SPOUSE_RE=/夫婦|妻|夫[とのにがを]|奥さん|旦那/;
 const PROFILE_SEEKING_RE=/マッチングアプリ|婚活|合コン|お見合い/;
-const PROFILE_ROMANCE_RE=/彼氏|彼女|恋人|デート|プロポーズ/;
+const PROFILE_ROMANCE_RE=/彼氏|彼女|恋人|デート|プロポーズ|付き合って|付き合い始め/;
 const PROFILE_CHILD_RE=/わが子|子ども[のをとがには]|赤ちゃん|乳児|夜泣き|ベビーカー|抱っこひも|離乳食|沐浴/;
 function profileChildAgeRule(text){
  if(/成人式|成人の日/.test(text))return [18,20];

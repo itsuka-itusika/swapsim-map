@@ -1230,6 +1230,70 @@ function workSleepP(profile, curve, h, we, active) {
   return sleepP(curve, h, we);
 }
 
+// 恋人がいる人（未婚で familyContext.partner）が、恋人と過ごしている場面。
+// 一般の自由時間の文に混ぜるだけでは、ほかの文の多さに埋もれてほとんど出ないので、時間帯ごとの割合で別に決める。
+// out：出かけてのデート（地図では住まいの外の人だけ）／home：家で恋人と過ごす（solo:1 は一人暮らし、fam:1 は家族と同居）
+const PARTNER_TX = {
+  out: [
+    [10, 13, '恋人と待ち合わせて、駅前で合流したところでした', { w: 1.2 }],
+    [11, 14.5, '恋人とランチの店に入り、メニューを一緒にのぞき込んでいるところでした', { w: 1.2 }],
+    [13, 18, '恋人とショッピングモールを歩きながら、服を選んでもらっているところでした', { a: [16, 39] }],
+    [12, 18, '恋人とカフェで向かい合って、次の旅行の行き先を相談しているところでした', { a: [18, 39] }],
+    [10, 17, '恋人と水族館に来て、クラゲの水槽の前で足を止めているところでした', { a: [16, 39], w: .7 }],
+    [11, 21, '恋人と映画館に来て、どちらの作品を見るかでまだ迷っているところでした', { a: [16, 39], w: .8 }],
+    [10, 17, '恋人と公園を散歩しながら、ベンチで休憩しているところでした'],
+    [12, 18, '恋人と並んで歩きながら、スマホで次に行く店を探しているところでした'],
+    [10, 17, '恋人とのドライブで、運転を交代するタイミングを相談しているところでした', { a: [20, 39], w: .6 }],
+    [17, 22, '恋人とディナーの店で、料理の写真を撮り合っているところでした', { a: [20, 39] }],
+    [18, 22.5, '恋人と居酒屋のカウンターに並んで座り、乾杯したところでした', { a: [20, 39], w: .8 }],
+    [18, 22.5, '恋人とデートの帰りに、駅の改札の前で名残惜しく話しているところでした'],
+    [17, 21, '恋人と夜景の見える場所で、写真を撮ろうとしているところでした', { a: [18, 39], w: .7 }],
+    [11, 18, '彼氏とのデートで、彼が予約してくれていた店に向かっているところでした', { sex: 'f', a: [18, 39] }],
+    [11, 18, '彼女とのデートで、雑貨屋の店先でもうしばらく待つことにしたところでした', { sex: 'm', a: [18, 39] }],
+    [12, 18, '放課後のデートで、恋人とクレープを分け合っているところでした', { a: [16, 19], wd: 1, w: .8 }]
+  ],
+  home: [
+    [10, 14, '休みの日、一人暮らしの部屋に恋人が来て、一緒に遅めの朝ごはんを作っているところでした', { a: [18, 39], solo: 1 }],
+    [12, 18, '一人暮らしの部屋で、恋人と並んで配信の映画を見ているところでした', { a: [18, 39], solo: 1, w: 1.3 }],
+    [17, 21, '部屋に来た恋人と、二人で鍋の具材を切っているところでした', { a: [18, 39], solo: 1, m: [10, 11, 12, 1, 2, 3] }],
+    [17, 21, '部屋に来た恋人と、デリバリーのピザを何にするか選んでいるところでした', { a: [18, 39], solo: 1 }],
+    [19, 23.5, '泊まりに来た恋人と、ソファでだらだらとドラマを見ているところでした', { a: [20, 39], solo: 1, w: 1.2 }],
+    [13, 22, '部屋で恋人と、協力プレイのゲームで同じところを何度もやり直しているところでした', { a: [18, 34], solo: 1 }],
+    [9, 12, '泊まりに来た恋人より先に起きて、コーヒーをいれているところでした', { a: [20, 39], solo: 1, we: 1 }],
+    [22, 1, '泊まりに来た恋人と、明日どこへ出かけるか話しながら寝る支度をしているところでした', { a: [20, 39], solo: 1 }],
+    [13, 19, '家に遊びに来た恋人を、家族に紹介しているところでした', { a: [16, 34], fam: 1, w: .6 }],
+    [13, 20, '家に来た恋人と自分の部屋で、昔のアルバムを見せて笑われているところでした', { a: [16, 34], fam: 1 }],
+    [17, 21, '家に来た恋人と、家族も一緒に夕食の食卓を囲んでいるところでした', { a: [18, 39], fam: 1, w: .7 }],
+    [13, 21, '家に来た恋人と自分の部屋で、並んでスマホの動画を見ているところでした', { a: [16, 34], fam: 1 }],
+    [12, 18, '恋人と一緒に、自宅で手作りのお菓子を焼いているところでした', { a: [16, 39], w: .6 }]
+  ]
+};
+// 恋人と過ごしている時間の割合（休日の昼〜夜が多く、平日は夜だけ少し）
+function partnerP(P, ctx) {
+  const h = ctx.h, a = P.age, F = P.familyContext, H = P.household;
+  if (!F || !F.partner || !H || H.mar === 'married' || H.mar === 'unknown' || a < 16) return 0;
+  if (P.hb && (P.hb.bed || P.hb.preg)) return 0;
+  const teen = a < 18;
+  if (ctx.we) {
+    if (inWin(h, 10, 22)) return teen ? (h < 19 ? .1 : 0) : inWin(h, 12, 20) ? .24 : .15;
+    if (inWin(h, 22, 1) && !teen) return .08;
+    return 0;
+  }
+  if (inWin(h, 16, 19)) return teen ? .05 : .04;
+  if (inWin(h, 19, 23) && !teen) return .07;
+  return 0;
+}
+function partnerScene(P, ctx) {
+  const solo = P.household && P.household.i === 0;
+  const wet = ctx.wx && (ctx.wx.rain || ctx.wx.snow);
+  const homeShare = (solo ? .5 : .3) + (ctx.h >= 21 || ctx.h < 5 ? .5 : 0) + (wet ? .2 : 0);
+  const fit = e => { const o = e[3] || {}; return !(o.solo && !solo) && !(o.fam && solo); };
+  const first = rnd() < homeShare ? 'home' : 'out', second = first === 'home' ? 'out' : 'home';
+  const pk = fromPool(PARTNER_TX[first], ctx, fit), kind = pk ? first : second;
+  const res = pk || fromPool(PARTNER_TX[second], ctx, fit);
+  return res ? { pk: res, label: kind === 'home' ? '恋人と過ごしている' : 'デート中' } : null;
+}
+
 function situation(P, t) {
   const h = t.hf;
   const oc = P.occ;
@@ -1392,6 +1456,12 @@ function situation(P, t) {
     const pk = fromPool(by.get(kr.v).l, ctx);
     return pk ? done('off', { e: pk.e, p: kr.p * pk.p }, pk.e[3].lb) : null;
   };
+  const tryPartner = () => {
+    const pp = partnerP(P, ctx);
+    if (!pp || !br(pp)) return null;
+    const r = partnerScene(P, ctx);
+    return r ? done('off', r.pk, r.label) : null;
+  };
   // 自分の立場の自由時間の文のうち、入浴・身じたく・晩酌にあたるもの
   function ownSpecial(label) {
     const key = oc.group + '|' + label;
@@ -1413,7 +1483,7 @@ function situation(P, t) {
       const pk = fromPool(OFF_TX.college, ctx, e => e[3] && (e[3].camp || e[3].yr || e[3].senmon || e[3].grad));
       if (pk) return done('school', pk, 'キャンパスにいる');
     }
-    const bath = tryEvent() || tryBath() || tryGroom() || tryDrink();
+    const bath = tryEvent() || tryPartner() || tryBath() || tryGroom() || tryDrink();
     if (bath) return bath;
     return pickOff(offPoolsOf('college')) || done('off', { e: FALLBACK.college, n: 1 });
   }
@@ -1460,7 +1530,7 @@ function situation(P, t) {
     const pk = fromPool(ADULT_VENUE_TX, ctx);
     if (pk) return done('off', pk, pk.e[3].lb);
   }
-  const evp = tryEvent();
+  const evp = tryEvent() || (g !== 'facility' && g !== 'prison' ? tryPartner() : null);
   if (evp) return evp;
   if (g !== 'facility') { const bath = tryBath() || tryGroom() || tryDrink(); if (bath) return bath; }
   return pickOff(offPoolsOf(g)) || done('off', { e: FALLBACK[g] || FALLBACK.adult, n: 1 });
