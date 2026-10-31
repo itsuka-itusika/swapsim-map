@@ -6,10 +6,10 @@ const LoveHotelModel=(()=>{
  function activity(k,t){let h=t.hf??t.h,we=t.dow===0||t.dow===6||!!t.holiday||t.dow===5&&h>=18;
   if(k==='guest')return (we?1.3:1)*(h>=18?2.2:h<5?2:h<11?.45:h>=12?.6:.3);
   return h>=10&&h<16?1:.6}
- const AGES={guest:[[20,24,22],[25,29,25],[30,39,27],[40,40,2]],staff:[[20,29,14],[30,39,18],[40,49,22],[50,59,26],[60,74,20]]};
+ const AGES={guest:[[20,24,22],[25,29,25],[30,34,3],[35,35,.2]],service:[[20,24,10],[25,29,10],[30,34,.7],[35,35,.05]],staff:[[20,29,14],[30,39,18],[40,49,22],[50,59,26],[60,74,20]]};
  function rows(tag,t,row,area){let lv=tag.lovehotel||0;if(lv<=0)return [];
-  return [row('area_lovehotel_guest','ホテル街の利用客',lv*.9*activity('guest',t),20,40,.5,{area,ageBands:AGES.guest,loveHotel:true}),
-   ...((t.hf??t.h)>=11||(t.hf??t.h)<3?[row('area_lovehotel_service_worker','ホテル街で働く派遣型風俗店の女性スタッフ',lv*.18*activity('guest',t),20,40,1,{area,ageBands:AGES.guest,loveHotel:true})]:[]),
+  return [row('area_lovehotel_guest','ホテル街の利用客',lv*.9*activity('guest',t),20,35,.5,{area,ageBands:AGES.guest,loveHotel:true}),
+   ...((t.hf??t.h)>=11||(t.hf??t.h)<3?[row('area_lovehotel_service_worker','ホテル街で働く派遣型風俗店の女性スタッフ',lv*.18*activity('guest',t),20,35,1,{area,ageBands:AGES.service,loveHotel:true})]:[]),
    row('area_lovehotel_staff','ホテル街のホテルの従業員',lv*.14*activity('staff',t),20,74,.62,{area,ageBands:AGES.staff,loveHotel:true,placeWorker:true})]}
  const T={
   day:['部屋の写真が並んだパネルの前で、空いている部屋を選んでいるところでした','休憩料金の看板を見上げ、相手と小声で相談しているところでした','部屋の大きなテレビで、カラオケの曲を選んでいるところでした','備え付けのアメニティを眺めて、入浴剤を一つ選んだところでした','部屋の電話で、フロントに休憩の延長を伝えたところでした'],
@@ -27,7 +27,7 @@ const LoveHotelModel=(()=>{
   front:['清掃の終わった部屋から、空室表示のパネルを点灯させているところでした','小窓だけのフロントで、部屋の鍵を差し出したところでした','フロントで、延長するかどうかの電話に答えているところでした'],
   frontNight:['深夜のフロントで、防犯カメラのモニターを見ているところでした','フロントで、ルームサービスの注文を厨房に伝えたところでした']};
  function assign(c,P){if(!c.loveHotel)return false;
-  if(c.role==='area_lovehotel_service_worker'){let job=JOB_OBJS.find(j=>j.tag==='adultservice'&&j.f>0&&P.age>=(j.o.amin||20)&&P.age<=(j.o.amax||59));if(!job)throw Error('No eligible hotel adult-service job');P.occ={label:job.o.labels?.f||job.n,group:'adult',cat:job.cat,tag:job.tag,job,kind:'employed',p:1};return true}
+  if(c.role==='area_lovehotel_service_worker'){let job=JOB_OBJS.find(j=>j.tag==='adultservice'&&j.f>0&&jobAgeFactor(j,'f',P.age)>0);if(!job)throw Error('No eligible hotel adult-service job');P.occ={label:job.o.labels?.f||job.n,group:'adult',cat:job.cat,tag:job.tag,job,kind:'employed',p:1};return true}
   if(c.role==='area_lovehotel_staff'){let front=rnd()<.35,job=JOB_OBJS.find(j=>j.n===(front?'ホテルのフロント係':'ビル清掃員'));P.occ={label:front?'ホテルのフロント係':'ホテルの客室清掃スタッフ',group:'adult',cat:job?.cat||'サービス',tag:job?.tag||'hotel',job,kind:'employed',p:1,front};return true}
   if(['student','kid','baby','facility','prison'].includes(P.occ.group))P.occ={label:'会社員',group:'adult',cat:'事務',p:1};return true}
  function apply(c,P,t){if(!c.loveHotel)return false;let h=t.hf??t.h,text,state='off';

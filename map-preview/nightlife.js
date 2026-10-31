@@ -46,9 +46,9 @@ const Nightlife=(()=>{
  function assign(c,P){
   let tags=c.role==='area_night_worker'?['food','izakaya']:c.role==='area_cabaret_worker'?['cabaret']:c.role==='area_host_worker'?['host']:c.role==='area_adult_worker'?['adultservice']:null;
   if(!tags)return;
-  let jobs=JOB_OBJS.filter(j=>tags.includes(j.tag)&&j[P.sex]>0&&P.age>=(j.o.amin||20)&&P.age<=(j.o.amax||69));
+  let jobs=JOB_OBJS.filter(j=>tags.includes(j.tag)&&j[P.sex]>0&&jobAgeFactor(j,P.sex,P.age)>0);
   if(!jobs.length)throw Error('No eligible nightlife job: '+c.role);
-  let job=pickW(jobs,j=>j[P.sex]).v;
+  let job=pickW(jobs,j=>j[P.sex]*jobAgeFactor(j,P.sex,P.age)).v;
   P.occ={label:job.o.labels?.[P.sex]||job.n,group:'adult',cat:job.cat,tag:job.tag,job,kind:'employed',p:1};
  }
  function choose(c,P,t){

@@ -329,6 +329,14 @@ function nonregForm(sex, a) {
   return { form: r.v[0], p: r.p };
 }
 
+// Shared age eligibility and preference for ordinary jobs and map-specific assignments.
+function jobAgeFactor(job, sex, age) {
+  const o = job.o || {}, max = o.amaxSex?.[sex] ?? o.amax;
+  if (age < (o.amin || 0) || max != null && age > max) return 0;
+  const weights = o.ageWSex?.[sex] ?? o.ageW;
+  return weights ? lookup(weights, age) : 1;
+}
+
 function pickJob(P) {
   const { sex, age: a } = P;
   let pp = 1;
@@ -341,9 +349,8 @@ function pickJob(P) {
   const jobW = j => {
     let w = j[sex];
     if (!w) return 0;
-    if (j.o.amin && a < j.o.amin) return 0;
-    if (j.o.amax != null && a > j.o.amax) return 0;
-    if (j.o.ageW) w *= lookup(j.o.ageW, a);
+    w *= jobAgeFactor(j, sex, a);
+    if (!w) return 0;
     if (a >= 65 && j.o.old != null) w *= j.o.old;
     if (a < 25 && j.o.yng != null) w *= j.o.yng;
     if (a >= 45 && a < 65 && j.o.mid != null) w *= j.o.mid;

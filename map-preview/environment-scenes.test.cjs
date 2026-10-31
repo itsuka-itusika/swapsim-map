@@ -119,7 +119,7 @@ test('night-work ages, hosts, fewer stay-at-home husbands and concise job names'
  const r=JSON.parse(run(`(()=>{let xy=MAP_DATA.areas.find(a=>a.name==='歌舞伎町').xy,t={y:2026,mo:10,d:30,dow:5,h:22,hf:22.5,mi:30,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,xy,200),t).filter(c=>/cabaret|host|adult_worker/.test(c.role)),tot=parts.reduce((s,c)=>s+c.n,0),night=[];for(let i=0;i<500;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);night.push([P.occ.label,P.age,P.sex])}
  let wife=0,husband=0,labels=[];for(let i=0;i<20000;i++){let P={pref:PREFS.find(p=>p.n==='東京都'),age:28+Math.floor(Math.random()*35),sex:Math.random()<.5?'m':'f',t};P.muni=P.pref.munis[0];P.urb='metro';P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);let o=occupation(P,t);if(o.label==='専業主婦')wife++;if(o.label==='専業主夫')husband++;if(i<3000)labels.push(JobLabels.short(o.label))}
  return JSON.stringify({night,wife,husband,host:JOB_OBJS.some(j=>j.n==='ホスト'),labels})})()`));
- const f=r.night.filter(x=>/キャバクラ嬢|風俗嬢/.test(x[0]));assert.ok(f.length>200);assert.ok(f.filter(x=>x[1]>=35).length/f.length<.12,String(f.filter(x=>x[1]>=35).length/f.length));
+ const f=r.night.filter(x=>/キャバクラ嬢|風俗嬢/.test(x[0]));assert.ok(f.length>200);assert.ok(f.every(x=>x[1]<=35));assert.ok(f.filter(x=>x[1]>=30).length/f.length<.1,String(f.filter(x=>x[1]>=30).length/f.length));
  assert.ok(r.host&&r.night.some(x=>x[0]==='ホスト'&&x[2]==='m'));assert.ok(r.night.filter(x=>x[0]==='ホスト').every(x=>x[1]<40));
  assert.ok(r.husband*20<r.wife,r.husband+' / '+r.wife);
  assert.ok(!r.labels.some(x=>/^(倉庫のピッキングスタッフ|飲食店のホールスタッフ|コンビニの店員|県庁の職員|市役所の職員|自動車部品工場の作業員)/.test(x)));
@@ -243,12 +243,12 @@ test('trains on the tracks inside the circle: rare riders, more at rush, labelle
  assert.ok(r.rush.share>.05&&r.rush.share<=.1501,String(r.rush.share));assert.ok(r.day.share>0&&r.day.share<=.0501,String(r.day.share));assert.equal(r.night.share,0);
  for(const [role,place,job] of [...r.rush.people,...r.day.people]){assert.match(place,/^\S+(線|駅|ライナー|ゆりかもめ|モノレール) 列車内$/,place);if(role==='rail_driver')assert.match(job,/運転士/);if(role==='rail_conductor')assert.match(job,/車掌/)}
 });
-test('ホテル街: guests aged 20–40, hotel staff and female visiting service workers have fitting scenes',()=>{
+test('ホテル街: guests aged 20–35, hotel staff and female visiting service workers have fitting scenes',()=>{
  const r=JSON.parse(run(`(()=>{const go=(xy,h,dow,d)=>{let t={y:2026,mo:10,d,dow,h,hf:h+.2,mi:12,rand:false},p=LandProfile.create(envContext,xy,150),parts=LandEstimator.estimate(p,t),tot=parts.reduce((s,c)=>s+c.n,0),lh=parts.filter(c=>c.loveHotel),out=[];for(let c of lh)for(let i=0;i<8;i++){let P=mapPerson({...c,roleP:.01},t);out.push([c.role,P.age,P.occ.label,P.sit.text,P.place,P.sex,P.sit.state,P.occ.tag])}return {share:lh.reduce((s,c)=>s+c.n,0)/tot,out}};
  return JSON.stringify({day:go([139.6945,35.6585],14,3,28),night:go([139.6945,35.6585],3,6,31),ginza:go([139.765,35.672],21,5,30)})})()`));
  assert.ok(r.day.share>.05&&r.night.share>r.day.share,JSON.stringify([r.day.share,r.night.share]));assert.equal(r.ginza.share,0);
  assert.ok(r.day.out.some(([role])=>role==='area_lovehotel_service_worker'));assert.ok(!r.night.out.some(([role])=>role==='area_lovehotel_service_worker'));
- for(const [role,age,job,text,place,sex,state,tag] of [...r.day.out,...r.night.out]){assert.equal(place,'道玄坂・円山町 ホテル街');if(role==='area_lovehotel_guest')assert.ok(age>=20&&age<=40&&!/^(高校|中学|小学)[1-6]年生/.test(job),job);else if(role==='area_lovehotel_service_worker'){assert.ok(age>=20&&age<=40);assert.equal(sex,'f');assert.equal(tag,'adultservice');assert.equal(job,'風俗嬢');assert.equal(state,'work');assert.match(text,/客|サービス/);assert.doesNotMatch(text,/恋人|パートナー|清掃|フロント/)}else{assert.equal(role,'area_lovehotel_staff');assert.match(job,/フロント|清掃/);if(/清掃/.test(job))assert.doesNotMatch(text,/フロント/)}}
+ for(const [role,age,job,text,place,sex,state,tag] of [...r.day.out,...r.night.out]){assert.equal(place,'道玄坂・円山町 ホテル街');if(role==='area_lovehotel_guest')assert.ok(age>=20&&age<=35&&!/^(高校|中学|小学)[1-6]年生/.test(job),job);else if(role==='area_lovehotel_service_worker'){assert.ok(age>=20&&age<=35);assert.equal(sex,'f');assert.equal(tag,'adultservice');assert.equal(job,'風俗嬢');assert.equal(state,'work');assert.match(text,/客|サービス/);assert.doesNotMatch(text,/恋人|パートナー|清掃|フロント/)}else{assert.equal(role,'area_lovehotel_staff');assert.match(job,/フロント|清掃/);if(/清掃/.test(job))assert.doesNotMatch(text,/フロント/)}}
 });
 test('国会議事堂・議員会館・都庁 follow the session calendar, with no single-holder offices',()=>{
  const r=JSON.parse(run(`(()=>{const T=(mo,d,dow,h)=>({y:2026,mo,d,dow,h:Math.floor(h),hf:h,mi:0,rand:false}),c={name:'国会議事堂',civicKind:'parliament',type:'public',subtype:'parliament',area:100000,areaM2:100000},k={...c,name:'衆議院第一議員会館'},to={name:'東京都庁舎 第一本庁舎',civicKind:'government',type:'public',subtype:'government',area:20000,areaM2:20000},region=MAP_DATA.regions.find(r=>r.id==='13101');
@@ -286,4 +286,17 @@ test('中央卸売市場・上野動物園・音楽大学: own people and scenes
  assert.ok(r.toyosu.includes('仲卸業者')&&r.toyosu.includes('市場の買出人'),r.toyosu.join());assert.ok(!r.sunday.includes('仲卸業者'));
  assert.ok(r.zoo>0);assert.equal(r.zooMon,0);
  assert.ok(r.music.filter(x=>/レッスン|ソルフェージュ|合奏|声楽|音楽史|楽譜|練習室/.test(x)).length>=4,r.music.join('\n'));
+});
+
+test('female adult-service jobs and hotel guests cap at 35 and reduce the thirties',()=>{
+ const result=JSON.parse(run(`(()=>{
+  const jobs=JOB_OBJS.filter(j=>['cabaret','adultservice'].includes(j.tag));
+  const checks=jobs.map(j=>({tag:j.tag,at35:jobAgeFactor(j,'f',35),at36:jobAgeFactor(j,'f',36),young:jobAgeFactor(j,'f',25),older:jobAgeFactor(j,'f',30)}));
+  const male=jobAgeFactor(jobs.find(j=>j.tag==='adultservice'),'m',45);
+  const rows=LoveHotelModel.rows({lovehotel:3},{h:22,hf:22,dow:5},(role,label,w,min,max,female,extra)=>({role,min,max,...extra}),{});
+  return JSON.stringify({checks,male,rows:rows.filter(c=>c.role!=='area_lovehotel_staff').map(c=>({role:c.role,max:c.max,bands:c.ageBands}))});
+ })()`));
+ for(const c of result.checks){assert.ok(c.at35>0);assert.equal(c.at36,0);assert.ok(c.older/c.young<.1);}
+ assert.ok(result.male>0);
+ for(const c of result.rows){assert.equal(c.max,35);assert.ok(c.bands.every(b=>b[0]>=20&&b[1]<=35));const total=c.bands.reduce((s,b)=>s+b[2],0),older=c.bands.filter(b=>b[0]>=30).reduce((s,b)=>s+b[2],0);assert.ok(older/total<.07);}
 });

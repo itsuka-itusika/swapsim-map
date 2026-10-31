@@ -27,7 +27,7 @@ function mapPerson(c,t){
  if(c.ageBands)sa.age=bandAge();
  // Hostesses, hosts and sex workers are concentrated in their twenties; past the mid-thirties they are rare.
  // Night-district visitors, restaurant staff and customers also skew young, more so in youth-tagged districts (歌舞伎町, 渋谷, 池袋 ...).
- const youth=(c.area?.tags?.youth||0)>=3,nightBands=c.role==='area_cabaret_worker'&&sa.sex==='f'?[[20,24,10],[25,29,7],[30,34,2],[35,39,.5],[40,45,.1]]:c.role==='area_host_worker'?[[20,24,10],[25,29,6],[30,34,1.5],[35,39,.3]]:c.role==='area_adult_worker'&&sa.sex==='f'?[[20,24,8],[25,29,8],[30,34,3.5],[35,39,1.2],[40,49,.3]]
+ const youth=(c.area?.tags?.youth||0)>=3,nightBands=c.role==='area_cabaret_worker'&&sa.sex==='f'?[[20,24,10],[25,29,7],[30,34,.6],[35,35,.05]]:c.role==='area_host_worker'?[[20,24,10],[25,29,6],[30,34,1.5],[35,39,.3]]:c.role==='area_adult_worker'&&sa.sex==='f'?[[20,24,8],[25,29,8],[30,34,.6],[35,35,.05]]
   :c.role==='area_adult_worker'||c.role==='area_cabaret_worker'?[[20,24,24],[25,29,18],[30,34,13],[35,39,10],[40,44,9],[45,49,8],[50,54,7],[55,59,6]]
   :c.role==='area_night_worker'?[[20,24,24],[25,29,18],[30,34,13],[35,39,10],[40,44,9],[45,49,8],[50,54,7],[55,59,6],[60,64,5]]
   :c.role==='area_night'?(youth?[[20,24,24],[25,29,22],[30,34,16],[35,39,11],[40,44,9],[45,49,7],[50,54,5],[55,59,4],[60,64,2]]:[[20,24,15],[25,29,16],[30,34,14],[35,39,12],[40,44,11],[45,49,10],[50,54,9],[55,59,7],[60,64,6]])
