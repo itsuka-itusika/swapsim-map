@@ -11,6 +11,8 @@ const broadcast=[...JSON.parse(read('map-preview/data/broadcast.json')).faciliti
 for(let f of broadcast){let geoCtx=vm.createContext({});vm.runInContext(read('map-preview/model.js')+';globalThis.model=MapModel;',geoCtx);let r=geoCtx.model.locate(f.xy,data.regions);f.code=r?.id;}
 data.facilities.push(...broadcast);
 data.facilities=data.facilities.map(f=>policyContext.policy.apply(f,policy.records));
+// Large university campuses get a circle of about their own size instead of the shared 120 m (see campus-radius.json).
+{const campuses=JSON.parse(read('map-preview/data/campus-radius.json')).campuses;data.facilities=data.facilities.map(f=>{if(f.kind!=='university')return f;const c=campuses.find(c=>c.name===f.name&&Math.hypot((c.xy[0]-f.xy[0])*111195*Math.cos(f.xy[1]*Math.PI/180),(c.xy[1]-f.xy[1])*111195)<=60);return c?{...f,radius:c.radius}:f})}
 // 大手予備校 are listed as 各種学校 (kind college) in the school data; give them their own kind.
 data.facilities=data.facilities.map(f=>f.kind==='college'&&/予備学校|予備校|河合塾|ゼミナール/.test(f.name)&&!/専門学校|学園/.test(f.name)?{...f,kind:'prep'}:f);
 // Hospitals: beds, department families, emergency roles and type (P04). The footprint grows with the bed count.

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "notes": "Approximate campus sizes for the large university campuses, whose point data all carried the same 120 m circle. The radius is of a circle with about the campus area (本郷 about 56 ha, long north to south, so a slightly wide circle; 駒場 about 30 ha ...); the figures are rough game assumptions from general knowledge, not surveyed or official values. Small city campuses of 4 to 6 ha fit the default circle and are left alone. A record applies to the university point of that name within 60 m of xy.",
+  "campuses": [
+    {"name": "東京大学", "xy": [139.763123, 35.712522], "radius": 460, "label": "本郷"},
+    {"name": "東京大学", "xy": [139.68483, 35.659849], "radius": 310, "label": "駒場"},
+    {"name": "早稲田大学", "xy": [139.72285, 35.709185], "radius": 175, "label": "早稲田"},
+    {"name": "早稲田大学", "xy": [139.718156, 35.70523], "radius": 165, "label": "戸山"},
+    {"name": "早稲田大学", "xy": [139.70602, 35.706039], "radius": 160, "label": "西早稲田"},
+    {"name": "慶應義塾大学", "xy": [139.741992, 35.64924], "radius": 180, "label": "三田"},
+    {"name": "明治大学", "xy": [139.659222, 35.706667], "radius": 160, "label": "和泉"},
+    {"name": "東京工業大学", "xy": [139.684109, 35.604578], "radius": 250, "label": "大岡山"},
+    {"name": "学習院大学", "xy": [139.708825, 35.718815], "radius": 160, "label": "目白"},
+    {"name": "立教大学", "xy": [139.702298, 35.730119], "radius": 150, "label": "池袋"},
+    {"name": "東京理科大学", "xy": [139.864322, 35.771506], "radius": 160, "label": "葛飾"}
+  ]
+}
