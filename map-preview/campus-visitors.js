@@ -8,8 +8,8 @@ const CampusVisitors=(()=>{
  const famous=[[/東京大学/,.3,'redgate'],[/早稲田大学/,.1],[/慶應義塾大学/,.1],[/東京工業大学|東京科学大学/,.05]];
  function rows(f,t){if(f.kind!=='university'||(f.radius||0)<150)return [];let h=t.hf??t.h,we=weekend(t),
   hour=we?(h>=8&&h<18?1:h>=6&&h<8||h>=18&&h<19?.1:0):(h>=9&&h<17?1:h>=7&&h<9||h>=17&&h<19?.03:0);if(!hour)return [];
-  // A weekday: about 8% of the students, more at a bigger campus; a weekend: about 150 at 300 m, as the students thin out.
-  let size=Math.min(1.6,f.radius/300),base=(we?150:120)*size*hour,fam=famous.find(x=>x[0].test(f.name)),tour=fam?fam[1]:.03;
+  // A weekday: about 8% of the students, more at a bigger campus; a weekend: about 90 at 300 m, as the students thin out.
+  let size=Math.min(1.6,f.radius/300),base=(we?90:120)*size*hour,fam=famous.find(x=>x[0].test(f.name)),tour=fam?fam[1]:.03;
   return [{role:'campus_visitor',label:'キャンパスを散歩・見学に来た人',w:base*(1-tour),n:base*(1-tour),min:0,max:89,female:.52,ageBands:[[0,9,10],[10,19,8],[20,39,22],[40,64,30],[65,89,30]],campusVisitor:true},
    {role:'campus_tourist',label:'キャンパスを訪れた観光客',w:base*tour,n:base*tour,min:3,max:84,female:.52,ageBands:[[3,19,12],[20,39,38],[40,64,35],[65,84,15]],campusVisitor:true,inboundGuest:true}]}
  const general=[
