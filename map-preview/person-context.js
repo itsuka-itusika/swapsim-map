@@ -35,6 +35,8 @@ const PersonContext=(()=>{
  // statistics (twenties and thirties dominate); drivers, guards and cleaners skew older; shop, hotel and station staff younger.
  const ROLE_BANDS=[
   [c=>c.role==='area_inbound'||c.inboundGuest,[[3,9,4],[10,19,7],[20,29,27],[30,39,25],[40,49,17],[50,59,12],[60,69,6],[70,79,2]]],
+  // Office workers in the central wards: twenties to fifties, thinner past the late fifties (not a single peak at 40).
+  [c=>c.role==='area_office',[[22,24,7],[25,29,14],[30,34,14],[35,39,14],[40,44,14],[45,49,14],[50,54,11],[55,59,8],[60,64,4]]],
   [c=>c.role==='road_taxi_driver',[[28,39,6],[40,49,13],[50,59,22],[60,69,35],[70,79,24]]],
   [c=>c.role==='road_bus_driver',[[25,34,8],[35,44,20],[45,54,32],[55,65,40]]],
   [c=>/^road_(truck|trailer|dump|delivery)_driver$/.test(c.role),[[22,29,10],[30,39,20],[40,49,30],[50,59,27],[60,69,13]]],

@@ -32,6 +32,8 @@ function mapPerson(c,t){
   :c.role==='area_night_worker'?[[20,24,24],[25,29,18],[30,34,13],[35,39,10],[40,44,9],[45,49,8],[50,54,7],[55,59,6],[60,64,5]]
   :c.role==='area_night'?(youth?[[20,24,24],[25,29,22],[30,34,16],[35,39,11],[40,44,9],[45,49,7],[50,54,5],[55,59,4],[60,64,2]]:[[20,24,15],[25,29,16],[30,34,14],[35,39,12],[40,44,11],[45,49,10],[50,54,9],[55,59,7],[60,64,6]])
   :c.role==='area_adult_customer'?(youth?[[20,24,12],[25,29,17],[30,34,16],[35,39,14],[40,44,12],[45,49,10],[50,54,8],[55,59,6],[60,69,5]]:[[20,24,9],[25,29,14],[30,34,15],[35,39,14],[40,44,13],[45,49,12],[50,54,10],[55,59,7],[60,69,6]]):null;
+ // Late at night in youth districts (渋谷, 新宿, 池袋 ...) people out on the street skew young; hotel guests, staff and drivers keep their own mix.
+ if(!nightBands&&youth&&!c.resident&&((t.hf??t.h)>=21||(t.hf??t.h)<5)){if(['general','area_shopping','area_tourist','urban_visit','rail_passenger','special_passenger','special_station','area_inbound'].includes(c.role)&&rnd()<.45){let b=[[18,24,30],[25,29,26],[30,34,18],[35,39,11],[40,49,10]],v=rnd()*95,x=b.find(q=>(v-=q[2])<0)||b[0];sa.age=x[0]+Math.floor(rnd()*(x[1]-x[0]+1))}}
  if(nightBands){let v=rnd()*nightBands.reduce((s,b)=>s+b[2],0),b=nightBands.find(b=>(v-=b[2])<0)||nightBands[0];sa.age=b[0]+Math.floor(rnd()*(b[1]-b[0]+1))}
  // Jobs and visitor groups whose age profile differs clearly from the resident population (approximate national statistics).
  else if(!c.ageBands&&c.role!=='general'){let bands=PersonContext.roleBands(c);if(bands){bands=bands.map(([a,b,w])=>[Math.max(a,c.min??0),Math.min(b,c.max??99),w]).filter(b=>b[0]<=b[1]);if(bands.length){let v=rnd()*bands.reduce((s,b)=>s+b[2],0),b=bands.find(b=>(v-=b[2])<0)||bands[0];sa.age=b[0]+Math.floor(rnd()*(b[1]-b[0]+1))}}}

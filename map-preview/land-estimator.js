@@ -109,7 +109,7 @@ const LandEstimator=(()=>{
   return out.filter(x=>x.n>1e-12);
  }
  function estimate(profile,t){return redistribute(estimateRaw(profile,t));}
- function sampleResident(c,t,pick,random=Math.random){let sa;for(let i=0;i<24;i++){sa=pick();let w=1;if(c.daytime)w=sa.age>=65?1:sa.age<6?.75:sa.age<23?.15:.4;if(c.subtype==='student')w*=sa.age>=18&&sa.age<=29?1:.4;if(c.subtype==='family')w*=sa.age<15||sa.age>=30&&sa.age<50?1:.65;if(c.subtype==='senior')w*=sa.age>=65?1:.35;if(random()<w)return sa}return sa;}
+ function sampleResident(c,t,pick,random=Math.random){let sa;for(let i=0;i<24;i++){sa=pick();let w=1;if(c.daytime)w=sa.age>=65?1:sa.age<6?.75:sa.age<18?.06:sa.age<23?.15:.4;if(c.subtype==='student')w*=sa.age>=18&&sa.age<=29?1:.4;if(c.subtype==='family')w*=sa.age<15||sa.age>=30&&sa.age<50?1:.65;if(c.subtype==='senior')w*=sa.age>=65?1:.35;if(random()<w)return sa}return sa;}
  return {estimatePopulation,estimateDemographics,estimateOccupations,estimateRaw,redistribute,estimate,timeFactor,sampleResident};
 })();
 if(typeof module!=='undefined')module.exports=LandEstimator;
