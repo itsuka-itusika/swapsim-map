@@ -9,6 +9,8 @@
    flu jab (no illness of their own then), and nurses and doctors give it.
    東京駅 in the holiday rushes (お盆 8-17 August, 年末年始 26 December-4 January, GW 29 April-6 May): travellers
    leave in the first days and come back in the last ones; station staff and shop staff deal with the crowds.
+   ハロウィン: 31 October and the immediately preceding weekend. Costume street scenes are limited to known hubs,
+   with different hours and strengths for 渋谷, 池袋, 川崎, 原宿, 新宿 and 秋葉原. Shares are deliberately modest.
    Shares and hours are game assumptions, not counts. */
 const SeasonalEvents=(()=>{
  const weekend=t=>t.dow===0||t.dow===6||!!t.holiday||(typeof holName==='function'&&!!holName(t));
@@ -26,6 +28,29 @@ const SeasonalEvents=(()=>{
  // Flu jab season: October and November, in clinic hours (weekdays to 18:00, Saturday mornings).
  function flu(t){if(t.mo!==10&&t.mo!==11)return false;let h=t.hf??t.h;if(t.dow===0||t.holiday||(typeof holName==='function'&&holName(t)))return false;return h>=9&&h<(t.dow===6?12.5:18)}
  function obon(t){return (t.mo===7||t.mo===8)&&t.d>=13&&t.d<=16}
+ // Halloween window: 31 October plus the Saturday and Sunday immediately before it (strictly before the 31st).
+ function halloweenDay(t){if(t.mo!==10)return null;let dow31=new Date(Date.UTC(t.y,9,31)).getUTCDay(),prevSun=31-(dow31===0?7:dow31),prevSat=prevSun-1;if(t.d===31)return 'day';if(t.d===prevSat||t.d===prevSun)return 'weekend';return null}
+ const HALLOWEEN_SPOTS=[
+  {key:'shibuya',name:'渋谷',xy:[139.7006,35.6595],radius:950,start:15,end:25,peak:[18,23],p:.13},
+  {key:'ikebukuro',name:'池袋',xy:[139.7111,35.7295],radius:1050,start:10,end:21,peak:[11,18],p:.18,weekendBoost:1.35},
+  {key:'kawasaki',name:'川崎',xy:[139.6974,35.5313],radius:900,start:11,end:22,peak:[13,20],p:.09},
+  {key:'harajuku',name:'原宿',xy:[139.7027,35.6702],radius:750,start:11,end:21,peak:[13,19],p:.075},
+  {key:'shinjuku',name:'新宿',xy:[139.7003,35.6938],radius:950,start:16,end:25,peak:[18,23],p:.06},
+  {key:'akihabara',name:'秋葉原',xy:[139.7731,35.6984],radius:700,start:11,end:21,peak:[13,19],p:.07}
+ ];
+ function halloweenXY(c){return c.landComponent?.sampleXY||c.landComponent?.xy||c.zone?.sampleXY||c.zone?.xy||c.area?.sampleXY||c.area?.xy||c.facility?.xy||c.sampleXY||c.xy||null}
+ function halloweenSpot(c){let xy=halloweenXY(c);if(!xy)return null;let dist=(a,b)=>typeof MapModel!=='undefined'&&MapModel.distance?MapModel.distance(a,b):Math.hypot((a[0]-b[0])*90000,(a[1]-b[1])*111000);let hits=HALLOWEEN_SPOTS.map(s=>[s,dist(xy,s.xy)]).filter(x=>x[1]<=x[0].radius).sort((a,b)=>a[1]-b[1]);return hits.length?{...hits[0][0],distance:hits[0][1]}:null}
+ function halloweenChance(c,P,t,spot,kind){let h=t.hf??t.h;if(h<spot.start||h>=spot.end)return 0;
+  // Do not turn people who are clearly inside a specific facility or at home/work into street revellers.
+  let streetRole=['general','area_shopping','area_tourist','area_inbound','area_night','area_student','urban_visit','rail_passenger','special_passenger'].includes(c.role);
+  if(!streetRole||c.resident||P.sit?.state==='work'||P.hb?.bed)return 0;
+  let age=P.age<10?.18:P.age<13?.35:P.age<18?.72:P.age<30?1:P.age<40?.72:P.age<50?.38:P.age<60?.2:.07;
+  let hour=h>=spot.peak[0]&&h<spot.peak[1]?1:.55,day=kind==='weekend'?(spot.weekendBoost||1):1;
+  // 池袋 is mainly a daytime cosplay-festival destination on the preceding weekend; 31 October itself is weaker.
+  if(spot.key==='ikebukuro'&&kind==='day')day=.45;
+  // Shibuya still attracts costumed visitors, but recent crowd-control measures mean it should not dominate every draw.
+  if(spot.key==='shibuya'&&kind==='weekend')day*=.8;
+  return Math.min(.28,spot.p*age*hour*day)}
  // 一般参賀: appearance times (hours) and the hours the gates take people in.
  function sanga(t){if(t.mo===1&&t.d===2)return {kind:'new',name:'新年の一般参賀',shows:[10+10/60,11,11+50/60,13.5,14+20/60],open:9.5,close:14+10/60,people:60000};
   if(t.mo===2&&t.d===23)return {kind:'birthday',name:'天皇誕生日の一般参賀',shows:[10+20/60,11+5/60,11+50/60],open:9.5,close:11+20/60,people:27000};return null}
@@ -73,7 +98,13 @@ const SeasonalEvents=(()=>{
   fluTeen:['学校の帰りに、インフルエンザの予防接種を受けに寄ったところでした'],
   fluNurse:['予防接種の問診票を確かめ、腕に消毒綿を当てているところでした','インフルエンザワクチンの在庫を確かめ、午後の予約の人数と照らし合わせているところでした','予防接種を終えた人に、今日は激しい運動を控えるよう伝えているところでした'],
   fluDoctor:['予防接種の問診票に目を通し、接種してよいか一人ずつ確かめているところでした','インフルエンザの予防接種の前に、子どもの胸に聴診器を当てているところでした'],
-  sangaGuard:['{e}の参入者を、手荷物検査の列へ誘導しているところでした','{e}で、東庭に向かう人の流れが詰まらないよう声をかけているところでした','{e}で、長和殿の前に集まった人の様子を見渡しているところでした']
+  sangaGuard:['{e}の参入者を、手荷物検査の列へ誘導しているところでした','{e}で、東庭に向かう人の流れが詰まらないよう声をかけているところでした','{e}で、長和殿の前に集まった人の様子を見渡しているところでした'],
+  halloweenWalk:['ハロウィンの仮装をして、友人と人混みの中を歩いているところでした','ハロウィンの衣装の小物を直しながら、仮装した仲間と街を歩いているところでした','仮装姿で、周囲の人の流れに合わせながら街を歩いているところでした','ハロウィンの仮装姿で友人と合流し、次に行く場所を相談しながら歩き始めたところでした'],
+  halloweenPhoto:['仮装姿の友人と並び、スマートフォンで写真を撮り合っているところでした','ハロウィンの仮装をして、通行の邪魔にならない場所で記念写真を撮っているところでした','衣装のポーズを決め、友人に何枚か写真を撮ってもらっているところでした'],
+  halloweenEvent:['ハロウィンの仮装姿で、コスプレイベントの会場へ向かって歩いているところでした','仮装した参加者たちと一緒に、撮影できる場所を探しながら歩いているところでした','コスプレイベントを回りながら、次の撮影場所へ移動しているところでした'],
+  halloweenNight:['ハロウィンの仮装をして、友人と飲食店のイベントへ向かっているところでした','仮装姿の仲間と、次に入る店を相談しながら繁華街を歩いているところでした'],
+  halloweenKid:['ハロウィンの衣装を着て、家族と街の飾り付けを眺めながら歩いているところでした','仮装姿で家族と歩き、ハロウィンの飾りの前で写真を撮ってもらっているところでした','ハロウィンの衣装で、家族と商業施設のイベントへ向かっているところでした'],
+  halloweenLate:['仮装のまま駅へ向かい、友人と今日撮った写真を見返しながら歩いているところでした','ハロウィンの仮装姿で、帰りの電車に乗るため駅へ向かっているところでした']
  };
  const pick=a=>a[Math.floor(rnd()*a.length)];
  function apply(c,P,t){let r=c.role,text=null,label=null;
@@ -98,7 +129,16 @@ const SeasonalEvents=(()=>{
     P.hospCase={kind:'check',dept:null};label='インフルエンザの予防接種';P.mapSituation=text;P.visitLabel=label;P.sit={...P.sit,text,state:'off',stateLabel:label,source:'seasonal-event',p:1};return true}
    if(k!=='outpatient'&&rnd()<(k==='nurse'?.25:.2)){text=pick(k==='nurse'?scenes.fluNurse:scenes.fluDoctor.filter(x=>H.type==='child'||!/子ども/.test(x)||rnd()<.5));P.mapSituation=text;P.sit={...P.sit,text,source:'seasonal-event'};return true}
    return false}
+  // Costume street scenes: after facility-specific seasonal overrides, only for people plausibly moving through the street/rail area.
+  let hk=halloweenDay(t),hs=hk&&halloweenSpot(c),hp=hs?halloweenChance(c,P,t,hs,hk):0;
+  if(hp&&rnd()<hp){let h=t.hf??t.h,pool;
+   if(P.age<13)pool=scenes.halloweenKid;
+   else if(hs.key==='ikebukuro'&&hk==='weekend'&&h<19)pool=[...scenes.halloweenEvent,...scenes.halloweenPhoto,...scenes.halloweenWalk];
+   else if(h>=22)pool=[...scenes.halloweenLate,...scenes.halloweenWalk];
+   else if(P.age>=20&&h>=18&&rnd()<.3)pool=[...scenes.halloweenNight,...scenes.halloweenWalk,...scenes.halloweenPhoto];
+   else pool=[...scenes.halloweenWalk,...scenes.halloweenPhoto];
+   text=pick(pool);label='ハロウィンの仮装で街を歩いている';P.mapSituation=text;P.visitLabel=`${hs.name}のハロウィン`;P.sit={...P.sit,text,state:'off',stateLabel:label,source:'seasonal-event',p:hp};return true}
   if(!text)return false;P.mapSituation=text;P.visitLabel=label;P.sit={...P.sit,text,state:'off',stateLabel:label,source:'seasonal-event',p:1};return true}
- return {shichigosan,higan,obon,flu,travel,sanga,sangaRows,equinox,shichigosanRows,scenes,apply};
+ return {shichigosan,higan,obon,flu,travel,halloweenDay,halloweenSpot,halloweenChance,sanga,sangaRows,equinox,shichigosanRows,scenes,apply};
 })();
 if(typeof module!=='undefined')module.exports=SeasonalEvents;
