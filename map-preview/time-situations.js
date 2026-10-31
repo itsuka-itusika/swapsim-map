@@ -72,6 +72,23 @@ const TimeSituations=(()=>{
   // proportion, so a rare line keeps its rarity.
   if(pk&&pk.tot<3&&rnd()>pk.tot/3)return null;return pk?fillText(textOf(pk.e),P):null;
  }
+// The map's own supplement pools hold only two or three lines each, so every student at one campus drew the same few. These
+ // add lines by school stage (elem, teen, college) for the phases that were thinnest, and are merged into the supplement
+ // pool of that phase. Lines are for the people at school (no home, job or errand elsewhere).
+ const MORE={
+  teen:{
+   school_weekend:['体育館で、部活の練習試合に向けてウォームアップをしているところでした','グラウンドの脇で、部活の仲間と水筒の麦茶を回し飲みしているところでした','休日の教室で、補習の問題を解いているところでした','音楽室で、次のコンクールの課題曲を合わせているところでした','美術室で、文化祭に出す絵の背景を塗っているところでした','図書室の自習席で、来週のテストの範囲を見直しているところでした','部室で、次の大会のメンバー表を見ながら先輩と話しているところでした','校庭で、友達と部活の休憩時間にスマートフォンの画面を見せ合っているところでした','休日の校舎の廊下で、顧問の先生に練習メニューを確かめているところでした','学校のプールの脇で、泳ぐ順番を待ちながらゴーグルを調整しているところでした'],
+   school_evening:['部活を終え、部室で着替えながら今日の練習を振り返っているところでした','夕方の教室で、友達と宿題の答えを見せ合っているところでした','下校のチャイムが鳴り、校門で友達と別れの挨拶をしているところでした','居残りの自習室で、明日の小テストの範囲を確かめているところでした','部活のあとの水飲み場で、顔を洗って汗を流しているところでした']
+  },
+  college:{
+   school_weekend:['休日の図書館の自習席で、レポートの参考文献を探しているところでした','サークルの部室で、次の大会の予定を先輩と話し合っているところでした','学園祭の準備で、模擬店の看板の絵を描いているところでした','体育会の練習のあと、グラウンドの脇で水を飲んでいるところでした','休日の研究室で、ゼミの資料をノートパソコンにまとめているところでした','キャンパスのベンチで、友人と次のゼミの発表の分担を決めているところでした','生協の売店で、教科書の売り場を見て回っているところでした','休日のキャンパスの芝生で、友人と持ち寄ったお菓子を広げているところでした','学内の自習室で、資格試験の過去問を解いているところでした','サークルの練習室で、本番前の通し練習の録音を聞き返しているところでした','休日の講義棟で、補講の教室の場所を掲示板で確かめているところでした','語学の課題のために、図書館でDVDを借りようとしているところでした'],
+   school_evening:['夜の図書館で、閉館までに課題を仕上げようと画面に向かっているところでした','研究室で、夜遅くまで論文の草稿に目を通しているところでした','サークルの練習を終え、部室の鍵を返しに向かっているところでした','学食の閉店間際に、残り少ない定食を選んでいるところでした','夜のキャンパスで、友人と今日の講義のノートを見せ合っているところでした','最終の講義を終え、帰りの電車の時刻を確かめているところでした','自習室で、明日の小テストの範囲をもう一度読み返しているところでした','夜の講義棟の前で、サークルの飲み会の集合場所を友人と決めているところでした'],
+   college_after:['サークルの部室で、新入生のための企画書をまとめているところでした','キャンパスの中庭で、友人と学園祭の出し物の相談をしているところでした','研究室で、先輩に資料の探し方を教わっているところでした','図書館のグループ学習室で、ゼミ発表のスライドを作っているところでした','学内のカフェで、友人と就活の情報を交換しているところでした','体育館で、サークルの練習の準備をしているところでした','講義棟の掲示板で、休講の知らせを見つけて肩を落としたところでした','生協で、新しい教科書を手に取って値段を確かめているところでした'],
+   college_arrival:['キャンパスの門をくぐりながら、友人に「間に合った」とメッセージを送ったところでした','朝の学食で、パンとコーヒーを買って講義室へ向かっているところでした','掲示板で、休講の知らせが出ていないか確かめているところでした','自転車を駐輪場に停めて、遅れを取り戻そうと小走りしているところでした','講義室で、前の席に座ろうか後ろにしようか迷っているところでした'],
+   college_lunch:['学食の券売機の前で、メニューを見比べて決めかねているところでした','中庭のベンチで、買ってきたお弁当を友人と広げているところでした','サークルの仲間と、部室でカップ麺をすすっているところでした','生協で、おにぎりと飲み物を手に会計の列に並んでいるところでした','昼休みの図書館で、午後の講義の予習をしているところでした','食堂の窓際の席で、午後の講義の持ち物を確かめているところでした'],
+   college_class:['演習の授業で、配られたプリントの問題を解きはじめたところでした','語学の授業で、隣の席の人とペアで会話練習をしているところでした','教授の板書を、ノートの余白まで使って書き写しているところでした','演習の授業で、グループに分かれて課題の分担を決めているところでした','講義の途中で、スライドの一枚前に戻して説明し直してもらっているところでした','体育の授業で、準備運動のあとにコートへ向かっているところでした','大教室で、出席登録の画面を慌てて開いているところでした','ゼミの輪読で、自分の担当のページを読み上げているところでした']
+  }
+ };
  // Schools with their own daily life. Matched by the facility name in the school dataset (東京芸術大学 is spelled with 芸 there).
  // Medical and science/engineering students. Medical and technical universities get these scenes for all their
  // students; at a university with other faculties only its medical or engineering campus does (at: [lon, lat],
@@ -144,7 +161,7 @@ const TimeSituations=(()=>{
   // Teachers at a school with its own daily life get its lesson scenes in working hours.
   if(c.role==='teacher'){const s=own.find(x=>x.teacher);return s&&/_work$/.test(k)?s.teacher:null}
   if(c.role!=='student')return null;let s=own.find(x=>x.arrival),phase=/_class$/.test(k)?'class':/_lunch$/.test(k)?'lunch':/_after$/.test(k)?'after':k==='school_break'?'break':/arrival$/.test(k)?'arrival':null;if(!s||!phase)return null;return [...s[phase],...(s.season&&['class','after'].includes(phase)?s.season(t):[])]}
- function apply(c,P,t){let k=key(c,P,t);if(!k)return false;if(c.role==='general'&&P.sit?.text&&!/会社で|職場で|通勤|出勤|退勤|学校で|授業中/.test(P.sit.text))return false;let pool=pools[k];if(!pool?.length)throw Error('Missing time situation '+k);let own=schoolPool(c,k,t);if(own&&rnd()<.75)pool=own;let candidates=pool.filter(x=>x!==last.get(k));let text=pool!==own&&rnd()<.5?reuse(k,c,P,t):null,source=text?'swapsim':pool===own?'school-special':'supplement';if(!text)text=candidates[Math.floor(rnd()*candidates.length)]||pool[0];last.set(k,text);P.mapSituation=text;P.sit={text,state:k==='home_sleep'||k==='facility_sleep'?'sleep':k.includes('lunch')||k==='facility_meal'?'off':c.role==='student'||c.role==='area_student'?'school':c.role==='general'?P.sit.state:c.role==='resident'||c.role==='patient'?'off':'work',stateLabel:c.label,p:1,source};P.timeSituationKey=k;return true}
+ function apply(c,P,t){let k=key(c,P,t);if(!k)return false;if(c.role==='general'&&P.sit?.text&&!/会社で|職場で|通勤|出勤|退勤|学校で|授業中/.test(P.sit.text))return false;let pool=pools[k];if(!pool?.length)throw Error('Missing time situation '+k);{let kind=c.facility?.kind,st=['university','college'].includes(kind)&&/^college|^school_(weekend|evening)$/.test(k)?'college':['middle','high'].includes(kind)&&/^school_(weekend|evening)$/.test(k)?'teen':null,more=st&&MORE[st][k];if(more)pool=[...pool,...more]}let own=schoolPool(c,k,t);if(own&&rnd()<.75)pool=own;let candidates=pool.filter(x=>x!==last.get(k));let text=pool!==own&&rnd()<.5?reuse(k,c,P,t):null,source=text?'swapsim':pool===own?'school-special':'supplement';if(!text)text=candidates[Math.floor(rnd()*candidates.length)]||pool[0];last.set(k,text);P.mapSituation=text;P.sit={text,state:k==='home_sleep'||k==='facility_sleep'?'sleep':k.includes('lunch')||k==='facility_meal'?'off':c.role==='student'||c.role==='area_student'?'school':c.role==='general'?P.sit.state:c.role==='resident'||c.role==='patient'?'off':'work',stateLabel:c.label,p:1,source};P.timeSituationKey=k;return true}
  return {configure,studentPhase,homeStudent,key,apply,homeCompatible,schoolPool,reuse};
 })();
 if(typeof module!=='undefined')module.exports=TimeSituations;
