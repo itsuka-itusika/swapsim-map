@@ -34,6 +34,11 @@ const PersonContext=(()=>{
  // Age profiles [min, max, weight] for roles that differ from the census mix. Visitors from abroad follow arrival
  // statistics (twenties and thirties dominate); drivers, guards and cleaners skew older; shop, hotel and station staff younger.
  const ROLE_BANDS=[
+  // Hotel guests: in youth districts (渋谷, 新宿, 池袋 ...) they are mostly in their twenties and thirties.
+  [c=>c.inboundGuest&&c.youthArea,[[18,24,22],[25,29,27],[30,39,26],[40,49,14],[50,64,11]]],
+  [c=>c.role==='place_hotel_leisure'&&c.youthArea,[[18,24,26],[25,29,26],[30,34,18],[35,44,14],[45,59,12],[60,70,4]]],
+  [c=>c.role==='place_hotel_leisure',[[6,14,6],[15,24,12],[25,34,22],[35,44,18],[45,54,16],[55,64,14],[65,85,12]]],
+  [c=>c.role==='place_hotel_business',[[24,29,14],[30,39,24],[40,49,26],[50,59,24],[60,64,12]]],
   [c=>c.role==='area_inbound'||c.inboundGuest,[[3,9,4],[10,19,7],[20,29,27],[30,39,25],[40,49,17],[50,59,12],[60,69,6],[70,79,2]]],
   // Office workers in the central wards: twenties to fifties, thinner past the late fifties (not a single peak at 40).
   [c=>c.role==='area_office',[[22,24,7],[25,29,14],[30,34,14],[35,39,14],[40,44,14],[45,49,14],[50,54,11],[55,59,8],[60,64,4]]],
