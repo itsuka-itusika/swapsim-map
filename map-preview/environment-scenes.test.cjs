@@ -300,3 +300,9 @@ test('female adult-service jobs and hotel guests cap at 35 and reduce the thirti
  assert.ok(result.male>0);
  for(const c of result.rows){assert.equal(c.max,35);assert.ok(c.bands.every(b=>b[0]>=20&&b[1]<=35));const total=c.bands.reduce((s,b)=>s+b[2],0),older=c.bands.filter(b=>b[0]>=30).reduce((s,b)=>s+b[2],0);assert.ok(older/total<.07);}
 });
+test('cinema audiences stay a small share of the busy districts around them',()=>{
+ // Saturday afternoon, the default 300 m circle: before the audience was scaled, cinemas took 30-45% of these districts.
+ const r=JSON.parse(run(`(()=>{let t={y:2026,mo:10,d:31,dow:6,h:15,hf:15.3,mi:18,rand:false},out={};for(const name of ['歌舞伎町','池袋東口・乙女ロード','新宿ゴールデン街','サンシャイン60通り']){let a=MAP_DATA.areas.find(x=>x.name===name),parts=LandEstimator.estimate(LandProfile.create(envContext,a.xy,300),t),tot=parts.reduce((s,c)=>s+c.n,0);out[name]=parts.filter(c=>c.role==='place_cinema_guest').reduce((s,c)=>s+c.n,0)/tot}return JSON.stringify(out)})()`));
+ for(const [name,share] of Object.entries(r))assert.ok(share<.1,name+' '+share);
+ assert.ok(r['歌舞伎町']>.005,String(r['歌舞伎町']));
+});
