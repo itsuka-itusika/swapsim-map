@@ -75,20 +75,18 @@ const LandEstimator=(()=>{
  const housing=c.type==='residential'?(c.subtype==='family'&&c.precision==='polygon'?.55:c.subtype==='apartments'?1.25:c.housingWeight||1):1;
  return density*c.areaM2/1e6*factor*traffic*housing*(['commercial','office','mall'].includes(c.type)?hubFactor(c,profile):1);
  }
- // PROTOTYPE (opt-in): busy hubs hold several times the generic commercial density. Station tier and the district's
- // strongest shopping/night/office tag stand in for real footfall, which the data does not carry.
- const hub={on:false};
- function hubFactor(c,profile){if(!hub.on)return 1;let q=c.sampleXY||c.xy||profile.point,s=0;
-  // Ridership mode: arrivals (half the daily boardings+alightings) x share who stay nearby x hours stayed / 12 active hours,
-  // spread over a tent-shaped catchment of radius R (its volume is πR²/3).
-  if(hub.riders){if(!hub.index)hub.index=new S.Index(hub.riders.map(r=>({xy:[r[0],r[1]],v:r[2],bbox:S.box([r[0],r[1]],1)})));const R=hub.R||800,k=.5*(hub.stay??.4)*(hub.dwell??2)/12*3/(Math.PI*R*R)*1e6;let extra=0;for(const r of hub.index.query(S.box(q,R))){let d=M.distance(q,r.xy);if(d<R)extra+=r.v*k*(1-d/R)}return Math.min(hub.cap||8,1+extra/14000)}
+ // Busy hubs hold several times the generic commercial density (14,000/km² stands for an ordinary shopping street;
+ // Shinjuku or Ginza draw five or more times that by day). The data carries no footfall or ridership, so station
+ // tier and the district's strongest shopping/night/office tag stand in for it.
+ function hubFactor(c,profile){let q=c.sampleXY||c.xy||profile.point,s=0;
   for(const f of profile.context.facilities.query(S.box(q,600)))if(f.kind==='station'){let d=M.distance(q,f.xy);if(d<600)s+=(f.capacity>=1800?4:f.lines?.length>=3?2:f.lines?.length>=2?1:.6)*(1-d/600)}
   let tag=c.areaTag?.tags||{},area=Math.max(tag.shopping||0,tag.night||0,tag.office||0)/4,f=1+Math.min(3,s)+1.5*Math.min(1,area);
-  // Neighbourhood shopping streets (localStreet) draw locals on foot, not hub crowds: the multiplier fades back to 1 toward their centre.
-  let local=0;for(const a of profile.context.areas.query(S.box(q,1)))if(a.localStreet)local=Math.max(local,1-(M.distance(q,a.xy)/a.radius)**2);
+  // Neighbourhood shopping streets (localStreet) draw locals on foot, not hub crowds: the multiplier fades back to 1
+  // toward their centre, over streetRadius when the street's pull reaches past its own district circle.
+  let local=0;for(const a of profile.context.areas.query(S.box(q,1)))if(a.localStreet){let r=a.streetRadius||a.radius;local=Math.max(local,1-(M.distance(q,a.xy)/r)**2)}
   return 1+(f-1)*(1-Math.min(1,Math.max(0,local)))}
  function estimateDemographics(c,occupation,t){let d={min:occupation.min,max:occupation.max,female:occupation.female};if(occupation.resident){d.resident=true;d.censusCode=c.region.id;d.subtype=c.subtype;d.daytime=t.h>=9&&t.h<17&&!weekend(t)}if(c.type==='green'&&c.subtype==='playground'&&occupation.role==='green_walk')d.ageBands=[[0,11,.5],[25,49,.45],[60,79,.05]];if(c.subtype==='fashion'&&occupation.role==='area_shopping')d.female=.62;return d;}
- function estimateRaw(profile,t){let out=[];for(let c of profile.parts){let n=estimatePopulation(c,t,profile),roles=estimateOccupations(c,t),mass=roles.reduce((s,z)=>s+z.w,0);if(!n||!mass)continue;let mixHub=c.type==='mixed'?hubFactor(c,profile):1;for(let z of roles){if(z.w<=0)continue;out.push({...z,...estimateDemographics(c,z,t),n:n*z.w/mass*(z.resident?1:mixHub),region:c.region,landType:c.type,subtype:c.subtype,evidence:c.source,precision:c.precision,landComponent:c})}}
+ function estimateRaw(profile,t){let out=[];for(let c of profile.parts){let n=estimatePopulation(c,t,profile),roles=estimateOccupations(c,t),mass=roles.reduce((s,z)=>s+z.w,0);if(!n||!mass)continue;let hub=hubFactor(c,profile),mixHub=c.type==='mixed'?hub:1;for(let z of roles){if(z.w<=0)continue;out.push({...z,...estimateDemographics(c,z,t),n:n*z.w/mass*(z.resident?1:mixHub),hubScale:hub,region:c.region,landType:c.type,subtype:c.subtype,evidence:c.source,precision:c.precision,landComponent:c})}}
   // Drivers and passengers on expressways and major roads inside the circle, on top of the land use beneath.
   if(typeof RoadModel!=='undefined')out.push(...RoadModel.rows(profile,t));
   // People aboard trains on the tracks inside the circle (rarely; a little more at rush hours).
@@ -102,9 +100,10 @@ const LandEstimator=(()=>{
    const donors=out.filter(x=>donorTest(x)&&x.n>0),targets=out.filter(x=>targetTest(x)&&x.n>0);
    if(!donors.length||!targets.length)return;
    let requested=donors.reduce((s,x)=>s+x.n,0)*fraction;
-   // A facility can be split into several spatial fragments; share one cap across them.
-   const groups=new Map();for(const x of targets){let c=x.landComponent||{},key=c.id||x.facility?.id||x.zone?.id||x;let g=groups.get(key);if(!g){g={members:[],base:0};groups.set(key,g)}g.members.push({row:x,base:x.n});g.base+=x.n}
-   let active=[...groups.values()].map(g=>({...g,capacity:Math.min(perFacilityCap,Math.max(3,g.base*capMultiplier)),weight:Math.sqrt(g.base)}));
+   // A facility can be split into several spatial fragments; share one cap across them. The cap grows with the
+   // district's hub multiplier, since the crowd it draws from does.
+   const groups=new Map();for(const x of targets){let c=x.landComponent||{},key=c.id||x.facility?.id||x.zone?.id||x;let g=groups.get(key);if(!g){g={members:[],base:0,hub:1};groups.set(key,g)}g.members.push({row:x,base:x.n});g.base+=x.n;g.hub=Math.max(g.hub,x.hubScale||1)}
+   let active=[...groups.values()].map(g=>({...g,capacity:Math.min(perFacilityCap*g.hub,Math.max(3,g.base*capMultiplier)),weight:Math.sqrt(g.base)}));
    let amount=Math.min(requested,active.reduce((s,g)=>s+g.capacity,0));if(amount<=0)return;
    const demand=amount;
    while(amount>1e-8&&active.length){const weights=active.reduce((s,g)=>s+g.weight,0);let paid=0;for(const g of active){let add=Math.min(g.capacity,amount*g.weight/weights);for(const x of g.members)x.row.n+=add*x.base/g.base;g.capacity-=add;paid+=add}amount-=paid;active=active.filter(g=>g.capacity>1e-8);if(paid<1e-8)break}
@@ -122,6 +121,6 @@ const LandEstimator=(()=>{
  }
  function estimate(profile,t){return redistribute(estimateRaw(profile,t));}
  function sampleResident(c,t,pick,random=Math.random){let sa;for(let i=0;i<24;i++){sa=pick();let w=1;if(c.daytime)w=sa.age>=65?1:sa.age<6?.75:sa.age<18?.06:sa.age<23?.15:.4;if(c.subtype==='student')w*=sa.age>=18&&sa.age<=29?1:.4;if(c.subtype==='family')w*=sa.age<15||sa.age>=30&&sa.age<50?1:.65;if(c.subtype==='senior')w*=sa.age>=65?1:.35;if(random()<w)return sa}return sa;}
- return {hub,hubFactor,estimatePopulation,estimateDemographics,estimateOccupations,estimateRaw,redistribute,estimate,timeFactor,sampleResident};
+ return {hubFactor,estimatePopulation,estimateDemographics,estimateOccupations,estimateRaw,redistribute,estimate,timeFactor,sampleResident};
 })();
 if(typeof module!=='undefined')module.exports=LandEstimator;
