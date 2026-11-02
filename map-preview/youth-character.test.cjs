@@ -25,3 +25,10 @@ test('adult and senior character lines follow age, sex, place and hour; night-ou
  assert.ok(!r.shop20.some(x=>x[5]==='night'));assert.ok(r.night21.length&&r.night21.every(x=>x[5]==='night'));
  assert.ok(r.senior.length&&r.senior.every(x=>x[4]==='senior'&&x[1]!=='f'));assert.equal(r.young.length,0);
 });
+test('married couples at home late at night sometimes share an intimate night, implied, only with a spouse at home',()=>{
+ const r=JSON.parse(run(`(()=>{const P=(age,sex,mar,members)=>({age,sex,household:{mar},familyContext:{members}}),T=(h,dow)=>({hf:h,h:Math.floor(h),dow});
+  return JSON.stringify({young:AdultCharacter.couple({},P(30,'m','married',['本人','妻']),T(23,5)),settled:AdultCharacter.couple({},P(55,'f','married',['本人','夫']),T(22,3)),day:AdultCharacter.couple({},P(30,'m','married',['本人','妻']),T(15,6)),single:AdultCharacter.couple({},P(30,'m','single',['本人']),T(23,5)),away:AdultCharacter.couple({},P(30,'m','married',['本人','長男']),T(23,5)),old:AdultCharacter.couple({},P(80,'m','married',['本人','妻']),T(22,3))})})()`));
+ assert.equal(r.young.spouse,'妻');assert.ok(r.young.share>r.settled.share);assert.equal(r.settled.spouse,'夫');
+ assert.equal(r.day,null);assert.equal(r.single,null);assert.equal(r.away,null);assert.equal(r.old,null);
+ for(const t of [...r.young.pool,...r.settled.pool])assert.ok(!/〈/.test(t.replace(/〈配偶者〉/g,'')));
+});

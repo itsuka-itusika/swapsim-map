@@ -77,9 +77,32 @@ const AdultCharacter=(()=>{
   // Night-out lines (bars, snacks, a third round) only in night districts, and only those there.
   if(place==='out')lines=lines.filter(x=>(x[5]==='night')===(c.role==='area_night'));
   return lines.filter(([,sex,from,to,k])=>(!sex||sex===P.sex)&&h>=from&&h<to&&w[k]).map(x=>x[0])}
- function apply(c,P,t,random=typeof rnd==='function'?rnd:Math.random){let s=P.sit;if(!s||s.state==='sleep'||!KEEP.has(s.source)||/デート中|恋人と過ごしている/.test(s.stateLabel||''))return false;
+ // Married couples at home late at night: a few of them spend the night together, hinted at and never spelt out. Young
+ // couples (22-39) more often than settled ones (40-74), and more on the night before a day off. 〈配偶者〉 becomes 妻 or 夫.
+ const COUPLE={young:[
+  '寝室の明かりをいつもより早く落とし、夫婦でひとつのベッドに潜り込んでいるところでした',
+  'ベッドの上で〈配偶者〉と肩を寄せ合い、声を潜めて甘い時間を過ごしているところでした',
+  '寝室に鍵をかけ、誰にも邪魔されない夫婦水入らずの夜を楽しんでいるところでした',
+  'ひとつの毛布に夫婦でくるまり、少し火照った顔で仲睦まじく語り合っているところでした',
+  '少し乱れたベッドの上で、〈配偶者〉と寄り添いながら幸せそうに息を整えているところでした'],
+  settled:[
+  '晩酌を早めに切り上げ、夫婦で目配せをして寝室のドアを閉めたところでした',
+  '常夜灯のほのかな明かりの下、夫婦でひとつの布団に入って親密な時間を過ごしているところでした',
+  '静まり返った寝室で、長年連れ添った〈配偶者〉と温もりを分け合っているところでした',
+  '夫婦の特別な時間を終え、隣でまどろむ〈配偶者〉の掛け布団をそっと直しているところでした',
+  'ひとつの枕を分け合いながら、〈配偶者〉と手を繋いで穏やかな夜の余韻に浸っているところでした']};
+ function couple(c,P,t){let H=P.household,members=P.familyContext?.members||[],h=t.hf??t.h;
+  if(H?.mar!=='married'||!members.some(x=>x==='妻'||x==='夫')||P.age<22||P.age>74)return null;
+  let young=P.age<40,night=young?h>=21.5||h<1:h>=21||h<.5;if(!night)return null;
+  // The night before a day off: Friday and Saturday evenings, or the small hours of Saturday and Sunday.
+  let eve=h>=12?t.dow===5||t.dow===6:t.dow===6||t.dow===0,share=(young?.04:.015)*(eve?2:1);
+  return {pool:COUPLE[young?'young':'settled'],share,spouse:P.sex==='f'?'夫':'妻'}}
+ function apply(c,P,t,random=typeof rnd==='function'?rnd:Math.random){let s=P.sit;
+  if(s&&KEEP.has(s.source)&&!/デート中|恋人と過ごしている/.test(s.stateLabel||'')&&(c.resident||c.role==='general')&&typeof PlaceLabel!=='undefined'&&(s.state==='sleep'||PlaceLabel.kind(c,P)==='自宅')){let k=couple(c,P,t);
+   if(k&&random()<k.share){let text=k.pool[Math.floor(random()*k.pool.length)].replace(/〈配偶者〉/g,k.spouse);P.mapSituation=text;P.sit={...s,text,state:'off',stateLabel:'夫婦で過ごしている',source:'adult-character'};return true}}
+if(!s||s.state==='sleep'||!KEEP.has(s.source)||/デート中|恋人と過ごしている/.test(s.stateLabel||''))return false;
   let place=where(c,P),pool=candidates(c,P,t);if(!pool.length||random()>=SHARE[place])return false;let text=pool[Math.floor(random()*pool.length)];P.mapSituation=text;
   let stateLabel=place==='home'&&typeof actLabel==='function'?actLabel(text,P.occ?.group):s.stateLabel;P.sit={...s,text,stateLabel,source:'adult-character'};return true}
- return {WORK,HOME,OUT,candidates,apply};
+ return {WORK,HOME,OUT,COUPLE,couple,candidates,apply};
 })();
 if(typeof module!=='undefined')module.exports=AdultCharacter;
