@@ -21,3 +21,16 @@ test('festivals close in the evening and 駒場祭 runs on the holiday',()=>{
  const r=JSON.parse(run(`JSON.stringify({night:at(...WASEDA,2026,11,7,6,21),komaba:at('東京大学',[139.6848,35.6598],2026,11,23,1,15,true)})`));
  assert.equal(r.night.visitors+r.night.students,0);assert.ok(r.komaba.visitors>.3);
 });
+test('school festivals: the whole school takes part, middle schools share the high school festival, visitors are families and friends',()=>{
+ const r=JSON.parse(run(`(()=>{const at=(name,mo,d,dow,h)=>{let f=MAP_DATA.facilities.find(x=>x.name===name),t={y:2026,mo,d,dow,h:Math.floor(h),hf:h,mi:0,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,f.xy,100),t),own=parts.filter(c=>c.facility===f||c.facility?.id===f.id);
+  return {fest:own.filter(c=>c.schoolFestival&&!c.festivalPrep).reduce((s,c)=>s+c.n,0),prep:own.filter(c=>c.festivalPrep).reduce((s,c)=>s+c.n,0),plain:own.filter(c=>c.role==='student'&&!c.schoolFestival).reduce((s,c)=>s+c.n,0),
+   people:own.filter(c=>c.schoolFestival&&c.n>0).flatMap(c=>Array.from({length:30},()=>{let P=mapPerson({...c,roleP:.01},t);return [c.role,P.age,P.occ.label,P.sit.stateLabel,P.sit.text]}))}};
+  return JSON.stringify({high:at('開成高等学校',9,19,6,11),middle:at('開成中学校',9,19,6,11),prep:at('開成高等学校',9,18,5,16),plain:at('開成高等学校',9,26,6,11),matched:MAP_DATA.facilities.filter(f=>CampusFestival.schoolFestival(f)).length})})()`));
+ assert.ok(r.matched>200,String(r.matched));
+ assert.ok(r.high.fest>500&&r.middle.fest>500);assert.equal(r.plain.fest,0);assert.ok(r.prep.prep>0&&r.prep.fest===0);
+ const pupils=[...r.high.people,...r.middle.people].filter(p=>p[0]==='student');assert.ok(pupils.length);
+ assert.ok(r.high.people.filter(p=>p[0]==='student').every(p=>/^高校/.test(p[2])&&p[3]==='文化祭に参加している生徒'));
+ assert.ok(r.middle.people.filter(p=>p[0]==='student').every(p=>/^中学/.test(p[2])));
+ const visitors=[...r.high.people,...r.middle.people].filter(p=>p[0]==='school_festival_visitor');assert.ok(visitors.every(p=>p[3]==='開成の文化祭の来場者'));
+ assert.ok(!visitors.some(p=>p[1]<=9&&/志望校/.test(p[4])));assert.ok(!r.middle.people.some(p=>p[0]==='school_festival_visitor'&&p[1]>=13&&p[1]<=15&&/志望校/.test(p[4])));
+});

@@ -30,6 +30,7 @@ data.mesh=JSON.parse(read('map-preview/data/mesh-23.json'));
 data.areas=JSON.parse(read('map-preview/data/areas.json')).areas;
 data.zoning=JSON.parse(read('map-preview/data/zoning.json'));
 data.policeStations=JSON.parse(read('map-preview/data/police-stations.json')).features;
+data.schoolFestivals=JSON.parse(read('map-preview/data/school-festivals.json')).festivals;
 data.specialPlaces=[...JSON.parse(read('map-preview/data/special-places.json')).features,...JSON.parse(read('map-preview/data/named-venues.json')).features,...JSON.parse(read('map-preview/data/hotels.json')).features,...JSON.parse(read('map-preview/data/cinemas.json')).features,...JSON.parse(read('map-preview/data/livehouses.json')).features,...JSON.parse(read('map-preview/data/large-facilities.json')).features];
 // 東京都中央卸売市場 as modeled footprints around their positions.
 data.specialPlaces.push(...JSON.parse(read('map-preview/data/markets.json')).features.map(f=>{const r=f.radius,dx=r/(111195*Math.cos(f.xy[1]*Math.PI/180)),dy=r/111195;return {...f,type:'commercial',subtype:'market',placeKind:'market',bbox:[f.xy[0]-dx,f.xy[1]-dy,f.xy[0]+dx,f.xy[1]+dy],area:Math.PI*r*r,source:'OpenStreetMap Nominatim による位置（ODbL）',precision:'modeled-footprint'}}));

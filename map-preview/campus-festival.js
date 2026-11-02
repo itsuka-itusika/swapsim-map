@@ -66,12 +66,41 @@ const CampusFestival=(()=>{
   '野外ステージの袖で、自分たちの出番を待っているところでした','実行委員のスタッフTシャツを着て、迷子の案内をしているところでした','模擬店の売上を数えながら、仕込みの量を相談しているところでした'];
  const STUDENT_LATE=['模擬店のテントを片付けながら、サークルの仲間と打ち上げの店を決めているところでした','後夜祭の盛り上がりの中で、サークルの仲間と写真を撮っているところでした'];
  const PREP=['明日からの学園祭に向けて、模擬店のテントを組み立てているところでした','教室の展示パネルを、仲間と夜遅くまで貼り付けているところでした','実行委員会の最終打ち合わせで、当日の動線を確かめているところでした'];
- function apply(c,P,t){if(!c.festival)return false;let x=c.festival,h=t.hf??t.h,pool;
+ // Middle and high school festivals (文化祭) from data/school-festivals.json (2026 dates). A middle school shares the festival of the
+ // high school with the same name (中高一貫). Open about 9:00-16:00 (15:30 on the last day); the whole school takes part,
+ // and visitors are mostly pupils hoping to apply, their parents, friends and alumni. Visitor numbers are game assumptions.
+ const FAMOUS=/^(開成|麻布|桜蔭|女子学院|雙葉|海城|駒場東邦|早稲田|渋谷教育学園渋谷|広尾学園|豊島岡女子学園|巣鴨|本郷|慶應義塾女子|青山学院|学習院女子|頌栄女子学院|鴎友学園女子|攻玉社|城北|芝|世田谷学園|明治大学付属明治|立教池袋|暁星|白百合学園|東洋英和女学院|品川女子学院)$/;
+ const stem=n=>String(n||'').replace(/鷗/g,'鴎').replace(/(高等学校|高等部|高等科|中学校|中等部|中等科|中学部|高校)$/,'');
+ let byStem=null;
+ function schoolFestival(f){if(!['middle','high'].includes(f?.kind))return null;if(!byStem){byStem=new Map();for(const x of (typeof MAP_DATA!=='undefined'&&MAP_DATA.schoolFestivals)||[])byStem.set(stem(x.name),x)}return byStem.get(stem(f.name))||null}
+ function schoolOn(f,t){let x=schoolFestival(f);if(!x)return null;let key=(m,d)=>m*100+d,days=x.days.map(md=>shift(md,t.y)),ks=days.map(([m,d])=>key(m,d)),i=ks.indexOf(key(t.mo,t.d));
+  if(i>=0)return {fest:x,day:i,last:i===ks.length-1};let [m,d]=days[0],prev=new Date(Date.UTC(t.y,m-1,d-1));return prev.getUTCMonth()+1===t.mo&&prev.getUTCDate()===t.d?{fest:x,prep:true}:null}
+ // enroll(): the school's pupils on an ordinary weekday morning.
+ function schoolRows(f,t,student,enroll){let s=schoolOn(f,t);if(!s||!student)return [];let h=t.hf??t.h,x=s.fest,name=stem(x.name),out=[];
+  if(s.prep){if(h>=13&&h<18.5){let n=enroll()*.5;out.push({...student,w:n,n,schoolFestival:x,festivalPrep:true})}return out}
+  let close=s.last?15.5:16,curve=h<8.5||h>=close+1?0:h<9?.2:h<10?.6:h<close-1?1:h<close?.6:.05,on=h>=8&&h<close+1?(h>=close?.5:1):0;
+  if(on){let n=enroll()*.9*on;out.push({...student,w:n,n,schoolFestival:x})}
+  if(curve){let daily=FAMOUS.test(name)?8000:3000,n=daily*.35*curve*AUDIENCE;out.push({role:'school_festival_visitor',label:name+'の文化祭の来場者',w:n,n,min:6,max:79,female:.55,ageBands:[[6,12,22],[13,15,14],[16,18,12],[19,29,10],[30,59,37],[60,79,5]],schoolFestival:x})}
+  return out}
+ const SCHOOL_PUPIL=['クラスのお化け屋敷で、驚かす役として暗がりに隠れているところでした','教室の入口で、クラス展示の呼び込みをしているところでした','部活の展示の受付で、来場者に部誌を手渡しているところでした',
+  '体育館のステージ袖で、有志バンドの出番を待っているところでした','文化祭実行委員の腕章をつけて、来場者に順路を案内しているところでした','見学に来た小学生に、学校の様子を聞かれて答えているところでした','クラスの劇の本番前に、舞台袖で台詞を確かめているところでした'];
+ const SCHOOL_HIGH=['模擬店で、焼きそばのパックに輪ゴムをかけているところでした','模擬店の行列を、最後尾の札を持って整理しているところでした'];
+ const SCHOOL_LATE=['片付けの合間に、クラスのみんなで打ち上げの集合写真を撮っているところでした','教室の飾りを外しながら、文化祭が終わったことを惜しんでいるところでした'];
+ const SCHOOL_PREP=['明日の文化祭に向けて、段ボールの看板に色を塗っているところでした','教室の飾りつけで、天井から紙の花をつるしているところでした','クラスの劇の通し稽古で、最後の場面を何度も合わせているところでした'];
+ function schoolApply(c,P,t){let x=c.schoolFestival,h=t.hf??t.h,name=stem(x.name),pool;
+  if(c.role==='school_festival_visitor'){if(['facility','prison'].includes(P.occ.group))P.occ={label:'無職',group:P.age>=65?'senior':'adult',cat:'none',p:1};
+   pool=P.age<=9?['親と一緒に、在校生のきょうだいのクラスの出し物を見に来たところでした','親に手を引かれて、お化け屋敷の入口でおじけづいているところでした']:P.age<=12?['志望校の文化祭に来て、在校生の案内で校舎を回っているところでした','親と一緒に、部活の展示で在校生の説明を聞いているところでした','文化祭のパンフレットを、記念に大事にかばんへしまったところでした']
+    :P.age<=18?['友達の学校の文化祭に遊びに来て、お化け屋敷の列に並んでいるところでした','部活の展示を見て回り、自分の学校との違いを話しているところでした',...(P.age<=15&&c.facility?.kind==='high'?['志望校の文化祭に来て、在校生の案内で校舎を回っているところでした']:[])]
+    :P.age<=30?['母校の文化祭に来て、恩師にあいさつしたところでした','後輩のクラスの出し物に、差し入れを持って顔を出したところでした']
+    :['子どもの志望校の文化祭で、校舎の雰囲気を確かめているところでした','わが子のクラスの劇を、後ろの席から見守っているところでした','パンフレットを片手に、部活の展示を見て回っているところでした']}
+  else pool=c.festivalPrep?SCHOOL_PREP:h>=15.5?SCHOOL_LATE:[...SCHOOL_PUPIL,...(c.facility?.kind==='high'?SCHOOL_HIGH:[])];
+  let text=pick(pool);P.mapSituation=text;P.visitLabel=c.label;P.sit={text,state:'off',stateLabel:c.role==='school_festival_visitor'?c.label:'文化祭'+(c.festivalPrep?'の準備をしている生徒':'に参加している生徒'),p:1,source:'festival'};return true}
+ function apply(c,P,t){if(c.schoolFestival)return schoolApply(c,P,t);if(!c.festival)return false;let x=c.festival,h=t.hf??t.h,pool;
   if(c.role==='festival_visitor'){if(['facility','prison'].includes(P.occ.group))P.occ={label:'無職',group:P.age>=65?'senior':'adult',cat:'none',p:1};
    pool=[...VISIT,...(SPECIAL[x[5]]||[])];if(P.age<=12)pool=['親と一緒に、学生の出し物のスーパーボールすくいをしているところでした','親に手を引かれて、模擬店のわたあめを買ってもらったところでした','学生が作った迷路の出口で、親を待っているところでした'];
    else if(P.age>=15&&P.age<=18)pool.push('受験を考えている大学の雰囲気を見に来て、校舎を見上げているところでした');else if(P.age>=26)pool.push('卒業生として、久しぶりのキャンパスを懐かしく歩いているところでした')}
   else pool=c.festivalPrep?PREP:h>=17?STUDENT_LATE:STUDENT;
   let text=pick(pool);P.mapSituation=text;P.visitLabel=c.label;P.sit={text,state:'off',stateLabel:c.role==='festival_visitor'?c.label:x[0]+(c.festivalPrep?'の準備をしている学生':'に参加している学生'),p:1,source:'festival'};return true}
- return {LIST,festivals,on,rows,apply};
+ return {LIST,festivals,on,rows,apply,schoolFestival,schoolOn,schoolRows};
 })();
 if(typeof module!=='undefined')module.exports=CampusFestival;
