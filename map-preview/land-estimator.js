@@ -11,7 +11,9 @@ const LandEstimator=(()=>{
   // コンカフェ (concept cafes): 秋葉原 and 池袋 run from late morning to the evening; in a night district (歌舞伎町) they open
   // in the evening and some stay open past midnight.
   let cc=tag.concafe||0,src=area?.sources?.concafe;if(cc>0&&src){let late=(src.tags?.night||0)>=4,act=late?(h>=17||h<1?1:h<5?.5:h>=12?.3:0):h>=11&&h<23?1:0;
-   if(act)out.push(row('urban_concafe','コンカフェ嬢',.2*cc/4*act*factor,18,34,1,{jobTag:'food',urbanTag:'concafe',area:src,ageBands:[[18,19,20],[20,24,55],[25,29,20],[30,34,5]]}))}
+   if(act)out.push(row('urban_concafe','コンカフェ嬢',.2*cc/4*act*factor,18,34,1,{jobTag:'food',urbanTag:'concafe',area:src,ageBands:[[18,19,20],[20,24,55],[25,29,20],[30,34,5]]}),
+    // Customers: about 2.5 per cast member on shift, mostly men in their 20s and 30s; more women around 乙女ロード.
+    row('urban_visit','コンカフェの客',.5*cc/4*act*factor,18,59,/乙女/.test(src.name)?.35:.2,{urbanTag:'concafe',area:src,ageBands:[[18,19,6],[20,24,24],[25,29,22],[30,39,28],[40,49,15],[50,59,5]]}))}
   return out}
  function timeFactor(type,subtype,t){let h=t.hf??t.h,we=weekend(t);if(type==='residential'||type==='mixed')return h>=9&&h<17?(we?.85:.5):h>=7&&h<21?.8:1;
  if(type==='office'||type==='public')return h>=9&&h<18?(we?.1:1):h>=7&&h<21?.2:.025;
