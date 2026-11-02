@@ -73,10 +73,16 @@ const LandEstimator=(()=>{
  // Nearby stations change accessibility modestly; station occupants remain a separate component.
  let traffic=1;if(['office','commercial','mall'].includes(c.type)){let near=profile.context.facilities.query(S.box(c.xy||profile.point,300)).filter(f=>f.kind==='station');if(near.length)traffic+=.12*(!weekend(t)&&(t.h>=7&&t.h<9||t.h>=17&&t.h<20)?1.5:1)}
  const housing=c.type==='residential'?(c.subtype==='family'&&c.precision==='polygon'?.55:c.subtype==='apartments'?1.25:c.housingWeight||1):1;
- return density*c.areaM2/1e6*factor*traffic*housing;
+ return density*c.areaM2/1e6*factor*traffic*housing*(['commercial','office','mall'].includes(c.type)?hubFactor(c,profile):1);
  }
+ // PROTOTYPE (opt-in): busy hubs hold several times the generic commercial density. Station tier and the district's
+ // strongest shopping/night/office tag stand in for real footfall, which the data does not carry.
+ const hub={on:false};
+ function hubFactor(c,profile){if(!hub.on)return 1;let q=c.sampleXY||c.xy||profile.point,s=0;
+  for(const f of profile.context.facilities.query(S.box(q,600)))if(f.kind==='station'){let d=M.distance(q,f.xy);if(d<600)s+=(f.capacity>=1800?4:f.lines?.length>=3?2:f.lines?.length>=2?1:.6)*(1-d/600)}
+  let tag=c.areaTag?.tags||{},area=Math.max(tag.shopping||0,tag.night||0,tag.office||0)/4;return 1+Math.min(3,s)+1.5*Math.min(1,area)}
  function estimateDemographics(c,occupation,t){let d={min:occupation.min,max:occupation.max,female:occupation.female};if(occupation.resident){d.resident=true;d.censusCode=c.region.id;d.subtype=c.subtype;d.daytime=t.h>=9&&t.h<17&&!weekend(t)}if(c.type==='green'&&c.subtype==='playground'&&occupation.role==='green_walk')d.ageBands=[[0,11,.5],[25,49,.45],[60,79,.05]];if(c.subtype==='fashion'&&occupation.role==='area_shopping')d.female=.62;return d;}
- function estimateRaw(profile,t){let out=[];for(let c of profile.parts){let n=estimatePopulation(c,t,profile),roles=estimateOccupations(c,t),mass=roles.reduce((s,z)=>s+z.w,0);if(!n||!mass)continue;for(let z of roles){if(z.w<=0)continue;out.push({...z,...estimateDemographics(c,z,t),n:n*z.w/mass,region:c.region,landType:c.type,subtype:c.subtype,evidence:c.source,precision:c.precision,landComponent:c})}}
+ function estimateRaw(profile,t){let out=[];for(let c of profile.parts){let n=estimatePopulation(c,t,profile),roles=estimateOccupations(c,t),mass=roles.reduce((s,z)=>s+z.w,0);if(!n||!mass)continue;let mixHub=c.type==='mixed'?hubFactor(c,profile):1;for(let z of roles){if(z.w<=0)continue;out.push({...z,...estimateDemographics(c,z,t),n:n*z.w/mass*(z.resident?1:mixHub),region:c.region,landType:c.type,subtype:c.subtype,evidence:c.source,precision:c.precision,landComponent:c})}}
   // Drivers and passengers on expressways and major roads inside the circle, on top of the land use beneath.
   if(typeof RoadModel!=='undefined')out.push(...RoadModel.rows(profile,t));
   // People aboard trains on the tracks inside the circle (rarely; a little more at rush hours).
@@ -110,6 +116,6 @@ const LandEstimator=(()=>{
  }
  function estimate(profile,t){return redistribute(estimateRaw(profile,t));}
  function sampleResident(c,t,pick,random=Math.random){let sa;for(let i=0;i<24;i++){sa=pick();let w=1;if(c.daytime)w=sa.age>=65?1:sa.age<6?.75:sa.age<18?.06:sa.age<23?.15:.4;if(c.subtype==='student')w*=sa.age>=18&&sa.age<=29?1:.4;if(c.subtype==='family')w*=sa.age<15||sa.age>=30&&sa.age<50?1:.65;if(c.subtype==='senior')w*=sa.age>=65?1:.35;if(random()<w)return sa}return sa;}
- return {estimatePopulation,estimateDemographics,estimateOccupations,estimateRaw,redistribute,estimate,timeFactor,sampleResident};
+ return {hub,hubFactor,estimatePopulation,estimateDemographics,estimateOccupations,estimateRaw,redistribute,estimate,timeFactor,sampleResident};
 })();
 if(typeof module!=='undefined')module.exports=LandEstimator;
