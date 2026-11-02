@@ -7,7 +7,12 @@ const LandEstimator=(()=>{
  // Game emphasis over the census mix: fashion streets get more hairdressers and apparel staff, Akihabara maid-cafe staff.
  function styleRows(area,t,factor=1){let tag=area?.tags||{},h=t.hf??t.h,open=h>=10&&h<20?1:h>=9&&h<21?.3:0,f=tag.fashion||0,out=[];
   if(f>=1.5&&open)out.push(row('urban_hairdresser','美容師',.12*f*open*factor,20,49,.6,{jobTag:'salon',jobName:'美容師',urbanTag:'hair'}),row('urban_apparel','アパレル店員',.15*f*open*factor,18,44,.65,{jobTag:'shop',jobName:'アパレルの販売員',urbanTag:'apparel'}));
-  if(area?.sources?.electronics?.name==='秋葉原'&&h>=11&&h<22)out.push(row('urban_maidcafe','メイドカフェの店員',.5*(tag.electronics||0)/4*factor,18,29,.95,{jobTag:'food',urbanTag:'maidcafe'}));return out}
+  if(area?.sources?.electronics?.name==='秋葉原'&&h>=11&&h<22)out.push(row('urban_maidcafe','メイドカフェの店員',.5*(tag.electronics||0)/4*factor,18,29,.95,{jobTag:'food',urbanTag:'maidcafe'}));
+  // コンカフェ (concept cafes): 秋葉原 and 池袋 run from late morning to the evening; in a night district (歌舞伎町) they open
+  // in the evening and some stay open past midnight.
+  let cc=tag.concafe||0,src=area?.sources?.concafe;if(cc>0&&src){let late=(src.tags?.night||0)>=4,act=late?(h>=17||h<1?1:h<5?.5:h>=12?.3:0):h>=11&&h<23?1:0;
+   if(act)out.push(row('urban_concafe','コンカフェ嬢',.2*cc/4*act*factor,18,34,1,{jobTag:'food',urbanTag:'concafe',area:src,ageBands:[[18,19,20],[20,24,55],[25,29,20],[30,34,5]]}))}
+  return out}
  function timeFactor(type,subtype,t){let h=t.hf??t.h,we=weekend(t);if(type==='residential'||type==='mixed')return h>=9&&h<17?(we?.85:.5):h>=7&&h<21?.8:1;
  if(type==='office'||type==='public')return h>=9&&h<18?(we?.1:1):h>=7&&h<21?.2:.025;
  if(type==='education')return h>=8&&h<18?(we?.08:1):.01;
