@@ -52,8 +52,8 @@ for(const key of ['kid','student','college','homemaker','senior'])if(OFF_TX[key]
 // Ages 12-18: secretly using a smartphone after the household has gone quiet.
 // Duplicate the entries across 22:00-24:00 and 00:00-05:00 because situation windows do not wrap midnight.
 const LATE_NIGHT_TEEN_PHONE_SITUATIONS = [
- [22,24,'部屋のドアを閉め、片耳だけイヤホンを挿してスマホの画面に見入っているところでした',{a:[12,18],w:.8}],
- [0,5,'部屋のドアを閉め、片耳だけイヤホンを挿してスマホの画面に見入っているところでした',{a:[12,18],w:.8}],
+ [22,24,'部屋に鍵をかけ、片耳だけイヤホンを挿してスマホの画面に見入っているところでした',{a:[12,18],w:.8}],
+ [0,5,'部屋に鍵をかけ、片耳だけイヤホンを挿してスマホの画面に見入っているところでした',{a:[12,18],w:.8}],
  [22,24,'家族が寝静まったのを確かめ、布団の中でスマホのロックを解除したところでした',{a:[12,18],w:.75}],
  [0,5,'家族が寝静まったのを確かめ、布団の中でスマホのロックを解除したところでした',{a:[12,18],w:.75}],
  [22,24,'廊下の足音に気づき、慌ててスマホを伏せて寝たふりをしたところでした',{a:[12,18],w:.55}],
