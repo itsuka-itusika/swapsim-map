@@ -11,9 +11,9 @@ const LandEstimator=(()=>{
   // コンカフェ (concept cafes): 秋葉原 and 池袋 run from late morning to the evening; in a night district (歌舞伎町) they open
   // in the evening and some stay open past midnight.
   let cc=tag.concafe||0,src=area?.sources?.concafe;if(cc>0&&src){let late=(src.tags?.night||0)>=4,act=late?(h>=17||h<1?1:h<5?.5:h>=12?.3:0):h>=11&&h<23?1:0;
-   if(act)out.push(row('urban_concafe','コンカフェ嬢',.2*cc/4*act*factor,18,34,1,{jobTag:'food',urbanTag:'concafe',area:src,ageBands:[[18,19,20],[20,24,55],[25,29,20],[30,34,5]]}),
+   if(act)out.push(row('urban_concafe','コンカフェ嬢',.26*cc/4*act*factor,18,28,1,{jobTag:'food',urbanTag:'concafe',area:src,ageBands:[[18,19,20],[20,24,58],[25,28,22]]}),
     // Customers: about 2.5 per cast member on shift, mostly men in their 20s and 30s; more women around 乙女ロード.
-    row('urban_visit','コンカフェの客',.5*cc/4*act*factor,18,59,/乙女/.test(src.name)?.35:.2,{urbanTag:'concafe',area:src,ageBands:[[18,19,6],[20,24,24],[25,29,22],[30,39,28],[40,49,15],[50,59,5]]}))}
+    row('urban_visit','コンカフェの客',.65*cc/4*act*factor,18,59,/乙女/.test(src.name)?.35:.2,{urbanTag:'concafe',area:src,ageBands:[[18,19,6],[20,24,24],[25,29,22],[30,39,28],[40,49,15],[50,59,5]]}))}
   return out}
  function timeFactor(type,subtype,t){let h=t.hf??t.h,we=weekend(t);if(type==='residential'||type==='mixed')return h>=9&&h<17?(we?.85:.5):h>=7&&h<21?.8:1;
  if(type==='office'||type==='public')return h>=9&&h<18?(we?.1:1):h>=7&&h<21?.2:.025;
@@ -33,7 +33,7 @@ const LandEstimator=(()=>{
  if(f.kind==='university'&&typeof CampusVisitors!=='undefined')roles.push(...CampusVisitors.rows(f,t).map(z=>({...z,facility:f})));
  result.push(...roles)}return result;
  }
- function estimateOccupations(c,t){for(const m of [typeof MarketModel!=='undefined'?MarketModel:null,typeof TaxiModel!=='undefined'?TaxiModel:null,typeof ZooModel!=='undefined'?ZooModel:null]){const r=m?.roles(c,t);if(r)return r}const police=typeof PoliceModel!=='undefined'?PoliceModel.roles(c,t):null;if(police)return police;const place=typeof PlacesModel!=='undefined'?PlacesModel.roles(c,t):null;if(place)return place;const civic=typeof CivicModel!=='undefined'?CivicModel.roles(c,t):null;if(civic)return civic;const venue=typeof VenueModel!=='undefined'?VenueModel.roles(c,t):null;if(venue)return venue;const facility=facilityRows(c,t);if(facility?.length)return facility;
+ function estimateOccupations(c,t){for(const m of [typeof MarketModel!=='undefined'?MarketModel:null,typeof TaxiModel!=='undefined'?TaxiModel:null,typeof ZooModel!=='undefined'?ZooModel:null,typeof LiveHouseModel!=='undefined'?LiveHouseModel:null]){const r=m?.roles(c,t);if(r)return r}const police=typeof PoliceModel!=='undefined'?PoliceModel.roles(c,t):null;if(police)return police;const place=typeof PlacesModel!=='undefined'?PlacesModel.roles(c,t):null;if(place)return place;const civic=typeof CivicModel!=='undefined'?CivicModel.roles(c,t):null;if(civic)return civic;const venue=typeof VenueModel!=='undefined'?VenueModel.roles(c,t):null;if(venue)return venue;const facility=facilityRows(c,t);if(facility?.length)return facility;
  if(c.kind==='palace'||c.type==='green'){let z={...c,kind:c.subtype==='playground'?'park':c.subtype};let closed=typeof OSMProfile!=='undefined'&&OSMProfile.opening(c.openingHours,t)===false;return GreenModel.roles(z,t).map(z=>({...z,w:closed&&['green_walk','green_tourist','green_run'].includes(z.role)?0:z.density,zone:c}));}
  if(['airfield','terminal','cemetery','port'].includes(c.subtype))return LandModel.roles({...c,kind:c.subtype},t).map(z=>({...z,w:z.density,zone:c}));
  if(c.type==='waterfront'&&c.subtype==='water')return [];
@@ -69,7 +69,7 @@ const LandEstimator=(()=>{
  function estimatePopulation(c,t,profile){if(c.type==='waterfront'&&c.subtype==='water')return 0;
  const roles=estimateOccupations(c,t),sum=roles.reduce((s,z)=>s+z.w,0);if(!sum)return 0;
  if(typeof PoliceModel!=='undefined'&&PoliceModel.kind(c))return sum*Math.min(1,c.areaM2/Math.max(1,c.area||(c.geometry?S.area(c.geometry):Math.PI*(c.radius||20)**2)));
- if(typeof MarketModel!=='undefined'&&MarketModel.kind(c)||typeof TaxiModel!=='undefined'&&TaxiModel.kind(c)||typeof ZooModel!=='undefined'&&ZooModel.kind(c)||typeof PlacesModel!=='undefined'&&PlacesModel.kind(c)||typeof CivicModel!=='undefined'&&CivicModel.kind(c)||typeof VenueModel!=='undefined'&&VenueModel.kind(c))return sum*Math.min(1,c.areaM2/Math.max(1,c.area||(c.geometry?S.area(c.geometry):c.areaM2)));
+ if(typeof MarketModel!=='undefined'&&MarketModel.kind(c)||typeof TaxiModel!=='undefined'&&TaxiModel.kind(c)||typeof ZooModel!=='undefined'&&ZooModel.kind(c)||typeof LiveHouseModel!=='undefined'&&LiveHouseModel.kind(c)||typeof PlacesModel!=='undefined'&&PlacesModel.kind(c)||typeof CivicModel!=='undefined'&&CivicModel.kind(c)||typeof VenueModel!=='undefined'&&VenueModel.kind(c))return sum*Math.min(1,c.areaM2/Math.max(1,c.area||(c.geometry?S.area(c.geometry):c.areaM2)));
  if(c.facilities?.length||['education','medical','transport'].includes(c.type)&&!['airfield','terminal'].includes(c.subtype)){let footprint=c.geometry?S.area(c.geometry):Math.PI*(c.facilities?.[0]?.radius||c.radius||60)**2;return sum*Math.min(1,c.areaM2/Math.max(1,footprint));}
  if(c.type==='green'||c.kind==='palace'||['airfield','terminal','cemetery','port'].includes(c.subtype))return sum*c.areaM2/1e6;
  const density={residential:c.region.residentialDensity||c.region.density||6000,mixed:c.region.density||6000,commercial:14000,office:18000,industrial:2600,medical:7000,tourism:3000,transport:12000,public:3000,mall:16000,sports:1800,religious:900,agriculture:35,waterfront:250}[c.type]||1000;

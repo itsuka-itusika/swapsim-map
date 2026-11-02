@@ -321,7 +321,7 @@ test('コンカフェ嬢 work in 秋葉原, 池袋 and 歌舞伎町 (late there)
  const r=JSON.parse(run(`(()=>{let out={};for(const [n,h,dow,d] of [['秋葉原',15,6,31],['秋葉原',9,3,28],['歌舞伎町',1,6,31],['サンシャイン60通り',16,6,31],['渋谷',16,6,31]]){let a=MAP_DATA.areas.find(x=>x.name===n),t={y:2026,mo:10,d,dow,h,hf:h+.3,mi:18,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,a.xy,300),t),tot=parts.reduce((s,c)=>s+c.n,0),rows=parts.filter(c=>c.role==='urban_concafe'),people=rows.length?Array.from({length:30},()=>mapPerson({...rows[0],roleP:.01},t)):[];out[n+h]={share:rows.reduce((s,c)=>s+c.n,0)/tot,people:people.map(P=>[P.age,P.sex,P.occ.label,P.sit.text])}}return JSON.stringify(out)})()`));
  assert.ok(r['秋葉原15'].share>.01&&r['秋葉原15'].share<.04,String(r['秋葉原15'].share));
  assert.equal(r['秋葉原9'].share,0);assert.ok(r['歌舞伎町1'].share>0);assert.ok(r['サンシャイン60通り16'].share>0);assert.equal(r['渋谷16'].share,0);
- for(const p of [...r['秋葉原15'].people,...r['歌舞伎町1'].people]){assert.ok(p[0]>=18,String(p));assert.equal(p[1],'f');assert.equal(p[2],'コンカフェ嬢')}
+ for(const p of [...r['秋葉原15'].people,...r['歌舞伎町1'].people]){assert.ok(p[0]>=18&&p[0]<=28,String(p));assert.equal(p[1],'f');assert.equal(p[2],'コンカフェ嬢')}
  assert.ok(r['秋葉原15'].people.every(p=>!/閉店間際|終電/.test(p[3])));
 });
 test('コンカフェ customers keep their own jobs and get customer scenes; late drinking lines only for adults after 23時',()=>{

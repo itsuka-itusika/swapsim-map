@@ -77,6 +77,7 @@ function mapPerson(c,t){
  Nightlife.assign(c,P);
  if(typeof LoveHotelModel!=='undefined')LoveHotelModel.assign(c,P);
  if(typeof VenueModel!=='undefined')VenueModel.assign(c,P);
+ if(typeof LiveHouseModel!=='undefined')LiveHouseModel.assign(c,P);
  if(typeof PlacesModel!=='undefined')PlacesModel.assign(c,P);
  if(typeof RoadModel!=='undefined')RoadModel.assign(c,P);
  if(typeof RailModel!=='undefined')RailModel.assign(c,P);
@@ -154,6 +155,7 @@ function mapPerson(c,t){
  if(typeof MarketModel!=='undefined')MarketModel.apply(c,P,t);
  if(typeof TaxiModel!=='undefined')TaxiModel.apply(c,P,t);
  if(typeof ZooModel!=='undefined')ZooModel.apply(c,P,t);
+ if(typeof LiveHouseModel!=='undefined')LiveHouseModel.apply(c,P,t);
  if(typeof PlacesModel!=='undefined')PlacesModel.apply(c,P,t);
  if(typeof RoadModel!=='undefined')RoadModel.apply(c,P,t);
  if(typeof RailModel!=='undefined')RailModel.apply(c,P,t);
