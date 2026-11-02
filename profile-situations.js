@@ -67,6 +67,17 @@ const LATE_NIGHT_TEEN_PHONE_SITUATIONS = [
 ];
 for(const key of ['adult','kid','student','college','homemaker','senior'])if(OFF_TX[key])OFF_TX[key].push(...LATE_NIGHT_TEEN_PHONE_SITUATIONS);
 
+// Adults 18+: private late-night self-care situations at home.
+const LATE_NIGHT_ADULT_PRIVATE_SITUATIONS = [
+ [22,24,'部屋の明かりを落とし、スマホの画面の明かりだけを頼りに一人で致しているところでした',{a:[18,100],w:.35}],
+ [0,5,'部屋の明かりを落とし、スマホの画面の明かりだけを頼りに一人で致しているところでした',{a:[18,100],w:.35}],
+ [22,24,'スマホの画面に目を落としながら浅い息を吐き、ひとり熱を鎮めようとしているところでした',{a:[18,100],w:.3}],
+ [0,5,'スマホの画面に目を落としながら浅い息を吐き、ひとり熱を鎮めようとしているところでした',{a:[18,100],w:.3}],
+ [22,24,'スマホを脇に置き、丸めたティッシュをゴミ箱に放ってひと息ついているところでした',{a:[18,100],w:.25}],
+ [0,5,'スマホを脇に置き、丸めたティッシュをゴミ箱に放ってひと息ついているところでした',{a:[18,100],w:.25}]
+];
+for(const key of ['adult','student','college','homemaker','senior'])if(OFF_TX[key])OFF_TX[key].push(...LATE_NIGHT_ADULT_PRIVATE_SITUATIONS);
+
 // Secondary-school break-time scenes. These are intentionally narrow: male junior/high-school students
 // while they are actually at school on a normal school day. They add personality without turning every
 // school scene into a generic "class in progress" description.
