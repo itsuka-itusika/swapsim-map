@@ -9,7 +9,10 @@ const OSMProfile=(()=>{
  if(n&&a==='public_bath'&&/スーパー銭湯|天然温泉|健康ランド|スパ|温浴/i.test(n))return ['tourism','bath'];
  if(n&&['hostel','guest_house'].includes(t.tourism))return ['tourism','hostel'];
  if(n&&['zoo','aquarium','attraction','viewpoint','theme_park'].includes(t.tourism))return ['tourism','tourist'];
- if(n&&(t.shop==='mall'||t.shop==='department_store'||t.shop==='electronics'&&/ヨドバシ|ビックカメラ|ヤマダデンキ|ヤマダ電機|LABI|エディオン|ケーズデンキ|ノジマ/i.test(n)||t.shop==='books'&&/ジュンク堂|紀伊國屋|紀伊国屋|丸善|三省堂書店|八重洲ブックセンター|有隣堂|MARUZEN/i.test(n)||t.shop==='clothes'&&/旗艦|UNIQLO TOKYO|ユニクロ銀座|ユニクロ新宿本店/i.test(n)))return ['mall','large_shop'];
+ // OSM often tags a single chain store as shop=department_store or mall (a 100-yen shop, MUJI, a record shop); those
+ // stay ordinary shops, not large stores with their own crowd.
+ const SINGLE_STORE=/ダイソー|DAISO|キャンドゥ|Can ?Do|セリア|Seria|ワッツ|無印良品|MUJI|ディスクユニオン|disk ?union/i;
+ if(n&&((t.shop==='mall'||t.shop==='department_store')&&!SINGLE_STORE.test(n+' '+(t.brand||''))||t.shop==='electronics'&&/ヨドバシ|ビックカメラ|ヤマダデンキ|ヤマダ電機|LABI|エディオン|ケーズデンキ|ノジマ/i.test(n)||t.shop==='books'&&/ジュンク堂|紀伊國屋|紀伊国屋|丸善|三省堂書店|八重洲ブックセンター|有隣堂|MARUZEN/i.test(n)||t.shop==='clothes'&&/旗艦|UNIQLO TOKYO|ユニクロ銀座|ユニクロ新宿本店/i.test(n)))return ['mall','large_shop'];
  if(t.shop||['cafe','restaurant','fast_food','bar','pub','food_court'].includes(a))return null;
  if(a==='police'&&/警察署$/.test(t.name||''))return ['public','police'];
  if(a==='fire_station')return ['public','fire_station'];
