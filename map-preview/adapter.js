@@ -173,6 +173,7 @@ function mapPerson(c,t){
  if(typeof CampusVisitors!=='undefined')CampusVisitors.apply(c,P,t);
  if(typeof CampusFestival!=='undefined')CampusFestival.apply(c,P,t);
  if(typeof YouthCharacter!=='undefined')YouthCharacter.apply(c,P,t);
+ if(typeof AdultCharacter!=='undefined')AdultCharacter.apply(c,P,t);
  if(typeof CrossingScenes!=='undefined')CrossingScenes.apply(c,P,t);
  if(typeof Drunks!=='undefined')Drunks.apply(c,P,t);
  if(typeof NightDuty!=='undefined')NightDuty.apply(c,P,t);

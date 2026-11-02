@@ -16,3 +16,12 @@ test('students get character lines at lunch and after school; drinking lines onl
  assert.ok(r.lunch.length>3&&r.after.length>2);
  assert.ok(!r.u19.some(x=>/飲み会|クラブ/.test(x)));assert.ok(r.u21.some(x=>/飲み会/.test(x)));
 });
+test('adult and senior character lines follow age, sex, place and hour; night-out lines stay in night districts',()=>{
+ const r=JSON.parse(run(`(()=>{const T=h=>({y:2026,mo:11,d:11,dow:3,h:Math.floor(h),hf:h,mi:0}),home={role:'general',resident:true,landComponent:{type:'residential',precision:'zoning'}};
+  const P=(age,sex,state='off')=>({age,sex,occ:{group:age>=65?'senior':'adult',label:'会社員'},sit:{text:'自宅で、テレビを見ているところでした',state,stateLabel:'テレビを見ている'}});
+  const all=new Map([...AdultCharacter.WORK,...AdultCharacter.HOME,...AdultCharacter.OUT].map(x=>[x[0],x]));const c=(cc,p,h)=>AdultCharacter.candidates(cc,p,T(h)).map(x=>all.get(x));
+  return JSON.stringify({office45f:c({role:'area_office'},P(45,'f','work'),10),office28m:c({role:'area_office'},P(28,'m','work'),10),shop20:c({role:'area_shopping'},P(40,'m'),20),night21:c({role:'area_night'},P(40,'m'),21),senior:c(home,P(75,'m'),14),young:c(home,P(20,'f'),14)})})()`));
+ assert.ok(r.office45f.some(x=>/給湯室|備品棚/.test(x[0])));assert.ok(!r.office28m.some(x=>x[4]==='mid'||x[1]==='f'));
+ assert.ok(!r.shop20.some(x=>x[5]==='night'));assert.ok(r.night21.length&&r.night21.every(x=>x[5]==='night'));
+ assert.ok(r.senior.length&&r.senior.every(x=>x[4]==='senior'&&x[1]!=='f'));assert.equal(r.young.length,0);
+});
