@@ -330,3 +330,10 @@ test('コンカフェ customers keep their own jobs and get customer scenes; lat
  for(const p of [...r['秋葉原'],...r['歌舞伎町']]){assert.ok(p[0]>=18,String(p));assert.equal(p[2],'コンカフェの客');assert.notEqual(p[1],'コンカフェ嬢');assert.match(p[3],/キャスト|コンカフェ|チェキ|オムライス|常連|終電|閉店/)}
  assert.ok(!r['秋葉原'].some(p=>/終電|閉店まで/.test(p[3])));assert.ok(r['歌舞伎町'].filter(p=>/終電|閉店まで/.test(p[3])).every(p=>p[0]>=20));
 });
+test('pupils and students get character lines in class and at break, matching their sex and school',()=>{
+ const r=JSON.parse(run(`(()=>{let chars=new Map();for(const st of Object.keys(TimeSituations.CHARACTER))for(const ph of ['class','break'])for(const [x,sx] of TimeSituations.CHARACTER[st][ph])chars.set(x,sx);let out={};
+ for(const [name,mi] of [['開成高等学校',20],['桜蔭中学校',20],['早稲田大学',50]]){let f=MAP_DATA.facilities.find(x=>x.name===name),t={y:2026,mo:11,d:11,dow:3,h:10,hf:10+mi/60,mi,rand:false},parts=LandEstimator.estimate(LandProfile.create(envContext,f.xy,30),t),st=parts.find(c=>c.role==='student'&&c.facility?.name===name);
+  out[name]=Array.from({length:200},()=>{let P=mapPerson({...st,roleP:.01},t);return [P.sex,P.sit.text,chars.has(P.sit.text)?chars.get(P.sit.text)||'any':null]})}return JSON.stringify(out)})()`));
+ for(const [name,ps] of Object.entries(r)){const ch=ps.filter(p=>p[2]);assert.ok(ch.length>30,name+' '+ch.length);assert.ok(ch.every(p=>p[2]==='any'||p[2]===p[0]),name)}
+ assert.ok(!r['桜蔭中学校'].some(p=>p[2]&&/男子|女子/.test(p[1])));
+});

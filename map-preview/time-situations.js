@@ -77,6 +77,75 @@ const TimeSituations=(()=>{
  // pool of that phase. Lines are for the people at school (no home, job or errand elsewhere).
 // Club (サークル・部) scenes, by kind of club. No lab, medical or engineering words: these go to every campus.
  const CIRCLES=['テニスサークルの練習で、ラケットのガットを張り直しているところでした','フットサルサークルの練習で、パスを受けそこねて笑われているところでした','バスケットボールのサークルの体育館練習で、スリーポイントを繰り返し練習しているところでした','陸上部のトラックで、400mのタイムを計ってもらっているところでした','弓道部の道場で、的に向かって静かに弦を引いているところでした','ダンスサークルの練習室で、鏡の前で振り付けを確かめているところでした','登山サークルの部室で、次の合宿の持ち物リストを作っているところでした','自転車サークルの部室で、ロードバイクのチェーンに油を差しているところでした','軽音サークルの練習室で、ドラムのフィルインに合わせてギターを入れているところでした','吹奏楽団の練習で、チューニングの音を合わせているところでした','演劇サークルの稽古場で、台本を片手に台詞を繰り返しているところでした','映画研究会の部室で、編集ソフトの画面を見ながらカットをつないでいるところでした','写真サークルの暗室で、現像した写真を乾かしているところでした','茶道部の茶室で、正座のまま先輩の点前を見つめているところでした','落語研究会の部室で、新ネタの出だしを繰り返し練習しているところでした','漫画研究会の部室で、同人誌の原稿にペン入れをしているところでした','天文サークルの部室で、観測会の天気予報を確かめているところでした','アカペラサークルの練習で、ハモリのパートを確かめているところでした','ボランティアサークルの打ち合わせで、子ども食堂の当番表を作っているところでした','eスポーツサークルの部室で、大会の対戦表を見ながら作戦を話しているところでした','オーケストラの練習で、指揮者に弓の動きを直されているところでした','競技かるたの部室で、札を並べて暗記の確認をしているところでした','料理サークルの調理室で、先輩の包丁さばきを見ているところでした','ボードゲームサークルの部室で、新しいゲームのルールを読み合わせているところでした','文芸サークルの部室で、会誌に載せる短編の最後の一文を悩んでいるところでした','合唱団の練習で、指揮の合図に合わせて息を吸ったところでした','ESSの部室で、英語のディベートの論点を整理しているところでした','学園祭の実行委員会で、出店の配置図を前に議論しているところでした','サークルの新歓イベントの企画書を、部室のホワイトボードに書き出しているところでした'];
+ // Character lines for pupils and students in class and at break: a mischievous boy, a dependable girl, a daydreamer.
+ // [text, sex ('m'/'f', or null for anyone)]. Mixed into a third of the draws for the matching stage and sex.
+ const CHARACTER={
+  elem:{class:[
+   ['先生の「静かに」の声に、一番大きな声で「はーい」と返事をして笑いを取ったところでした','m'],
+   ['筆箱をロボットに変形させて遊んでいたのが見つかり、慌てて元に戻しているところでした','m'],
+   ['答えがわかった瞬間、当てられる前に「はい！はい！」と立ち上がりかけたところでした','m'],
+   ['定規を剣に見立てて、隣の席の子と小声でチャンバラをしているところでした','m'],
+   ['給食まであと何分か、時計をちらちら見ながら指折り数えているところでした','m'],
+   ['忘れ物をした隣の席の子に、自分の消しゴムを半分に割って渡したところでした','f'],
+   ['班の話し合いで出た意見を、ノートにきれいにまとめているところでした','f'],
+   ['ふざけている男子に、「先生が見てるよ」と小声で注意したところでした','f'],
+   ['配られたプリントの名前欄を、言われる前にきちんと書き終えたところでした','f'],
+   ['当てられて立ち上がったものの、何を聞かれたのか忘れて固まっているところでした',null],
+   ['窓の外の雲が動物の形に見えて、授業そっちのけで眺めているところでした',null],
+   ['手を挙げようか迷っているうちに、別の子が答えてしまったところでした',null]],
+  break:[
+   ['鬼ごっこで、靴が片方脱げたまま校庭を走り続けているところでした','m'],
+   ['雲梯のてっぺんに座り、下の友達に「ここまで来てみろ」と言っているところでした','m'],
+   ['チャイムが鳴っても校庭から戻らず、先生に名前を呼ばれたところでした','m'],
+   ['教室の花瓶の水を替えて、窓辺にそっと戻したところでした','f'],
+   ['仲間に入れずにいた子に、「一緒に縄跳びしよう」と声をかけたところでした','f'],
+   ['友達と手紙を小さく折って交換し、中身を見せ合っているところでした','f'],
+   ['出しっぱなしのボールを、一人で体育倉庫へ片付けに行くところでした',null]]},
+  teen:{class:[
+   ['先生の雑談に乗っかって、授業を脱線させようと質問を投げたところでした','m'],
+   ['居眠りから目を覚ますと、黒板が一面書き換わっていて青ざめたところでした','m'],
+   ['小テストが返ってきて、思ったより点が良くて机の下で小さくガッツポーズをしたところでした','m'],
+   ['教科書の陰で、部活の練習メニューをこっそり考えているところでした','m'],
+   ['ノートを色ペンで丁寧に分けて、テスト前に見返しやすく整えているところでした','f'],
+   ['学級委員として、授業の始まりの号令をかけたところでした','f'],
+   ['先生の板書の間違いに気づき、手を挙げてそっと伝えたところでした','f'],
+   ['班活動で、話の進まない男子たちに役割分担を決めてあげたところでした','f'],
+   ['当てられないよう、教科書を立てて顔を隠しているところでした',null],
+   ['分からなかった問題に、あとで先生に聞こうと付箋で印をつけたところでした',null]],
+  break:[
+   ['廊下で友達とプロレス技をかけ合い、通りかかった先生に止められたところでした','m'],
+   ['教室の後ろで、丸めた紙をゴミ箱に投げ入れる勝負をしているところでした','m'],
+   ['次の授業の宿題を、友達のノートを借りて大急ぎで写しているところでした','m'],
+   ['友達の前髪を、手鏡を見ながら直してあげているところでした','f'],
+   ['次の授業の提出物を、クラス全員分集めて数えているところでした','f'],
+   ['友達と、推しのアイドルの新曲の振り付けを小さく踊っているところでした','f'],
+   ['机に突っ伏して、次の授業が始まるまでの数分だけ眠ろうとしているところでした',null]]},
+  high:{class:[
+   ['授業中、机の下でこっそり早弁をして、においで気づかれそうになっているところでした','m'],
+   ['指名されたのに堂々と「わかりません」と答え、クラスを笑わせたところでした','m'],
+   ['授業の要点を先回りしてまとめ、ノートを見せてと頼まれたところでした','f'],
+   ['スマートフォンをいじっていた隣の席の子に、先生が来ると目で合図したところでした','f']],
+  break:[
+   ['体育館の裏まで走って、友達とバスケのシュートを何本か打ってきたところでした','m'],
+   ['購買のパンを買いに行く係をじゃんけんで決め、負けて廊下を走り出したところでした','m'],
+   ['友達とメイクポーチを広げて、リップの色を見比べているところでした','f'],
+   ['クラスのグループトークで、文化祭の出し物の多数決を取っているところでした','f']]},
+  college:{class:[
+   ['出席だけ取って後ろの席で寝ようとしたら、教授に当てられたところでした','m'],
+   ['グループワークで、何も準備していないのに発表役を押しつけられたところでした','m'],
+   ['講義のスライドをきれいにまとめ、欠席した友達に送ってあげているところでした','f'],
+   ['グループワークで、締め切りから逆算して全員の作業を割り振ったところでした','f'],
+   ['最前列の席で、教授の冗談に一人だけ笑ってしまったところでした',null],
+   ['講義を聞くふりをしながら、ノートパソコンで別の授業のレポートを書いているところでした',null]],
+  break:[
+   ['友達と、次の講義を自主休講にするかじゃんけんで決めているところでした','m'],
+   ['サークルの同期の誕生日プレゼントを何にするか、友達と相談しているところでした','f'],
+   ['次の教室まで遠いことに気づき、キャンパスを早足で横切っているところでした',null]]}};
+ function character(c,P,k){let kind=c.facility?.kind,phase=/_class$/.test(k)?'class':k==='school_break'?'break':null;if(c.role!=='student'||!phase)return null;
+  let stages=kind==='primary'?['elem']:kind==='middle'?['teen']:kind==='high'?['teen','high']:['university','college'].includes(kind)?['college']:[];
+  // A boys' or girls' school has no classmates of the other sex to tease or tidy up after.
+  let single=['male','female'].includes(c.facility?.sex);
+  return stages.flatMap(st=>CHARACTER[st]?.[phase]||[]).filter(([text,sex])=>(!sex||sex===P.sex)&&!(single&&/男子|女子/.test(text))).map(([text])=>text)}
  const MORE={
   elem:{
    school_break:['休み時間のチャイムと同時に、校庭へ飛び出していくところでした','友達と、ドッジボールのチーム分けをしているところでした','教室の後ろの棚で、友達と折り紙を折っているところでした','図書室で、続きが気になる本を急いで読んでいるところでした','先生に呼ばれて、プリントを配る手伝いをしているところでした','鉄棒で、前回りができる回数を友達と数えているところでした','席に座ったまま、次の授業の教科書とノートをそろえているところでした','友達と、昨日見たアニメの話に夢中になっているところでした','水筒のお茶を飲んで、友達と先生の物まねをして笑っているところでした','トイレの前で、友達と並んで順番を待っているところでした','校庭の隅で、見つけたダンゴムシを友達に見せているところでした','廊下を走って、通りかかった先生に「歩きなさい」と声をかけられたところでした']
@@ -173,8 +242,8 @@ const TimeSituations=(()=>{
   if(c.role==='teacher'){const s=own.find(x=>x.teacher);return s&&/_work$/.test(k)?s.teacher:null}
   if(c.role!=='student')return null;let s=own.find(x=>x.arrival),phase=/_class$/.test(k)?'class':/_lunch$/.test(k)?'lunch':/_after$/.test(k)?'after':k==='school_break'?'break':/arrival$/.test(k)?'arrival':null;if(!s||!phase)return null;return [...s[phase],...(s.season&&['class','after'].includes(phase)?s.season(t):[])]}
  function apply(c,P,t){let k=key(c,P,t);if(!k)return false;if(c.role==='general'&&P.sit?.text&&!/会社で|職場で|通勤|出勤|退勤|学校で|授業中/.test(P.sit.text))return false;let pool=pools[k];if(!pool?.length)throw Error('Missing time situation '+k);{let kind=c.facility?.kind,sts=[];if(['university','college'].includes(kind)&&/^college|^school_(weekend|evening|break)$/.test(k))sts.push('college');else if(['middle','high'].includes(kind)&&/^school_(weekend|evening|break)$/.test(k))sts.push('teen',...(kind==='high'?['high']:[]));else if(kind==='primary'&&k==='school_break')sts.push('elem');
-  for(const st of sts){const more=MORE[st]?.[k];if(more)pool=[...pool,...more]}}let own=schoolPool(c,k,t);if(own&&rnd()<.75)pool=own;let candidates=pool.filter(x=>x!==last.get(k));let text=pool!==own&&rnd()<.5?reuse(k,c,P,t):null,source=text?'swapsim':pool===own?'school-special':'supplement';if(!text)text=candidates[Math.floor(rnd()*candidates.length)]||pool[0];last.set(k,text);P.mapSituation=text;P.sit={text,state:k==='home_sleep'||k==='facility_sleep'?'sleep':k.includes('lunch')||k==='facility_meal'?'off':c.role==='student'||c.role==='area_student'?'school':c.role==='general'?P.sit.state:c.role==='resident'||c.role==='patient'?'off':'work',stateLabel:c.label,p:1,source};P.timeSituationKey=k;return true}
- return {configure,studentPhase,homeStudent,key,apply,homeCompatible,schoolPool,reuse};
+  for(const st of sts){const more=MORE[st]?.[k];if(more)pool=[...pool,...more]}}let own=schoolPool(c,k,t);if(own&&rnd()<.75)pool=own;let chars=pool===own?null:character(c,P,k);if(chars?.length&&rnd()<.35)pool=chars;let candidates=pool.filter(x=>x!==last.get(k));let text=pool!==own&&pool!==chars&&rnd()<.5?reuse(k,c,P,t):null,source=text?'swapsim':pool===own?'school-special':pool===chars?'character':'supplement';if(!text)text=candidates[Math.floor(rnd()*candidates.length)]||pool[0];last.set(k,text);P.mapSituation=text;P.sit={text,state:k==='home_sleep'||k==='facility_sleep'?'sleep':k.includes('lunch')||k==='facility_meal'?'off':c.role==='student'||c.role==='area_student'?'school':c.role==='general'?P.sit.state:c.role==='resident'||c.role==='patient'?'off':'work',stateLabel:c.label,p:1,source};P.timeSituationKey=k;return true}
+ return {CHARACTER,character,configure,studentPhase,homeStudent,key,apply,homeCompatible,schoolPool,reuse};
 })();
 if(typeof module!=='undefined')module.exports=TimeSituations;
 
