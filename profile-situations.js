@@ -75,3 +75,13 @@ if(typeof profileEntryOK==='function'){
  };
 }
 if(SCHOOL_TX?.teen)SCHOOL_TX.teen.push(...MALE_TEEN_BREAK_SITUATIONS);
+
+// Subtle private-at-home scenes for adult men only. The wording intentionally never states a sexual act;
+// it merely allows that interpretation among other ordinary reasons for wanting privacy.
+const ADULT_MALE_PRIVATE_HOME_SITUATIONS = [
+ [20,26,'自室のドアを閉め、スマホを手にしばらく一人で過ごしているところでした',{a:[18,35],w:.20,profile:{sex:'m'}}],
+ [21,27,'家の中の気配を確かめてから自室に戻り、スマホの画面を見ながら一人の時間を過ごしているところでした',{a:[18,35],w:.13,profile:{sex:'m'}}],
+ [22,27,'自室でスマホを見ていたところ、廊下の物音に気づいて反射的に画面を閉じたところでした',{a:[18,35],w:.10,profile:{sex:'m'}}],
+ [21,26,'自室で一人になり、ティッシュ箱を手元に置いてスマホを見ているところでした',{a:[18,35],w:.07,profile:{sex:'m'}}]
+];
+for(const key of ['adult','college'])if(OFF_TX[key])OFF_TX[key].push(...ADULT_MALE_PRIVATE_HOME_SITUATIONS);
