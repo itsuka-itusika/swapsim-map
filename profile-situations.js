@@ -49,3 +49,29 @@ OFF_TX.adult.push(...PROFILE_NEW_SITUATIONS);
 // Every off-duty role uses the same relationship, age and hobby gates.
 for(const key of ['kid','student','college','homemaker','senior'])if(OFF_TX[key])OFF_TX[key].push(...PROFILE_NEW_SITUATIONS);
 
+// Secondary-school break-time scenes. These are intentionally narrow: male junior/high-school students
+// while they are actually at school on a normal school day. They add personality without turning every
+// school scene into a generic "class in progress" description.
+const MALE_TEEN_BREAK_SITUATIONS = [
+ [8.2,15.6,'休み時間に、友達から回ってきた漫画を机の下で読んでいるところでした',{a:[12,18],w:.8,profile:{sex:'m'}}],
+ [8.2,15.6,'休み時間に、数人で一冊の漫画を回し読みしながら感想を言い合っているところでした',{a:[12,18],w:.75,profile:{sex:'m'}}],
+ [8.2,15.6,'休み時間に、友達が持ってきた漫画の新刊を借り、続きが気になって読みふけっているところでした',{a:[12,18],w:.65,profile:{sex:'m',hobby:27}}],
+ [8.2,15.6,'休み時間に、友達が持ち込んだグラビア写真集を数人で囲んで見ているところでした',{a:[13,18],w:.32,profile:{sex:'m'}}],
+ [8.2,15.6,'休み時間に、友達が持ってきたグラビア写真集を興味津々でめくっているところでした',{a:[14,18],w:.22,profile:{sex:'m'}}],
+ [8.2,15.6,'休み時間に、友達のスマホで話題の動画を見せてもらい、周囲と笑っているところでした',{a:[12,18],w:.7,profile:{sex:'m'}}],
+ [8.2,15.6,'休み時間に、机を囲んでカードゲームをしながら勝敗で盛り上がっているところでした',{a:[12,18],w:.48,profile:{sex:'m'}}],
+ [8.2,15.6,'休み時間に、窓際で友達とくだらない話をしながら笑っているところでした',{a:[12,18],w:.9,profile:{sex:'m'}}],
+ [8.2,15.6,'休み時間に、次の授業の宿題を忘れていたことに気づき、友達のノートを見せてもらっているところでした',{a:[12,18],w:.45,profile:{sex:'m'}}],
+ [8.2,15.6,'休み時間に、廊下で友達とふざけ合い、先生が来て慌てて教室へ戻ったところでした',{a:[12,18],w:.6,profile:{sex:'m'}}]
+];
+
+// profileEntryOK predates sex-specific situation gates, so extend it here without touching the core model.
+if(typeof profileEntryOK==='function'){
+ const profileEntryOKBase=profileEntryOK;
+ profileEntryOK=function(e,P){
+  const o=Array.isArray(e)?e[3]||{}:{},r=o.profile||{};
+  if(r.sex&&P.sex!==r.sex)return false;
+  return profileEntryOKBase(e,P);
+ };
+}
+if(SCHOOL_TX?.teen)SCHOOL_TX.teen.push(...MALE_TEEN_BREAK_SITUATIONS);
