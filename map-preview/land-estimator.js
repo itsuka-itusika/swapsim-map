@@ -79,6 +79,9 @@ const LandEstimator=(()=>{
  // strongest shopping/night/office tag stand in for real footfall, which the data does not carry.
  const hub={on:false};
  function hubFactor(c,profile){if(!hub.on)return 1;let q=c.sampleXY||c.xy||profile.point,s=0;
+  // Ridership mode: arrivals (half the daily boardings+alightings) x share who stay nearby x hours stayed / 12 active hours,
+  // spread over a tent-shaped catchment of radius R (its volume is πR²/3).
+  if(hub.riders){if(!hub.index)hub.index=new S.Index(hub.riders.map(r=>({xy:[r[0],r[1]],v:r[2],bbox:S.box([r[0],r[1]],1)})));const R=hub.R||800,k=.5*(hub.stay??.4)*(hub.dwell??2)/12*3/(Math.PI*R*R)*1e6;let extra=0;for(const r of hub.index.query(S.box(q,R))){let d=M.distance(q,r.xy);if(d<R)extra+=r.v*k*(1-d/R)}return Math.min(hub.cap||8,1+extra/14000)}
   for(const f of profile.context.facilities.query(S.box(q,600)))if(f.kind==='station'){let d=M.distance(q,f.xy);if(d<600)s+=(f.capacity>=1800?4:f.lines?.length>=3?2:f.lines?.length>=2?1:.6)*(1-d/600)}
   let tag=c.areaTag?.tags||{},area=Math.max(tag.shopping||0,tag.night||0,tag.office||0)/4;return 1+Math.min(3,s)+1.5*Math.min(1,area)}
  function estimateDemographics(c,occupation,t){let d={min:occupation.min,max:occupation.max,female:occupation.female};if(occupation.resident){d.resident=true;d.censusCode=c.region.id;d.subtype=c.subtype;d.daytime=t.h>=9&&t.h<17&&!weekend(t)}if(c.type==='green'&&c.subtype==='playground'&&occupation.role==='green_walk')d.ageBands=[[0,11,.5],[25,49,.45],[60,79,.05]];if(c.subtype==='fashion'&&occupation.role==='area_shopping')d.female=.62;return d;}
