@@ -17,7 +17,11 @@ const LandProfile=(()=>{
  function tagAt(q,type){
   if(['green','education','medical','industrial','waterfront','agriculture'].includes(type))return null;
   let best=null,w=0,adult=null,adultWeight=0,tags={},sources={},pri=null;
+  // street: the smallest named street (kind street) whose circle holds q, by plain distance rather than strength, so a
+  // street inside a wide district (センター街 in 渋谷) still names the people on it. nameRadius can narrow that circle.
+  let street=null;
   for(let a of ctx.areas.query(S.box(q,1))){let v=Math.max(0,1-(M.distance(q,a.xy)/a.radius)**2);if(!v)continue;
+   if(a.kind==='street'&&M.distance(q,a.xy)<=(a.nameRadius||a.radius)&&(!street||a.radius<street.radius))street=a;
    if(v>w){best=a;w=v}if(a.priority&&(!pri||a.radius<pri.radius))pri=a
    for(let [k,level] of Object.entries(a.tags||{})){let score=v*level;if(score>(tags[k]||0)){tags[k]=score;sources[k]=a}}
    let av=v*(a.tags?.adult||0)*(a.adultBoost||1);if(av>adultWeight){adult=a;adultWeight=av}
@@ -25,7 +29,7 @@ const LandProfile=(()=>{
   // A small landmark spot (スクランブル交差点) inside a wide district names the place and supplies its scenes wherever
   // it reaches, instead of losing to the district's larger circle.
   if(pri){best=pri;w=Math.max(w,1-(M.distance(q,pri.xy)/pri.radius)**2);for(const k of Object.keys(pri.tags||{}))if(sources[k])sources[k]=pri}
-  return best?{...best,strength:w,tags,sources,adultArea:adult,adultWeight}:null;
+  return best?{...best,strength:w,tags,sources,adultArea:adult,adultWeight,street:street?{id:street.id,name:street.name}:null}:null;
  }
  function classify(q){let region=ctx.regions.at(q)[0];if(!region)return null;// Newer landfill (the 中央防波堤 container terminals) still lies under the older water layer: a port zone wins.
  let water=ctx.waters.at(q)[0];if(water&&ctx.zones.at(q).some(z=>z.subtype==='port'))water=null;if(water)return {...water,type:'waterfront',subtype:'water',region,precision:water.source?.includes('W09')?'polygon':'approximate-polygon'};
@@ -58,7 +62,7 @@ const LandProfile=(()=>{
  if(type==='residential'){let schools=official.filter(f=>f.type==='education'&&M.distance(q,f.xy)<350);subtype=schools.some(f=>['university','college'].includes(f.kind))?'student':schools.some(f=>['primary','kindergarten'].includes(f.kind))?'family':near.some(f=>f.subtype==='care')?'senior':z?.subtype==='suburban'?'suburban':'residential'}
  return {id:(z?.id||'fallback-'+region.id)+'-'+type+'-'+subtype+(tag?'-'+tag.id:''),name:tag?.name||region.name,type,subtype,region,areaTag:tag,source:z?.source||'国勢調査・情報不足時の仮定',precision:z?'zoning':'fallback',poiCounts:counts,housingWeight:z?.housingWeight||1};
  }
- for(let q of S.samples(p,r,N)){let f=classify(q);if(!f)continue;let tag=f.areaTag,signature=tag?Object.entries(tag.sources).sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>k+':'+v.id).join(',')+'/'+(tag.adultArea?.id||''):'';let key=f.id+'/'+f.region.id+'/'+(tag?.id||'')+'/'+signature;if(!buckets.has(key))buckets.set(key,{...f,sampleXY:q,areaTag:tag?{...tag,tags:{},adultWeight:0}:null,areaM2:0,samples:0});let b=buckets.get(key);b.areaM2+=unit;b.samples++;landWeights[f.type]=(landWeights[f.type]||0)+unit;if(tag){for(let [k,v] of Object.entries(tag.tags)){b.areaTag.tags[k]=(b.areaTag.tags[k]||0)+v;tagTotals[k]=(tagTotals[k]||0)+unit*v}b.areaTag.adultWeight+=tag.adultWeight;}}
+ for(let q of S.samples(p,r,N)){let f=classify(q);if(!f)continue;let tag=f.areaTag,signature=tag?Object.entries(tag.sources).sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>k+':'+v.id).join(',')+'/'+(tag.adultArea?.id||''):'';let key=f.id+'/'+f.region.id+'/'+(tag?.id||'')+'/'+signature+'/'+(tag?.street?.id||'');if(!buckets.has(key))buckets.set(key,{...f,sampleXY:q,areaTag:tag?{...tag,tags:{},adultWeight:0}:null,areaM2:0,samples:0});let b=buckets.get(key);b.areaM2+=unit;b.samples++;landWeights[f.type]=(landWeights[f.type]||0)+unit;if(tag){for(let [k,v] of Object.entries(tag.tags)){b.areaTag.tags[k]=(b.areaTag.tags[k]||0)+v;tagTotals[k]=(tagTotals[k]||0)+unit*v}b.areaTag.adultWeight+=tag.adultWeight;}}
  let parts=[...buckets.values()];for(let b of parts)if(b.areaTag){for(let k of Object.keys(b.areaTag.tags))b.areaTag.tags[k]/=b.samples;b.areaTag.adultWeight/=b.samples;}let total=parts.reduce((s,f)=>s+f.areaM2,0),weights=Object.fromEntries(Object.entries(landWeights).map(([k,v])=>[k,v/(total||1)])),order=Object.keys(weights).sort((a,b)=>weights[b]-weights[a]);
  return {point:p,radius:r,parts,weights,primaryType:order[0]||'mixed',secondaryType:order[1]||null,tags:tagTotals,features:osm,coverage:total/(Math.PI*r*r),sampleCount:N,classify,context:ctx};
  }

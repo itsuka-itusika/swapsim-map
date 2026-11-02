@@ -21,10 +21,13 @@ const PlaceLabel=(()=>{
   return ''}
  // Place name without the 自宅/職場 suffix, for lists and map tooltips.
  function storeName(lc){if(!lc)return '';const N=typeof StoreNames!=='undefined'?StoreNames:typeof require==='function'?require('./store-names.js'):null;return N?N.resolve(lc,typeof MAP_DATA!=='undefined'?MAP_DATA.specialPlaces||[]:[]):lc.name}
- function name(c){let own=c.facility?.name||storeName(c.landComponent)||c.zone?.name||c.area?.name;if(own&&!generic(c))return own;return named(c.area,c)||named(c.landComponent?.areaTag,c)||c.region?.name||own||''}
+ // A famous street (センター街, サンシャイン60通り) names the people on it ahead of the wide district around it; people at home
+ // keep the district, since nobody lives "in" a street.
+ const street=c=>c.landComponent?.areaTag?.street?.name||null;
+ function name(c){let own=c.facility?.name||storeName(c.landComponent)||c.zone?.name||c.area?.name;if(own&&!generic(c))return own;return street(c)||named(c.area,c)||named(c.landComponent?.areaTag,c)||c.region?.name||own||''}
  // A wide district can be named only near its centre (labelRadius); farther out the ward is shown.
  function named(a,c){if(!a?.name)return null;if(!a.labelRadius)return a.name;let p=c.landComponent?.sampleXY||c.landComponent?.xy;return p&&typeof MapModel!=='undefined'&&MapModel.distance(p,a.xy)>a.labelRadius?null:a.name}
- function label(c,P,fallback){if(!generic(c))return c.facility?.name||storeName(c.landComponent)||fallback;let lc=c.landComponent,where=(c.area&&/^area_/.test(c.role)&&named(c.area,c))||named(lc?.areaTag,c)||c.region?.name||fallback;let k=kind(c,P);return k?where+' '+k:where}
+ function label(c,P,fallback){if(!generic(c))return c.facility?.name||storeName(c.landComponent)||fallback;let lc=c.landComponent,k=kind(c,P),where=(k!=='自宅'&&street(c))||(c.area&&/^area_/.test(c.role)&&named(c.area,c))||named(lc?.areaTag,c)||c.region?.name||fallback;return k?where+' '+k:where}
  return {label,generic,kind,privateName,name};
 })();
 if(typeof module!=='undefined')module.exports=PlaceLabel;

@@ -306,3 +306,14 @@ test('cinema audiences stay a small share of the busy districts around them',()=
  for(const [name,share] of Object.entries(r))assert.ok(share<.1,name+' '+share);
  assert.ok(r['歌舞伎町']>.005,String(r['歌舞伎町']));
 });
+test('famous streets name the people on them ahead of the wide district, but not people at home',()=>{
+ const r=JSON.parse(run(`(()=>{let t={y:2026,mo:10,d:31,dow:6,h:15,hf:15.3,mi:18,rand:false},out={};const draw=(xy,rad,n)=>{let parts=LandEstimator.estimate(LandProfile.create(envContext,xy,rad),t),tot=parts.reduce((s,c)=>s+c.n,0),o=[];for(let i=0;i<n;i++){let c=MapModel.pick(parts),P=mapPerson({...c,roleP:c.n/tot},t);o.push(P.place)}return o};
+ for(const name of ['渋谷センター街','サンシャイン60通り','渋谷のんべい横丁','新宿二丁目']){let a=MAP_DATA.areas.find(x=>x.name===name);out[name]=draw(a.xy,50,200).filter(p=>p.startsWith(name)).length/200}
+ let a=MAP_DATA.areas.find(x=>x.name==='渋谷センター街');out.outside=draw([a.xy[0]+(a.radius+250)/90400,a.xy[1]],50,200).filter(p=>p.startsWith('渋谷センター街')).length;
+ let lc={precision:'zoning',type:'mixed',name:'x',areaTag:{name:'渋谷',street:{name:'奥渋谷'}}};
+ out.home=PlaceLabel.label({role:'general',resident:true,landComponent:lc},{sit:{state:'sleep',text:'眠っているところでした'}},'');
+ out.work=PlaceLabel.label({role:'area_office',landComponent:lc},{sit:{state:'work',text:'資料を作っているところでした'}},'');
+ return JSON.stringify(out)})()`));
+ for(const name of ['渋谷センター街','サンシャイン60通り','渋谷のんべい横丁','新宿二丁目'])assert.ok(r[name]>=.7,name+' '+r[name]);
+ assert.equal(r.outside,0);assert.ok(!r.home.startsWith('奥渋谷'),r.home);assert.equal(r.work,'奥渋谷 職場');
+});
