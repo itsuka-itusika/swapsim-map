@@ -6,12 +6,33 @@ const LandProfile=(()=>{
  const kindType=k=>['primary','middle','high','university','college','kindergarten','prep'].includes(k)?'education':['care','hospital'].includes(k)?'medical':k==='station'||k==='terminal'||k==='airfield'?'transport':k==='theme'?'tourism':['tv','radio','palace'].includes(k)?'public':k==='industrial'||k==='port'?'industrial':k==='cemetery'?'religious':'green';
  function configure(data){const zones=[...(data.greenZones||[]).map(z=>({...z,type:kindType(z.kind),subtype:z.kind,precision:'approximate-polygon',source:z.source||'SwapSim概略区域'})),...(data.landZones||[]).map(z=>({...z,type:kindType(z.kind),subtype:z.kind,precision:'approximate-polygon',source:z.source||'SwapSim概略区域'}))];
  return {data,police:new S.Index((data.policeStations||[]).map(f=>({...f,type:'public',subtype:'police',area:Math.PI*f.radius*f.radius}))),specialPlaces:new S.Index(data.specialPlaces||[]),publicAreas:new S.Index(data.publicAreas||[]),landmarks:new S.Index(data.landmarks||[]),zones:new S.Index(zones),waters:new S.Index(data.waters||[]),zoning:new S.Index(data.zoning?.zones||[]),facilities:new S.Index((data.facilities||[]).map(f=>({...f,type:kindType(f.kind),subtype:f.kind,precision:'modeled-footprint'}))),areas:new S.Index(data.areas||[]),regions:new S.Index(data.regions||[])};}
- function normalize(n){return String(n||'').normalize('NFKC').replace(/[\s・･]/g,'').replace(/高校/g,'高等学校')}
+ // Old and new forms of a few kanji are the same school (東京藝術大学 / 東京芸術大学, 國學院 / 国学院).
+ const OLD_KANJI={'藝':'芸','國':'国','學':'学','櫻':'桜','澤':'沢','邊':'辺','邉':'辺','齋':'斎','齊':'斉','髙':'高','﨑':'崎','德':'徳','惠':'恵'};
+ function normalize(n){return String(n||'').normalize('NFKC').replace(/[藝國學櫻澤邊邉齋齊髙﨑德惠]/g,c=>OLD_KANJI[c]).replace(/[\s・･]/g,'').replace(/高校/g,'高等学校')}
  function create(ctx,p,r,features=[]){let bbox=S.box(p,r),expanded=S.box(p,r+450),raw=features.filter(f=>S.intersects(expanded,f.bbox)).map(f=>{if(f.source!=='OpenStreetMap'||!f.tags)return f;let c=OSMProfile.classification(f.tags);return c?{...f,type:c[0],subtype:c[1]}:null}).filter(Boolean),official=ctx.facilities.query(expanded),matched=new Set();
  // Deduplicate official points and OSM footprints. A campus may contain several school stages.
  let osm=raw.map(f=>{let fs=[];if(['education','medical','transport'].includes(f.type)){fs=official.filter(x=>x.type===f.type&&(f.geometry&&S.contains(x.xy,f)||normalize(x.name)===normalize(f.name)&&M.distance(x.xy,f.xy)<800));for(let x of fs)matched.add(x.id)}return {...f,facilities:fs}});
  // Relation/member and tagged node/polygon duplicates must not increase density or capacity.
  osm=osm.filter((f,i,a)=>!a.some((g,j)=>j!==i&&g.geometry&&g.type===f.type&&((!f.geometry&&normalize(f.name)===normalize(g.name)&&S.contains(f.xy,g))||(f.geometry&&g.id.startsWith('osm-relation')&&f.id.startsWith('osm-way')&&normalize(f.name)===normalize(g.name)&&Math.abs(f.area-g.area)<Math.max(10,g.area*.05)))));
+ // Campus parts. A university or hospital is often drawn in OpenStreetMap as one site plus many buildings, some unnamed
+ // (only amenity=university) and some named after the school (東京海洋大学博物館, 東京海洋大学（水産学部）). The site carries
+ // the official school, also when its name only begins with the school's (東京大学 本郷キャンパス) or the official name
+ // carries a corporate prefix (国家公務員共済組合連合会 虎の門病院 / 虎の門病院); the parts must not
+ // become schools of their own (a "university" with hundreds of students in one building).
+ for(const x of official.filter(x=>!matched.has(x.id)&&['education','medical'].includes(x.type))){let key=normalize(x.name),site=osm.filter(f=>{let n=normalize(f.name);return f.type===x.type&&!f.facilities.length&&f.geometry&&(n.startsWith(key)||n.length>=4&&key.endsWith(n))&&M.distance(x.xy,f.xy)<800}).sort((a,b)=>b.area-a.area)[0];if(site){site.facilities=[x];matched.add(x.id)}}
+ // A campus site whose school point lies outside the selection (中央大学 茗荷谷キャンパス seen from 跡見) still belongs to it.
+ for(const f of osm.filter(f=>['education','medical'].includes(f.type)&&!f.facilities.length&&f.geometry&&(f.tags?.name||f.tags?.['name:ja']))){let a=normalize(f.name),x=ctx.facilities.query(S.box(f.xy,800)).filter(x=>x.type===f.type&&!official.includes(x)&&a.startsWith(normalize(x.name))&&M.distance(x.xy,f.xy)<800).sort((p,q)=>M.distance(p.xy,f.xy)-M.distance(q.xy,f.xy))[0];if(x)f.facilities=[x]}
+ // Grounds, dormitories, halls, libraries and research institutes tagged as a school have no pupils of their own.
+ const NOT_SCHOOL=/グラウンド|グランド|運動場|体育館|寮|会館|記念館|資料館|資料センター|図書館|研究所|プラザ|ハウス|ホール|セミナーハウス/;
+ const sites=osm.filter(f=>f.facilities.length&&f.geometry);
+ osm=osm.filter(f=>{if(!['education','medical'].includes(f.type)||f.facilities.length)return true;
+  if(sites.some(g=>g.type===f.type&&S.contains(f.xy,g)))return false;
+  if(f.type==='education'&&NOT_SCHOOL.test(f.name))return false;
+  const near=ctx.facilities.query(S.box(f.xy,800)).filter(x=>x.type===f.type&&M.distance(x.xy,f.xy)<800);
+  // A numbered or named building (共立女子学園2号館, 〇〇校舎, 本館) next to a school is part of it.
+  if(/号館|棟$|校舎|本館|別館|新館/.test(f.name)&&near.some(x=>M.distance(x.xy,f.xy)<400))return false;
+  if(!(f.tags?.name||f.tags?.['name:ja']))return !near.some(x=>M.distance(x.xy,f.xy)<400);
+  return !near.some(x=>{let a=normalize(f.name),b=normalize(x.name);return a!==b&&a.startsWith(b)})});
  let index=new S.Index(osm),facilities=official.filter(f=>!matched.has(f.id)),facilityIndex=new S.Index(facilities),buckets=new Map(),landWeights={},tagTotals={},N=Math.min(10000,Math.max(384,Math.ceil(Math.PI*r*r/225))),unit=Math.PI*r*r/N;
  const specific=f=>['hotel','hostel','museum','gallery','theatre','fire_station','large_shop','library','bank','bath','tourist'].includes(f.subtype)||!['residential','green','industrial','commercial','office','agriculture','waterfront'].includes(f.type);
  function tagAt(q,type){
@@ -58,7 +79,8 @@ const LandProfile=(()=>{
  let z=ctx.zoning.at(q)[0],type=z?.type||'mixed',subtype=z?.subtype||'unknown',near=index.query(S.box(q,120)).filter(f=>M.distance(q,f.xy)<120),counts={};for(let f of near)counts[f.type]=(counts[f.type]||0)+1;
  let tag=tagAt(q,type);
  if(type==='commercial'){let off=counts.office||0,shop=counts.commercial||0;if(off>shop||!off&&!shop&&(tag?.tags.office||0)>Math.max(tag?.tags.shopping||0,tag?.tags.night||0))type='office';else if((tag?.tags.night||0)>=3||near.filter(f=>f.subtype==='night').length>=2)subtype='night';else if((tag?.tags.subculture||0)>=2)subtype='subculture';else if((tag?.tags.fashion||0)>=3)subtype='fashion';else subtype='shopping'}
- if(type==='mixed'&&near.length>=2){type=Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];subtype=near.find(f=>f.type===type).subtype}
+ if(type==='mixed'&&near.length>=2){// Schools, hospitals and stations need a facility of their own: a few of their buildings nearby do not make one.
+  let kinds=Object.keys(counts).filter(k=>!['education','medical','transport'].includes(k)).sort((a,b)=>counts[b]-counts[a]);if(kinds.length){type=kinds[0];subtype=near.find(f=>f.type===type).subtype}}
  if(type==='residential'){let schools=official.filter(f=>f.type==='education'&&M.distance(q,f.xy)<350);subtype=schools.some(f=>['university','college'].includes(f.kind))?'student':schools.some(f=>['primary','kindergarten'].includes(f.kind))?'family':near.some(f=>f.subtype==='care')?'senior':z?.subtype==='suburban'?'suburban':'residential'}
  return {id:(z?.id||'fallback-'+region.id)+'-'+type+'-'+subtype+(tag?'-'+tag.id:''),name:tag?.name||region.name,type,subtype,region,areaTag:tag,source:z?.source||'国勢調査・情報不足時の仮定',precision:z?'zoning':'fallback',poiCounts:counts,housingWeight:z?.housingWeight||1};
  }

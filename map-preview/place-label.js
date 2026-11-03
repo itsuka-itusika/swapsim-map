@@ -6,7 +6,7 @@ const PlaceLabel=(()=>{
  // A named building or complex (〇〇ビル, 〇〇タワー) is kept; a company name never is.
  const COMPANY=/株式会社|有限会社|合同会社|合資会社|\(株\)|（株）|\(有\)|（有）|㈱|㈲|Inc\.?|Co\.,?|Ltd|LLC|Corporation|事務所|営業所|支店|本社|支社|出張所/i,BUILDING=/ビル|タワー|ヒルズ|センター|プラザ|スクエア|テラス|ゲート|フォレスト|シティ|会館|工場|倉庫|物流/;
  function privateName(lc){let named=lc.tags?lc.tags.name||lc.tags['name:ja']:lc.name;if(!named||lc.name===lc.subtype)return true;if(lc.type==='residential')return true;return ['office','industrial'].includes(lc.type)&&(COMPANY.test(lc.name)||!BUILDING.test(lc.name))}
- function generic(c){let lc=c.landComponent;if(c.facility||c.road||c.zone)return false;if(c.area)return true;if(!lc)return true;return ['zoning','fallback'].includes(lc.precision)||!lc.name||lc.name===c.region?.name||lc.name===lc.areaTag?.name||lc.source==='OpenStreetMap'&&privateName(lc)}
+ function generic(c){let lc=c.landComponent;if(c.facility?.unnamed)return true;if(c.facility||c.road||c.zone)return false;if(c.area)return true;if(!lc)return true;return ['zoning','fallback'].includes(lc.precision)||!lc.name||lc.name===c.region?.name||lc.name===lc.areaTag?.name||lc.source==='OpenStreetMap'&&privateName(lc)}
  // 自宅 and 職場 follow the final scene, not only the drawn role: a resident shopping at the supermarket or a worker
  // on a lunch break at a cafe gets just the district.
  // Clear at-home markers win over outside words; sleeping people are always at home.
