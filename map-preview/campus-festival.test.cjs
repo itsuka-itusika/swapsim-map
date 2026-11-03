@@ -34,3 +34,14 @@ test('school festivals: the whole school takes part, middle schools share the hi
  const visitors=[...r.high.people,...r.middle.people].filter(p=>p[0]==='school_festival_visitor');assert.ok(visitors.every(p=>p[3]==='開成の文化祭の来場者'));
  assert.ok(!visitors.some(p=>p[1]<=9&&/志望校/.test(p[4])));assert.ok(!r.middle.people.some(p=>p[0]==='school_festival_visitor'&&p[1]>=13&&p[1]<=15&&/志望校/.test(p[4])));
 });
+test('東京海洋大学: campus-specific classes at 品川 and 越中島, 海鷹祭 closing at 13:00 on its last day, and 海王祭 in May',()=>{
+ const r=JSON.parse(run(`(()=>{const F=xy=>MAP_DATA.facilities.find(f=>f.name==='東京海洋大学'&&MapModel.distance(f.xy,xy)<50),SH=F([139.746881,35.626354]),EC=F([139.791765,35.667851]);
+  const own=(f,k)=>TimeSituations.schoolPool({role:'student',facility:f},k,{})||[];
+  const fest=(f,mo,d,dow,h,hol)=>{let t={y:2026,mo,d,dow,h:Math.floor(h),hf:h,mi:0,rand:false,holiday:hol},rows=CampusFestival.rows(f,t,{role:'student',w:1,n:1});return rows.filter(z=>z.role==='festival_visitor').reduce((s,z)=>s+z.w,0)};
+  let shClass=[],ecClass=[];for(let i=0;i<40;i++){shClass.push(...own(SH,'college_class'));ecClass.push(...own(EC,'college_class'))}
+  return JSON.stringify({radius:[SH.radius,EC.radius],shClass:[...new Set(shClass)],ecClass:[...new Set(ecClass)],kaiyo11:fest(SH,11,3,2,11,true),kaiyo15:fest(SH,11,3,2,15,true),kaiyo2:fest(SH,11,2,1,16,false),kaio:fest(EC,5,16,6,13,false),festOther:fest(EC,11,3,2,11,true)})})()`));
+ assert.deepEqual(r.radius,[190,170]);
+ assert.ok(r.shClass.some(x=>/魚|プランクトン|かまぼこ/.test(x))&&!r.shClass.some(x=>/海図|ディーゼル|六分儀/.test(x)));
+ assert.ok(r.ecClass.some(x=>/海図|ディーゼル|六分儀/.test(x))&&!r.ecClass.some(x=>/プランクトン|かまぼこ/.test(x)));
+ assert.ok(r.kaiyo11>0&&r.kaiyo2>0);assert.equal(r.kaiyo15,0);assert.ok(r.kaio>0);assert.equal(r.festOther,0);
+});

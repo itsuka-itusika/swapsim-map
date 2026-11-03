@@ -27,12 +27,17 @@ const CampusVisitors=(()=>{
  const kids=[['親と一緒に、キャンパスの広い芝生を走り回っているところでした',9,17,{max:9}],['親と一緒に、池のそばで鯉にパンくずをやろうとして止められているところでした',10,16,{max:9}],['親に手を引かれて、大きな古い建物を見上げているところでした',9,17,{max:12}],['お父さんに肩車してもらって、並木道を進んでいるところでした',9,17,{max:7}],['親と一緒に、キャンパスの中のカフェでジュースを選んでいるところでした',10,17,{min:3,max:12}]];
  const tourist=[['ガイドブックを片手に、キャンパスの案内図を見ているところでした',9,17],['キャンパスの象徴的な建物の前で、順番に記念写真を撮っているところでした',9,17],['有名な門の前で、家族に頼まれて記念写真を撮っているところでした',9,17],['学内の売店で、お土産にする大学のグッズを選んでいるところでした',10,17],['日本の大学の雰囲気を、並木道を歩きながら見て回っているところでした',9,17]];
  // Campus-specific scenes: [text, from, to, options, month range]
- const special={'東京大学':[['赤門の前で、記念写真を撮ってもらっているところでした',9,17],['三四郎池のほとりのベンチで、池を眺めているところでした',9,17],['安田講堂の前で、建物を見上げて写真を撮っているところでした',9,17],['銀杏並木の黄色く色づいた葉を見上げながら歩いているところでした',9,17,{mo:[11,12]}],['総合研究博物館で、標本の展示をゆっくり見て回っているところでした',10,17,{min:8}]],'早稲田大学':[['大隈講堂の前で、時計台を見上げているところでした',9,17],['演劇博物館の展示を、順路に沿って見て回っているところでした',10,17,{min:10}]],'慶應義塾大学':[['三田のキャンパスの旧図書館の前で、赤れんがの建物を見上げているところでした',9,17]],'東京工業大学':[['正門の先の桜並木を、写真を撮りながら歩いているところでした',9,17,{mo:[3,4]}]]};
+ const special={'東京海洋大学':[
+   ['マリンサイエンスミュージアムで、クジラの骨格標本を見上げているところでした',10,16,{min:4,at:[[139.746881,35.626354],400]}],
+   ['構内に保存された帆船の雲鷹丸を、写真に収めているところでした',9,17,{at:[[139.746881,35.626354],400]}],
+   ['明治丸の甲板を見学し、太いマストを見上げているところでした',10,16,{min:4,at:[[139.791765,35.667851],400]}],
+   ['隅田川沿いの構内のベンチで、行き交う船を眺めているところでした',9,17,{at:[[139.791765,35.667851],400]}]],
+  '東京大学':[['赤門の前で、記念写真を撮ってもらっているところでした',9,17],['三四郎池のほとりのベンチで、池を眺めているところでした',9,17],['安田講堂の前で、建物を見上げて写真を撮っているところでした',9,17],['銀杏並木の黄色く色づいた葉を見上げながら歩いているところでした',9,17,{mo:[11,12]}],['総合研究博物館で、標本の展示をゆっくり見て回っているところでした',10,17,{min:8}]],'早稲田大学':[['大隈講堂の前で、時計台を見上げているところでした',9,17],['演劇博物館の展示を、順路に沿って見て回っているところでした',10,17,{min:10}]],'慶應義塾大学':[['三田のキャンパスの旧図書館の前で、赤れんがの建物を見上げているところでした',9,17]],'東京工業大学':[['正門の先の桜並木を、写真を撮りながら歩いているところでした',9,17,{mo:[3,4]}]]};
  // 東京大学 is the 本郷 campus only within 600 m of its 赤門 (駒場 is 6 km away): scenes of one campus must not reach another.
  const HONGO=[139.7631,35.7125],near=(f)=>f?.xy&&typeof MapModel!=='undefined'&&MapModel.distance(f.xy,HONGO)<600;
  function pool(c,P,t){let h=t.hf??t.h,mo=t.mo,name=c.facility?.name||'',tour=c.role==='campus_tourist',base=tour?[...tourist,...general.filter(x=>!/犬|ジョギング|ランニング|日課/.test(x[0]))]:[...general,...(P.age<13?kids:[])];
   let sp=Object.entries(special).filter(([k])=>name.includes(k)&&(k!=='東京大学'||near(c.facility))).flatMap(([,v])=>v);
-  return [...base,...sp].filter(([,s,e,o={}])=>h>=s&&h<e&&(o.min==null||P.age>=o.min)&&(o.max==null||P.age<=o.max)&&(!o.mo||o.mo.includes(mo)))}
+  return [...base,...sp].filter(([,s,e,o={}])=>h>=s&&h<e&&(o.min==null||P.age>=o.min)&&(o.max==null||P.age<=o.max)&&(!o.mo||o.mo.includes(mo))&&(!o.at||c.facility?.xy&&typeof MapModel!=='undefined'&&MapModel.distance(c.facility.xy,o.at[0])<=o.at[1]))}
  function apply(c,P,t){if(!c.campusVisitor||P.hb?.bed)return false;let p=pool(c,P,t);if(!p.length)return false;let text=pick(p)[0];
   P.mapSituation=text;P.visitLabel=c.label;P.sit={...P.sit,text,state:'off',stateLabel:c.label,source:'campus-visitor',p:1};return true}
  return {rows,pool,apply,general,kids,tourist,special};
