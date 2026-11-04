@@ -34,7 +34,7 @@ const PROFILE_NEW_SITUATIONS = [
  [9,21,'ミシンの前で、縫い目のずれをほどいているところでした',{a:[10,100],profile:{hobby:17}}],
  [9,21,'スケッチブックに、窓辺の鉢植えを描いているところでした',{a:[10,100],profile:{hobby:22}}],
  [9,20,'陶芸教室で、ろくろの上の器を整えているところでした',{a:[10,100],profile:{hobby:23}}],
- [10,22,'パチンコ店で、台を離れる前に残高を確かめているところでした',{a:[20,100],profile:{hobby:30}}],
+ [10,22,'パチンコ店で、台を離れる前に残高を確かめているところでした',{a:[20,100],profile:{hobby:30,hobbyDetail:['パチンコ','パチスロ']}}],
  [8,18,'キャンプ場で、テントの張り綱を締め直しているところでした',{a:[10,100],profile:{hobby:33}}],
  [10,18,'子どもとクッキーの型を抜いているところでした',{a:[18,90],profile:{hobby:19,childAge:[3,12]}}],
  [10,22,'きょうだいと協力して、ゲームの難所を越えたところでした',{a:[10,100],profile:{hobby:31,sibling:true}}],
@@ -49,24 +49,29 @@ OFF_TX.adult.push(...PROFILE_NEW_SITUATIONS);
 // Every off-duty role uses the same relationship, age and hobby gates.
 for(const key of ['kid','student','college','homemaker','senior'])if(OFF_TX[key])OFF_TX[key].push(...PROFILE_NEW_SITUATIONS);
 
-// Gambling lovers (profile hobby 30 = パチンコ, the statistics category that covers betting hobbies).
-// Racing scenes are weekend-only; out-of-home venues are listed in homeCompatible so residential
-// components never show them.
+// Gambling lovers (profile hobby 30). The hobby's detail decides which kind of betting a person does:
+// pachinko/pachislot hall scenes, weekend horse racing, or boat racing; generic scenes fit any of them.
+// Out-of-home venues are listed in homeCompatible so residential components never show them.
 const GAMBLING_HOBBY_SITUATIONS = [
- [10,22,'パチンコ店で、当たりが来ないまま追加の千円札を台に入れたところでした',{a:[20,100],w:.7,profile:{hobby:30}}],
- [10,22,'パチンコ店で、確変が続いて足元に積み上がったドル箱を眺めているところでした',{a:[20,100],w:.45,profile:{hobby:30}}],
- [10,22,'パチスロの台の前で、設定がいいかどうか回転数とにらめっこしているところでした',{a:[20,100],w:.55,profile:{hobby:30}}],
- [11,22.5,'パチンコ店の景品交換所で、換金した札を数えているところでした',{a:[20,100],w:.4,profile:{hobby:30}}],
- [12,22,'パチンコ店を出て、財布の中身を見ながら「今日はもうやめておこう」とつぶやいたところでした',{a:[20,100],w:.5,profile:{hobby:30}}],
- [7,10,'朝から新聞の出走表を広げ、赤ペンで印をつけているところでした',{a:[20,100],w:.6,we:true,profile:{hobby:30}}],
- [9.5,16.5,'スマホの投票アプリで、締め切り直前に馬券を買い足したところでした',{a:[20,100],w:.6,we:true,profile:{hobby:30}}],
- [10,16.5,'テレビの競馬中継を前に、握りしめた馬券を見ながら声を上げているところでした',{a:[20,100],w:.55,we:true,profile:{hobby:30}}],
- [10,16.5,'競馬場のスタンドで、最後の直線に向かって大声で馬の名前を叫んでいるところでした',{a:[20,100],w:.4,we:true,profile:{hobby:30}}],
- [10,16.5,'場外馬券売り場のモニターの前で、外れた馬券を細かく破っているところでした',{a:[20,100],w:.4,we:true,profile:{hobby:30}}],
- [10,16.5,'競艇場で、ボートが最後のターンを回るのを身を乗り出して見ているところでした',{a:[20,100],w:.3,profile:{hobby:30}}],
+ [10,22,'パチンコ店で、当たりが来ないまま追加の千円札を台に入れたところでした',{a:[20,100],w:.7,profile:{hobby:30,hobbyDetail:['パチンコ']}}],
+ [10,22,'パチンコ店で、確変が続いて足元に積み上がったドル箱を眺めているところでした',{a:[20,100],w:.45,profile:{hobby:30,hobbyDetail:['パチンコ']}}],
+ [10,22,'パチスロの台の前で、設定がいいかどうか回転数とにらめっこしているところでした',{a:[20,100],w:.7,profile:{hobby:30,hobbyDetail:['パチスロ']}}],
+ [10,22,'パチスロで、目押しを決めてボーナスを揃えたところでした',{a:[20,100],w:.45,profile:{hobby:30,hobbyDetail:['パチスロ']}}],
+ [11,22.5,'パチンコ店の景品交換所で、換金した札を数えているところでした',{a:[20,100],w:.4,profile:{hobby:30,hobbyDetail:['パチンコ','パチスロ']}}],
+ [12,22,'パチンコ店を出て、財布の中身を見ながら「今日はもうやめておこう」とつぶやいたところでした',{a:[20,100],w:.5,profile:{hobby:30,hobbyDetail:['パチンコ','パチスロ']}}],
+ [7,10,'朝から競馬新聞の出走表を広げ、赤ペンで印をつけているところでした',{a:[20,100],w:.6,we:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [9.5,16.5,'スマホの投票アプリで、締め切り直前に馬券を買い足したところでした',{a:[20,100],w:.6,we:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [10,16.5,'テレビの競馬中継を前に、握りしめた馬券を見ながら声を上げているところでした',{a:[20,100],w:.55,we:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [10,16.5,'競馬場のスタンドで、最後の直線に向かって大声で馬の名前を叫んでいるところでした',{a:[20,100],w:.4,we:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [10,16.5,'場外馬券売り場のモニターの前で、外れた馬券を細かく破っているところでした',{a:[20,100],w:.4,we:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [16,23,'今日のレースの映像を見返し、あの馬の位置取りがまずかったと反省しているところでした',{a:[20,100],w:.4,we:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [19,24,'週末の重賞に向けて、出走馬の過去の成績をノートに書き出しているところでした',{a:[20,100],w:.45,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [10,16.5,'競艇場で、ボートが最後のターンを回るのを身を乗り出して見ているところでした',{a:[20,100],w:.45,profile:{hobby:30,hobbyDetail:['競艇']}}],
+ [10,21,'スマホでボートレースの中継を見ながら、買った舟券の結果を待っているところでした',{a:[20,100],w:.55,profile:{hobby:30,hobbyDetail:['競艇']}}],
+ [8,11,'出走表を見比べ、今日はどの選手のモーターが良さそうか考えているところでした',{a:[20,100],w:.45,profile:{hobby:30,hobbyDetail:['競艇']}}],
+ [15,21,'ナイターレースの締め切りに合わせて、舟券の買い目を絞り込んでいるところでした',{a:[20,100],w:.4,profile:{hobby:30,hobbyDetail:['競艇']}}],
  [15,19,'当たった払い戻し金で、今夜は少しいい酒を買って帰ろうと考えているところでした',{a:[20,100],w:.35,profile:{hobby:30}}],
  [18,24,'家計簿アプリを開き、今月の負け額を見て思わず画面を閉じたところでした',{a:[20,100],w:.45,profile:{hobby:30}}],
- [19,24,'次の週末のレースに向けて、過去の成績をノートに書き出しているところでした',{a:[20,100],w:.45,profile:{hobby:30}}],
  [10,19,'宝くじ売り場の列に並び、今回こそはと連番で買っているところでした',{a:[20,100],w:.3,profile:{hobby:30}}],
  [9,23,'当選番号の発表を見ながら、買った宝くじを一枚ずつ照らし合わせているところでした',{a:[20,100],w:.3,profile:{hobby:30}}],
  [17,22,'夫婦で夕食をとりながら、今日の負け分をどう切り出そうか迷っているところでした',{a:[20,100],w:.3,profile:{hobby:30,spouse:true}}]
@@ -124,6 +129,11 @@ if(typeof profileEntryOK==='function'){
  profileEntryOK=function(e,P){
   const o=Array.isArray(e)?e[3]||{}:{},r=o.profile||{};
   if(r.sex&&P.sex!==r.sex)return false;
+  if(r.hobbyDetail&&(typeof PROFILE_ENABLED==='undefined'||PROFILE_ENABLED)){
+   // Sub-hobby gate: the person must have the parent hobby with one of the listed details.
+   if(P.age>=10&&typeof assignProfileHobbyDetails==='function')assignProfileHobbyDetails(P);
+   if(!P.hobbies?.some(h=>(r.hobby==null||h.i===r.hobby)&&r.hobbyDetail.includes(h.detail)))return false;
+  }
   return profileEntryOKBase(e,P);
  };
 }
