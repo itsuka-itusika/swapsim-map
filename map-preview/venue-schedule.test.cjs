@@ -12,3 +12,16 @@ test('audiences skew by event type and betting venues follow their calendars',()
  const texts=run(`Object.values(VenueAudience.profiles).length`);assert.ok(texts>25);
 });
 test('closed off-track betting halls have no customers during their closure',()=>{const x=JSON.parse(run(`(()=>{let f=MAP_DATA.landmarks.find(v=>v.name==='場外馬券売り場（渋谷）'),sat={...T,dow:6,h:13,hf:13};return JSON.stringify([VenueSchedule.resolve(f,{...sat,d:31}).mode,VenueSchedule.resolve(f,{...sat,y:2027,mo:1,d:9}).mode])})()`));assert.equal(x[0],'event');assert.equal(x[1],'none')});
+test('大井競馬場 follows a general meeting pattern after the official snapshot',()=>{const x=JSON.parse(run(`(()=>{let f=MAP_DATA.landmarks.find(v=>v.name==='大井競馬場'),days=[];for(let d=Date.UTC(2027,0,1);d<Date.UTC(2028,0,1);d+=864e5){let D=new Date(d),t={y:D.getUTCFullYear(),mo:D.getUTCMonth()+1,d:D.getUTCDate(),dow:D.getUTCDay(),h:18,hf:18,mi:0,venueEvent:'auto'},r=VenueSchedule.resolve(f,t);days.push([t.mo*100+t.d,t.dow,r.mode,r.basis])}
+ let t=(mo,d,h)=>{let D=new Date(Date.UTC(2027,mo-1,d));return VenueSchedule.resolve(f,{y:2027,mo,d,dow:D.getUTCDay(),h,hf:h,mi:0,venueEvent:'auto'})};
+ return JSON.stringify({days,again:[t(1,18,18),t(1,18,18)],morning:t(1,18,10).mode,eve:t(12,30,12).mode,late:t(12,30,20).mode})})()`));
+ const on=x.days.filter(d=>d[2]==='event');
+ assert.ok(x.days.every(d=>d[3]==='想定日程'));
+ assert.ok(on.length>=75&&on.length<=100,'days '+on.length);
+ assert.ok(on.filter(d=>d[0]<1228).every(d=>d[1]>=1&&d[1]<=5),'regular meetings are on weekdays');
+ assert.ok(!on.some(d=>d[0]<=104),'no racing over the New Year holidays');
+ assert.deepEqual(on.filter(d=>d[0]>=1222).map(d=>d[0]),[1228,1229,1230,1231]);
+ assert.equal(JSON.stringify(x.again[0]),JSON.stringify(x.again[1]));
+ assert.equal(x.again[0].mode,'event');assert.equal(x.morning,'none');
+ assert.equal(x.eve,'event');assert.equal(x.late,'none');
+});
