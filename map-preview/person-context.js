@@ -53,7 +53,8 @@ const PersonContext=(()=>{
   [c=>/^police_(patrol|traffic|desk|investigation)$/.test(c.role),[[20,29,33],[30,39,27],[40,49,22],[50,59,18]]],
   [c=>c.role==='nurse',[[22,29,26],[30,39,26],[40,49,25],[50,59,17],[60,65,6]]],
   [c=>c.role==='care',[[20,29,14],[30,39,18],[40,49,24],[50,59,24],[60,65,20]]],
-  [c=>c.role==='urban_hairdresser',[[20,24,25],[25,29,30],[30,34,20],[35,39,12],[40,49,13]]]];
+  [c=>c.role==='urban_hairdresser',[[20,24,25],[25,29,30],[30,34,20],[35,39,12],[40,49,13]]],
+  [c=>c.role==='urban_nailist',[[20,24,30],[25,29,32],[30,34,20],[35,39,11],[40,44,7]]]];
  function roleBands(c){return ROLE_BANDS.find(([test])=>test(c))?.[1]||null}
  function schoolTime(t){let h=t.hf??t.h;return t.dow>0&&t.dow<6&&!t.holiday&&!(typeof holName==='function'&&holName(t))&&!(typeof schoolVac==='function'&&schoolVac(t))&&h>=8.5&&h<15}
  // Picks a name style uniformly, without implying any nationality distribution.

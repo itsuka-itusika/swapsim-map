@@ -4,9 +4,9 @@ const LandEstimator=(()=>{
  const M=typeof MapModel!=='undefined'?MapModel:require('./model.js'),S=typeof MapSpatial!=='undefined'?MapSpatial:require('./spatial.js');
  const row=(role,label,w,min=20,max=69,female=.5,extra={})=>({role,label,w,min,max,female,...extra});
  const weekend=t=>t.dow===0||t.dow===6||t.holiday;
- // Game emphasis over the census mix: fashion streets get more hairdressers and apparel staff, Akihabara maid-cafe staff.
+ // Game emphasis over the census mix: fashion streets get more hairdressers, nail salon staff and apparel staff, Akihabara maid-cafe staff.
  function styleRows(area,t,factor=1){let tag=area?.tags||{},h=t.hf??t.h,open=h>=10&&h<20?1:h>=9&&h<21?.3:0,f=tag.fashion||0,out=[];
-  if(f>=1.5&&open)out.push(row('urban_hairdresser','美容師',.12*f*open*factor,20,49,.6,{jobTag:'salon',jobName:'美容師',urbanTag:'hair'}),row('urban_apparel','アパレル店員',.15*f*open*factor,18,44,.65,{jobTag:'shop',jobName:'アパレルの販売員',urbanTag:'apparel'}));
+  if(f>=1.5&&open)out.push(row('urban_hairdresser','美容師',.12*f*open*factor,20,49,.6,{jobTag:'salon',jobName:'美容師',urbanTag:'hair'}),row('urban_nailist','ネイリスト',.04*f*open*factor,20,44,.96,{jobTag:'salon',jobName:'ネイリスト',urbanTag:'nail'}),row('urban_apparel','アパレル店員',.15*f*open*factor,18,44,.65,{jobTag:'shop',jobName:'アパレルの販売員',urbanTag:'apparel'}));
   if(area?.sources?.electronics?.name==='秋葉原'&&h>=11&&h<22)out.push(row('urban_maidcafe','メイドカフェの店員',.5*(tag.electronics||0)/4*factor,18,29,.95,{jobTag:'food',urbanTag:'maidcafe'}));
   // コンカフェ (concept cafes): 秋葉原 and 池袋 run from late morning to the evening; in a night district (歌舞伎町) they open
   // in the evening and some stay open past midnight.
