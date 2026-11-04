@@ -24,3 +24,7 @@ test('rehearsal in the afternoon, nobody on a dark day, idols and jazz have thei
  const jazz=JSON.parse(run(`JSON.stringify(draw('Blue Note Tokyo',6,20))`));
  assert.ok(jazz.people.filter(p=>p[0]==='live_guest').every(p=>p[2]>=20));assert.ok(!jazz.people.some(p=>/押し合い|ドリンクチケット|整理番号/.test(p[5])));
 });
+test('a show counts well under a full house, and clubs are dark on some weekdays',()=>{
+ const r=JSON.parse(run(`(()=>{let clubs=MAP_DATA.specialPlaces.filter(x=>x.liveStyle==='club'),v=clubs[0],d=showOn(v,3),w=LiveHouseModel.roles(v,T(d,3,20.5)).find(x=>x.role==='live_guest').w,dark=0,n=0;for(const c of clubs)for(let dd=1;dd<=28;dd++){let dow=(dd+6)%7;if(dow>0&&dow<6){n++;if(!LiveHouseModel.showDay(c,T(dd,dow,12)))dark++}}return JSON.stringify({share:w/v.capacity,dark:dark/n})})()`));
+ assert.ok(r.share<=.2,JSON.stringify(r));assert.ok(r.dark>=.15,JSON.stringify(r));
+});

@@ -5,7 +5,9 @@
    All times, fills and show-day rates are game assumptions, not real schedules. */
 const LiveHouseModel=(()=>{
  const AUDIENCE=.4;
- const SHOW_RATE={hall:[.55,.85],club:[.92,.92],idol:[.85,.85],jazz:[.95,.95]},FILL={hall:.85,club:.65,idol:.95,jazz:.7};
+ // A full house is the exception: many weekday bills (対バン, small names) play to a half-empty floor, and smaller clubs
+ // stay dark some weekdays. These keep the venues from outweighing the streets around them.
+ const SHOW_RATE={hall:[.5,.8],club:[.75,.9],idol:[.85,.85],jazz:[.9,.95]},FILL={hall:.6,club:.4,idol:.9,jazz:.5};
  const CREW={hall:[14,35],club:[16,8],idol:[16,10],jazz:[5,15]};
  const LABEL={hall:['ライブの観客','ミュージシャン','ライブハウスのスタッフ'],club:['ライブの観客','バンドマン','ライブハウスのスタッフ'],idol:['アイドル劇場の観客','アイドル','劇場のスタッフ'],jazz:['ジャズクラブの客','ジャズミュージシャン','ジャズクラブのスタッフ']};
  const GUEST_AGES={hall:[[13,17,8],[18,24,30],[25,34,30],[35,44,20],[45,59,12]],club:[[15,17,5],[18,24,35],[25,34,32],[35,44,18],[45,59,10]],idol:[[16,19,10],[20,29,30],[30,39,25],[40,49,22],[50,64,13]],jazz:[[20,29,8],[30,39,15],[40,49,22],[50,59,25],[60,69,20],[70,79,10]]};
