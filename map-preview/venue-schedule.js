@@ -28,6 +28,14 @@ const VenueSchedule=(()=>{
  let planned=typeof VenueAudience!=='undefined'?VenueAudience.plan(name,kind,t):null;
  return planned?shape(planned,'自動推定'):{mode:'none',basis:'自動推定',phase:'通常利用の想定',occupancy:0,estimated:true};
  }
- return {resolve,date,ooiRule};
+ // Is 大井競馬場 racing into the evening now? Official snapshot first, then the assumed pattern from 2027.
+ // Earlier dates have no schedule basis, so night-racing scenes stay off there.
+ function ooiNight(t,h){let ds=date(t),events=(typeof MAP_DATA!=='undefined'?MAP_DATA.venueSchedules?.events:[])||[],e=events.find(x=>x.venue==='大井競馬場'&&x.date===ds);
+  if(!e&&ds>='2027-01-01')e=ooiRule(t);
+  return !!e&&e.endsAssumed>=21&&h>=Math.max(16.5,e.opens)&&h<e.endsAssumed;
+ }
+ return {resolve,date,ooiRule,ooiNight};
 })();
 if(typeof module!=='undefined')module.exports=VenueSchedule;
+// Situations marked ooiNight follow the 大井競馬場 schedule instead of a fixed weekday rule.
+if(typeof entryOK==='function'){const entryOKBeforeOoi=entryOK;entryOK=function(e,ctx){if(Array.isArray(e)&&e[3]?.ooiNight&&!VenueSchedule.ooiNight(ctx.t,ctx.t?.hf??ctx.h))return false;return entryOKBeforeOoi(e,ctx)}}

@@ -66,6 +66,13 @@ const GAMBLING_HOBBY_SITUATIONS = [
  [10,16.5,'場外馬券売り場のモニターの前で、外れた馬券を細かく破っているところでした',{a:[20,100],w:.4,we:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
  [16,23,'今日のレースの映像を見返し、あの馬の位置取りがまずかったと反省しているところでした',{a:[20,100],w:.4,we:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
  [19,24,'週末の重賞に向けて、出走馬の過去の成績をノートに書き出しているところでした',{a:[20,100],w:.45,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ // 大井競馬場 night racing: shown only while 大井 races into the evening (ooiNight, gated in venue-schedule.js).
+ [16.5,21.5,'仕事帰りに大井競馬場のナイターに寄り、パドックで馬の気配を見比べているところでした',{a:[20,100],w:.7,wd:true,ooiNight:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [17,21.5,'大井競馬場のナイターで、照明に浮かぶ最後の直線に向かって声を張り上げているところでした',{a:[20,100],w:.6,ooiNight:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [17,21.5,'大井競馬場のスタンドで、ビール片手にメインレースの発走を待っているところでした',{a:[20,100],w:.55,ooiNight:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [16.5,21,'大井競馬場の売店で煮込みをつまみ、マークシートを塗りながら次のレースを考えているところでした',{a:[20,100],w:.45,ooiNight:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [18,21.5,'大井競馬場の払戻機の前で、的中した馬券を差し込んだところでした',{a:[20,100],w:.35,ooiNight:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
+ [16.5,21.5,'スマホで大井のナイター中継を見ながら、買った馬券の結果を待っているところでした',{a:[20,100],w:.6,ooiNight:true,profile:{hobby:30,hobbyDetail:['競馬']}}],
  [10,16.5,'競艇場で、ボートが最後のターンを回るのを身を乗り出して見ているところでした',{a:[20,100],w:.45,profile:{hobby:30,hobbyDetail:['競艇']}}],
  [10,21,'スマホでボートレースの中継を見ながら、買った舟券の結果を待っているところでした',{a:[20,100],w:.55,profile:{hobby:30,hobbyDetail:['競艇']}}],
  [8,11,'出走表を見比べ、今日はどの選手のモーターが良さそうか考えているところでした',{a:[20,100],w:.45,profile:{hobby:30,hobbyDetail:['競艇']}}],

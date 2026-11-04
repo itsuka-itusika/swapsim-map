@@ -2,7 +2,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const html=fs.readFileSync('dist/map-preview.html','utf8'),ctx=vm.createContext({console});vm.runInContext(html.slice(html.indexOf('// ===== 統計データ'),html.indexOf("'use strict';\nconst el=id")),ctx);const run=s=>vm.runInContext(s,ctx);
 run(`for(let f of MAP_DATA.regions){f.density=censusMass(f.id)/f.area;f.residentialDensity=censusMass(f.id)/(MAP_DATA.zoning.residentialAreaKm2[f.id]||f.area)}`);
 // Draw the original engine with a fixed gambling sub-hobby.
-const draw=(o,n)=>run(`(()=>{const o=${JSON.stringify(o)},out=[];for(let i=0;i<${n};i++){const pref=PREFS.find(p=>p.n==='東京都'),muni=pref.munis[0],t={y:2026,mo:10,d:o.d,dow:o.dow,h:Math.floor(o.h),hf:o.h,mi:0,rand:true};
+const draw=(o,n)=>run(`(()=>{const o=${JSON.stringify(o)},out=[];for(let i=0;i<${n};i++){const pref=PREFS.find(p=>p.n==='東京都'),muni=pref.munis[0],t={y:o.y||2026,mo:o.mo||10,d:o.d,dow:o.dow,h:Math.floor(o.h),hf:o.h,mi:0,rand:true};
  const P={pref,muni,urb:'metro',age:o.age,sex:'m',t};P.birth=birthOf(P.age,t);P.g=gradeIndex(P.birth,t);P.occ={label:'会社員',group:'adult',cat:'事務',tag:'office',p:1};P.hb={preg:0,pp:-1,leave:false,bed:null};
  P.household={i:0,mar:'single'};P.familyContext={ownChild:false,youngest:null,children:[],awayChildren:[],grandchild:false,members:[]};P.hobbies=[{i:30,detail:o.detail,detailP:1}];
  out.push(situation(P,t).text);}return out})()`);
@@ -21,4 +21,14 @@ test("gambling scenes follow the person's sub-hobby",()=>{
 test('horse racing scenes stay on weekends and holidays',()=>{
  const xs=draw({detail:'競馬',age:45,dow:3,d:21,h:14},2000);
  assert.equal(xs.filter(x=>/馬券|競馬場|場外馬券/.test(x)).length,0);
+});
+test('大井 night-racing scenes follow the 大井競馬場 schedule',()=>{
+ const ooi=/大井/;
+ const at=(y,mo,d,dow,h)=>draw({detail:'競馬',age:45,y,mo,d,dow,h},1500).filter(x=>ooi.test(x)).length;
+ assert.ok(at(2026,11,17,2,19)>0,'official race day');
+ assert.equal(at(2026,11,10,2,19),0,'official non-race weekday');
+ assert.equal(at(2026,11,17,2,12),0,'before the night card');
+ assert.ok(at(2027,1,19,2,19)>0,'assumed race day');
+ assert.equal(at(2027,1,12,2,19),0,'assumed non-race weekday');
+ assert.equal(draw({detail:'パチンコ',age:45,y:2026,mo:11,d:17,dow:2,h:19},1500).filter(x=>ooi.test(x)).length,0,'only horse racing fans');
 });
