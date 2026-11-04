@@ -169,7 +169,9 @@ const TimeSituations=(()=>{
   let stages=kind==='primary'?['elem']:kind==='middle'?['teen']:kind==='high'?['teen','high']:['university','college'].includes(kind)?['college']:[];
   // A boys' or girls' school has no classmates of the other sex to tease or tidy up after.
   let single=['male','female'].includes(c.facility?.sex);
-  return stages.flatMap(st=>CHARACTER[st]?.[phase]||[]).filter(([text,sex,min])=>(!sex||sex===P.sex)&&!(min&&P.age<min)&&!(single&&/男子|女子/.test(text))).map(([text])=>text)}
+  return stages.flatMap(st=>CHARACTER[st]?.[phase]||[]).filter(([text,sex,min])=>(!sex||sex===P.sex)&&!(min&&P.age<min)&&!(single&&/男子|女子/.test(text))&&!(kind==='high'&&grade(P,text))).map(([text])=>text)}
+ // 部活の引退 is a 高3 matter, and a 高1 has no 後輩 yet.
+ function grade(P,text){let g=P.g??12;return /引退/.test(text)&&g<12||/後輩/.test(text)&&g<11}
  const MORE={
   elem:{
    school_break:['休み時間のチャイムと同時に、校庭へ飛び出していくところでした','友達と、ドッジボールのチーム分けをしているところでした','教室の後ろの棚で、友達と折り紙を折っているところでした','図書室で、続きが気になる本を急いで読んでいるところでした','先生に呼ばれて、プリントを配る手伝いをしているところでした','鉄棒で、前回りができる回数を友達と数えているところでした','席に座ったまま、次の授業の教科書とノートをそろえているところでした','友達と、昨日見たアニメの話に夢中になっているところでした','水筒のお茶を飲んで、友達と先生の物まねをして笑っているところでした','トイレの前で、友達と並んで順番を待っているところでした','校庭の隅で、見つけたダンゴムシを友達に見せているところでした','廊下を走って、通りかかった先生に「歩きなさい」と声をかけられたところでした']
