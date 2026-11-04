@@ -41,7 +41,8 @@ const Nightlife=(()=>{
  [0.75,5,'終電を逃して入ったファミレスで、ドリンクバーのおかわりを取りに立ったところでした',{a:[20,89]}],
  [0.75,5,'タクシー乗り場の長い列を見て、始発まで待つことに決めたところでした',{a:[20,89]}],
  [2,5,'始発までの時間を、カラオケのフリータイムでやり過ごしているところでした',{a:[20,89]}]];
- function extraPool(kind){return extra[kind].map((text,i)=>{let end=kind==='entertainment'&&[4,5,9].includes(i)?24:5;return [18,end,text,{a:[20,89],...(/立ち飲み|次の一杯/.test(text)?{np:1}:{})}]})}
+ function extraPool(kind){return extra[kind].map((text,i)=>{let end=kind==='entertainment'&&[4,5,9].includes(i)?24:5;// 締め lines come after a night of drinking, not at the start of the evening.
+  let start=/締め/.test(text)?22:18;return [start,end,text,{a:[20,89],...(/立ち飲み|次の一杯/.test(text)?{np:1}:{})}]})}
  function handles(c){return roles.has(c.role)}
  function assign(c,P){
   let tags=c.role==='area_night_worker'?['food','izakaya']:c.role==='area_cabaret_worker'?['cabaret']:c.role==='area_host_worker'?['host']:c.role==='area_adult_worker'?['adultservice']:null;
@@ -78,7 +79,7 @@ const Nightlife=(()=>{
   let text=fillText(textOf(pk.e),P);
   return {text,tpl:textOf(pk.e),state,stateLabel:label,p:pk.p,source:'swapsim-role-pool'};
  }
- return {handles,assign,choose,fallback,extra};
+ return {handles,assign,choose,fallback,extra,extraPool};
 })();
 if(typeof module!=='undefined')module.exports=Nightlife;
 

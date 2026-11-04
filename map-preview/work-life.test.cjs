@@ -24,3 +24,7 @@ test('overworked scenes stay away from shop clerks and ramen staff',()=>{
  for(const job of ['スーパーの店員','ラーメン屋の店員'])for(const [d,dow,h] of [[4,3,21.5],[8,0,18]])
   assert.equal(draw({job,d,dow,h},800).filter(x=>OVER.test(x)).length,0,job);
 });
+test('the 締めのラーメン night scene starts late in the evening',()=>{
+ const r=JSON.parse(run(`JSON.stringify(Nightlife.extraPool('dining').filter(e=>/締め/.test(e[2])).map(e=>e[0]))`));
+ assert.ok(r.length&&r.every(h=>h>=22),JSON.stringify(r));
+});
