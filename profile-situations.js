@@ -49,6 +49,30 @@ OFF_TX.adult.push(...PROFILE_NEW_SITUATIONS);
 // Every off-duty role uses the same relationship, age and hobby gates.
 for(const key of ['kid','student','college','homemaker','senior'])if(OFF_TX[key])OFF_TX[key].push(...PROFILE_NEW_SITUATIONS);
 
+// Gambling lovers (profile hobby 30 = パチンコ, the statistics category that covers betting hobbies).
+// Racing scenes are weekend-only; out-of-home venues are listed in homeCompatible so residential
+// components never show them.
+const GAMBLING_HOBBY_SITUATIONS = [
+ [10,22,'パチンコ店で、当たりが来ないまま追加の千円札を台に入れたところでした',{a:[20,100],w:.7,profile:{hobby:30}}],
+ [10,22,'パチンコ店で、確変が続いて足元に積み上がったドル箱を眺めているところでした',{a:[20,100],w:.45,profile:{hobby:30}}],
+ [10,22,'パチスロの台の前で、設定がいいかどうか回転数とにらめっこしているところでした',{a:[20,100],w:.55,profile:{hobby:30}}],
+ [11,22.5,'パチンコ店の景品交換所で、換金した札を数えているところでした',{a:[20,100],w:.4,profile:{hobby:30}}],
+ [12,22,'パチンコ店を出て、財布の中身を見ながら「今日はもうやめておこう」とつぶやいたところでした',{a:[20,100],w:.5,profile:{hobby:30}}],
+ [7,10,'朝から新聞の出走表を広げ、赤ペンで印をつけているところでした',{a:[20,100],w:.6,we:true,profile:{hobby:30}}],
+ [9.5,16.5,'スマホの投票アプリで、締め切り直前に馬券を買い足したところでした',{a:[20,100],w:.6,we:true,profile:{hobby:30}}],
+ [10,16.5,'テレビの競馬中継を前に、握りしめた馬券を見ながら声を上げているところでした',{a:[20,100],w:.55,we:true,profile:{hobby:30}}],
+ [10,16.5,'競馬場のスタンドで、最後の直線に向かって大声で馬の名前を叫んでいるところでした',{a:[20,100],w:.4,we:true,profile:{hobby:30}}],
+ [10,16.5,'場外馬券売り場のモニターの前で、外れた馬券を細かく破っているところでした',{a:[20,100],w:.4,we:true,profile:{hobby:30}}],
+ [10,16.5,'競艇場で、ボートが最後のターンを回るのを身を乗り出して見ているところでした',{a:[20,100],w:.3,profile:{hobby:30}}],
+ [15,19,'当たった払い戻し金で、今夜は少しいい酒を買って帰ろうと考えているところでした',{a:[20,100],w:.35,profile:{hobby:30}}],
+ [18,24,'家計簿アプリを開き、今月の負け額を見て思わず画面を閉じたところでした',{a:[20,100],w:.45,profile:{hobby:30}}],
+ [19,24,'次の週末のレースに向けて、過去の成績をノートに書き出しているところでした',{a:[20,100],w:.45,profile:{hobby:30}}],
+ [10,19,'宝くじ売り場の列に並び、今回こそはと連番で買っているところでした',{a:[20,100],w:.3,profile:{hobby:30}}],
+ [9,23,'当選番号の発表を見ながら、買った宝くじを一枚ずつ照らし合わせているところでした',{a:[20,100],w:.3,profile:{hobby:30}}],
+ [17,22,'夫婦で夕食をとりながら、今日の負け分をどう切り出そうか迷っているところでした',{a:[20,100],w:.3,profile:{hobby:30,spouse:true}}]
+];
+for(const key of ['adult','student','college','homemaker','senior'])if(OFF_TX[key])OFF_TX[key].push(...GAMBLING_HOBBY_SITUATIONS);
+
 // Ages 12-18: secretly using a smartphone after the household has gone quiet.
 // Duplicate the entries across 22:00-24:00 and 00:00-05:00 because situation windows do not wrap midnight.
 const LATE_NIGHT_TEEN_PHONE_SITUATIONS = [
