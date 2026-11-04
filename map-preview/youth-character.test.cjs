@@ -32,3 +32,7 @@ test('married couples at home late at night sometimes share an intimate night, i
  assert.equal(r.day,null);assert.equal(r.single,null);assert.equal(r.away,null);assert.equal(r.old,null);
  for(const t of [...r.young.pool,...r.settled.pool])assert.ok(!/〈/.test(t.replace(/〈配偶者〉/g,'')));
 });
+test('the career-form scene after school is rare and only for 高2・高3',()=>{
+ const r=JSON.parse(run(`(()=>{let f=MAP_DATA.facilities.find(f=>f.kind==='high'),region=MapModel.locate(f.xy,MAP_DATA.regions),t={y:2026,mo:11,d:4,dow:3,h:16,hf:16.4,mi:24},n=0,g10=0,N=1500;for(let i=0;i<N;i++){let P=mapPerson({role:'student',label:'生徒',facility:f,region,min:15,max:18,female:.5},t);if(P.sit.text===TimeSituations.CAREER){n++;if(P.g<11)g10++}}return JSON.stringify({share:n/N,g10,inPool:MAP_DATA.timeSituations.high_after.includes(TimeSituations.CAREER)})})()`));
+ assert.equal(r.inPool,false);assert.equal(r.g10,0);assert.ok(r.share<.05,JSON.stringify(r));
+});
