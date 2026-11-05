@@ -58,12 +58,27 @@ Actions の実行結果で **Deploy AI explain worker** の手順を開き、ロ
 
 費用の目安（実測ではなく見積もり）：1件あたり入力約1,500トークン・出力約1,000トークンで、Claude Sonnet 5.5（入力 $2 / 出力 $10 ／100万トークン）なら約 $0.013（2円ほど）。上限の100件を毎日使い切ると月 $40 程度です。`MODEL` を `claude-haiku-5-5` にすると1件 0.1〜0.2円ほどになりますが、誰の体・心かの取り違えが増えます。Sonnet 5.5 では、安全上の判定で断られたときに別のモデルで自動的にやり直すサーバー側の仕組み（fallbacks）を使っています。Cloudflare Workers と KV は無料枠の範囲に収まります（KV の書き込みは1件の生成で2回、無料枠は1日1,000回）。
 
+## モデルを切り替える（Claude ⇄ Gemini）
+
+既定は Claude Sonnet 5.5 です。Gemini 3.1 Flash-Lite も使えます。
+
+1. Gemini を使う場合は、Google AI Studio（https://aistudio.google.com/ ）で APIキーを作り、課金（有料枠）を有効にする。無料枠では、送った内容が Google の製品改善に使われます。
+2. GitHub の Repository secrets に `GEMINI_API_KEY` として登録する。
+3. 既定のモデルを変えるときは、**Settings → Secrets and variables → Actions → Variables** に `AI_MODEL` を作り、`gemini-3.1-flash-lite` などを入れて Run workflow する。Claude に戻すときは `AI_MODEL` を `claude-sonnet-5-5` にする（または削除する）。
+
+保存済みの解説はモデルごとに分けて残るので、戻すと以前の解説がそのまま使われます。
+
+比較のため、リクエストに `"model"` を入れると、`ALLOWED_MODELS` にあるモデルに限ってそのモデルで生成します（返答の `model` に、どのモデルが書いたかが入ります）。
+
+費用の目安（1件、入力約1,500・出力約1,000トークン）：Claude Sonnet 5.5 約2円、Gemini 3.1 Flash-Lite（入力 $0.25 / 出力 $1.50）約0.3円、Claude Haiku 5.5 約0.1円。
+
 ## 設定（wrangler.toml の `[vars]`）
 
 | 名前 | 既定 | 内容 |
 |---|---|---|
 | `ALLOWED_ORIGINS` | `https://itsuka-itusika.github.io,http://localhost:8000` | 呼び出しを許すページの Origin |
-| `MODEL` | `claude-sonnet-5-5` | 使う Claude のモデル |
+| `MODEL` | `claude-sonnet-5-5` | 既定のモデル（Actions variables の `AI_MODEL` があればそちら） |
+| `ALLOWED_MODELS` | `claude-sonnet-5-5,gemini-3.1-flash-lite,claude-haiku-5-5` | リクエストで選べるモデル |
 | `DAILY_LIMIT` | `100` | 1日に新しく生成する解説の上限 |
 
 IP ごとの回数制限は `[[ratelimits]]` の `simple` で変えられます。変更を main に入れると、次の公開で反映されます。

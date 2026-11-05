@@ -1,12 +1,23 @@
 // Cloudflare Worker: 地図版の「AI解説」。APIキーは Worker の secret（ANTHROPIC_API_KEY）にだけ置く。
 import Anthropic from '@anthropic-ai/sdk';
-import { handle } from './explain.js';
+import { handle, isGemini, geminiBody, fromGemini } from './explain.js';
 
 const FALLBACK_MODELS = new Set(['claude-sonnet-5-5', 'claude-opus-5-5', 'claude-opus-5', 'claude-fable-5-1']);
 
 export default {
   async fetch(request, env) {
     const generate = async (system, user, model) => {
+      if (isGemini(model)) {
+        // Gemini: the key goes in a header, never in the URL, so it cannot end up in logs.
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY || '' },
+          body: JSON.stringify(geminiBody(system, user)),
+          signal: AbortSignal.timeout(25_000),
+        });
+        if (!r.ok) throw Object.assign(new Error('gemini ' + r.status), { status: r.status });
+        return fromGemini(await r.json());
+      }
       const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, baseURL: env.ANTHROPIC_BASE_URL || undefined, maxRetries: 1, timeout: 25_000 });
       // Claude Sonnet 5.5 can decline a request on a safety classifier; the server-side fallback
       // re-runs it on a suitable model in the same call instead of returning a refusal.

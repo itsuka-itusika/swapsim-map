@@ -6,7 +6,10 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 # 呼び出しを許すページの Origin（カンマ区切り）
 ALLOWED_ORIGINS = "https://itsuka-itusika.github.io,http://localhost:8000"
+# 既定のモデル。GitHub の Actions variables の AI_MODEL を設定すると、公開時にそちらで上書きされる。
 MODEL = "claude-sonnet-5-5"
+# リクエストで選べるモデル（比較用）。ここにないモデルを指定されたら MODEL を使う。
+ALLOWED_MODELS = "claude-sonnet-5-5,gemini-3.1-flash-lite,claude-haiku-5-5"
 # 1日（日本時間）に新しく生成する解説の上限。キャッシュ済みの解説は数えない。
 DAILY_LIMIT = "100"
 

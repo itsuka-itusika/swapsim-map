@@ -32,6 +32,8 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
         run: |
           set -euo pipefail
           [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || unset CLOUDFLARE_ACCOUNT_ID
@@ -39,10 +41,13 @@ jobs:
           secrets="$RUNNER_TEMP/ai-secrets.json"
           trap 'rm -f "$secrets"' EXIT
           args=()
-          if [ -n "$ANTHROPIC_API_KEY" ]; then
-            node -e 'require("fs").writeFileSync(process.argv[1],JSON.stringify({ANTHROPIC_API_KEY:process.env.ANTHROPIC_API_KEY}),{mode:0o600})' "$secrets"
+          # Only the keys that are set are uploaded; keys left out keep their previous value in the Worker.
+          if [ -n "$ANTHROPIC_API_KEY$GEMINI_API_KEY" ]; then
+            node -e 'const e=process.env,o={};for(const k of ["ANTHROPIC_API_KEY","GEMINI_API_KEY"])if(e[k])o[k]=e[k];require("fs").writeFileSync(process.argv[1],JSON.stringify(o),{mode:0o600})' "$secrets"
             args=(--secrets-file "$secrets")
           fi
+          # vars.AI_MODEL (optional) overrides the default model in wrangler.toml, e.g. to go back to Claude.
+          if [ -n "$AI_MODEL" ]; then args+=(--var "MODEL:$AI_MODEL"); fi
           npx wrangler deploy "${args[@]}" 2>&1 | tee "$RUNNER_TEMP/worker-deploy.log"
           url=$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/worker-deploy.log" | head -n 1 || true)
           echo "url=$url" >> "$GITHUB_OUTPUT"

@@ -72,3 +72,22 @@ test('the Pages workflow deploys the Worker from secrets and hands the page only
  assert.match(wf,/ANTHROPIC_API_KEY: \$\{\{ secrets\.ANTHROPIC_API_KEY \}\}/);assert.match(wf,/--secrets-file/);assert.match(wf,/continue-on-error: true/);
  assert.match(wf,/AI_EXPLAIN_URL: \$\{\{ steps\.worker\.outputs\.url \|\| vars\.AI_EXPLAIN_URL \}\}/);assert.doesNotMatch(wf,/echo[^\n]*ANTHROPIC_API_KEY/);
  assert.doesNotMatch(wf,/pull_request/);assert.match(toml,/binding = "EXPLAIN_KV"/);assert.doesNotMatch(toml,/REPLACE_WITH/)});
+
+test('the model is MODEL unless the request names one from ALLOWED_MODELS; the answer says which model wrote it',async()=>{const {pickModel,handle,isGemini}=await worker;
+ const e={MODEL:'claude-sonnet-5-5',ALLOWED_MODELS:'claude-sonnet-5-5, gemini-3.1-flash-lite'};
+ assert.equal(pickModel(undefined,e),'claude-sonnet-5-5');assert.equal(pickModel('gemini-3.1-flash-lite',e),'gemini-3.1-flash-lite');
+ assert.equal(pickModel('claude-fable-5-1',e),'claude-sonnet-5-5');assert.equal(pickModel({x:1},e),'claude-sonnet-5-5');assert.equal(pickModel('gemini-3.1-flash-lite',{MODEL:'claude-sonnet-5-5'}),'claude-sonnet-5-5');
+ assert.ok(isGemini('gemini-3.1-flash-lite'));assert.ok(!isGemini('claude-sonnet-5-5'));
+ let used;const ok=async(s,u,m)=>{used=m;return {text:ANSWER,stop:'end_turn'}},en=env(e);
+ const a=await(await handle(req({...AiExplain.payload(pair),model:'gemini-3.1-flash-lite'}),en,ok)).json();assert.equal(used,'gemini-3.1-flash-lite');assert.equal(a.model,'gemini-3.1-flash-lite');
+ const b=await(await handle(req(AiExplain.payload(pair)),en,ok)).json();assert.equal(used,'claude-sonnet-5-5');assert.equal(b.cached,false);assert.equal(b.model,'claude-sonnet-5-5');
+ assert.equal((await(await handle(req({...AiExplain.payload(pair),model:'gemini-3.1-flash-lite'}),en,ok)).json()).cached,true)});
+
+test('Gemini requests carry the prompt and a low thinking level; responses map finish reasons and skip thoughts',async()=>{const {geminiBody,fromGemini}=await worker;
+ const g=geminiBody('SYS','USER');assert.equal(g.systemInstruction.parts[0].text,'SYS');assert.deepEqual(g.contents,[{role:'user',parts:[{text:'USER'}]}]);assert.equal(g.generationConfig.thinkingConfig.thinkingLevel,'low');assert.equal(g.generationConfig.maxOutputTokens,2000);
+ assert.deepEqual(fromGemini({candidates:[{content:{parts:[{text:'考え中',thought:true},{text:'【入れ替わり直後】本文'}]},finishReason:'STOP'}]}),{text:'【入れ替わり直後】本文',stop:'end_turn'});
+ assert.equal(fromGemini({candidates:[{content:{parts:[{text:'途中'}]},finishReason:'MAX_TOKENS'}]}).stop,'max_tokens');
+ assert.equal(fromGemini({candidates:[{finishReason:'SAFETY'}]}).stop,'refusal');assert.equal(fromGemini({promptFeedback:{blockReason:'PROHIBITED_CONTENT'}}).stop,'refusal');assert.equal(fromGemini({}).stop,'refusal');
+ const src=fs.readFileSync('ai-explain/src/index.js','utf8');assert.match(src,/'x-goog-api-key': env\.GEMINI_API_KEY/);assert.doesNotMatch(src,/[?&]key=/);
+ const wf=fs.readFileSync('.github/workflows/pages.yml','utf8');assert.match(wf,/GEMINI_API_KEY: \$\{\{ secrets\.GEMINI_API_KEY \}\}/);assert.match(wf,/--var "MODEL:\$AI_MODEL"/);
+ assert.match(fs.readFileSync('ai-explain/wrangler.toml','utf8'),/ALLOWED_MODELS = "claude-sonnet-5-5,gemini-3\.1-flash-lite/)});

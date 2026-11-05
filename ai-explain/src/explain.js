@@ -99,6 +99,32 @@ export function buildUserPrompt(req) {
   return `<swap>\n${head}\n<入れ替わり前>\n${beforeLine(P)}\n読者（あなた）：プロフィール不明\n</入れ替わり前>\n<入れ替わり後>\n■ ${surname(P)}の体 ― 中身はあなたの心\n${bodyLines(P).join('\n')}\n${reader}\n</入れ替わり後>\n</swap>\n「あなた（体は${surname(P)}）」の視点で、入れ替わった直後の状況を記録してください。${surname(P)}の心がどうなったかは分からないので触れない。`;
 }
 
+// The default model comes from MODEL. A request may name another one only if it is in ALLOWED_MODELS,
+// so callers can compare models but never pick one the owner has not listed.
+export function pickModel(asked, env) {
+  const fallback = env.MODEL || 'claude-sonnet-5-5';
+  const allowed = String(env.ALLOWED_MODELS || '').split(',').map(s => s.trim()).filter(Boolean);
+  return typeof asked === 'string' && allowed.includes(asked) ? asked : fallback;
+}
+export const isGemini = model => /^gemini-/.test(model);
+
+// Gemini API (generateContent) request body and response, kept here so they can be tested without a key.
+export function geminiBody(system, user) {
+  return {
+    systemInstruction: { parts: [{ text: system }] },
+    contents: [{ role: 'user', parts: [{ text: user }] }],
+    generationConfig: { maxOutputTokens: 2000, thinkingConfig: { thinkingLevel: 'low' } },
+  };
+}
+const GEMINI_STOP = { STOP: 'end_turn', MAX_TOKENS: 'max_tokens' };
+export function fromGemini(json) {
+  if (json?.promptFeedback?.blockReason) return { text: '', stop: 'refusal' };
+  const c = json?.candidates?.[0];
+  if (!c) return { text: '', stop: 'refusal' };
+  const text = (c.content?.parts || []).filter(p => !p.thought && typeof p.text === 'string').map(p => p.text).join('');
+  return { text, stop: GEMINI_STOP[c.finishReason] || (text ? 'other' : 'refusal') };
+}
+
 export async function cacheKey(req, model) {
   const bytes = new TextEncoder().encode(JSON.stringify([PROMPT_VERSION, model, req]));
   const hash = await crypto.subtle.digest('SHA-256', bytes);
@@ -140,10 +166,10 @@ export async function handle(request, env, generate, now = Date.now()) {
   const req = normalize(body);
   if (!req) return json(400, { error: 'bad_request' }, h);
 
-  const model = env.MODEL || 'claude-sonnet-5-5';
+  const model = pickModel(body.model, env);
   const key = await cacheKey(req, model);
   const hit = await env.EXPLAIN_KV.get(key, 'json');
-  if (hit?.text) return json(200, { text: hit.text, cached: true }, h);
+  if (hit?.text) return json(200, { text: hit.text, cached: true, model: hit.model || model }, h);
 
   // Only generation costs money, so only cache misses count toward the limits.
   if (env.RATE_LIMITER) {
@@ -164,5 +190,5 @@ export async function handle(request, env, generate, now = Date.now()) {
   if (text.length < 40) return json(502, { error: 'upstream' }, h);
   // A cut-off answer is shown but not kept, so the next request gets a fresh, complete one.
   if (out.stop === 'end_turn' && text.startsWith('【入れ替わり直後】')) await env.EXPLAIN_KV.put(key, JSON.stringify({ text, model, at: now }));
-  return json(200, { text, cached: false }, h);
+  return json(200, { text, cached: false, model }, h);
 }
