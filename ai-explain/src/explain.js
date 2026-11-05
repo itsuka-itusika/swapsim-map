@@ -107,7 +107,11 @@ export async function cacheKey(req, model) {
 
 // Ends a truncated answer at its last full sentence.
 export function tidy(text) {
-  let t = String(text || '').replace(/\r/g, '').replace(/\n{3,}/g, '\n\n').trim().slice(0, 2000);
+  let t = String(text || '').replace(/\r/g, '');
+  // A model that rewrites itself mid-answer: keep only its last version.
+  const last = t.lastIndexOf('【入れ替わり直後】');
+  if (last > 0) t = t.slice(last);
+  t = t.replace(/\n{3,}/g, '\n\n').trim().slice(0, 2000);
   const end = t.lastIndexOf('。');
   if (end > 0 && end < t.length - 1 && !/[】」）]$/.test(t)) t = t.slice(0, end + 1);
   return t;

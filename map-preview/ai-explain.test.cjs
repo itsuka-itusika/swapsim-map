@@ -57,6 +57,7 @@ test('only complete answers are cached',async()=>{const {handle}=await worker,e=
 
 test('a cut-off answer ends at its last full sentence and headings are split for display',async()=>{const {tidy}=await worker;
  assert.equal(tidy('【入れ替わった直後】一文目です。二文目の途中'),'【入れ替わった直後】一文目です。');
+ assert.equal(tidy('【入れ替わり直後】下書き。\n\n誤りがあります。以下に正しく書き直します。\n\n【入れ替わり直後】本番。\n【短評】ひとこと。'),'【入れ替わり直後】本番。\n【短評】ひとこと。');
  assert.deepEqual(AiExplain.sections(ANSWER).map(s=>s.head),['入れ替わり直後','短評']);assert.deepEqual(AiExplain.sections('【入れ替わり直後】\n一文目。\n二文目。\n\n【短評】\nひとこと。').map(s=>s.body),['一文目。二文目。','ひとこと。'])});
 
 test('the published site carries no API key: only the Worker URL, and no button without one',()=>{
