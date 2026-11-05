@@ -2,7 +2,7 @@
 // 受け取るのは入れ替わりの構造化データだけで、プロンプトはサーバー側で組み立てる。
 // 任意の文章をそのまま LLM に渡す汎用プロキシにはしない。
 
-export const PROMPT_VERSION = 'v3.2';
+export const PROMPT_VERSION = 'v4';
 const MAX_BODY = 6000;
 const WEEK = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -39,32 +39,45 @@ export function normalize(body) {
 }
 
 const sexJa = s => s === 'f' ? '女性' : '男性';
-function personLines(label, p) {
-  const extra = [
-    p.status && `立場: ${p.status}`, p.household && `世帯: ${p.household}`, p.family && `同居: ${p.family}`,
-    p.hobbies && `趣味: ${p.hobbies}`, p.health && `健康: ${p.health}`,
-    p.height && p.weight && `体格: ${p.height}cm・${p.weight}kg`, p.weather && `天気: ${p.weather}`,
-  ].filter(Boolean);
-  return [
-    `[${label}] ${p.name}（${sexJa(p.sex)}・${p.age}歳）／${p.job || '職業不明'}／居場所: ${p.place || '不明'}`,
-    ...extra.map(s => '  ' + s),
-    `  入れ替わった瞬間: ${p.situation}`,
-  ].join('\n');
+const surname = p => p.name.split(/\s+/)[0];
+const join = (...xs) => xs.filter(Boolean).join('／');
+
+// 入れ替わり前: each person as they were.
+function beforeLine(p) {
+  return `${p.name}（${sexJa(p.sex)}・${p.age}歳）／${join(p.job || '職業不明', p.status)}／${p.place || '場所不明'}：${p.situation}`;
 }
 
-export const SYSTEM_PROMPT = `あなたは「集団入れ替わりシミュレーター」の記録係です。架空の人物の心と体が、ある瞬間に突然入れ替わりました。これは予測ではなく、すでに起きた出来事です。時刻・場所・天気・プロフィールと、入れ替わった瞬間にしていたことをもとに、入れ替わった直後の状況を、その場に居合わせたかのように記録してください。
+// 入れ替わり後: the body keeps its own physical traits, place and surroundings; the mind brings its own.
+// The system splits them here so the model never has to work out which trait belongs to which side.
+function bodyLines(body) {
+  return [
+    `  ［肉体（${surname(body)}のまま）］${join(`${body.age}歳・${sexJa(body.sex)}`, body.height && body.weight && `${body.height}cm・${body.weight}kg`,
+      body.health && `健康: ${body.health}`, `声: ${body.age}歳の${sexJa(body.sex)}の声`, `服装: この体が直前の場面で着ていた服のまま（${[body.job, body.status].filter(Boolean).join('、') || '不明'}）`)}`,
+    `  ［場所と周囲（${surname(body)}のまま）］${join(body.place && `場所: ${body.place}`, body.weather && `天気: ${body.weather}`,
+      `この体が直前までしていたこと: ${body.situation}`, `周りの人からは${body.name}として見られている`, body.family && `この体の家族: ${body.family}`)}`,
+  ];
+}
+function mindLine(mind) {
+  return `  ［精神（${surname(mind)}のもの）］${join(`${mind.name}（${mind.age}歳・${sexJa(mind.sex)}）の心。口調・性格・感情・記憶・知識・話せる言葉は${surname(mind)}のもの`,
+    `${surname(mind)}の職業・身につけた技能: ${mind.job || '不明'}`, mind.hobbies && `趣味: ${mind.hobbies}`, mind.household && `${surname(mind)}の暮らし: ${mind.household}`,
+    `${surname(mind)}が入れ替わる直前にしていたこと: ${mind.situation}`)}`;
+}
+const afterBlock = (body, mind) => [`■ ${surname(body)}の体 ― 中身は${surname(mind)}の心`, ...bodyLines(body), mindLine(mind)].join('\n');
+
+export const SYSTEM_PROMPT = `あなたは「集団入れ替わりシミュレーター」の記録係です。架空の人物の心と体が、ある瞬間に突然入れ替わりました。これは予測ではなく、すでに起きた出来事です。<swap> の「入れ替わり後」に書かれた状況を事実として、入れ替わった直後の数分間を、その場に居合わせたかのように記録してください。
 
 形式（この2つの見出しを行頭に置き、この順に書く）
 【入れ替わり直後】入れ替わってから数分間の、当人たちと周りの状況。250〜330字。
 【短評】この入れ替わりで何が起きたのかを突き放してまとめた一文。40〜70字。
 
 書き方
+- 「入れ替わり後」の各欄をそのまま使う。［肉体］と［場所と周囲］は、体の見た目・声・感覚・居場所・周りの反応に使う。［精神］は、口調・考え・感情・とっさの反応に使う。欄にないことを付け足すときも、この区分に合わせる。
+- 人物は心の名前で呼び、最初に出すときは「高橋（体は稲垣）」のように書く。
 - 常体（〜した。〜だ。）の過去形で、起きたことを言い切る。「〜でしょう」「〜かもしれない」「〜はずだ」などの推測・予想の言い方は使わない。
 - 生々しく、臨場感をもって描く。目に入ったもの、音、体の感覚、とっさの動き、周りの人の声や反応を具体的に書く。短い文を重ねてよい。
-- 年齢・性別・職業・趣味・家族・その時の状況から、それぞれの人柄を決め、その人柄のまま混乱に反応させる。人柄は説明せず、行動とせりふで見せる。
-- 二人のギャップ（年齢・性別・体格・体力・職業の技能・知識・場所・その場の役目・同行者）が、入れ替わった体と状況の中でどう噛み合わないかを、具体的な場面で描く。
+- ［精神］のプロフィールから人柄を決め、行動とせりふで見せる。
+- 二人のギャップが、新しい体と状況の中でどう噛み合わないかを、具体的な場面で描く。
 - 無難な展開や安全な結末に収めない。混沌・混乱・パニック・誤解・取り返しのつかなさを、ありのまま描く。事態が収まらないまま、混乱の最中で終えてよい。笑いを狙わない。
-- 誰の心がどの体にいるか分かるよう、最初に出すときは「高橋（体は稲垣）」のように書く。
 - 箇条書き・Markdown・絵文字は使わない。
 - 性的な行為の描写、流血やけがの生々しい描写、人の死、犯罪の手口は書かない。性風俗に関わる場面は、その場の混乱や気まずさとして描く。
 - 職業・年齢・性別・病気・障害・国籍などをおとしめない。実在の人物・団体を貶めない。施設名は場所として触れる程度にする。
@@ -75,9 +88,10 @@ export function buildUserPrompt(req) {
   const head = `発生日時: ${w.y}年${w.mo}月${w.d}日(${WEEK[w.dow]}) ${w.h}時${pad(w.mi)}分`;
   if (req.kind === 'pair') {
     const gap = req.gap !== null ? `\nギャップ: 5段階中${req.gap}` : '';
-    return `<swap>\n${head}${gap}\n${personLines('Aさん', req.A)}\n${personLines('Bさん', req.B)}\n</swap>\nAさんとBさんが入れ替わりました。Aさんの心はBさんの体と居場所に、Bさんの心はAさんの体と居場所に移りました。入れ替わった直後の状況を記録してください。`;
+    return `<swap>\n${head}${gap}\n<入れ替わり前>\n${beforeLine(req.A)}\n${beforeLine(req.B)}\n</入れ替わり前>\n<入れ替わり後>\n${afterBlock(req.A, req.B)}\n${afterBlock(req.B, req.A)}\n</入れ替わり後>\n</swap>\n入れ替わった直後の状況を記録してください。`;
   }
-  return `<swap>\n${head}\n${personLines('この人', req.P)}\n</swap>\n読者（あなた）の心が、この人の体と居場所に入れ替わりました。読者のことは分からないので、ごく普通の人が突然この人になったものとして、「あなた（体は〇〇さん）」の視点で、入れ替わった直後の状況を記録してください。`;
+  const P = req.P, reader = `  ［精神（あなたのもの）］読者（あなた）の心。プロフィールは分からないので、ごく普通の人として描く。口調・性格・感情・記憶は読者自身のもの／${surname(P)}の仕事の技能や知識、周りの人との関係は知らない`;
+  return `<swap>\n${head}\n<入れ替わり前>\n${beforeLine(P)}\n読者（あなた）：プロフィール不明\n</入れ替わり前>\n<入れ替わり後>\n■ ${surname(P)}の体 ― 中身はあなたの心\n${bodyLines(P).join('\n')}\n${reader}\n</入れ替わり後>\n</swap>\n「あなた（体は${surname(P)}）」の視点で、入れ替わった直後の状況を記録してください。${surname(P)}の心がどうなったかは分からないので触れない。`;
 }
 
 export async function cacheKey(req, model) {
