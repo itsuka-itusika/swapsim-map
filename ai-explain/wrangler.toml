@@ -7,7 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 # 呼び出しを許すページの Origin（カンマ区切り）
 ALLOWED_ORIGINS = "https://itsuka-itusika.github.io,http://localhost:8000"
 # 既定のモデル。GitHub の Actions variables の AI_MODEL を設定すると、公開時にそちらで上書きされる。
-MODEL = "claude-sonnet-5-5"
+MODEL = "gemini-3.1-flash-lite:high"
 # リクエストで選べるモデル（比較用）。ここにないモデルを指定されたら MODEL を使う。
 # Gemini は「:low」「:medium」「:high」で考える量を指定できる（省略時は low）。
 ALLOWED_MODELS = "claude-sonnet-5-5,gemini-3.1-flash-lite,gemini-3.1-flash-lite:medium,gemini-3.1-flash-lite:high,claude-haiku-5-5"

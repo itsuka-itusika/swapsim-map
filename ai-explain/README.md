@@ -1,6 +1,6 @@
 # AI解説 Worker
 
-地図版の通知書にある「AI解説」ボタンの裏側です。Cloudflare Workers で動き、入れ替わった直後の状況を、すでに起きた出来事として LLM（既定は Claude Sonnet 5.5）に描写させて返します。2人のプロフィールは、Worker が「入れ替わり前」と「入れ替わり後（体ごとに肉体・場所と周囲・精神・ずれ）」に組み替えてから渡します。
+地図版の通知書にある「AI解説」ボタンの裏側です。Cloudflare Workers で動き、入れ替わった直後の状況を、すでに起きた出来事として LLM（既定は Gemini 3.1 Flash-Lite、Claude Sonnet 5.5 に切り替え可）に描写させて返します。2人のプロフィールは、Worker が「入れ替わり前」と「入れ替わり後（体ごとに肉体・場所と周囲・精神・ずれ）」に組み替えてから渡します。
 
 ## 有効にする手順（ブラウザだけ・約10分）
 
@@ -60,11 +60,11 @@ Actions の実行結果で **Deploy AI explain worker** の手順を開き、ロ
 
 ## モデルを切り替える（Claude ⇄ Gemini）
 
-既定は Claude Sonnet 5.5 です。Gemini 3.1 Flash-Lite も使えます。
+既定は Gemini 3.1 Flash-Lite（thinking high、`gemini-3.1-flash-lite:high`）です。Claude Sonnet 5.5 にも戻せます。
 
 1. Gemini を使う場合は、Google AI Studio（https://aistudio.google.com/ ）で APIキーを作り、課金（有料枠）を有効にする。無料枠では、送った内容が Google の製品改善に使われます。
 2. GitHub の Repository secrets に `GEMINI_API_KEY` として登録する。
-3. 既定のモデルを変えるときは、**Settings → Secrets and variables → Actions → Variables** に `AI_MODEL` を作り、`gemini-3.1-flash-lite` などを入れて Run workflow する。Claude に戻すときは `AI_MODEL` を `claude-sonnet-5-5` にする（または削除する）。
+3. 既定のモデルを変えるときは、**Settings → Secrets and variables → Actions → Variables** に `AI_MODEL` を作り、`gemini-3.1-flash-lite` などを入れて Run workflow する。Claude に戻すときは `AI_MODEL` を `claude-sonnet-5-5` にする（`wrangler.toml` の `MODEL` を書き換えてもよい）。
 
 保存済みの解説はモデルごとに分けて残るので、戻すと以前の解説がそのまま使われます。
 
@@ -77,7 +77,7 @@ Actions の実行結果で **Deploy AI explain worker** の手順を開き、ロ
 | 名前 | 既定 | 内容 |
 |---|---|---|
 | `ALLOWED_ORIGINS` | `https://itsuka-itusika.github.io,http://localhost:8000` | 呼び出しを許すページの Origin |
-| `MODEL` | `claude-sonnet-5-5` | 既定のモデル（Actions variables の `AI_MODEL` があればそちら） |
+| `MODEL` | `gemini-3.1-flash-lite:high` | 既定のモデル（Actions variables の `AI_MODEL` があればそちら）。Gemini は `:low` `:medium` `:high` で考える量を指定 |
 | `ALLOWED_MODELS` | `claude-sonnet-5-5,gemini-3.1-flash-lite,claude-haiku-5-5` | リクエストで選べるモデル |
 | `DAILY_LIMIT` | `100` | 1日に新しく生成する解説の上限 |
 
