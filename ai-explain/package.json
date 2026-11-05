@@ -1,0 +1,17 @@
+{
+  "name": "swapsim-map-ai-explain",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "地図版の AI解説を返す Cloudflare Worker（APIキーはここにだけ置く）",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run --outdir .wrangler/dry-run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.4.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.156.2"
+  }
+}

@@ -19,6 +19,9 @@ jobs:
         with:
           node-version: 22
       - run: npm run build
+        env:
+          # AI解説の Worker URL（公開してよい値）。リポジトリの Actions variables で設定する。
+          AI_EXPLAIN_URL: ${{ vars.AI_EXPLAIN_URL }}
       - run: npm test
       - uses: actions/upload-pages-artifact@v3
         with:

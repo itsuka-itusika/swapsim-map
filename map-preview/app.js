@@ -187,8 +187,8 @@ function samplePair(t,filtered=false,two=false){const A=samplePerson(t,filtered)
 function fewPairs(){const total=src=>src.reduce((s,c)=>s+c.n,0),n=between()?Math.min(total(parts),total(partsB)):total(parts);return n<3?1:n<12?2:6}
 function sampleResult(t,filtered=false){return options.pair?samplePair(t,filtered,between()):samplePerson(t,filtered)}
 // Two ways to share: a URL that shows this notice again, and a picture of it.
-function noticeHTML(P){el('person').innerHTML=MapNotice.html(P);const url=el('copy'),img=el('shareimg');url.textContent='URLをコピー';url.onclick=()=>shareURL(P);url.after(img);img.hidden=false;img.onclick=()=>shareImage(P.kind==='pair'?'pair':'single',P,'toast')}
-function showResult(P){currentPerson=P;noticeHTML(P);el('copy').disabled=false;el('shareimg').disabled=false;
+function noticeHTML(P){el('person').innerHTML=MapNotice.html(P);const url=el('copy'),img=el('shareimg');url.textContent='URLをコピー';url.onclick=()=>shareURL(P);url.after(img);img.hidden=false;img.onclick=()=>shareImage(P.kind==='pair'?'pair':'single',P,'toast');AiExplain.attach(P)}
+function showResult(P){currentPerson=P;noticeHTML(P);el('copy').disabled=false;el('shareimg').disabled=false;AiExplain.disable(false);
  stampIt(!reduceMotion);scrollToNotice(true);if(!reduceMotion)el('notice').classList.add('flash')}
 function resultLabel(P){const name=X=>X.displayName||X.surname.k+' '+X.given.k;return P.kind==='pair'?`${name(P.A)}（${P.A.age}歳） ⇄ ${name(P.B)}（${P.B.age}歳）`:`${name(P)} ／ ${P.age}歳 ／ ${P.occ.label}`}
 function renderCrowd(){
@@ -216,7 +216,7 @@ async function roam(count,ms,tk,pools=[]){roamLayer??=L.layerGroup().addTo(map);
 async function roll(id,gen,ms,tk){const node=el(id),end=performance.now()+ms;while(performance.now()<end){node.innerHTML=gen();await later(55,tk)}}
 async function typeOut(id,html,tk){const node=el(id),box=document.createElement('div');box.innerHTML=html;const plain=box.textContent;for(let i=1;i<=plain.length;i+=2){node.textContent=plain.slice(0,i);await later(28,tk)}node.innerHTML=html}
 const SN_KEYS=Object.keys(SN),fakePlace=()=>esc(placeName(MapModel.pick(pool.parts))),fakeName=sex=>esc(pickOne(SN_KEYS)+' '+pickOne(pickOne(ERAS)[sex]).k);
-async function reveal(P,tk){const k=plays>1?.6:1;noticeHTML(P);el('copy').disabled=true;el('shareimg').disabled=true;currentPerson=P;
+async function reveal(P,tk){const k=plays>1?.6:1;noticeHTML(P);el('copy').disabled=true;el('shareimg').disabled=true;AiExplain.disable(true);currentPerson=P;
  const ids=[...el('person').querySelectorAll('[id]')].map(n=>n.id),final=Object.fromEntries(ids.map(id=>[id,el(id).innerHTML])),put=id=>{el(id).innerHTML=final[id]};
  const fields=P.kind==='pair'?['place','name','age','job','body','hobby','family','health','sit'].flatMap(f=>['pa-'+f,'pb-'+f]):['f-place','f-name','f-job','f-hobby','f-family','f-health','f-sit','f-sex','f-age','f-height','f-weight'];
  for(const id of fields)if(final[id]!==undefined)el(id).innerHTML=/sex|age|height|weight/.test(id)&&P.kind!=='pair'?'<span class="blank">—</span>':'<span class="blank">記入中…</span>';
