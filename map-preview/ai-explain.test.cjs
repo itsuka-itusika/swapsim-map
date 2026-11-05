@@ -55,7 +55,7 @@ test('the published site carries no API key: only the Worker URL, and no button 
  const files=['dist/index.html',...fs.readdirSync('dist/assets').filter(f=>f.endsWith('.js')).map(f=>path.join('dist/assets',f))];
  for(const f of files){const s=fs.readFileSync(f,'utf8');assert.doesNotMatch(s,/sk-ant-[A-Za-z0-9_-]{8,}/,f);assert.doesNotMatch(s,/x-api-key|api\.anthropic\.com/i,f)}
  const app=fs.readFileSync('dist/assets/map-app.js','utf8');assert.match(app,/const AI_EXPLAIN_ENDPOINT="[^"]*";/);assert.match(app,/AiExplain\.attach\(P\)/);assert.match(app,/AiExplain\.cards\(el\('pcards'\),pairCards\)/);assert.match(app,/class="ai-chip" data-ai="\$\{i\}" hidden/);assert.match(app,/AiExplain\.cards\(el\('crowd'\),crowd\)/);assert.match(app,/class="ai-chip crowd-ai" data-ai="\$\{i\}" hidden/);assert.match(app,/AiExplain\.cards\(el\('crowd'\),crowd\)/);
- {const AE=fs.readFileSync('map-preview/ai-explain.js','utf8');assert.match(AE,/enabled=\(\)=>!!endpoint\(\)/);assert.match(AE,/function attach\(P\)\{if\(!enabled\(\)\)return/);assert.match(AE,/function cards\(list,results\)\{if\(!enabled\(\)\)return/)}
+ {const AE=fs.readFileSync('map-preview/ai-explain.js','utf8');assert.match(AE,/enabled=\(\)=>!!endpoint\(\)/);assert.match(AE,/function attach\(P\)\{if\(!enabled\(\)\)return/);assert.match(AE,/function cards\(list,results\)\{if\(!enabled\(\)/)}
  const toml=fs.readFileSync('ai-explain/wrangler.toml','utf8');assert.doesNotMatch(toml,/ANTHROPIC_API_KEY\s*=/);assert.doesNotMatch(toml,/sk-ant-/);
  assert.match(fs.readFileSync('.gitignore','utf8'),/^\.dev\.vars$/m)});
 
