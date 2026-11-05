@@ -19,7 +19,9 @@ function makeInbound(P){
  P.hobbies=[];P.profileDisplay={...(P.profileDisplay||{}),hobby:first[0]+(second?'、'+second[0]:'')};P.hobbyP=.1;
 }
 // Reuse existing demographic, occupation, name, hobby and household generators.
-function mapPerson(c,t){
+// Each person sees the live weather of the ward they are in (MapWeather.inWard); estimates stay shared.
+function mapPerson(c,t){return typeof MapWeather!=='undefined'&&MapWeather.inWard?MapWeather.inWard(c.region?.id,()=>mapPersonInWard(c,t)):mapPersonInWard(c,t)}
+function mapPersonInWard(c,t){
  const f=c.region,pref=PREFS.find(p=>p.code.slice(0,2)===f.id.slice(0,2));
  const muni=pref.munis.find(m=>m.code===f.id)||pref.munis.find(m=>f.name.startsWith(m.n))||{n:f.name,code:f.id};
  let sa=c.resident?LandEstimator.sampleResident(c,t,()=>pickSexAge(null,pref,'metro',f.id),rnd):pickSexAge(null,pref,'metro',f.id);if(c.role!=='general')sa={age:PersonContext.age(c,rnd),sex:rnd()<c.female?'f':'m'};
