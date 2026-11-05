@@ -47,6 +47,10 @@ test('the daily limit, the per-IP limiter, refusals and upstream errors return c
  const up=await handle(req(body(5)),env(),async()=>{throw Object.assign(Error('boom'),{status:529})});assert.equal(up.status,502);assert.deepEqual(await up.json(),{error:'upstream'});
  assert.match(AiExplain.message('daily_limit'),/明日/);assert.match(AiExplain.message('whatever'),/通信状況/)});
 
+test('only complete answers are cached',async()=>{const {handle}=await worker,e=env();let calls=0;
+ const cut=async()=>{calls++;return {text:'【入れ替わり直後】高橋（体は稲垣）は立ち上がろうとして膝の重さに驚いた。視界が低い。',stop:'max_tokens'}};
+ assert.equal((await handle(req(AiExplain.payload(pair)),e,cut)).status,200);assert.equal((await(await handle(req(AiExplain.payload(pair)),e,cut)).json()).cached,false);assert.equal(calls,2)});
+
 test('a cut-off answer ends at its last full sentence and headings are split for display',async()=>{const {tidy}=await worker;
  assert.equal(tidy('【入れ替わった直後】一文目です。二文目の途中'),'【入れ替わった直後】一文目です。');
  assert.deepEqual(AiExplain.sections(ANSWER).map(s=>s.head),['入れ替わり直後','短評']);assert.deepEqual(AiExplain.sections('【入れ替わり直後】\n一文目。\n二文目。\n\n【短評】\nひとこと。').map(s=>s.body),['一文目。二文目。','ひとこと。'])});

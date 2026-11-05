@@ -2,7 +2,7 @@
 // 受け取るのは入れ替わりの構造化データだけで、プロンプトはサーバー側で組み立てる。
 // 任意の文章をそのまま LLM に渡す汎用プロキシにはしない。
 
-export const PROMPT_VERSION = 'v3';
+export const PROMPT_VERSION = 'v3.1';
 const MAX_BODY = 6000;
 const WEEK = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -138,6 +138,7 @@ export async function handle(request, env, generate, now = Date.now()) {
   if (out.stop === 'refusal') return json(422, { error: 'refused' }, h);
   const text = tidy(out.text);
   if (text.length < 40) return json(502, { error: 'upstream' }, h);
-  await env.EXPLAIN_KV.put(key, JSON.stringify({ text, model, at: now }));
+  // A cut-off answer is shown but not kept, so the next request gets a fresh, complete one.
+  if (out.stop === 'end_turn' && /【短評】/.test(text)) await env.EXPLAIN_KV.put(key, JSON.stringify({ text, model, at: now }));
   return json(200, { text, cached: false }, h);
 }
