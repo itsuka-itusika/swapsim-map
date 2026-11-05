@@ -13,15 +13,44 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # AI解説: リポジトリの secret に CLOUDFLARE_API_TOKEN があるときだけ Worker を公開する。
+      HAS_CLOUDFLARE: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # APIキーは GitHub の secret から Worker の secret へ直接渡し、ページ側には Worker の URL だけを渡す。
+      # 失敗してもページの公開は続ける（その場合はボタンを出さないか、vars.AI_EXPLAIN_URL を使う）。
+      - name: Deploy AI explain worker
+        id: worker
+        if: env.HAS_CLOUDFLARE == 'true'
+        continue-on-error: true
+        working-directory: ai-explain
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set -euo pipefail
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || unset CLOUDFLARE_ACCOUNT_ID
+          npm ci --no-audit --no-fund
+          secrets="$RUNNER_TEMP/ai-secrets.json"
+          trap 'rm -f "$secrets"' EXIT
+          args=()
+          if [ -n "$ANTHROPIC_API_KEY" ]; then
+            node -e 'require("fs").writeFileSync(process.argv[1],JSON.stringify({ANTHROPIC_API_KEY:process.env.ANTHROPIC_API_KEY}),{mode:0o600})' "$secrets"
+            args=(--secrets-file "$secrets")
+          fi
+          npx wrangler deploy "${args[@]}" 2>&1 | tee "$RUNNER_TEMP/worker-deploy.log"
+          url=$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/worker-deploy.log" | head -n 1 || true)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "AI解説 Worker: ${url:-（URL を読み取れませんでした）}"
       - run: npm run build
         env:
-          # AI解説の Worker URL（公開してよい値）。リポジトリの Actions variables で設定する。
-          AI_EXPLAIN_URL: ${{ vars.AI_EXPLAIN_URL }}
+          # AI解説の Worker URL（公開してよい値）。上の手順で公開した URL を優先し、なければ Actions variables の値。
+          AI_EXPLAIN_URL: ${{ steps.worker.outputs.url || vars.AI_EXPLAIN_URL }}
       - run: npm test
       - uses: actions/upload-pages-artifact@v3
         with:

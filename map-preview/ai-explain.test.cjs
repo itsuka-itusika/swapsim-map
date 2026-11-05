@@ -58,3 +58,8 @@ test('the published site carries no API key: only the Worker URL, and no button 
  assert.match(fs.readFileSync('map-preview/ai-explain.js','utf8'),/if\(!endpoint\(\)/);
  const toml=fs.readFileSync('ai-explain/wrangler.toml','utf8');assert.doesNotMatch(toml,/ANTHROPIC_API_KEY\s*=/);assert.doesNotMatch(toml,/sk-ant-/);
  assert.match(fs.readFileSync('.gitignore','utf8'),/^\.dev\.vars$/m)});
+
+test('the Pages workflow deploys the Worker from secrets and hands the page only its URL',()=>{const wf=fs.readFileSync('.github/workflows/pages.yml','utf8'),toml=fs.readFileSync('ai-explain/wrangler.toml','utf8');
+ assert.match(wf,/ANTHROPIC_API_KEY: \$\{\{ secrets\.ANTHROPIC_API_KEY \}\}/);assert.match(wf,/--secrets-file/);assert.match(wf,/continue-on-error: true/);
+ assert.match(wf,/AI_EXPLAIN_URL: \$\{\{ steps\.worker\.outputs\.url \|\| vars\.AI_EXPLAIN_URL \}\}/);assert.doesNotMatch(wf,/echo[^\n]*ANTHROPIC_API_KEY/);
+ assert.doesNotMatch(wf,/pull_request/);assert.match(toml,/binding = "EXPLAIN_KV"/);assert.doesNotMatch(toml,/REPLACE_WITH/)});

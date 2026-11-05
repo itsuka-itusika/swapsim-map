@@ -12,4 +12,4 @@ GitHub Pages の公開元を GitHub Actions に設定すると、main への更�
 
 ## AI解説
 
-通知書の「AI解説」ボタンは、入れ替わり直後の状況と混乱を LLM に予測させて表示します。APIキーはページに置かず、`ai-explain/` の Cloudflare Worker だけが持ちます。ページには Worker の URL（GitHub Actions の変数 `AI_EXPLAIN_URL`、または `map-preview/data/ai-explain.json`）だけを渡し、URL が空のあいだはボタンを出しません。セットアップと費用の目安は [ai-explain/README.md](ai-explain/README.md) を参照してください。
+通知書の「AI解説」ボタンは、入れ替わり直後の状況と混乱を LLM に予測させて表示します。APIキーはページに置かず、`ai-explain/` の Cloudflare Worker だけが持ちます。リポジトリの secret に `ANTHROPIC_API_KEY` と `CLOUDFLARE_API_TOKEN` を登録すると、Pages の公開ワークフローが Worker も公開し、その URL だけをページに渡します。URL がないあいだはボタンを出しません。手順と費用の目安は [ai-explain/README.md](ai-explain/README.md) を参照してください。
