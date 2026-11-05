@@ -12,7 +12,7 @@ MODEL = "gemini-3.1-flash-lite:high"
 # Gemini は「:low」「:medium」「:high」で考える量を指定できる（省略時は low）。
 ALLOWED_MODELS = "claude-sonnet-5-5,gemini-3.1-flash-lite,gemini-3.1-flash-lite:medium,gemini-3.1-flash-lite:high,claude-haiku-5-5"
 # 1日（日本時間）に新しく生成する解説の上限。キャッシュ済みの解説は数えない。
-DAILY_LIMIT = "100"
+DAILY_LIMIT = "300"
 
 # 解説のキャッシュと1日の生成数。id を書かないので、初回の `wrangler deploy` が自動で作り、以後は同じものを使う。
 [[kv_namespaces]]

@@ -53,10 +53,10 @@ Actions の実行結果で **Deploy AI explain worker** の手順を開き、ロ
 ## 費用を抑える仕組み
 
 - 同じ入れ替わりの解説は KV に保存し、2回目からは LLM を呼びません（期限なし）。ページ側も端末に30件まで保存します。
-- 新しい解説の生成は、1日（日本時間）に `DAILY_LIMIT` 件まで（既定100件）。同じ IP からは1分に4件まで。
+- 新しい解説の生成は、1日（日本時間）に `DAILY_LIMIT` 件まで（既定300件）。同じ IP からは1分に4件まで。
 - 出力は `max_tokens: 2000`、`effort: low`。
 
-費用の目安（実測ではなく見積もり）：1件あたり入力約1,500トークン・出力約1,000トークンで、Claude Sonnet 5.5（入力 $2 / 出力 $10 ／100万トークン）なら約 $0.013（2円ほど）。上限の100件を毎日使い切ると月 $40 程度です。`MODEL` を `claude-haiku-5-5` にすると1件 0.1〜0.2円ほどになりますが、誰の体・心かの取り違えが増えます。Sonnet 5.5 では、安全上の判定で断られたときに別のモデルで自動的にやり直すサーバー側の仕組み（fallbacks）を使っています。Cloudflare Workers と KV は無料枠の範囲に収まります（KV の書き込みは1件の生成で2回、無料枠は1日1,000回）。
+費用の目安（実測ではなく見積もり）：1件あたり入力約1,500トークン。既定の Gemini 3.1 Flash-Lite（thinking high、入力 $0.25 / 出力 $1.50 ／100万トークン、考える分も出力に含む）で約0.3〜0.8円、上限の300件を毎日使い切ると月 $15〜$50 程度です。Claude Sonnet 5.5（入力 $2 / 出力 $10）に戻すと1件約2円、300件で月 $120 程度になるので、そのときは `DAILY_LIMIT` も下げてください。Sonnet 5.5 では、安全上の判定で断られたときに別のモデルで自動的にやり直すサーバー側の仕組み（fallbacks）を使っています。
 
 ## モデルを切り替える（Claude ⇄ Gemini）
 
@@ -79,7 +79,7 @@ Actions の実行結果で **Deploy AI explain worker** の手順を開き、ロ
 | `ALLOWED_ORIGINS` | `https://itsuka-itusika.github.io,http://localhost:8000` | 呼び出しを許すページの Origin |
 | `MODEL` | `gemini-3.1-flash-lite:high` | 既定のモデル（Actions variables の `AI_MODEL` があればそちら）。Gemini は `:low` `:medium` `:high` で考える量を指定 |
 | `ALLOWED_MODELS` | `claude-sonnet-5-5,gemini-3.1-flash-lite,claude-haiku-5-5` | リクエストで選べるモデル |
-| `DAILY_LIMIT` | `100` | 1日に新しく生成する解説の上限 |
+| `DAILY_LIMIT` | `300` | 1日に新しく生成する解説の上限 |
 
 IP ごとの回数制限は `[[ratelimits]]` の `simple` で変えられます。変更を main に入れると、次の公開で反映されます。
 
