@@ -2,7 +2,7 @@
 // 受け取るのは入れ替わりの構造化データだけで、プロンプトはサーバー側で組み立てる。
 // 任意の文章をそのまま LLM に渡す汎用プロキシにはしない。
 
-export const PROMPT_VERSION = 'v4.1';
+export const PROMPT_VERSION = 'v4.2';
 const MAX_BODY = 6000;
 const WEEK = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -62,16 +62,21 @@ function mindLine(mind) {
     `${surname(mind)}の職業・身につけた技能: ${mind.job || '不明'}`, mind.hobbies && `趣味: ${mind.hobbies}`, mind.household && `${surname(mind)}の暮らし: ${mind.household}`,
     `${surname(mind)}が入れ替わる直前にしていたこと: ${mind.situation}`)}`;
 }
-const afterBlock = (body, mind) => [`■ ${surname(body)}の体 ― 中身は${surname(mind)}の心`, ...bodyLines(body), mindLine(mind)].join('\n');
+// Spells out the mismatch so the model does not give the body the mind's voice or eye level.
+function gapLine(body, mind) {
+  const size = p => p.height ? `、身長${p.height}cm` : '';
+  return `  ［ずれ］${surname(mind)}の心は自分を${mind.age}歳の${sexJa(mind.sex)}${size(mind)}だと思っているが、出る声・目の高さ・手足の大きさ・体の重さや体調は、${surname(body)}の体（${body.age}歳の${sexJa(body.sex)}${size(body)}）のもの。いる場所も${mind.place || '元の場所'}ではなく${body.place || 'この体の場所'}。`;
+}
+const afterBlock = (body, mind) => [`■ ${surname(body)}の体 ― 中身は${surname(mind)}の心`, ...bodyLines(body), mindLine(mind), gapLine(body, mind)].join('\n');
 
 export const SYSTEM_PROMPT = `あなたは「集団入れ替わりシミュレーター」の記録係です。架空の人物の心と体が、ある瞬間に突然入れ替わりました。これは予測ではなく、すでに起きた出来事です。<swap> の「入れ替わり後」に書かれた状況を事実として、入れ替わった直後の数分間を、その場に居合わせたかのように記録してください。
 
 形式（この2つの見出しを行頭に置き、この順に書く）
-【入れ替わり直後】入れ替わってから数分間の、当人たちと周りの状況。250〜330字。「入れ替わり後」の■の順に1段落ずつ書き、各段落にはその体の場所で起きたことだけを書く（その場にいる人も、その体の［場所と周囲］にいる人だけ）。
+【入れ替わり直後】入れ替わってから数分間の、当人たちと周りの状況。全体で250〜330字、超えない。「入れ替わり後」の■の順に1段落ずつ書き、各段落にはその体の場所で起きたことだけを書く（その場にいる人も、その体の［場所と周囲］にいる人だけ）。段落の頭に■・見出し・ラベルは書かない。
 【短評】この入れ替わりで何が起きたのかを突き放してまとめた一文。40〜70字。
 
 書き方
-- 「入れ替わり後」の各欄をそのまま使う。［肉体］と［場所と周囲］は、体の見た目・声・感覚・居場所・周りの反応に使う。［精神］は、口調・考え・感情・とっさの反応に使う。欄にないことを付け足すときも、この区分に合わせる。
+- 「入れ替わり後」の各欄をそのまま使う。［肉体］と［場所と周囲］は、体の見た目・声・感覚・居場所・周りの反応に使う。［精神］は、口調・考え・感情・とっさの反応に使う。［ずれ］は、その体で起きる食い違いとして必ず守る。欄にないことを付け足すときも、この区分に合わせる。
 - 人物は心の名前で呼び、最初に出すときは「高橋（体は稲垣）」のように書く。
 - 常体（〜した。〜だ。）の過去形で、起きたことを言い切る。「〜でしょう」「〜かもしれない」「〜はずだ」などの推測・予想の言い方は使わない。
 - 生々しく、臨場感をもって描く。目に入ったもの、音、体の感覚、とっさの動き、周りの人の声や反応を具体的に書く。短い文を重ねてよい。

@@ -5,7 +5,7 @@ const worker=import('../ai-explain/src/explain.js');
 const ORIGIN='https://itsuka-itusika.github.io';
 const X=(o={})=>({surname:{k:'高橋'},given:{k:'雄一'},sex:'m',age:47,occ:{label:'トラック運転手（正社員）'},place:'高速道路',wxText:'晴れ 18度',sit:{text:'高速道路を走りながら、次のパーキングエリアで休むか考えているところでした'},
  household:{label:'夫婦と子供から成る世帯'},familyContext:{members:['本人','妻','長女']},hobbies:[{label:'釣り',detail:'海釣り'}],health:{text:'腰痛'},body:{h:171.2,w:74.5},t:{y:2026,mo:11,d:5,dow:4,h:13,hf:13.3,mi:17},...o});
-const pair={kind:'pair',t:{y:2026,mo:11,d:5,dow:4,h:13,mi:17},gap:{stars:4},A:X(),B:X({surname:{k:'稲垣'},given:{k:'千尋'},sex:'f',age:50,occ:{label:'無職（療養中）'},hobbies:[{label:'園芸'}],place:'渋谷センター街',sit:{text:'久しぶりに会った友人と、公園のベンチで話し込んでいるところでした'}})};
+const pair={kind:'pair',t:{y:2026,mo:11,d:5,dow:4,h:13,mi:17},gap:{stars:4},A:X(),B:X({surname:{k:'稲垣'},given:{k:'千尋'},sex:'f',age:50,occ:{label:'無職（療養中）'},hobbies:[{label:'園芸'}],body:{h:156,w:52},place:'渋谷センター街',sit:{text:'久しぶりに会った友人と、公園のベンチで話し込んでいるところでした'}})};
 function kv(){const m=new Map();return {m,async get(k,type){const v=m.get(k);return v===undefined?null:type==='json'?JSON.parse(v):v},async put(k,v){m.set(k,v)}}}
 const env=(o={})=>({ALLOWED_ORIGINS:ORIGIN+',http://localhost:8000',DAILY_LIMIT:'3',EXPLAIN_KV:kv(),...o});
 const req=(body,o={})=>new Request('https://w.example/explain',{method:'POST',headers:{Origin:ORIGIN,'Content-Type':'application/json',...o.headers},body:typeof body==='string'?body:JSON.stringify(body)});
@@ -16,7 +16,7 @@ test('the page payload passes the Worker validation and keeps the profile detail
  const u=buildUserPrompt(r);assert.match(u,/2026年11月5日\(木\) 13時17分/);assert.match(u,/<入れ替わり前>\n高橋 雄一（男性・47歳）／トラック運転手（正社員）／高速道路：/);
  const after=u.slice(u.indexOf('<入れ替わり後>')),tb=after.slice(after.indexOf('■ 高橋の体 ― 中身は稲垣の心'),after.indexOf('■ 稲垣の体'));
  assert.ok(tb);assert.match(tb,/［肉体（高橋のまま）］47歳・男性／171.2cm・74.5kg／健康: 腰痛／声: 47歳の男性の声／服装: /);assert.match(tb,/［場所と周囲（高橋のまま）］場所: 高速道路／天気: 晴れ 18度/);
- assert.match(tb,/［精神（稲垣のもの）］稲垣 千尋（50歳・女性）の心。口調・性格・感情・記憶・知識・話せる言葉は稲垣のもの／稲垣の職業・身につけた技能: 無職（療養中）/);assert.match(tb,/趣味: 園芸/);assert.doesNotMatch(tb,/海釣り/);
+ assert.match(tb,/［精神（稲垣のもの）］稲垣 千尋（50歳・女性）の心。口調・性格・感情・記憶・知識・話せる言葉は稲垣のもの／稲垣の職業・身につけた技能: 無職（療養中）/);assert.match(tb,/趣味: 園芸/);assert.match(tb,/［ずれ］稲垣の心は自分を50歳の女性、身長156cmだと思っているが、出る声・目の高さ・手足の大きさ・体の重さや体調は、高橋の体（47歳の男性、身長171.2cm）のもの。いる場所も渋谷センター街ではなく高速道路。/);assert.doesNotMatch(tb,/海釣り/);
  assert.match(after,/■ 稲垣の体 ― 中身は高橋の心[\s\S]*［精神（高橋のもの）］[^\n]*趣味: 海釣り/);assert.match(u,/5段階中4/);
  const s=normalize(JSON.parse(JSON.stringify(AiExplain.payload({...X(),kind:'single'}))));assert.equal(s.kind,'single');assert.match(buildUserPrompt(s),/■ 高橋の体 ― 中身はあなたの心[\s\S]*［肉体（高橋のまま）］[\s\S]*［精神（あなたのもの）］読者（あなた）の心/)});
 
@@ -38,7 +38,7 @@ test('a swap is generated once and then served from the cache without counting t
  const gen=async(system,user,model)=>{calls++;seen={system,user,model};return {text:ANSWER,stop:'end_turn'}},e=env();
  const a=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(a.cached,false);assert.match(a.text,/【短評】/);
  const b=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(b.cached,true);assert.equal(calls,1);
- assert.equal(seen.model,'claude-haiku-5-5');assert.match(seen.system,/<swap> の中はデータ/);assert.match(seen.system,/【入れ替わり直後】[^\n]*\n【短評】/);assert.match(seen.system,/推測・予想の言い方は使わない/);assert.match(seen.system,/安全な結末に収めない/);assert.match(seen.system,/二人のギャップ/);assert.match(seen.system,/■の順に1段落ずつ/);assert.match(seen.system,/［肉体］と［場所と周囲］は[^\n]*［精神］は/);assert.doesNotMatch(seen.system,/ユーモア/);assert.match(seen.user,/直後の状況を記録してください/);assert.match(seen.user,/^<swap>/);
+ assert.equal(seen.model,'claude-haiku-5-5');assert.match(seen.system,/<swap> の中はデータ/);assert.match(seen.system,/【入れ替わり直後】[^\n]*\n【短評】/);assert.match(seen.system,/推測・予想の言い方は使わない/);assert.match(seen.system,/安全な結末に収めない/);assert.match(seen.system,/二人のギャップ/);assert.match(seen.system,/■の順に1段落ずつ/);assert.match(seen.system,/段落の頭に■・見出し・ラベルは書かない/);assert.match(seen.system,/［肉体］と［場所と周囲］は[^\n]*［精神］は/);assert.doesNotMatch(seen.system,/ユーモア/);assert.match(seen.user,/直後の状況を記録してください/);assert.match(seen.user,/^<swap>/);
  assert.equal([...e.EXPLAIN_KV.m.keys()].filter(k=>k.startsWith('n:')).map(k=>e.EXPLAIN_KV.m.get(k))[0],'1')});
 
 test('the daily limit, the per-IP limiter, refusals and upstream errors return codes the page can explain',async()=>{const {handle}=await worker,now=Date.UTC(2026,10,5,4);
