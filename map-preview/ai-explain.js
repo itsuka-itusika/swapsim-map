@@ -34,9 +34,11 @@ const AiExplain=(()=>{
   const show=text=>{render(box,text);btn.setAttribute('aria-expanded','true')},close=()=>{box.hidden=true;btn.setAttribute('aria-expanded','false');open.delete(body)};
   if(open.has(body)&&recall(body))show(recall(body));
   btn.onclick=async e=>{e.stopPropagation();if(btn.getAttribute('aria-expanded')==='true')return close();open.add(body);
-   const have=recall(body);if(have)return show(have);
-   btn.disabled=true;status(box,'AIが入れ替わり直後の様子を書いています…');const got=await request(body);btn.disabled=false;
+   const have=recall(body);if(have){show(have);return reveal(box)}
+   btn.disabled=true;status(box,'AIが入れ替わり直後の様子を書いています…');reveal(box);const got=await request(body);btn.disabled=false;
    if(!box.isConnected)return;if(got.text)show(got.text);else{open.delete(body);status(box,message(got.error),true)}}}
+ // Pressing AI解説 brings its box into view (once, at the press; the text then fills in below its top).
+ function reveal(box){try{const still=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;box.scrollIntoView({behavior:still?'auto':'smooth',block:'start'})}catch{}}
  // The notice in #person: the chip follows the title, the box goes under the notice.
  function attach(P){if(!enabled())return;const root=document.getElementById('person'),head=root?.querySelector('.notice-head h2'),notice=root?.querySelector('.notice');if(!head||!notice)return;
   const btn=chip('ai-btn');head.after(btn);const box=document.createElement('section');box.className='ai-box';box.id='ai-box';box.hidden=true;box.setAttribute('aria-live','polite');box.setAttribute('aria-label','AI解説');notice.after(box);mount(P,btn,box)}

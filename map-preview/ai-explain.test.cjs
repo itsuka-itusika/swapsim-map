@@ -93,3 +93,10 @@ test('Gemini requests carry the prompt and a low thinking level; responses map f
  const src=fs.readFileSync('ai-explain/src/index.js','utf8');assert.match(src,/'x-goog-api-key': env\.GEMINI_API_KEY/);assert.doesNotMatch(src,/[?&]key=/);
  const wf=fs.readFileSync('.github/workflows/pages.yml','utf8');assert.match(wf,/GEMINI_API_KEY: \$\{\{ secrets\.GEMINI_API_KEY \}\}/);assert.match(wf,/--var "MODEL:\$AI_MODEL"/);
  assert.match(fs.readFileSync('ai-explain/wrangler.toml','utf8'),/ALLOWED_MODELS = "claude-sonnet-5-5,gemini-3\.1-flash-lite/)});
+
+test('answers come without a heading, are cached when finished, and show as separate paragraphs; pressing scrolls to them',async()=>{const {handle,SYSTEM_PROMPT}=await worker;
+ assert.doesNotMatch(SYSTEM_PROMPT,/【入れ替わり直後】|見出しを行頭/);
+ const plain='高橋（体は稲垣）はベンチで空を握った。\n\n稲垣（体は高橋）は運転席で悲鳴を上げた。',e=env();let calls=0;const gen=async()=>{calls++;return {text:plain,stop:'end_turn'}};
+ await handle(req(AiExplain.payload(pair)),e,gen);assert.equal((await(await handle(req(AiExplain.payload(pair)),e,gen)).json()).cached,true);assert.equal(calls,1);
+ assert.deepEqual(AiExplain.sections(plain),[{head:'',body:'高橋（体は稲垣）はベンチで空を握った。\n稲垣（体は高橋）は運転席で悲鳴を上げた。'}]);
+ const src=fs.readFileSync('map-preview/ai-explain.js','utf8');assert.match(src,/function reveal\(box\)\{[^}]*scrollIntoView\(\{behavior:still\?'auto':'smooth',block:'start'\}\)/);assert.match(src,/if\(have\)\{show\(have\);return reveal\(box\)\}/);assert.match(src,/書いています…'\);reveal\(box\);/)});
