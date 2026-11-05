@@ -2,7 +2,7 @@
 // 受け取るのは入れ替わりの構造化データだけで、プロンプトはサーバー側で組み立てる。
 // 任意の文章をそのまま LLM に渡す汎用プロキシにはしない。
 
-export const PROMPT_VERSION = 'v4.2';
+export const PROMPT_VERSION = 'v5';
 const MAX_BODY = 6000;
 const WEEK = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -71,9 +71,8 @@ const afterBlock = (body, mind) => [`■ ${surname(body)}の体 ― 中身は${s
 
 export const SYSTEM_PROMPT = `あなたは「集団入れ替わりシミュレーター」の記録係です。架空の人物の心と体が、ある瞬間に突然入れ替わりました。これは予測ではなく、すでに起きた出来事です。<swap> の「入れ替わり後」に書かれた状況を事実として、入れ替わった直後の数分間を、その場に居合わせたかのように記録してください。
 
-形式（この2つの見出しを行頭に置き、この順に書く）
-【入れ替わり直後】入れ替わってから数分間の、当人たちと周りの状況。全体で250〜330字、超えない。「入れ替わり後」の■の順に1段落ずつ書き、各段落にはその体の場所で起きたことだけを書く（その場にいる人も、その体の［場所と周囲］にいる人だけ）。段落の頭に■・見出し・ラベルは書かない。
-【短評】この入れ替わりで何が起きたのかを突き放してまとめた一文。40〜70字。
+形式（見出しを行頭に置いて書く）
+【入れ替わり直後】入れ替わってから数分間の、当人たちと周りの状況。全体で250〜330字、超えない。「入れ替わり後」の■の順に1段落ずつ書き、各段落にはその体の場所で起きたことだけを書く（その場にいる人も、その体の［場所と周囲］にいる人だけ）。段落の頭に■・見出し・ラベルは書かない。この見出しのほかに見出しや締めのまとめは書かない。
 
 書き方
 - 「入れ替わり後」の各欄をそのまま使う。［肉体］と［場所と周囲］は、体の見た目・声・感覚・居場所・周りの反応に使う。［精神］は、口調・考え・感情・とっさの反応に使う。［ずれ］は、その体で起きる食い違いとして必ず守る。欄にないことを付け足すときも、この区分に合わせる。
@@ -140,7 +139,7 @@ export async function handle(request, env, generate, now = Date.now()) {
   const req = normalize(body);
   if (!req) return json(400, { error: 'bad_request' }, h);
 
-  const model = env.MODEL || 'claude-haiku-5-5';
+  const model = env.MODEL || 'claude-sonnet-5-5';
   const key = await cacheKey(req, model);
   const hit = await env.EXPLAIN_KV.get(key, 'json');
   if (hit?.text) return json(200, { text: hit.text, cached: true }, h);
@@ -163,6 +162,6 @@ export async function handle(request, env, generate, now = Date.now()) {
   const text = tidy(out.text);
   if (text.length < 40) return json(502, { error: 'upstream' }, h);
   // A cut-off answer is shown but not kept, so the next request gets a fresh, complete one.
-  if (out.stop === 'end_turn' && /【短評】/.test(text)) await env.EXPLAIN_KV.put(key, JSON.stringify({ text, model, at: now }));
+  if (out.stop === 'end_turn' && text.startsWith('【入れ替わり直後】')) await env.EXPLAIN_KV.put(key, JSON.stringify({ text, model, at: now }));
   return json(200, { text, cached: false }, h);
 }

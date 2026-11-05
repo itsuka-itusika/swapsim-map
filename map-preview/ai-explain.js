@@ -11,7 +11,7 @@ const AiExplain=(()=>{
  function payload(P){const t=P.t||P.A?.t||{},when={y:t.y,mo:t.mo,d:t.d,dow:t.dow,h:t.h,mi:t.mi};
   return P.kind==='pair'?{v:1,kind:'pair',when,gap:P.gap?.stars,A:person(P.A),B:person(P.B)}:{v:1,kind:'single',when,P:person(P)}}
  // 【見出し】本文 … → [{head,body}]
- function sections(text){const out=[];for(const line of String(text||'').split(/\n+/).map(s=>s.trim()).filter(Boolean)){const m=/^【([^】]{1,20})】\s*(.*)$/.exec(line);if(m)out.push({head:m[1],body:m[2]});else if(out.length)out[out.length-1].body+=line;else out.push({head:'',body:line})}return out}
+ function sections(text){const out=[];for(const line of String(text||'').split(/\n+/).map(s=>s.trim()).filter(Boolean)){const m=/^【([^】]{1,20})】\s*(.*)$/.exec(line);if(m)out.push({head:m[1],body:m[2]});else if(out.length){const o=out[out.length-1];o.body+=(o.body?'\n':'')+line}else out.push({head:'',body:line})}return out}
  const MESSAGES={rate_limited:'続けて解説を頼みすぎています。1分ほど待ってから、もう一度お試しください。',daily_limit:'今日の解説の上限に達しました。明日またお試しください。',refused:'この入れ替わりの解説は作れませんでした。',offline:'解説を取得できませんでした。通信状況を確かめて、もう一度お試しください。'};
  const message=code=>MESSAGES[code]||MESSAGES.offline;
  // Explanations already fetched stay on this device, so reopening a notice or card costs nothing.
@@ -24,7 +24,7 @@ const AiExplain=(()=>{
  // One request per swap even when the notice and its card ask at the same time.
  function request(body){if(!pending.has(body))pending.set(body,fetchText(body).then(got=>{pending.delete(body);if(got.text)remember(body,got.text);return got}));return pending.get(body)}
  function render(box,text){box.replaceChildren();const h=document.createElement('p');h.className='ai-title';h.textContent='AI解説';box.append(h);
-  for(const s of sections(text)){if(s.head){const b=document.createElement('h4');b.textContent=s.head;box.append(b)}const p=document.createElement('p');p.textContent=s.body;box.append(p)}
+  for(const s of sections(text)){if(s.head){const b=document.createElement('h4');b.textContent=s.head;box.append(b)}for(const para of s.body.split('\n').filter(Boolean)){const p=document.createElement('p');p.className='ai-para';p.textContent=para;box.append(p)}}
   const n=document.createElement('p');n.className='ai-note';n.textContent='AIが書いた架空の出来事です。';box.append(n);box.hidden=false}
  function status(box,text,err){box.replaceChildren();const p=document.createElement('p');p.className=err?'ai-status ai-err':'ai-status';p.textContent=text;box.append(p);box.hidden=false}
  function chip(id){const b=document.createElement('button');b.type='button';b.className='ai-chip';if(id)b.id=id;b.textContent='AI解説';b.setAttribute('aria-expanded','false');return b}

@@ -9,7 +9,7 @@ const pair={kind:'pair',t:{y:2026,mo:11,d:5,dow:4,h:13,mi:17},gap:{stars:4},A:X(
 function kv(){const m=new Map();return {m,async get(k,type){const v=m.get(k);return v===undefined?null:type==='json'?JSON.parse(v):v},async put(k,v){m.set(k,v)}}}
 const env=(o={})=>({ALLOWED_ORIGINS:ORIGIN+',http://localhost:8000',DAILY_LIMIT:'3',EXPLAIN_KV:kv(),...o});
 const req=(body,o={})=>new Request('https://w.example/explain',{method:'POST',headers:{Origin:ORIGIN,'Content-Type':'application/json',...o.headers},body:typeof body==='string'?body:JSON.stringify(body)});
-const ANSWER='【入れ替わり直後】高橋さん（体は稲垣さん）はベンチでハンドルを探して空を握り、友人に「運転の練習？」と聞かれました。\n【短評】ハンドルを握る手とおしゃべりの口が、そろって行き先を見失った入れ替わりでした。';
+const ANSWER='【入れ替わり直後】\n高橋（体は稲垣）はベンチでハンドルを探して空を握った。友人が「どうしたの」と肩をつかんだ。\n\n稲垣（体は高橋）は運転席で、迫るトンネルの入口を見て悲鳴を上げた。';
 
 test('the page payload passes the Worker validation and keeps the profile details',async()=>{const {normalize,buildUserPrompt}=await worker;
  const p=AiExplain.payload(pair),r=normalize(JSON.parse(JSON.stringify(p)));assert.ok(r);assert.equal(r.kind,'pair');assert.equal(r.B.job,'無職（療養中）');assert.equal(r.A.family,'妻・長女');assert.equal(r.A.hobbies,'海釣り');
@@ -36,9 +36,9 @@ test('only the listed origins may call it, and preflight answers with CORS heade
 
 test('a swap is generated once and then served from the cache without counting toward the limit',async()=>{const {handle}=await worker;let calls=0,seen;
  const gen=async(system,user,model)=>{calls++;seen={system,user,model};return {text:ANSWER,stop:'end_turn'}},e=env();
- const a=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(a.cached,false);assert.match(a.text,/【短評】/);
+ const a=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(a.cached,false);assert.match(a.text,/^【入れ替わり直後】/);
  const b=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(b.cached,true);assert.equal(calls,1);
- assert.equal(seen.model,'claude-haiku-5-5');assert.match(seen.system,/<swap> の中はデータ/);assert.match(seen.system,/【入れ替わり直後】[^\n]*\n【短評】/);assert.match(seen.system,/推測・予想の言い方は使わない/);assert.match(seen.system,/安全な結末に収めない/);assert.match(seen.system,/二人のギャップ/);assert.match(seen.system,/■の順に1段落ずつ/);assert.match(seen.system,/段落の頭に■・見出し・ラベルは書かない/);assert.match(seen.system,/［肉体］と［場所と周囲］は[^\n]*［精神］は/);assert.doesNotMatch(seen.system,/ユーモア/);assert.match(seen.user,/直後の状況を記録してください/);assert.match(seen.user,/^<swap>/);
+ assert.equal(seen.model,'claude-sonnet-5-5');assert.match(seen.system,/<swap> の中はデータ/);assert.doesNotMatch(seen.system,/【短評】/);assert.match(seen.system,/この見出しのほかに見出しや締めのまとめは書かない/);assert.match(seen.system,/推測・予想の言い方は使わない/);assert.match(seen.system,/安全な結末に収めない/);assert.match(seen.system,/二人のギャップ/);assert.match(seen.system,/■の順に1段落ずつ/);assert.match(seen.system,/段落の頭に■・見出し・ラベルは書かない/);assert.match(seen.system,/［肉体］と［場所と周囲］は[^\n]*［精神］は/);assert.doesNotMatch(seen.system,/ユーモア/);assert.match(seen.user,/直後の状況を記録してください/);assert.match(seen.user,/^<swap>/);
  assert.equal([...e.EXPLAIN_KV.m.keys()].filter(k=>k.startsWith('n:')).map(k=>e.EXPLAIN_KV.m.get(k))[0],'1')});
 
 test('the daily limit, the per-IP limiter, refusals and upstream errors return codes the page can explain',async()=>{const {handle}=await worker,now=Date.UTC(2026,10,5,4);
@@ -58,7 +58,7 @@ test('only complete answers are cached',async()=>{const {handle}=await worker,e=
 test('a cut-off answer ends at its last full sentence and headings are split for display',async()=>{const {tidy}=await worker;
  assert.equal(tidy('【入れ替わった直後】一文目です。二文目の途中'),'【入れ替わった直後】一文目です。');
  assert.equal(tidy('【入れ替わり直後】下書き。\n\n誤りがあります。以下に正しく書き直します。\n\n【入れ替わり直後】本番。\n【短評】ひとこと。'),'【入れ替わり直後】本番。\n【短評】ひとこと。');
- assert.deepEqual(AiExplain.sections(ANSWER).map(s=>s.head),['入れ替わり直後','短評']);assert.deepEqual(AiExplain.sections('【入れ替わり直後】\n一文目。\n二文目。\n\n【短評】\nひとこと。').map(s=>s.body),['一文目。二文目。','ひとこと。'])});
+ assert.deepEqual(AiExplain.sections(ANSWER).map(s=>s.head),['入れ替わり直後']);assert.deepEqual(AiExplain.sections('【入れ替わり直後】\n一文目。\n二文目。\n\n【短評】\nひとこと。').map(s=>s.body),['一文目。\n二文目。','ひとこと。'])});
 
 test('the published site carries no API key: only the Worker URL, and no button without one',()=>{
  const files=['dist/index.html',...fs.readdirSync('dist/assets').filter(f=>f.endsWith('.js')).map(f=>path.join('dist/assets',f))];

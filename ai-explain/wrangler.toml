@@ -6,9 +6,9 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 # 呼び出しを許すページの Origin（カンマ区切り）
 ALLOWED_ORIGINS = "https://itsuka-itusika.github.io,http://localhost:8000"
-MODEL = "claude-haiku-5-5"
+MODEL = "claude-sonnet-5-5"
 # 1日（日本時間）に新しく生成する解説の上限。キャッシュ済みの解説は数えない。
-DAILY_LIMIT = "300"
+DAILY_LIMIT = "100"
 
 # 解説のキャッシュと1日の生成数。id を書かないので、初回の `wrangler deploy` が自動で作り、以後は同じものを使う。
 [[kv_namespaces]]
