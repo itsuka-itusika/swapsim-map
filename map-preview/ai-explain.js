@@ -39,8 +39,8 @@ const AiExplain=(()=>{
  // The notice in #person: the chip follows the title, the box goes under the notice.
  function attach(P){if(!enabled())return;const root=document.getElementById('person'),head=root?.querySelector('.notice-head h2'),notice=root?.querySelector('.notice');if(!head||!notice)return;
   const btn=chip('ai-btn');head.after(btn);const box=document.createElement('section');box.className='ai-box';box.id='ai-box';box.hidden=true;box.setAttribute('aria-live','polite');box.setAttribute('aria-label','AI解説');notice.after(box);mount(P,btn,box)}
- // 「入れ替わった人たち」の各カード（renderPairCards が [data-ai] のボタンと .ai-box を置く）。
- function cards(list,results){if(!enabled())return;list.querySelectorAll('[data-ai]').forEach(btn=>{const i=+btn.dataset.ai,R=results[i],box=list.querySelector('#ai-card-'+i);if(!R||!box)return;btn.hidden=false;mount(R,btn,box)})}
+ // 「入れ替わった人たち」のカードと「同じ瞬間に入れ替わった人たち」の一覧（各 li に [data-ai] のボタンと .ai-box がある）。
+ function cards(list,results){if(!enabled())return;list.querySelectorAll('[data-ai]').forEach(btn=>{const i=+btn.dataset.ai,R=results[i],box=btn.closest('li')?.querySelector('.ai-box');if(!R||!box)return;btn.hidden=false;mount(R,btn,box)})}
  function disable(on){const b=typeof document!=='undefined'&&document.getElementById('ai-btn');if(b)b.disabled=on}
  return {attach,cards,disable,payload,sections,message,enabled};
 })();

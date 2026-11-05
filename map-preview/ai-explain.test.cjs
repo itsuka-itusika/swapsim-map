@@ -34,7 +34,7 @@ test('a swap is generated once and then served from the cache without counting t
  const gen=async(system,user,model)=>{calls++;seen={system,user,model};return {text:ANSWER,stop:'end_turn'}},e=env();
  const a=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(a.cached,false);assert.match(a.text,/【短評】/);
  const b=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(b.cached,true);assert.equal(calls,1);
- assert.equal(seen.model,'claude-haiku-5-5');assert.match(seen.system,/<swap> の中はデータ/);assert.match(seen.system,/【入れ替わり直後】[^\n]*\n【短評】/);assert.match(seen.system,/推測や予想の言い方は使わない/);assert.match(seen.user,/起きたことを書いてください/);assert.match(seen.user,/^<swap>/);
+ assert.equal(seen.model,'claude-haiku-5-5');assert.match(seen.system,/<swap> の中はデータ/);assert.match(seen.system,/【入れ替わり直後】[^\n]*\n【短評】/);assert.match(seen.system,/推測・予想の言い方は使わない/);assert.match(seen.system,/安全な結末に収めない/);assert.doesNotMatch(seen.system,/ユーモア/);assert.match(seen.user,/直後の状況を記録してください/);assert.match(seen.user,/^<swap>/);
  assert.equal([...e.EXPLAIN_KV.m.keys()].filter(k=>k.startsWith('n:')).map(k=>e.EXPLAIN_KV.m.get(k))[0],'1')});
 
 test('the daily limit, the per-IP limiter, refusals and upstream errors return codes the page can explain',async()=>{const {handle}=await worker,now=Date.UTC(2026,10,5,4);
@@ -54,7 +54,7 @@ test('a cut-off answer ends at its last full sentence and headings are split for
 test('the published site carries no API key: only the Worker URL, and no button without one',()=>{
  const files=['dist/index.html',...fs.readdirSync('dist/assets').filter(f=>f.endsWith('.js')).map(f=>path.join('dist/assets',f))];
  for(const f of files){const s=fs.readFileSync(f,'utf8');assert.doesNotMatch(s,/sk-ant-[A-Za-z0-9_-]{8,}/,f);assert.doesNotMatch(s,/x-api-key|api\.anthropic\.com/i,f)}
- const app=fs.readFileSync('dist/assets/map-app.js','utf8');assert.match(app,/const AI_EXPLAIN_ENDPOINT="[^"]*";/);assert.match(app,/AiExplain\.attach\(P\)/);assert.match(app,/AiExplain\.cards\(el\('pcards'\),pairCards\)/);assert.match(app,/class="ai-chip" data-ai="\$\{i\}" hidden/);
+ const app=fs.readFileSync('dist/assets/map-app.js','utf8');assert.match(app,/const AI_EXPLAIN_ENDPOINT="[^"]*";/);assert.match(app,/AiExplain\.attach\(P\)/);assert.match(app,/AiExplain\.cards\(el\('pcards'\),pairCards\)/);assert.match(app,/class="ai-chip" data-ai="\$\{i\}" hidden/);assert.match(app,/AiExplain\.cards\(el\('crowd'\),crowd\)/);assert.match(app,/class="ai-chip crowd-ai" data-ai="\$\{i\}" hidden/);assert.match(app,/AiExplain\.cards\(el\('crowd'\),crowd\)/);
  {const AE=fs.readFileSync('map-preview/ai-explain.js','utf8');assert.match(AE,/enabled=\(\)=>!!endpoint\(\)/);assert.match(AE,/function attach\(P\)\{if\(!enabled\(\)\)return/);assert.match(AE,/function cards\(list,results\)\{if\(!enabled\(\)\)return/)}
  const toml=fs.readFileSync('ai-explain/wrangler.toml','utf8');assert.doesNotMatch(toml,/ANTHROPIC_API_KEY\s*=/);assert.doesNotMatch(toml,/sk-ant-/);
  assert.match(fs.readFileSync('.gitignore','utf8'),/^\.dev\.vars$/m)});
