@@ -1,6 +1,6 @@
 // Cloudflare Worker: 地図版の「AI解説」。APIキーは Worker の secret（ANTHROPIC_API_KEY）にだけ置く。
 import Anthropic from '@anthropic-ai/sdk';
-import { handle, isGemini, geminiBody, fromGemini } from './explain.js';
+import { handle, isGemini, geminiModel, geminiBody, fromGemini } from './explain.js';
 
 const FALLBACK_MODELS = new Set(['claude-sonnet-5-5', 'claude-opus-5-5', 'claude-opus-5', 'claude-fable-5-1']);
 
@@ -9,11 +9,12 @@ export default {
     const generate = async (system, user, model) => {
       if (isGemini(model)) {
         // Gemini: the key goes in a header, never in the URL, so it cannot end up in logs.
-        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+        const { name, level } = geminiModel(model);
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(name)}:generateContent`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY || '' },
-          body: JSON.stringify(geminiBody(system, user)),
-          signal: AbortSignal.timeout(25_000),
+          body: JSON.stringify(geminiBody(system, user, level)),
+          signal: AbortSignal.timeout(45_000),
         });
         if (!r.ok) throw Object.assign(new Error('gemini ' + r.status), { status: r.status });
         return fromGemini(await r.json());

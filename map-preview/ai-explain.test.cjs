@@ -83,7 +83,9 @@ test('the model is MODEL unless the request names one from ALLOWED_MODELS; the a
  const b=await(await handle(req(AiExplain.payload(pair)),en,ok)).json();assert.equal(used,'claude-sonnet-5-5');assert.equal(b.cached,false);assert.equal(b.model,'claude-sonnet-5-5');
  assert.equal((await(await handle(req({...AiExplain.payload(pair),model:'gemini-3.1-flash-lite'}),en,ok)).json()).cached,true)});
 
-test('Gemini requests carry the prompt and a low thinking level; responses map finish reasons and skip thoughts',async()=>{const {geminiBody,fromGemini}=await worker;
+test('Gemini requests carry the prompt and a low thinking level; responses map finish reasons and skip thoughts',async()=>{const {geminiBody,fromGemini,geminiModel}=await worker;
+ assert.deepEqual(geminiModel('gemini-3.1-flash-lite'),{name:'gemini-3.1-flash-lite',level:'low'});assert.deepEqual(geminiModel('gemini-3.1-flash-lite:high'),{name:'gemini-3.1-flash-lite',level:'high'});assert.equal(geminiModel('gemini-3.1-flash-lite:ultra').level,'low');
+ {const h=geminiBody('S','U','high');assert.equal(h.generationConfig.thinkingConfig.thinkingLevel,'high');assert.equal(h.generationConfig.maxOutputTokens,12000)}
  const g=geminiBody('SYS','USER');assert.equal(g.systemInstruction.parts[0].text,'SYS');assert.deepEqual(g.contents,[{role:'user',parts:[{text:'USER'}]}]);assert.equal(g.generationConfig.thinkingConfig.thinkingLevel,'low');assert.equal(g.generationConfig.maxOutputTokens,2000);
  assert.deepEqual(fromGemini({candidates:[{content:{parts:[{text:'考え中',thought:true},{text:'【入れ替わり直後】本文'}]},finishReason:'STOP'}]}),{text:'【入れ替わり直後】本文',stop:'end_turn'});
  assert.equal(fromGemini({candidates:[{content:{parts:[{text:'途中'}]},finishReason:'MAX_TOKENS'}]}).stop,'max_tokens');

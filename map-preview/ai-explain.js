@@ -20,7 +20,7 @@ const AiExplain=(()=>{
  function stored(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch{return {}}}
  function remember(id,text){memo.set(id,text);try{const all=stored();all[id]=text;const ids=Object.keys(all);for(const k of ids.slice(0,Math.max(0,ids.length-30)))delete all[k];localStorage.setItem(KEY,JSON.stringify(all))}catch{}}
  function recall(id){if(memo.has(id))return memo.get(id);const t=stored()[id];if(t)memo.set(id,t);return t}
- async function fetchText(body){const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),40000);let r;try{r=await fetch(endpoint().replace(/\/+$/,'')+'/explain',{method:'POST',headers:{'Content-Type':'application/json'},body,signal:ctl.signal})}catch(e){clearTimeout(timer);return {error:'offline'}}
+ async function fetchText(body){const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),60000);let r;try{r=await fetch(endpoint().replace(/\/+$/,'')+'/explain',{method:'POST',headers:{'Content-Type':'application/json'},body,signal:ctl.signal})}catch(e){clearTimeout(timer);return {error:'offline'}}
   let o=null;try{o=await r.json()}catch{}clearTimeout(timer);if(!r.ok||!o?.text)return {error:o?.error||'offline'};return {text:o.text}}
  // One request per swap even when the notice and its card ask at the same time.
  function request(body){if(!pending.has(body))pending.set(body,fetchText(body).then(got=>{pending.delete(body);if(got.text)remember(body,got.text);return got}));return pending.get(body)}

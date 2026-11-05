@@ -109,11 +109,18 @@ export function pickModel(asked, env) {
 export const isGemini = model => /^gemini-/.test(model);
 
 // Gemini API (generateContent) request body and response, kept here so they can be tested without a key.
-export function geminiBody(system, user) {
+// A Gemini model may carry its thinking level after a colon, e.g. "gemini-3.1-flash-lite:high".
+const THINKING = ['minimal', 'low', 'medium', 'high'];
+export function geminiModel(model) {
+  const [name, level] = String(model).split(':');
+  return { name, level: THINKING.includes(level) ? level : 'low' };
+}
+export function geminiBody(system, user, level = 'low') {
   return {
     systemInstruction: { parts: [{ text: system }] },
     contents: [{ role: 'user', parts: [{ text: user }] }],
-    generationConfig: { maxOutputTokens: 2000, thinkingConfig: { thinkingLevel: 'low' } },
+    // Thinking tokens count toward maxOutputTokens, so higher levels get more room (only what is used is billed).
+    generationConfig: { maxOutputTokens: level === 'high' ? 12000 : level === 'medium' ? 6000 : 2000, thinkingConfig: { thinkingLevel: level } },
   };
 }
 const GEMINI_STOP = { STOP: 'end_turn', MAX_TOKENS: 'max_tokens' };
