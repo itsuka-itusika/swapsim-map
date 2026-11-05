@@ -2,7 +2,7 @@
 // 受け取るのは入れ替わりの構造化データだけで、プロンプトはサーバー側で組み立てる。
 // 任意の文章をそのまま LLM に渡す汎用プロキシにはしない。
 
-export const PROMPT_VERSION = 'v5';
+export const PROMPT_VERSION = 'v5.1';
 const MAX_BODY = 6000;
 const WEEK = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -15,7 +15,8 @@ function person(o) {
   const p = {
     name: str(o.name, 20), sex: o.sex === 'f' ? 'f' : o.sex === 'm' ? 'm' : null, age: int(o.age, 0, 120),
     job: str(o.job, 40), status: str(o.status, 20), place: str(o.place, 40), weather: str(o.weather, 30),
-    situation: str(o.situation, 160), household: str(o.household, 30), family: str(o.family, 60),
+    // 家族構成（世帯・同居家族）は通知書でも伏せているので、送られてきても受け取らない。
+    situation: str(o.situation, 160),
     hobbies: str(o.hobbies, 60), health: str(o.health, 60), height: num(o.height, 40, 230), weight: num(o.weight, 2, 250),
   };
   return p.name && p.sex && p.age !== null && p.situation ? p : null;
@@ -54,12 +55,12 @@ function bodyLines(body) {
     `  ［肉体（${surname(body)}のまま）］${join(`${body.age}歳・${sexJa(body.sex)}`, body.height && body.weight && `${body.height}cm・${body.weight}kg`,
       body.health && `健康: ${body.health}`, `声: ${body.age}歳の${sexJa(body.sex)}の声`, `服装: この体が直前の場面で着ていた服のまま（${[body.job, body.status].filter(Boolean).join('、') || '不明'}）`)}`,
     `  ［場所と周囲（${surname(body)}のまま）］${join(body.place && `場所: ${body.place}`, body.weather && `天気: ${body.weather}`,
-      `この体が直前までしていたこと: ${body.situation}`, `周りの人からは${body.name}として見られている`, body.family && `この体の家族: ${body.family}`)}`,
+      `この体が直前までしていたこと: ${body.situation}`, `周りの人からは${body.name}として見られている`)}`,
   ];
 }
 function mindLine(mind) {
   return `  ［精神（${surname(mind)}のもの）］${join(`${mind.name}（${mind.age}歳・${sexJa(mind.sex)}）の心。口調・性格・感情・記憶・知識・話せる言葉は${surname(mind)}のもの`,
-    `${surname(mind)}の職業・身につけた技能: ${mind.job || '不明'}`, mind.hobbies && `趣味: ${mind.hobbies}`, mind.household && `${surname(mind)}の暮らし: ${mind.household}`,
+    `${surname(mind)}の職業・身につけた技能: ${mind.job || '不明'}`, mind.hobbies && `趣味: ${mind.hobbies}`,
     `${surname(mind)}が入れ替わる直前にしていたこと: ${mind.situation}`)}`;
 }
 // Spells out the mismatch so the model does not give the body the mind's voice or eye level.

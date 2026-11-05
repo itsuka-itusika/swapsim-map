@@ -5,8 +5,9 @@ const AiExplain=(()=>{
  const endpoint=()=>typeof AI_EXPLAIN_ENDPOINT==='string'?AI_EXPLAIN_ENDPOINT:'';
  const enabled=()=>!!endpoint()&&typeof document!=='undefined';
  const hobbyText=X=>(X.hobbies||[]).map(h=>h.detail||String(h.label||'').replace(/[(（].*$/,'')).filter(Boolean).join('、');
+ // 家族構成（世帯・同居家族）は通知書で伏せているので送らない。
  const person=X=>({name:X.displayName||X.surname.k+' '+X.given.k,sex:X.sex,age:X.age,job:X.occ?.label,status:X.visitLabel,place:X.place,weather:X.wxText,situation:X.sit?.text,
-  household:X.household?.label,family:(X.familyContext?.members||[]).filter(m=>m!=='本人').join('・'),hobbies:hobbyText(X),health:X.health?.text,height:X.body?.h,weight:X.body?.w});
+  hobbies:hobbyText(X),health:X.health?.text,height:X.body?.h,weight:X.body?.w});
  // The Worker accepts only this shape and writes the prompt itself.
  function payload(P){const t=P.t||P.A?.t||{},when={y:t.y,mo:t.mo,d:t.d,dow:t.dow,h:t.h,mi:t.mi};
   return P.kind==='pair'?{v:1,kind:'pair',when,gap:P.gap?.stars,A:person(P.A),B:person(P.B)}:{v:1,kind:'single',when,P:person(P)}}

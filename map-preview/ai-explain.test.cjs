@@ -12,7 +12,7 @@ const req=(body,o={})=>new Request('https://w.example/explain',{method:'POST',he
 const ANSWER='【入れ替わり直後】\n高橋（体は稲垣）はベンチでハンドルを探して空を握った。友人が「どうしたの」と肩をつかんだ。\n\n稲垣（体は高橋）は運転席で、迫るトンネルの入口を見て悲鳴を上げた。';
 
 test('the page payload passes the Worker validation and keeps the profile details',async()=>{const {normalize,buildUserPrompt}=await worker;
- const p=AiExplain.payload(pair),r=normalize(JSON.parse(JSON.stringify(p)));assert.ok(r);assert.equal(r.kind,'pair');assert.equal(r.B.job,'無職（療養中）');assert.equal(r.A.family,'妻・長女');assert.equal(r.A.hobbies,'海釣り');
+ const p=AiExplain.payload(pair),r=normalize(JSON.parse(JSON.stringify(p)));assert.ok(r);assert.equal(r.kind,'pair');assert.equal(r.B.job,'無職（療養中）');assert.equal('family' in p.A||'household' in p.A,false);assert.equal(r.A.family,undefined);assert.equal(r.A.household,undefined);{const forced=normalize({...p,A:{...p.A,family:'妻・長女',household:'夫婦と子供から成る世帯'}});assert.equal(forced.A.family,undefined);assert.doesNotMatch(buildUserPrompt(forced),/妻・長女|夫婦と子供|家族|暮らし/)}assert.equal(r.A.hobbies,'海釣り');
  const u=buildUserPrompt(r);assert.match(u,/2026年11月5日\(木\) 13時17分/);assert.match(u,/<入れ替わり前>\n高橋 雄一（男性・47歳）／トラック運転手（正社員）／高速道路：/);
  const after=u.slice(u.indexOf('<入れ替わり後>')),tb=after.slice(after.indexOf('■ 高橋の体 ― 中身は稲垣の心'),after.indexOf('■ 稲垣の体'));
  assert.ok(tb);assert.match(tb,/［肉体（高橋のまま）］47歳・男性／171.2cm・74.5kg／健康: 腰痛／声: 47歳の男性の声／服装: /);assert.match(tb,/［場所と周囲（高橋のまま）］場所: 高速道路／天気: 晴れ 18度/);
