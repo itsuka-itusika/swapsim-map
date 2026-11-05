@@ -4,7 +4,7 @@
 const ShareImage=(()=>{
  const W=1080,H=1350,C={paper:'#E8EEEB',sheet:'#F8FAF8',ink:'#17231F',ink2:'#4D5E57',rule:'#2E6A5D',soft:'#C9D6D0',shu:'#C8371E',m:'#1F4C8F',f:'#A82A14'};
  const MIN="'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif",GO="'BIZ UDPGothic','Hiragino Sans','Yu Gothic','Meiryo',sans-serif";
- const SEX={m:'男性',f:'女性'},name=P=>P.displayName||P.surname.k+' '+P.given.k,job=P=>P.occ.label.replace(/（[^（）]*）$/,''),stars=n=>'★'.repeat(n)+'☆'.repeat(5-n);
+ const SEX={m:'男性',f:'女性'},name=P=>P.displayName||P.surname.k+' '+P.given.k,job=P=>/^(無職|主婦|主夫)/.test(P.occ.label)?P.occ.label:P.occ.label.replace(/（[^（）]*）$/,''),stars=n=>'★'.repeat(n)+'☆'.repeat(5-n);
  const pad=n=>String(n).padStart(2,'0'),serial=n=>'第'+String(n||0).padStart(6,'0')+'号';
  const date=t=>`${t.y}年${t.mo}月${t.d}日（${'日月火水木金土'[t.dow]}）`,clock=t=>typeof fmtClock==='function'?fmtClock(t):`${t.h}時${pad(t.mi)}分`;
  // Japanese wraps at any character; a closing mark never starts a line. Overflow ends in "…".
