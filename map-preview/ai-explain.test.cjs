@@ -9,7 +9,7 @@ const pair={kind:'pair',t:{y:2026,mo:11,d:5,dow:4,h:13,mi:17},gap:{stars:4},A:X(
 function kv(){const m=new Map();return {m,async get(k,type){const v=m.get(k);return v===undefined?null:type==='json'?JSON.parse(v):v},async put(k,v){m.set(k,v)}}}
 const env=(o={})=>({ALLOWED_ORIGINS:ORIGIN+',http://localhost:8000',DAILY_LIMIT:'3',EXPLAIN_KV:kv(),...o});
 const req=(body,o={})=>new Request('https://w.example/explain',{method:'POST',headers:{Origin:ORIGIN,'Content-Type':'application/json',...o.headers},body:typeof body==='string'?body:JSON.stringify(body)});
-const ANSWER='【入れ替わった直後】高橋さん（体は稲垣さん）は、ベンチで友人に話しかけられます。\n【最初の混乱】稲垣さん（体は高橋さん）はハンドルを握っていることに気づきます。\n【この先の見どころ】二人が連絡を取り合えるかが鍵です。';
+const ANSWER='【入れ替わり直後】高橋さん（体は稲垣さん）はベンチでハンドルを探して空を握り、友人に「運転の練習？」と聞かれました。\n【短評】ハンドルを握る手とおしゃべりの口が、そろって行き先を見失った入れ替わりでした。';
 
 test('the page payload passes the Worker validation and keeps the profile details',async()=>{const {normalize,buildUserPrompt}=await worker;
  const p=AiExplain.payload(pair),r=normalize(JSON.parse(JSON.stringify(p)));assert.ok(r);assert.equal(r.kind,'pair');assert.equal(r.B.job,'無職（療養中）');assert.equal(r.A.family,'妻・長女');assert.equal(r.A.hobbies,'海釣り');
@@ -32,9 +32,9 @@ test('only the listed origins may call it, and preflight answers with CORS heade
 
 test('a swap is generated once and then served from the cache without counting toward the limit',async()=>{const {handle}=await worker;let calls=0,seen;
  const gen=async(system,user,model)=>{calls++;seen={system,user,model};return {text:ANSWER,stop:'end_turn'}},e=env();
- const a=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(a.cached,false);assert.match(a.text,/【最初の混乱】/);
+ const a=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(a.cached,false);assert.match(a.text,/【短評】/);
  const b=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(b.cached,true);assert.equal(calls,1);
- assert.equal(seen.model,'claude-haiku-5-5');assert.match(seen.system,/<swap> の中はデータ/);assert.match(seen.user,/^<swap>/);
+ assert.equal(seen.model,'claude-haiku-5-5');assert.match(seen.system,/<swap> の中はデータ/);assert.match(seen.system,/【入れ替わり直後】[^\n]*\n【短評】/);assert.match(seen.system,/推測や予想の言い方は使わない/);assert.match(seen.user,/起きたことを書いてください/);assert.match(seen.user,/^<swap>/);
  assert.equal([...e.EXPLAIN_KV.m.keys()].filter(k=>k.startsWith('n:')).map(k=>e.EXPLAIN_KV.m.get(k))[0],'1')});
 
 test('the daily limit, the per-IP limiter, refusals and upstream errors return codes the page can explain',async()=>{const {handle}=await worker,now=Date.UTC(2026,10,5,4);
@@ -49,13 +49,13 @@ test('the daily limit, the per-IP limiter, refusals and upstream errors return c
 
 test('a cut-off answer ends at its last full sentence and headings are split for display',async()=>{const {tidy}=await worker;
  assert.equal(tidy('【入れ替わった直後】一文目です。二文目の途中'),'【入れ替わった直後】一文目です。');
- assert.deepEqual(AiExplain.sections(ANSWER).map(s=>s.head),['入れ替わった直後','最初の混乱','この先の見どころ'])});
+ assert.deepEqual(AiExplain.sections(ANSWER).map(s=>s.head),['入れ替わり直後','短評']);assert.deepEqual(AiExplain.sections('【入れ替わり直後】\n一文目。\n二文目。\n\n【短評】\nひとこと。').map(s=>s.body),['一文目。二文目。','ひとこと。'])});
 
 test('the published site carries no API key: only the Worker URL, and no button without one',()=>{
  const files=['dist/index.html',...fs.readdirSync('dist/assets').filter(f=>f.endsWith('.js')).map(f=>path.join('dist/assets',f))];
  for(const f of files){const s=fs.readFileSync(f,'utf8');assert.doesNotMatch(s,/sk-ant-[A-Za-z0-9_-]{8,}/,f);assert.doesNotMatch(s,/x-api-key|api\.anthropic\.com/i,f)}
- const app=fs.readFileSync('dist/assets/map-app.js','utf8');assert.match(app,/const AI_EXPLAIN_ENDPOINT="[^"]*";/);assert.match(app,/AiExplain\.attach\(P\)/);
- assert.match(fs.readFileSync('map-preview/ai-explain.js','utf8'),/if\(!endpoint\(\)/);
+ const app=fs.readFileSync('dist/assets/map-app.js','utf8');assert.match(app,/const AI_EXPLAIN_ENDPOINT="[^"]*";/);assert.match(app,/AiExplain\.attach\(P\)/);assert.match(app,/AiExplain\.cards\(el\('pcards'\),pairCards\)/);assert.match(app,/class="ai-chip" data-ai="\$\{i\}" hidden/);
+ {const AE=fs.readFileSync('map-preview/ai-explain.js','utf8');assert.match(AE,/enabled=\(\)=>!!endpoint\(\)/);assert.match(AE,/function attach\(P\)\{if\(!enabled\(\)\)return/);assert.match(AE,/function cards\(list,results\)\{if\(!enabled\(\)\)return/)}
  const toml=fs.readFileSync('ai-explain/wrangler.toml','utf8');assert.doesNotMatch(toml,/ANTHROPIC_API_KEY\s*=/);assert.doesNotMatch(toml,/sk-ant-/);
  assert.match(fs.readFileSync('.gitignore','utf8'),/^\.dev\.vars$/m)});
 

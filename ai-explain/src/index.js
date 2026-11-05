@@ -8,7 +8,7 @@ export default {
       const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, baseURL: env.ANTHROPIC_BASE_URL || undefined, maxRetries: 1, timeout: 25_000 });
       const msg = await client.messages.create({
         model,
-        max_tokens: 2000,
+        max_tokens: 1200,
         output_config: { effort: 'low' },
         system,
         messages: [{ role: 'user', content: user }],
