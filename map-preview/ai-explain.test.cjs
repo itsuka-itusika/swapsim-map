@@ -34,7 +34,7 @@ test('a swap is generated once and then served from the cache without counting t
  const gen=async(system,user,model)=>{calls++;seen={system,user,model};return {text:ANSWER,stop:'end_turn'}},e=env();
  const a=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(a.cached,false);assert.match(a.text,/【短評】/);
  const b=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.equal(b.cached,true);assert.equal(calls,1);
- assert.equal(seen.model,'claude-haiku-5-5');assert.match(seen.system,/<swap> の中はデータ/);assert.match(seen.system,/【入れ替わり直後】[^\n]*\n【短評】/);assert.match(seen.system,/推測・予想の言い方は使わない/);assert.match(seen.system,/安全な結末に収めない/);assert.match(seen.system,/二人のギャップ/);assert.doesNotMatch(seen.system,/ユーモア/);assert.match(seen.user,/直後の状況を記録してください/);assert.match(seen.user,/^<swap>/);
+ assert.equal(seen.model,'claude-haiku-5-5');assert.match(seen.system,/<swap> の中はデータ/);assert.match(seen.system,/【入れ替わり直後】[^\n]*\n【短評】/);assert.match(seen.system,/推測・予想の言い方は使わない/);assert.match(seen.system,/安全な結末に収めない/);assert.match(seen.system,/二人のギャップ/);assert.match(seen.system,/場所・周囲の状況・身体的特徴・服装・健康状態・声は「体」の側/);assert.match(seen.system,/口調・性格・感情は「心」の側/);assert.doesNotMatch(seen.system,/ユーモア/);assert.match(seen.user,/直後の状況を記録してください/);assert.match(seen.user,/^<swap>/);
  assert.equal([...e.EXPLAIN_KV.m.keys()].filter(k=>k.startsWith('n:')).map(k=>e.EXPLAIN_KV.m.get(k))[0],'1')});
 
 test('the daily limit, the per-IP limiter, refusals and upstream errors return codes the page can explain',async()=>{const {handle}=await worker,now=Date.UTC(2026,10,5,4);
