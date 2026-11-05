@@ -2,7 +2,7 @@
 // 受け取るのは入れ替わりの構造化データだけで、プロンプトはサーバー側で組み立てる。
 // 任意の文章をそのまま LLM に渡す汎用プロキシにはしない。
 
-export const PROMPT_VERSION = 'v6';
+export const PROMPT_VERSION = 'v6.1';
 const MAX_BODY = 6000;
 const WEEK = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -79,7 +79,6 @@ export const SYSTEM_PROMPT = `あなたは「集団入れ替わりシミュレ�
 
 - 「入れ替わり後」の各欄をそのまま使う。［肉体］と［場所と周囲］は、体の見た目・声・感覚・居場所・周りの反応に使う。［精神］は、口調・考え・感情・とっさの反応に使う。［ずれ］は、その体で起きる食い違いとして必ず守る。欄にないことを付け足すときも、この区分に合わせる。
 - 人物は心の名前で呼び、最初に出すときは「高橋（体は稲垣）」のように書く。周囲の人物は、入れ替わりの事実を最初から知っているわけではない。
-- 常体（〜した。〜だった。）の過去形で、起きた出来事を言い切る。推測や予想の表現は使わない。
 - 生々しく、臨場感をもって描く。目に入ったもの、音、体の感覚、とっさの動き、周りの人の声や反応を具体的に書く。
 - ［精神］のプロフィールから人柄を決め、行動とせりふで見せる。
 - 二人のギャップが、新しい体と状況の中でどう噛み合わないかを、具体的な場面で描く。
@@ -94,8 +93,11 @@ export function buildUserPrompt(req) {
     const gap = req.gap !== null ? `\nギャップ: 5段階中${req.gap}` : '';
     return `<swap>\n${head}${gap}\n<入れ替わり前>\n${beforeLine(req.A)}\n${beforeLine(req.B)}\n</入れ替わり前>\n<入れ替わり後>\n${afterBlock(req.A, req.B)}\n${afterBlock(req.B, req.A)}\n</入れ替わり後>\n</swap>\n入れ替わった直後の状況を記録してください。`;
   }
-  const P = req.P, reader = `  ［精神（あなたのもの）］読者（あなた）の心。プロフィールは分からないので、ごく普通の人として描く。口調・性格・感情・記憶は読者自身のもの／${surname(P)}の仕事の技能や知識、周りの人との関係は知らない`;
-  return `<swap>\n${head}\n<入れ替わり前>\n${beforeLine(P)}\n読者（あなた）：プロフィール不明\n</入れ替わり前>\n<入れ替わり後>\n■ ${surname(P)}の体 ― 中身はあなたの心\n${bodyLines(P).join('\n')}\n${reader}\n</入れ替わり後>\n</swap>\n「あなた（体は${surname(P)}）」の視点で、入れ替わった直後の状況を記録してください。${surname(P)}の心がどうなったかは分からないので触れない。`;
+  const P = req.P;
+  const size = P.height ? `、身長${P.height}cm` : '';
+  const youGap = `  ［ずれ］あなたの心は自分を元の自分だと思っているが、出る声・目の高さ・手足の大きさ・体の重さや体調は、${surname(P)}の体（${P.age}歳の${sexJa(P.sex)}${size}）のもの。いる場所も元の場所ではなく${P.place || 'この体の場所'}。`;
+  const reader = `  ［精神（あなたのもの）］読者（あなた）の心。プロフィールは分からないので、ごく普通の人として描く。口調・性格・感情・記憶は読者自身のもの／${surname(P)}の仕事の技能や知識、周りの人との関係は知らない`;
+  return `<swap>\n${head}\n<入れ替わり前>\n${beforeLine(P)}\n読者（あなた）：プロフィール不明\n</入れ替わり前>\n<入れ替わり後>\n■ ${surname(P)}の体 ― 中身はあなたの心\n${bodyLines(P).join('\n')}\n${reader}\n${youGap}\n</入れ替わり後>\n</swap>\n主語は「あなた」にして、「あなたは〜」と二人称で、入れ替わった直後の数分間を描写してください。「高橋（体は稲垣）」のような呼び方は使わず、${surname(P)}の名前は周りの人があなたを呼ぶ名前としてだけ使う。${surname(P)}の心がどうなったかは分からないので触れない。`;
 }
 
 // The default model comes from MODEL. A request may name another one only if it is in ALLOWED_MODELS,
