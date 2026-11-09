@@ -12,4 +12,4 @@ GitHub Pages の公開元を GitHub Actions に設定すると、main への更�
 
 ## AI解説
 
-通知書の「AI解説」ボタンは、プロフィールと場面から考えた人物の外見（髪型・顔・表情・体型・服装・足元・持ち物・ひとことで）を LLM に書かせて表示します。デバッグ欄の「AI解説を入れ替わり直後に」をオンにすると、以前の入れ替わり直後の描写に戻ります。APIキーはページに置かず、`ai-explain/` の Cloudflare Worker だけが持ちます。リポジトリの secret に `ANTHROPIC_API_KEY` と `CLOUDFLARE_API_TOKEN` を登録すると、Pages の公開ワークフローが Worker も公開し、その URL だけをページに渡します。URL がないあいだはボタンを出しません。手順と費用の目安は [ai-explain/README.md](ai-explain/README.md) を参照してください。
+通知書の「AI解説」ボタンは、プロフィールと場面から考えた人物の外見を LLM に文章で書かせ、人物ごとに名前・年齢・性別・仕事を添えて表示します。外見は髪型・服装・しぐさなどを網羅せず、その場面で目に留まるものを自然に描かせます。デバッグ欄の「AI解説切り替え」をオンにすると、以前の入れ替わり直後の描写に戻ります（スイッチの右に、いまのモード「外見情報」「入れ替わり直後」を赤字で表示）。APIキーはページに置かず、`ai-explain/` の Cloudflare Worker だけが持ちます。リポジトリの secret に `ANTHROPIC_API_KEY` と `CLOUDFLARE_API_TOKEN` を登録すると、Pages の公開ワークフローが Worker も公開し、その URL だけをページに渡します。URL がないあいだはボタンを出しません。手順と費用の目安は [ai-explain/README.md](ai-explain/README.md) を参照してください。

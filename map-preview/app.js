@@ -5,7 +5,7 @@ let storage=null;try{storage=localStorage}catch{}
 // to the one in 詳細設定. Saved separately from 詳細設定.
 const debug={time:null,mixed:false,real:false,aiSwap:false},debugKey='swapsim-map-debug-v1',DEBUG_TIME=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
 try{const saved=JSON.parse(storage?.getItem(debugKey)||'null');if(saved){debug.time=DEBUG_TIME.test(saved.time)?saved.time:null;debug.mixed=saved.mixed===true;debug.real=saved.real===true;debug.aiSwap=saved.aiSwap===true}}catch{}
-// AI解説は外見が既定。デバッグで「入れ替わり直後」の描写に戻せる。
+// AI解説は外見が既定。デバッグの「AI解説切り替え」で「入れ替わり直後」の描写に戻せる（スイッチの右に赤字でいまのモードを出す）。
 AiExplain.setMode(debug.aiSwap?'swap':'look');
 const initialSelection=SelectionCache.load(storage);
 let selected=initialSelection.point,radius=initialSelection.radius,parts=[],regions=MAP_DATA.regions,facilities=MAP_DATA.facilities,history=[];
@@ -280,7 +280,7 @@ el('mesh-mode').onchange=drawMesh;
 dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh();refreshB()}},1000);let lastMinute=time().mi;updateWeather();facilitiesOnMap();refresh();drawMesh();MapBoot.done();loadHistory();renderHistory();
 
 // Debug panel.
-function renderDebug(){el('dbg-time').value=debug.time||'';AiExplain.setMode(debug.aiSwap?'swap':'look');for(const key of ['mixed','real','aiSwap'])el('dbg-'+key).setAttribute('aria-checked',String(debug[key]));dateNow()}
+function renderDebug(){el('dbg-time').value=debug.time||'';AiExplain.setMode(debug.aiSwap?'swap':'look');el('dbg-aiMode').textContent=debug.aiSwap?'入れ替わり直後':'外見情報';for(const key of ['mixed','real','aiSwap'])el('dbg-'+key).setAttribute('aria-checked',String(debug[key]));dateNow()}
 function setDebugTime(v){debug.time=v&&DEBUG_TIME.test(v)?v:null;renderDebug();refresh();refreshB()}
 el('dbg-time').onchange=e=>setDebugTime(e.target.value.slice(0,16));
 el('dbg-now').onclick=()=>setDebugTime(null);

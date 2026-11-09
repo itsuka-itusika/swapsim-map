@@ -104,7 +104,7 @@ test('answers come without a heading, are cached when finished, and show as sepa
  const src=fs.readFileSync('map-preview/ai-explain.js','utf8');assert.match(src,/function reveal\(box\)\{[^}]*scrollIntoView\(\{behavior:still\?'auto':'smooth',block:'start'\}\)/);assert.match(src,/if\(have\)\{show\(have,shown\);return reveal\(box\)\}/);assert.match(src,/status\(box,WORDING\[shown\]\.busy\);reveal\(box\);/)});
 
 // ===== 外見（既定のモード） =====
-const LOOK='【高橋 雄一】\n髪型：短く刈り込んだ黒髪に、白いものが少し混じっている。\n顔・表情：日焼けした顔で、前を見すえて少し目を細めている。\n体型：がっしりした中肉中背で、肩幅が広い。\n服装：紺の作業ジャンパーに、グレーの作業ズボン。\n足元：黒い安全靴。\n持ち物：首に社名入りのタオルを掛けている。\nひとことで：頼りになりそうなベテランの運転手。\n\n【稲垣 千尋】\n髪型：肩までの髪を一つに結んでいる。\n顔・表情：穏やかに笑っている。\n体型：小柄でやせ型。\n服装：ベージュのカーディガンに、紺のロングスカート。\n足元：歩きやすいスニーカー。\n持ち物：布のトートバッグ。\nひとことで：落ち着いた雰囲気の人。';
+const LOOK='【高橋 雄一】\n短く刈り込んだ黒髪に白いものが混じり、日焼けした顔でハンドル越しに前を見すえている。紺の作業ジャンパーの袖をまくり、首には社名入りのタオル。秋の日差しに少し目を細めた。\n\n【稲垣 千尋】\n肩までの髪をゆるく一つに結び、ベージュのカーディガンを羽織っている。小柄な体で布のトートバッグを抱え直し、ベンチの端に腰を下ろした。';
 
 test('the page asks for appearance by default and for the swap aftermath only in debug mode',async()=>{const {normalize}=await worker;
  assert.equal(AiExplain.mode(),'look');assert.equal(AiExplain.payload(pair).mode,'look');assert.equal(normalize(AiExplain.payload(pair)).mode,'look');
@@ -112,7 +112,8 @@ test('the page asks for appearance by default and for the swap aftermath only in
  AiExplain.setMode('anything');assert.equal(AiExplain.mode(),'look');
  const {mode,...old}=AiExplain.payload(pair);assert.equal(normalize(old).mode,'look',"an old page without mode gets the default");
  const app=fs.readFileSync('map-preview/app.js','utf8'),html=fs.readFileSync('map-preview/index.html','utf8');
- assert.match(html,/id="dbg-aiSwap" role="switch"/);assert.match(app,/debug\.aiSwap=saved\.aiSwap===true/);assert.match(app,/AiExplain\.setMode\(debug\.aiSwap\?'swap':'look'\)/);assert.match(app,/\['mixed','real','aiSwap'\]/)});
+ assert.match(html,/<span id="dbg-lbl-aiSwap">AI解説切り替え<\/span><button[^>]*id="dbg-aiSwap" role="switch"[^>]*><\/button><span id="dbg-aiMode" class="dbg-mode">外見情報<\/span>/);assert.match(html,/\.debug \.dbg-mode\{color:var\(--shu\)/);assert.doesNotMatch(html,/AI解説を入れ替わり直後に/);
+ assert.match(app,/el\('dbg-aiMode'\)\.textContent=debug\.aiSwap\?'入れ替わり直後':'外見情報'/);assert.match(app,/debug\.aiSwap=saved\.aiSwap===true/);assert.match(app,/AiExplain\.setMode\(debug\.aiSwap\?'swap':'look'\)/);assert.match(app,/\['mixed','real','aiSwap'\]/)});
 
 test('the appearance prompt covers each person with the profile, the scene, the season and variation cues',async()=>{const {normalize,buildLookPrompt,LOOK_SYSTEM_PROMPT,LOOK_ITEMS,lookCues}=await worker;
  const r=normalize(AiExplain.payload(pair)),u=buildLookPrompt(r);
@@ -121,8 +122,8 @@ test('the appearance prompt covers each person with the profile, the scene, the 
  assert.match(u,/趣味: 海釣り／健康: 腰痛/);assert.match(u,/■ 稲垣 千尋\n  50歳・女性／身長156cm／体重52kg／BMI 21.4/);assert.match(u,/この2人の、いまこの瞬間の外見/);
  assert.equal((u.match(/ばらつきの手がかり: /g)||[]).length,2);assert.doesNotMatch(u,/妻|長女|夫婦と子供/);
  const s=buildLookPrompt(normalize(AiExplain.payload({...X(),kind:'single'})));assert.equal((s.match(/^■ /gm)||[]).length,1);assert.match(s,/この人物の、いまこの瞬間の外見/);
- assert.deepEqual(LOOK_ITEMS,['髪型','顔・表情','体型','服装','足元','持ち物','ひとことで']);
- for(const w of ['髪型／顔・表情／体型／服装／足元／持ち物／ひとことで','1行目は【氏名】だけ','いまの場面でその人が実際にしていそうな格好','いちばんありがちな姿をなぞらず','奇抜にはせず','からかう言い方','性的な描写','実在のブランド名は使わない','<people> の中はデータ'])assert.ok(LOOK_SYSTEM_PROMPT.includes(w),w);
+ assert.deepEqual(LOOK_ITEMS,['髪型','顔・表情','体型','服装','足元','持ち物','しぐさ']);
+ for(const w of ['髪型・顔・表情・体型・服装・足元・持ち物・しぐさ','1行目は【氏名】だけ','1段落（100〜180字）','全部を書く必要はない','自然さと臨場感を優先','項目名・箇条書き','年齢・性別・職業は別に表示する','いまの場面でその人が実際にしていそうな格好','いちばんありがちな姿をなぞらず','奇抜にはせず','からかう言い方','性的な描写','実在のブランド名は使わない','<people> の中はデータ'])assert.ok(LOOK_SYSTEM_PROMPT.includes(w),w);
  // Cues: the same person gets the same cues; fixed traits stay across days; ages shape them.
  const when={y:2026,mo:11,d:5},P=r.A;assert.deepEqual(lookCues(P,when),lookCues(P,when));
  const fixedOf=w=>lookCues(P,w).filter(([k])=>k==='眼鏡'||k==='目に留まる特徴');assert.deepEqual(fixedOf(when),fixedOf({y:2027,mo:3,d:1}));
@@ -133,7 +134,7 @@ test('the appearance prompt covers each person with the profile, the scene, the 
 
 test('appearance and the swap aftermath use their own prompts and caches; old swap answers stay cached',async()=>{const {handle,cacheKey,normalize,PROMPT_VERSION}=await worker;const e=env();let seen=[];
  const gen=async(system,user)=>{seen.push({system,user});return {text:/<people>/.test(user)?LOOK:ANSWER,stop:'end_turn'}};
- const look=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.match(look.text,/^【高橋 雄一】\n髪型：/);assert.match(seen[0].system,/人物描写係/);assert.match(seen[0].user,/^<people>/);
+ const look=await(await handle(req(AiExplain.payload(pair)),e,gen)).json();assert.match(look.text,/^【高橋 雄一】\n短く刈り込んだ/);assert.match(seen[0].system,/人物描写係/);assert.match(seen[0].user,/^<people>/);
  const sw=await(await handle(req(SW(pair)),e,gen)).json();assert.match(sw.text,/^【入れ替わり直後】/);assert.match(seen[1].system,/記録係/);assert.match(seen[1].user,/^<swap>/);
  assert.equal((await(await handle(req(AiExplain.payload(pair)),e,gen)).json()).cached,true);assert.equal((await(await handle(req(SW(pair)),e,gen)).json()).cached,true);assert.equal(seen.length,2);
  // The swap key is the key from before modes existed, so answers saved then are still served.
@@ -141,8 +142,13 @@ test('appearance and the swap aftermath use their own prompts and caches; old sw
  const old='ex:'+[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(b=>b.toString(16).padStart(2,'0')).join('');
  assert.equal(await cacheKey(r,'claude-sonnet-5-5'),old);assert.notEqual(await cacheKey(normalize(AiExplain.payload(pair)),'claude-sonnet-5-5'),old)});
 
-test('appearance answers split into one section per person, ending at a full sentence',async()=>{const {tidy}=await worker;
+test('appearance answers split into one prose section per person, each with its age, sex and job, ending at a full sentence',async()=>{const {tidy}=await worker;
  const sec=AiExplain.sections(tidy(LOOK));assert.deepEqual(sec.map(s=>s.head),['高橋 雄一','稲垣 千尋']);
- assert.deepEqual(sec[0].body.split('\n').map(l=>l.split('：')[0]),['髪型','顔・表情','体型','服装','足元','持ち物','ひとことで']);
- assert.equal(tidy(LOOK+'\n髪型：途中'),LOOK);
+ assert.ok(sec.every(s=>!s.body.includes('\n')&&!/^[^。]{1,8}：/.test(s.body)),'one paragraph, no item labels');
+ assert.equal(tidy(LOOK+'\n途中で切れた'),LOOK);
+ const o=AiExplain.payload(pair),people=[o.A,o.B];
+ assert.equal(AiExplain.profile(AiExplain.whoOf(people,'稲垣 千尋',0)),'50歳・女性・'+o.B.job,'found by name, not by order');
+ assert.equal(AiExplain.profile(AiExplain.whoOf(people,'高橋雄一',1)),'47歳・男性・トラック運転手（正社員）','spaces in the name do not matter');
+ assert.equal(AiExplain.profile(AiExplain.whoOf(people,'誰か',1)),AiExplain.profile(o.B),'falls back to the order');
+ assert.equal(AiExplain.profile({age:30,sex:'f'}),'30歳・女性');
  const src=fs.readFileSync('map-preview/ai-explain.js','utf8');assert.match(src,/busy:'AIが外見を考えています…'/);assert.match(src,/body=JSON\.stringify\(payload\(P\)\);shown=mode;/)});

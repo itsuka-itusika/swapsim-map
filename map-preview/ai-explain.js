@@ -1,5 +1,5 @@
 /* 「AI解説」。入れ替わりの構造化データを解説用 Worker（ai-explain/）へ送り、返ってきた文章を表示する。
-   既定はプロフィールと場面から考えた外見（髪型・服装・体型など）。デバッグ欄で「入れ替わり直後」の描写に切り替えられる（setMode）。
+   既定はプロフィールと場面から考えた外見の文章で、人物ごとに名前の下へ年齢・性別・仕事を添える。デバッグ欄の「AI解説切り替え」で「入れ替わり直後」の描写に切り替えられる（setMode）。
    APIキーはページに置かない。AI_EXPLAIN_ENDPOINT はビルド時に入る Worker の URL で、空ならボタンを出さない。
    ボタンは通知書と「入れ替わった人たち」の各カードで、見出し「入れ替わりのお知らせ」のすぐ後ろに置く。 */
 const AiExplain=(()=>{
@@ -16,10 +16,15 @@ const AiExplain=(()=>{
   return P.kind==='pair'?{v:1,mode,kind:'pair',when,gap:P.gap?.stars,A:person(P.A),B:person(P.B)}:{v:1,mode,kind:'single',when,P:person(P)}}
  // 【見出し】本文 … → [{head,body}]
  function sections(text){const out=[];for(const line of String(text||'').split(/\n+/).map(s=>s.trim()).filter(Boolean)){const m=/^【([^】]{1,20})】\s*(.*)$/.exec(line);if(m)out.push({head:m[1],body:m[2]});else if(out.length){const o=out[out.length-1];o.body+=(o.body?'\n':'')+line}else out.push({head:'',body:line})}return out}
+ // 外見の見出し（【氏名】）の下に出す「47歳・男性・トラック運転手（正社員）」。名前で人物を探し、見つからなければ順番で対応させる。
+ const sexJa=s=>s==='f'?'女性':s==='m'?'男性':'';
+ const profile=X=>X?[Number.isFinite(X.age)&&X.age+'歳',sexJa(X.sex),X.job].filter(Boolean).join('・'):'';
+ const bare=s=>String(s||'').replace(/\s+/g,'');
+ function whoOf(people,head,i){return people.find(X=>bare(X.name)===bare(head))||people[i]}
  const MESSAGES={rate_limited:'続けて解説を頼みすぎています。1分ほど待ってから、もう一度お試しください。',daily_limit:'今日の解説の上限に達しました。明日またお試しください。',refused:'この入れ替わりの解説は作れませんでした。',offline:'解説を取得できませんでした。通信状況を確かめて、もう一度お試しください。'};
  const message=code=>MESSAGES[code]||MESSAGES.offline;
  // Explanations already fetched stay on this device, so reopening a notice or card costs nothing.
- const KEY='swapsim-map-ai-v2',memo=new Map(),open=new Set(),pending=new Map();
+ const KEY='swapsim-map-ai-v3',memo=new Map(),open=new Set(),pending=new Map();
  function stored(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch{return {}}}
  function remember(id,text){memo.set(id,text);try{const all=stored();all[id]=text;const ids=Object.keys(all);for(const k of ids.slice(0,Math.max(0,ids.length-30)))delete all[k];localStorage.setItem(KEY,JSON.stringify(all))}catch{}}
  function recall(id){if(memo.has(id))return memo.get(id);const t=stored()[id];if(t)memo.set(id,t);return t}
@@ -27,17 +32,19 @@ const AiExplain=(()=>{
   let o=null;try{o=await r.json()}catch{}clearTimeout(timer);if(!r.ok||!o?.text)return {error:o?.error||'offline'};return {text:o.text}}
  // One request per swap even when the notice and its card ask at the same time.
  function request(body){if(!pending.has(body))pending.set(body,fetchText(body).then(got=>{pending.delete(body);if(got.text)remember(body,got.text);return got}));return pending.get(body)}
- // 「髪型：…」の行は項目名を太字にする（外見）。
- function para(line,look){const p=document.createElement('p');p.className='ai-para';const m=look&&/^([^：。「」]{1,8})：(.+)$/.exec(line);if(m){p.className='ai-para ai-item';const b=document.createElement('b');b.textContent=m[1]+'：';p.append(b,m[2])}else p.textContent=line;return p}
- function render(box,text,m){box.replaceChildren();const h=document.createElement('p');h.className='ai-title';h.textContent='AI解説';box.append(h);
-  for(const s of sections(text)){if(s.head){const b=document.createElement('h4');b.textContent=s.head;box.append(b)}for(const line of s.body.split('\n').filter(Boolean))box.append(para(line,(m||mode)==='look'))}
+ function para(line){const p=document.createElement('p');p.className='ai-para';p.textContent=line;return p}
+ // people: 外見のときだけ渡す（payload の人物）。見出しの下に年齢・性別・仕事を出す。
+ function render(box,text,m,people){box.replaceChildren();const h=document.createElement('p');h.className='ai-title';h.textContent='AI解説';box.append(h);
+  const look=(m||mode)==='look';sections(text).forEach((s,i)=>{if(s.head){const b=document.createElement('h4');b.textContent=s.head;box.append(b);
+   const meta=look&&people?profile(whoOf(people,s.head,i)):'';if(meta){const q=document.createElement('p');q.className='ai-meta';q.textContent=meta;box.append(q)}}
+   for(const line of s.body.split('\n').filter(Boolean))box.append(para(line))});
   const n=document.createElement('p');n.className='ai-note';n.textContent=WORDING[m||mode].note;box.append(n);box.hidden=false}
  function status(box,text,err){box.replaceChildren();const p=document.createElement('p');p.className=err?'ai-status ai-err':'ai-status';p.textContent=text;box.append(p);box.hidden=false}
  function chip(id){const b=document.createElement('button');b.type='button';b.className='ai-chip';if(id)b.id=id;b.textContent='AI解説';b.setAttribute('aria-expanded','false');return b}
  // Wires one button to one box for swap P. Open boxes stay open when the notice or the cards are redrawn.
  // The payload is read again at each press, so a mode switched in the debug panel applies to the next press.
  function mount(P,btn,box){let body=JSON.stringify(payload(P)),shown=mode;btn.setAttribute('aria-controls',box.id||'');
-  const show=(text,m)=>{render(box,text,m);btn.setAttribute('aria-expanded','true')},close=()=>{box.hidden=true;btn.setAttribute('aria-expanded','false');open.delete(body)};
+  const show=(text,m)=>{const o=JSON.parse(body);render(box,text,m,o.kind==='pair'?[o.A,o.B]:[o.P]);btn.setAttribute('aria-expanded','true')},close=()=>{box.hidden=true;btn.setAttribute('aria-expanded','false');open.delete(body)};
   if(open.has(body)&&recall(body))show(recall(body));
   btn.onclick=async e=>{e.stopPropagation();if(btn.getAttribute('aria-expanded')==='true')return close();body=JSON.stringify(payload(P));shown=mode;open.add(body);
    const have=recall(body);if(have){show(have,shown);return reveal(box)}
@@ -51,6 +58,6 @@ const AiExplain=(()=>{
  // 「入れ替わった人たち」のカードと「同じ瞬間に入れ替わった人たち」の一覧（各 li に [data-ai] のボタンと .ai-box がある）。
  function cards(list,results){if(!enabled()||typeof list?.querySelectorAll!=='function')return;list.querySelectorAll('[data-ai]').forEach(btn=>{const i=+btn.dataset.ai,R=results[i],box=btn.closest('li')?.querySelector('.ai-box');if(!R||!box)return;btn.hidden=false;mount(R,btn,box)})}
  function disable(on){const b=typeof document!=='undefined'&&document.getElementById('ai-btn');if(b)b.disabled=on}
- return {attach,cards,disable,payload,sections,message,enabled,setMode,mode:()=>mode};
+ return {attach,cards,disable,payload,sections,profile,whoOf,message,enabled,setMode,mode:()=>mode};
 })();
 if(typeof module!=='undefined')module.exports=AiExplain;
