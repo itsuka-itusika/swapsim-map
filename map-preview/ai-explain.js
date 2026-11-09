@@ -26,7 +26,7 @@ const AiExplain=(()=>{
  const MESSAGES={rate_limited:'続けて解説を頼みすぎています。1分ほど待ってから、もう一度お試しください。',daily_limit:'今日の解説の上限に達しました。明日またお試しください。',refused:'この入れ替わりの解説は作れませんでした。',offline:'解説を取得できませんでした。通信状況を確かめて、もう一度お試しください。'};
  const message=code=>MESSAGES[code]||MESSAGES.offline;
  // Explanations already fetched stay on this device, so reopening a notice or card costs nothing.
- const KEY='swapsim-map-ai-v6',memo=new Map(),open=new Set(),pending=new Map();
+ const KEY='swapsim-map-ai-v7',memo=new Map(),open=new Set(),pending=new Map();
  function stored(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch{return {}}}
  function remember(id,text){memo.set(id,text);try{const all=stored();all[id]=text;const ids=Object.keys(all);for(const k of ids.slice(0,Math.max(0,ids.length-30)))delete all[k];localStorage.setItem(KEY,JSON.stringify(all))}catch{}}
  function recall(id){if(memo.has(id))return memo.get(id);const t=stored()[id];if(t)memo.set(id,t);return t}

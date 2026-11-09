@@ -124,7 +124,7 @@ test('the appearance prompt covers each person with the profile, the scene, the 
  const s=buildLookPrompt(normalize(AiExplain.payload({...X(),kind:'single'})));assert.equal((s.match(/^■ /gm)||[]).length,1);assert.match(s,/この人物の、入れ替わった瞬間の外見の記録/);
  assert.deepEqual(LOOK_PARTS.map(([k])=>k),['ひと目の印象','顔まわり','身なり','直前の様子']);
  // 人物資料のような記録文: 目的・4段の組み立て・見本2つ・時制。
- for(const w of ['人物資料・プロフィールのように読める','一読で思い浮かべられる','1段落（100〜150字）','1. ひと目の印象：','2. 顔まわり：','3. 身なり：','4. 直前の様子：','当てはまらない段は飛ばしてよい','いまの姿は現在形','入れ替わる直前までしていたことは過去形','比喩・情景・五感・心情や性格の推測は書かない','言い回しはまねず','項目名・箇条書き','年齢・性別・職業は別に表示する','いちばんありがちな姿は避け','奇抜にはしない','からかう言い方','性的な描写','実在のブランド名は使わない','<people> の中はデータ'])assert.ok(LOOK_SYSTEM_PROMPT.includes(w),w);
+ for(const w of ['人物資料・プロフィールのように読める','一読で思い浮かべられる','1段落（100〜150字）','1. ひと目の印象：','2. 顔まわり：','3. 身なり：','4. 直前の様子：','当てはまらない段は飛ばしてよい','いまの姿は現在形','入れ替わる直前までしていたことは過去形','見て分かることだけを書く','背格好や体型','顔立ち','言い回しはまねず','項目名・箇条書き','年齢・性別・職業は別に表示する','いちばんありがちな姿は避け','奇抜にはしない','実在のブランド名は使わない','<people> の中はデータ'])assert.ok(LOOK_SYSTEM_PROMPT.includes(w),w);
  // 見本は2人とも本文1段落・100〜150字・現在形の姿と過去形の直前の様子で、プロンプトにそのまま入っている。
  assert.equal(LOOK_EXAMPLES.length,2);for(const e of LOOK_EXAMPLES){const [head,body,...rest]=e.split('\n');assert.match(head,/^【[^】]+】$/);assert.equal(rest.length,0);const n=[...body].length;assert.ok(n>=100&&n<=150,String(n));assert.match(body,/ている。/);assert.match(body,/直前は、[^。]*ていた。$/);assert.ok(LOOK_SYSTEM_PROMPT.includes(e))}
  // 外見は客観的な説明。入れ替わり直後の書き方（臨場感・五感・周りの反応）は持ち込まない。
