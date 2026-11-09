@@ -1,5 +1,5 @@
 /* 「AI解説」。入れ替わりの構造化データを解説用 Worker（ai-explain/）へ送り、返ってきた文章を表示する。
-   既定はプロフィールと場面から考えた外見の文章で、人物ごとに名前の下へ年齢・性別・仕事を添える。デバッグ欄の「AI解説切り替え」で「入れ替わり直後」の描写に切り替えられる（setMode）。
+   既定はプロフィールと場面から考えた外見情報の文章で、人物ごとに見出し「○○の外見情報」の下へ年齢・性別・仕事を添える。デバッグ欄の「AI解説切り替え」で「入れ替わり直後」の描写に切り替えられる（setMode）。
    APIキーはページに置かない。AI_EXPLAIN_ENDPOINT はビルド時に入る Worker の URL で、空ならボタンを出さない。
    ボタンは通知書と「入れ替わった人たち」の各カードで、見出し「入れ替わりのお知らせ」のすぐ後ろに置く。 */
 const AiExplain=(()=>{
@@ -21,10 +21,12 @@ const AiExplain=(()=>{
  const profile=X=>X?[Number.isFinite(X.age)&&X.age+'歳',sexJa(X.sex),X.job].filter(Boolean).join('・'):'';
  const bare=s=>String(s||'').replace(/\s+/g,'');
  function whoOf(people,head,i){return people.find(X=>bare(X.name)===bare(head))||people[i]}
+ // 外見の見出しは「河野 莉子の外見情報」（AIが付けてきても二重にしない）。
+ const lookHead=h=>String(h||'').replace(/の?外見情報$/,'')+'の外見情報';
  const MESSAGES={rate_limited:'続けて解説を頼みすぎています。1分ほど待ってから、もう一度お試しください。',daily_limit:'今日の解説の上限に達しました。明日またお試しください。',refused:'この入れ替わりの解説は作れませんでした。',offline:'解説を取得できませんでした。通信状況を確かめて、もう一度お試しください。'};
  const message=code=>MESSAGES[code]||MESSAGES.offline;
  // Explanations already fetched stay on this device, so reopening a notice or card costs nothing.
- const KEY='swapsim-map-ai-v3',memo=new Map(),open=new Set(),pending=new Map();
+ const KEY='swapsim-map-ai-v4',memo=new Map(),open=new Set(),pending=new Map();
  function stored(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch{return {}}}
  function remember(id,text){memo.set(id,text);try{const all=stored();all[id]=text;const ids=Object.keys(all);for(const k of ids.slice(0,Math.max(0,ids.length-30)))delete all[k];localStorage.setItem(KEY,JSON.stringify(all))}catch{}}
  function recall(id){if(memo.has(id))return memo.get(id);const t=stored()[id];if(t)memo.set(id,t);return t}
@@ -35,8 +37,8 @@ const AiExplain=(()=>{
  function para(line){const p=document.createElement('p');p.className='ai-para';p.textContent=line;return p}
  // people: 外見のときだけ渡す（payload の人物）。見出しの下に年齢・性別・仕事を出す。
  function render(box,text,m,people){box.replaceChildren();const h=document.createElement('p');h.className='ai-title';h.textContent='AI解説';box.append(h);
-  const look=(m||mode)==='look';sections(text).forEach((s,i)=>{if(s.head){const b=document.createElement('h4');b.textContent=s.head;box.append(b);
-   const meta=look&&people?profile(whoOf(people,s.head,i)):'';if(meta){const q=document.createElement('p');q.className='ai-meta';q.textContent=meta;box.append(q)}}
+  const look=(m||mode)==='look';sections(text).forEach((s,i)=>{if(s.head){const b=document.createElement('h4');b.textContent=look?lookHead(s.head):s.head;box.append(b);
+   const meta=look&&people?profile(whoOf(people,String(s.head).replace(/の?外見情報$/,''),i)):'';if(meta){const q=document.createElement('p');q.className='ai-meta';q.textContent=meta;box.append(q)}}
    for(const line of s.body.split('\n').filter(Boolean))box.append(para(line))});
   const n=document.createElement('p');n.className='ai-note';n.textContent=WORDING[m||mode].note;box.append(n);box.hidden=false}
  function status(box,text,err){box.replaceChildren();const p=document.createElement('p');p.className=err?'ai-status ai-err':'ai-status';p.textContent=text;box.append(p);box.hidden=false}
@@ -58,6 +60,6 @@ const AiExplain=(()=>{
  // 「入れ替わった人たち」のカードと「同じ瞬間に入れ替わった人たち」の一覧（各 li に [data-ai] のボタンと .ai-box がある）。
  function cards(list,results){if(!enabled()||typeof list?.querySelectorAll!=='function')return;list.querySelectorAll('[data-ai]').forEach(btn=>{const i=+btn.dataset.ai,R=results[i],box=btn.closest('li')?.querySelector('.ai-box');if(!R||!box)return;btn.hidden=false;mount(R,btn,box)})}
  function disable(on){const b=typeof document!=='undefined'&&document.getElementById('ai-btn');if(b)b.disabled=on}
- return {attach,cards,disable,payload,sections,profile,whoOf,message,enabled,setMode,mode:()=>mode};
+ return {attach,cards,disable,payload,sections,profile,whoOf,lookHead,message,enabled,setMode,mode:()=>mode};
 })();
 if(typeof module!=='undefined')module.exports=AiExplain;
