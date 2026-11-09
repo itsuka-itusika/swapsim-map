@@ -103,3 +103,5 @@ npx wrangler secret put ANTHROPIC_API_KEY    # キーを入力（画面にもフ
 ローカルで動かすときは `ai-explain/.dev.vars`（Git には入りません）に `ANTHROPIC_API_KEY=...` を書いて `npx wrangler dev --port 8787` を起動し、リポジトリのルートで `AI_EXPLAIN_URL=http://localhost:8787 npm run build` → `python3 -m http.server 8000 --directory dist` で http://localhost:8000 を開きます。
 
 Worker の入力チェック・回数制限・キャッシュの単体テストは、ルートの `npm test` に含まれます（`map-preview/ai-explain.test.cjs`）。
+
+渡しているプロンプトは `node ai-explain/print-prompts.mjs`（入れ替わり直後は末尾に `swap`）で、例の2人について書き出せます。APIキーや通信は要りません。
