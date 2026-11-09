@@ -1,16 +1,19 @@
 /* 「AI解説」。入れ替わりの構造化データを解説用 Worker（ai-explain/）へ送り、返ってきた文章を表示する。
+   既定はプロフィールと場面から考えた外見（髪型・服装・体型など）。デバッグ欄で「入れ替わり直後」の描写に切り替えられる（setMode）。
    APIキーはページに置かない。AI_EXPLAIN_ENDPOINT はビルド時に入る Worker の URL で、空ならボタンを出さない。
    ボタンは通知書と「入れ替わった人たち」の各カードで、見出し「入れ替わりのお知らせ」のすぐ後ろに置く。 */
 const AiExplain=(()=>{
  const endpoint=()=>typeof AI_EXPLAIN_ENDPOINT==='string'?AI_EXPLAIN_ENDPOINT:'';
  const enabled=()=>!!endpoint()&&typeof document!=='undefined';
+ let mode='look';const setMode=m=>{mode=m==='swap'?'swap':'look'};
+ const WORDING={look:{busy:'AIが外見を考えています…',note:'AIが考えた外見の一例です。'},swap:{busy:'AIが入れ替わり直後の様子を書いています…',note:'AIが書いた架空の出来事です。'}};
  const hobbyText=X=>(X.hobbies||[]).map(h=>h.detail||String(h.label||'').replace(/[(（].*$/,'')).filter(Boolean).join('、');
  // 家族構成（世帯・同居家族）は通知書で伏せているので送らない。
  const person=X=>({name:X.displayName||X.surname.k+' '+X.given.k,sex:X.sex,age:X.age,job:X.occ?.label,status:X.visitLabel,place:X.place,weather:X.wxText,situation:X.sit?.text,
   hobbies:hobbyText(X),health:X.health?.text,height:X.body?.h,weight:X.body?.w});
  // The Worker accepts only this shape and writes the prompt itself.
  function payload(P){const t=P.t||P.A?.t||{},when={y:t.y,mo:t.mo,d:t.d,dow:t.dow,h:t.h,mi:t.mi};
-  return P.kind==='pair'?{v:1,kind:'pair',when,gap:P.gap?.stars,A:person(P.A),B:person(P.B)}:{v:1,kind:'single',when,P:person(P)}}
+  return P.kind==='pair'?{v:1,mode,kind:'pair',when,gap:P.gap?.stars,A:person(P.A),B:person(P.B)}:{v:1,mode,kind:'single',when,P:person(P)}}
  // 【見出し】本文 … → [{head,body}]
  function sections(text){const out=[];for(const line of String(text||'').split(/\n+/).map(s=>s.trim()).filter(Boolean)){const m=/^【([^】]{1,20})】\s*(.*)$/.exec(line);if(m)out.push({head:m[1],body:m[2]});else if(out.length){const o=out[out.length-1];o.body+=(o.body?'\n':'')+line}else out.push({head:'',body:line})}return out}
  const MESSAGES={rate_limited:'続けて解説を頼みすぎています。1分ほど待ってから、もう一度お試しください。',daily_limit:'今日の解説の上限に達しました。明日またお試しください。',refused:'この入れ替わりの解説は作れませんでした。',offline:'解説を取得できませんでした。通信状況を確かめて、もう一度お試しください。'};
@@ -24,19 +27,22 @@ const AiExplain=(()=>{
   let o=null;try{o=await r.json()}catch{}clearTimeout(timer);if(!r.ok||!o?.text)return {error:o?.error||'offline'};return {text:o.text}}
  // One request per swap even when the notice and its card ask at the same time.
  function request(body){if(!pending.has(body))pending.set(body,fetchText(body).then(got=>{pending.delete(body);if(got.text)remember(body,got.text);return got}));return pending.get(body)}
- function render(box,text){box.replaceChildren();const h=document.createElement('p');h.className='ai-title';h.textContent='AI解説';box.append(h);
-  for(const s of sections(text)){if(s.head){const b=document.createElement('h4');b.textContent=s.head;box.append(b)}for(const para of s.body.split('\n').filter(Boolean)){const p=document.createElement('p');p.className='ai-para';p.textContent=para;box.append(p)}}
-  const n=document.createElement('p');n.className='ai-note';n.textContent='AIが書いた架空の出来事です。';box.append(n);box.hidden=false}
+ // 「髪型：…」の行は項目名を太字にする（外見）。
+ function para(line,look){const p=document.createElement('p');p.className='ai-para';const m=look&&/^([^：。「」]{1,8})：(.+)$/.exec(line);if(m){p.className='ai-para ai-item';const b=document.createElement('b');b.textContent=m[1]+'：';p.append(b,m[2])}else p.textContent=line;return p}
+ function render(box,text,m){box.replaceChildren();const h=document.createElement('p');h.className='ai-title';h.textContent='AI解説';box.append(h);
+  for(const s of sections(text)){if(s.head){const b=document.createElement('h4');b.textContent=s.head;box.append(b)}for(const line of s.body.split('\n').filter(Boolean))box.append(para(line,(m||mode)==='look'))}
+  const n=document.createElement('p');n.className='ai-note';n.textContent=WORDING[m||mode].note;box.append(n);box.hidden=false}
  function status(box,text,err){box.replaceChildren();const p=document.createElement('p');p.className=err?'ai-status ai-err':'ai-status';p.textContent=text;box.append(p);box.hidden=false}
  function chip(id){const b=document.createElement('button');b.type='button';b.className='ai-chip';if(id)b.id=id;b.textContent='AI解説';b.setAttribute('aria-expanded','false');return b}
  // Wires one button to one box for swap P. Open boxes stay open when the notice or the cards are redrawn.
- function mount(P,btn,box){const body=JSON.stringify(payload(P));btn.setAttribute('aria-controls',box.id||'');
-  const show=text=>{render(box,text);btn.setAttribute('aria-expanded','true')},close=()=>{box.hidden=true;btn.setAttribute('aria-expanded','false');open.delete(body)};
+ // The payload is read again at each press, so a mode switched in the debug panel applies to the next press.
+ function mount(P,btn,box){let body=JSON.stringify(payload(P)),shown=mode;btn.setAttribute('aria-controls',box.id||'');
+  const show=(text,m)=>{render(box,text,m);btn.setAttribute('aria-expanded','true')},close=()=>{box.hidden=true;btn.setAttribute('aria-expanded','false');open.delete(body)};
   if(open.has(body)&&recall(body))show(recall(body));
-  btn.onclick=async e=>{e.stopPropagation();if(btn.getAttribute('aria-expanded')==='true')return close();open.add(body);
-   const have=recall(body);if(have){show(have);return reveal(box)}
-   btn.disabled=true;status(box,'AIが入れ替わり直後の様子を書いています…');reveal(box);const got=await request(body);btn.disabled=false;
-   if(!box.isConnected)return;if(got.text)show(got.text);else{open.delete(body);status(box,message(got.error),true)}}}
+  btn.onclick=async e=>{e.stopPropagation();if(btn.getAttribute('aria-expanded')==='true')return close();body=JSON.stringify(payload(P));shown=mode;open.add(body);
+   const have=recall(body);if(have){show(have,shown);return reveal(box)}
+   btn.disabled=true;status(box,WORDING[shown].busy);reveal(box);const got=await request(body);btn.disabled=false;
+   if(!box.isConnected)return;if(got.text)show(got.text,shown);else{open.delete(body);status(box,message(got.error),true)}}}
  // Pressing AI解説 brings its box into view (once, at the press; the text then fills in below its top).
  function reveal(box){try{const still=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;box.scrollIntoView({behavior:still?'auto':'smooth',block:'start'})}catch{}}
  // The notice in #person: the chip follows the title, the box goes under the notice.
@@ -45,6 +51,6 @@ const AiExplain=(()=>{
  // 「入れ替わった人たち」のカードと「同じ瞬間に入れ替わった人たち」の一覧（各 li に [data-ai] のボタンと .ai-box がある）。
  function cards(list,results){if(!enabled()||typeof list?.querySelectorAll!=='function')return;list.querySelectorAll('[data-ai]').forEach(btn=>{const i=+btn.dataset.ai,R=results[i],box=btn.closest('li')?.querySelector('.ai-box');if(!R||!box)return;btn.hidden=false;mount(R,btn,box)})}
  function disable(on){const b=typeof document!=='undefined'&&document.getElementById('ai-btn');if(b)b.disabled=on}
- return {attach,cards,disable,payload,sections,message,enabled};
+ return {attach,cards,disable,payload,sections,message,enabled,setMode,mode:()=>mode};
 })();
 if(typeof module!=='undefined')module.exports=AiExplain;

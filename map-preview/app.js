@@ -3,8 +3,10 @@ const el=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"']/g,c=>
 let storage=null;try{storage=localStorage}catch{}
 // Debug mode (a staged developer panel): a fixed time, men-and-women-only pairs, and a 本当に入れ替える that is not tied
 // to the one in 詳細設定. Saved separately from 詳細設定.
-const debug={time:null,mixed:false,real:false},debugKey='swapsim-map-debug-v1',DEBUG_TIME=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
-try{const saved=JSON.parse(storage?.getItem(debugKey)||'null');if(saved){debug.time=DEBUG_TIME.test(saved.time)?saved.time:null;debug.mixed=saved.mixed===true;debug.real=saved.real===true}}catch{}
+const debug={time:null,mixed:false,real:false,aiSwap:false},debugKey='swapsim-map-debug-v1',DEBUG_TIME=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+try{const saved=JSON.parse(storage?.getItem(debugKey)||'null');if(saved){debug.time=DEBUG_TIME.test(saved.time)?saved.time:null;debug.mixed=saved.mixed===true;debug.real=saved.real===true;debug.aiSwap=saved.aiSwap===true}}catch{}
+// AI解説は外見が既定。デバッグで「入れ替わり直後」の描写に戻せる。
+AiExplain.setMode(debug.aiSwap?'swap':'look');
 const initialSelection=SelectionCache.load(storage);
 let selected=initialSelection.point,radius=initialSelection.radius,parts=[],regions=MAP_DATA.regions,facilities=MAP_DATA.facilities,history=[];
 // Census is used only by residential components or explicit missing-data fallback.
@@ -278,13 +280,13 @@ el('mesh-mode').onchange=drawMesh;
 dateNow();setInterval(()=>{dateNow();const t=time();if(t.mi!==lastMinute){lastMinute=t.mi;refresh();refreshB()}},1000);let lastMinute=time().mi;updateWeather();facilitiesOnMap();refresh();drawMesh();MapBoot.done();loadHistory();renderHistory();
 
 // Debug panel.
-function renderDebug(){el('dbg-time').value=debug.time||'';for(const key of ['mixed','real'])el('dbg-'+key).setAttribute('aria-checked',String(debug[key]));dateNow()}
+function renderDebug(){el('dbg-time').value=debug.time||'';AiExplain.setMode(debug.aiSwap?'swap':'look');for(const key of ['mixed','real','aiSwap'])el('dbg-'+key).setAttribute('aria-checked',String(debug[key]));dateNow()}
 function setDebugTime(v){debug.time=v&&DEBUG_TIME.test(v)?v:null;renderDebug();refresh();refreshB()}
 el('dbg-time').onchange=e=>setDebugTime(e.target.value.slice(0,16));
 el('dbg-now').onclick=()=>setDebugTime(null);
-for(const key of ['mixed','real'])el('dbg-'+key).onclick=()=>{debug[key]=!debug[key];renderDebug()};
+for(const key of ['mixed','real','aiSwap'])el('dbg-'+key).onclick=()=>{debug[key]=!debug[key];renderDebug()};
 el('dbg-save').onclick=()=>{try{if(!storage)throw Error();storage.setItem(debugKey,JSON.stringify(debug));el('dbg-status').textContent='saved'}catch{el('dbg-status').textContent='failed'}};
-el('dbg-reset').onclick=()=>{Object.assign(debug,{time:null,mixed:false,real:false});try{storage?.removeItem(debugKey)}catch{}el('dbg-status').textContent='reset';setDebugTime(null)};
+el('dbg-reset').onclick=()=>{Object.assign(debug,{time:null,mixed:false,real:false,aiSwap:false});try{storage?.removeItem(debugKey)}catch{}el('dbg-status').textContent='reset';setDebugTime(null)};
 renderDebug();
 // A result as a URL: the packed result (as in the history), deflated where the browser can, in the fragment, so it
 // never reaches the server. #r= holds one notice, #g= all the pairs of one swap in pair mode. Opening it shows them again.
