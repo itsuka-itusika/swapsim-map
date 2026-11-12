@@ -184,6 +184,7 @@ function mapPersonInWard(c,t){
  const fits=s=>!PersonContext.away(s.text,c)&&(c.resident?TimeSituations.homeCompatible(s.text):c.role==='general'||!/自宅|家で|布団|寝室|ソファ|リビング|自分の部屋/.test(s.text));
  if(PersonContext.away(P.sit.text,c)){for(let i=0;i<32&&!fits(P.sit);i++)P.sit=situation(P,t);if(!fits(P.sit))P.sit={text:c.resident?'自宅で、ひと息ついているところでした':'近くを歩きながら、次に行く場所を考えているところでした',state:'off',stateLabel:c.label,p:1};P.mapSituation=P.sit.text}
  P.occ={...P.occ,label:JobLabels.short(P.occ.label)};
+ Nightlife.applyStageName(P);
  P.health=settleHealth(P,t);if(typeof HospitalModel!=='undefined')HospitalModel.health(P,t);if(c.role==='venue_ghost'){P.hb.preg=false;P.health={text:'幽霊のため健康状態は不明',items:[],p:1,note:'お遊び要素'};}P.body=bodyOf(P,t);
  P.place=(c.facility?.name||c.landComponent?.name||c.zone?.name||c.area?.name||f.name);
  // Without a specific facility or named place, show the town and the kind of spot (西新宿 自宅, 銀座 市街地).

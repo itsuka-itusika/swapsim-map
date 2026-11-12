@@ -64,7 +64,11 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const fullName = P => `${P.surname.k} ${P.given.k}`;
 const stars = n => '★'.repeat(n) + '<i>' + '☆'.repeat(5 - n) + '</i>';
 function nameHTML(P) {
-  return `<ruby>${esc(P.surname.k)}<rt>${esc(P.surname.r)}</rt></ruby><ruby>${esc(P.given.k)}<rt>${esc(P.given.r)}</rt></ruby>`;
+  const real = `<ruby>${esc(P.surname.k)}<rt>${esc(P.surname.r)}</rt></ruby><ruby>${esc(P.given.k)}<rt>${esc(P.given.r)}</rt></ruby>`;
+  // 源氏名（本名）: the stage name first, the real name in parentheses. Kana-only names need no reading.
+  const rb = x => x.r && x.r !== x.k ? `<ruby>${esc(x.k)}<rt>${esc(x.r)}</rt></ruby>` : esc(x.k);
+  const S = P.stageName;
+  return S ? (S.fam ? rb(S.fam) + ' ' : '') + rb(S.given) + `<span class="real-name">（${real}）</span>` : real;
 }
 const whereText = P => (P.prison ? `${P.place}の${P.prison.n}にいる` : `${P.place}にいる`);
 // 通知書の「場所」：いまいる場所（天気 気温）＋ 服役中は刑務所名

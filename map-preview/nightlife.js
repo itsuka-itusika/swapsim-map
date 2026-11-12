@@ -79,7 +79,25 @@ const Nightlife=(()=>{
   let text=fillText(textOf(pk.e),P);
   return {text,tpl:textOf(pk.e),state,stateLabel:label,p:pk.p,source:'swapsim-role-pool'};
  }
- return {handles,assign,choose,fallback,extra,extraPool};
+ // 源氏名: hosts, キャバクラ嬢 and 風俗嬢 are shown as 源氏名（本名）. Male staff of adult-service shops use their own name.
+ const stage={
+  host:{fam:[['一条','いちじょう'],['如月','きさらぎ'],['神崎','かんざき'],['白鳥','しらとり'],['桐生','きりゅう'],['黒崎','くろさき'],['天堂','てんどう'],['藤堂','とうどう'],['九条','くじょう'],['神楽','かぐら'],['朝霧','あさぎり'],['月城','つきしろ'],['氷室','ひむろ'],['葛城','かつらぎ'],['東雲','しののめ'],['鳳','おおとり']],
+   giv:[['零','れい'],['蓮','れん'],['翔','しょう'],['流星','りゅうせい'],['光','ひかる'],['龍','りゅう'],['皇輝','こうき'],['聖夜','せいや'],['煌','きら'],['来夢','らいむ'],['遊馬','あすま'],['碧','あお'],['響','ひびき'],['瑠偉','るい'],['隼人','はやと'],['雅','みやび'],['天馬','てんま'],['冬馬','とうま'],['律','りつ'],['優希','ゆうき'],['夜神','やがみ'],['愛','あい'],['怜音','れおん'],['悠真','ゆうま']],famP:.5},
+  cabaret:{fam:[['白石','しらいし'],['桜井','さくらい'],['一ノ瀬','いちのせ'],['姫川','ひめかわ'],['星野','ほしの'],['早乙女','さおとめ'],['朝比奈','あさひな'],['如月','きさらぎ'],['月野','つきの'],['七瀬','ななせ']],
+   giv:[['あいり'],['ゆな'],['りな'],['みゆ'],['れいな'],['あやか'],['ひな'],['まりあ'],['えみり'],['さくら'],['ゆあ'],['ののか'],['みれい'],['るな'],['かれん'],['ありす'],['ゆめ'],['せいら'],['あんな'],['まお'],['美月','みづき'],['姫奈','ひな'],['愛梨','あいり'],['麗奈','れいな'],['莉子','りこ']],famP:.3},
+  adultservice:{fam:[],giv:[['まりん'],['みく'],['さくら'],['ここあ'],['ゆいな'],['りりか'],['あいみ'],['なな'],['ひまり'],['めい'],['すず'],['もか'],['ゆら'],['のあ'],['みお'],['るる'],['あんじゅ'],['かのん'],['ちひろ'],['ゆき'],['ミク'],['ルナ'],['エマ'],['リナ']],famP:0}
+ };
+ function stageKind(P){let tag=P.occ?.tag;return tag==='host'&&P.sex==='m'||(tag==='cabaret'||tag==='adultservice')&&P.sex==='f'?tag:null}
+ function applyStageName(P,r=rnd){
+  let kind=stageKind(P);if(!kind){delete P.stageName;delete P.displayName;return null}
+  let s=stage[kind],one=a=>a[Math.floor(r()*a.length)],giv=one(s.giv);
+  for(let i=0;i<8&&giv[0]===P.given.k;i++)giv=one(s.giv);
+  let fam=s.fam.length&&r()<s.famP?one(s.fam):null;
+  P.stageName={fam:fam?{k:fam[0],r:fam[1]}:null,given:{k:giv[0],r:giv[1]||giv[0]}};
+  P.displayName=(fam?fam[0]+' ':'')+giv[0]+'（'+P.surname.k+' '+P.given.k+'）';
+  return P.stageName;
+ }
+ return {handles,assign,choose,fallback,extra,extraPool,stageKind,applyStageName};
 })();
 if(typeof module!=='undefined')module.exports=Nightlife;
 
